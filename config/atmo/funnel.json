@@ -46,7 +46,8 @@
               "emoji": "🔮",
               "detail": "Zodiac, numerology and patterns — decoded daily"
             }
-          ]
+          ],
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal.jpg"
         },
         {
           "id": "goal-ack",
@@ -55,6 +56,15 @@
           "title": "Great choice{withName|}",
           "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
           "cta": "Let's Go"
+        },
+        {
+          "id": "value-guidance",
+          "type": "info",
+          "title": "Daily guidance, tailored to you",
+          "subtitle": "Micro-insights, focus and affirmations — curated for this very day, powered by real sky data.",
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-guidance.jpg",
+          "imageStyle": "poster",
+          "cta": "Feeling Cosmic!"
         },
         {
           "id": "sensitivity",
@@ -79,7 +89,8 @@
               "title": "Not sure — let's find out",
               "emoji": "🧭"
             }
-          ]
+          ],
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/sensitivity.jpg"
         },
         {
           "id": "drain",
@@ -113,7 +124,8 @@
               "emoji": "😮‍💨",
               "detail": "Daily focus tuned to steady your rhythm"
             }
-          ]
+          ],
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/drain.jpg"
         },
         {
           "id": "name",
@@ -123,7 +135,8 @@
           "subtitle": "Your reading gets personal.",
           "placeholder": "Your name",
           "optional": true,
-          "cta": "Continue"
+          "cta": "Continue",
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/name.jpg"
         },
         {
           "id": "birthdate",
@@ -132,7 +145,8 @@
           "title": "When were you born?",
           "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index.",
           "cta": "Continue",
-          "footnote": "Moon & planet positions computed with astronomical precision"
+          "footnote": "Moon & planet positions computed with astronomical precision",
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthdate.jpg"
         },
         {
           "id": "birthtime",
@@ -145,7 +159,8 @@
           "afterTasks": [
             "Aligning planets at your birth moment…",
             "Mapping your cosmic blueprint…"
-          ]
+          ],
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthtime.jpg"
         },
         {
           "id": "birthplace",
@@ -155,7 +170,8 @@
           "subtitle": "Your birth place anchors your chart to the sky above it.",
           "placeholder": "City of birth",
           "optional": true,
-          "cta": "Continue"
+          "cta": "Continue",
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthplace.jpg"
         },
         {
           "id": "sign-payoff",
@@ -208,7 +224,8 @@
               "title": "Affirmations",
               "emoji": "🧘"
             }
-          ]
+          ],
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/interests.jpg"
         },
         {
           "id": "personalizing",
@@ -233,6 +250,15 @@
           "footnote": null
         },
         {
+          "id": "value-science",
+          "type": "info",
+          "title": "Real data. Real sky.",
+          "subtitle": "Live space weather from NOAA and 10,000+ stations — science first, magic close behind.",
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-science.jpg",
+          "imageStyle": "poster",
+          "cta": "Impressive!"
+        },
+        {
           "id": "location",
           "type": "permission",
           "permission": "location",
@@ -240,7 +266,8 @@
           "title": "Weather where you are",
           "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
           "cta": "Allow Location",
-          "footnote": "10,000+ weather stations · NOAA space-weather observatory"
+          "footnote": "10,000+ weather stations · NOAA space-weather observatory",
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/location.jpg"
         },
         {
           "id": "notifications",
@@ -249,7 +276,8 @@
           "emoji": "🔔",
           "title": "Start mornings prepared",
           "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
-          "cta": "Enable Notifications"
+          "cta": "Enable Notifications",
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/notifications.jpg"
         },
         {
           "id": "before-after",
@@ -335,7 +363,8 @@
         "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
         "brandName": "Solara",
         "brandBadge": "PLUS",
-        "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning."
+        "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning.",
+        "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero.jpg"
       }
     }
   ]
