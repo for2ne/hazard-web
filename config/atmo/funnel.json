@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "experimentId": "onb-hollywood-v1",
   "variants": [
     {
@@ -17,7 +17,6 @@
         {
           "id": "goal",
           "type": "singleChoice",
-          "emoji": "🎯",
           "title": "What brings you here?",
           "subtitle": "We'll tune your daily reading around it.",
           "cta": "Continue",
@@ -46,14 +45,13 @@
               "emoji": "🔮",
               "detail": "Zodiac, numerology and patterns — decoded daily"
             }
-          ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal-v2.png",
-          "imageBlend": "float"
+          ]
         },
         {
           "id": "goal-ack",
           "type": "payoff",
           "emoji": "🌟",
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal-v2.png",
           "title": "Great choice{withName|}",
           "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
           "cta": "Let's Go"
@@ -70,7 +68,6 @@
         {
           "id": "sensitivity",
           "type": "singleChoice",
-          "emoji": "🌪️",
           "title": "Do you feel the weather?",
           "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep.",
           "cta": "Continue",
@@ -90,14 +87,11 @@
               "title": "Not sure — let's find out",
               "emoji": "🧭"
             }
-          ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/sensitivity-v2.png",
-          "imageBlend": "float"
+          ]
         },
         {
           "id": "drain",
           "type": "singleChoice",
-          "emoji": "🫠",
           "title": "What drains your energy most?",
           "subtitle": "We'll build your daily reading to protect exactly that.",
           "cta": "Continue",
@@ -126,37 +120,28 @@
               "emoji": "😮‍💨",
               "detail": "Daily focus tuned to steady your rhythm"
             }
-          ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/drain.jpg",
-          "imageBlend": "screen"
+          ]
         },
         {
           "id": "name",
           "type": "textInput",
-          "emoji": "👋",
           "title": "What should we call you?",
           "subtitle": "Your reading gets personal.",
           "placeholder": "Your name",
           "optional": true,
-          "cta": "Continue",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/name.jpg",
-          "imageBlend": "screen"
+          "cta": "Continue"
         },
         {
           "id": "birthdate",
           "type": "datePicker",
-          "emoji": "🎂",
           "title": "When were you born?",
           "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index.",
           "cta": "Continue",
-          "footnote": "Moon & planet positions computed with astronomical precision",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthdate.jpg",
-          "imageBlend": "screen"
+          "footnote": "Moon & planet positions computed with astronomical precision"
         },
         {
           "id": "birthtime",
           "type": "timePicker",
-          "emoji": "⏰",
           "title": "What time were you born?",
           "subtitle": "If you don't know — skip it, we'll calculate an approximate birth chart.",
           "cta": "Continue",
@@ -164,21 +149,16 @@
           "afterTasks": [
             "Aligning planets at your birth moment…",
             "Mapping your cosmic blueprint…"
-          ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthtime.jpg",
-          "imageBlend": "screen"
+          ]
         },
         {
           "id": "birthplace",
           "type": "textInput",
-          "emoji": "🌍",
           "title": "Where were you born?",
           "subtitle": "Your birth place anchors your chart to the sky above it.",
           "placeholder": "City of birth",
           "optional": true,
-          "cta": "Continue",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthplace.jpg",
-          "imageBlend": "screen"
+          "cta": "Continue"
         },
         {
           "id": "sign-payoff",
@@ -191,7 +171,6 @@
         {
           "id": "interests",
           "type": "multiChoice",
-          "emoji": "✨",
           "title": "What should we tune in to?",
           "subtitle": "Pick everything that resonates — your daily reading adapts.",
           "cta": "Continue",
@@ -231,9 +210,7 @@
               "title": "Affirmations",
               "emoji": "🧘"
             }
-          ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/interests.jpg",
-          "imageBlend": "screen"
+          ]
         },
         {
           "id": "personalizing",
@@ -274,9 +251,7 @@
           "title": "Weather where you are",
           "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
           "cta": "Allow Location",
-          "footnote": "10,000+ weather stations · NOAA space-weather observatory",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/location.jpg",
-          "imageBlend": "screen"
+          "footnote": "10,000+ weather stations · NOAA space-weather observatory"
         },
         {
           "id": "notifications",
@@ -285,9 +260,7 @@
           "emoji": "🔔",
           "title": "Start mornings prepared",
           "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
-          "cta": "Enable Notifications",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/notifications.jpg",
-          "imageBlend": "screen"
+          "cta": "Enable Notifications"
         },
         {
           "id": "before-after",
