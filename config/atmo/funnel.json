@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "experimentId": "onb-hollywood-v1",
   "variants": [
     {
@@ -18,31 +18,27 @@
           "id": "goal",
           "type": "singleChoice",
           "title": "What brings you here?",
-          "subtitle": "We'll tune your daily reading around it.",
+          "subtitle": "We'll tune your daily reading around it. 🎯",
           "cta": "Continue",
           "options": [
             {
               "id": "energy",
               "title": "More energy through the day",
-              "emoji": "⚡",
               "detail": "Morning guidance built around your energy peaks"
             },
             {
               "id": "mood",
               "title": "Steadier mood",
-              "emoji": "🌈",
               "detail": "We'll track what actually moves your mood"
             },
             {
               "id": "sleep",
               "title": "Better sleep",
-              "emoji": "😴",
               "detail": "Evenings become your protected ritual"
             },
             {
               "id": "self",
               "title": "Understand myself deeper",
-              "emoji": "🔮",
               "detail": "Zodiac, numerology and patterns — decoded daily"
             }
           ]
@@ -69,23 +65,20 @@
           "id": "sensitivity",
           "type": "singleChoice",
           "title": "Do you feel the weather?",
-          "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep.",
+          "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep. 🌧️",
           "cta": "Continue",
           "options": [
             {
               "id": "often",
-              "title": "Yes, I feel them strongly",
-              "emoji": "💯"
+              "title": "Yes, I feel them strongly"
             },
             {
               "id": "sometimes",
-              "title": "Sometimes, I think so",
-              "emoji": "🤔"
+              "title": "Sometimes, I think so"
             },
             {
               "id": "unsure",
-              "title": "Not sure — let's find out",
-              "emoji": "🧭"
+              "title": "Not sure — let's find out"
             }
           ]
         },
@@ -93,31 +86,27 @@
           "id": "drain",
           "type": "singleChoice",
           "title": "What drains your energy most?",
-          "subtitle": "We'll build your daily reading to protect exactly that.",
+          "subtitle": "We'll build your daily reading to protect exactly that. 🔋",
           "cta": "Continue",
           "options": [
             {
               "id": "overthinking",
               "title": "Overthinking & worry",
-              "emoji": "🌀",
               "detail": "Your reading will flag high-tension days in advance"
             },
             {
               "id": "sleep",
               "title": "Poor sleep",
-              "emoji": "😴",
               "detail": "Evening guidance will guard your wind-down"
             },
             {
               "id": "weather",
               "title": "Weather & storm days",
-              "emoji": "🌧️",
               "detail": "Pressure and Kp alerts before they hit you"
             },
             {
               "id": "stress",
               "title": "Stress & mood swings",
-              "emoji": "😮‍💨",
               "detail": "Daily focus tuned to steady your rhythm"
             }
           ]
@@ -126,7 +115,7 @@
           "id": "name",
           "type": "textInput",
           "title": "What should we call you?",
-          "subtitle": "Your reading gets personal.",
+          "subtitle": "Your reading gets personal. ✨",
           "placeholder": "Your name",
           "optional": true,
           "cta": "Continue"
@@ -135,7 +124,7 @@
           "id": "birthdate",
           "type": "datePicker",
           "title": "When were you born?",
-          "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index.",
+          "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index. 🎂",
           "cta": "Continue",
           "footnote": "Moon & planet positions computed with astronomical precision"
         },
@@ -143,7 +132,7 @@
           "id": "birthtime",
           "type": "timePicker",
           "title": "What time were you born?",
-          "subtitle": "If you don't know — skip it, we'll calculate an approximate birth chart.",
+          "subtitle": "If you don't know — skip it, we'll calculate an approximate birth chart. ⏳",
           "cta": "Continue",
           "skippable": true,
           "afterTasks": [
@@ -155,7 +144,7 @@
           "id": "birthplace",
           "type": "textInput",
           "title": "Where were you born?",
-          "subtitle": "Your birth place anchors your chart to the sky above it.",
+          "subtitle": "Your birth place anchors your chart to the sky above it. 🌍",
           "placeholder": "City of birth",
           "optional": true,
           "cta": "Continue"
@@ -172,43 +161,36 @@
           "id": "interests",
           "type": "multiChoice",
           "title": "What should we tune in to?",
-          "subtitle": "Pick everything that resonates — your daily reading adapts.",
+          "subtitle": "Pick everything that resonates — your daily reading adapts. 💫",
           "cta": "Continue",
           "options": [
             {
               "id": "weather",
-              "title": "Weather sensitivity",
-              "emoji": "🌦️"
+              "title": "Weather sensitivity"
             },
             {
               "id": "magnetic",
-              "title": "Magnetic storms",
-              "emoji": "🧲"
+              "title": "Magnetic storms"
             },
             {
               "id": "moon",
-              "title": "Moon cycles",
-              "emoji": "🌙"
+              "title": "Moon cycles"
             },
             {
               "id": "zodiac",
-              "title": "Zodiac & astrology",
-              "emoji": "♌"
+              "title": "Zodiac & astrology"
             },
             {
               "id": "biorhythms",
-              "title": "Biorhythms",
-              "emoji": "📈"
+              "title": "Biorhythms"
             },
             {
               "id": "numerology",
-              "title": "Numerology",
-              "emoji": "🔢"
+              "title": "Numerology"
             },
             {
               "id": "affirmations",
-              "title": "Affirmations",
-              "emoji": "🧘"
+              "title": "Affirmations"
             }
           ]
         },
