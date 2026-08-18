@@ -252,6 +252,26 @@
           "cta": "Enable Notifications"
         },
         {
+          "id": "before-after",
+          "type": "comparison",
+          "title": "Days with Solara hit different",
+          "beforeTitle": "Without",
+          "afterTitle": "With Solara",
+          "before": [
+            "Blindsided by heavy days",
+            "Guessing why energy dips",
+            "Storms hit out of nowhere",
+            "Generic advice for everyone"
+          ],
+          "after": [
+            "Know your day in advance",
+            "See what moves your energy",
+            "Alerts before the storm hits",
+            "Guidance tuned to YOU"
+          ],
+          "cta": "I Want This"
+        },
+        {
           "id": "paywall",
           "type": "paywall",
           "title": "Paywall"
