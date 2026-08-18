@@ -93,7 +93,35 @@
           "emoji": "🎂",
           "title": "When were you born?",
           "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index.",
-          "cta": "Reveal My Sign"
+          "cta": "Continue"
+        },
+        {
+          "id": "birthtime",
+          "type": "timePicker",
+          "emoji": "⏰",
+          "title": "What time were you born?",
+          "subtitle": "If you don't know — skip it, we'll calculate an approximate birth chart.",
+          "cta": "Continue",
+          "skippable": true
+        },
+        {
+          "id": "birthplace",
+          "type": "textInput",
+          "emoji": "🌍",
+          "title": "Where were you born?",
+          "subtitle": "Your birth place anchors your chart to the sky above it.",
+          "placeholder": "City of birth",
+          "optional": true,
+          "cta": "Continue"
+        },
+        {
+          "id": "casting-chart",
+          "type": "progress",
+          "title": "Casting your birth chart…",
+          "tasks": [
+            "Aligning planets at your birth moment",
+            "Mapping your cosmic blueprint"
+          ]
         },
         {
           "id": "sign-payoff",
