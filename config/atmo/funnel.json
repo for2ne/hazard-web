@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "experimentId": "onb-baseline",
+  "version": 3,
+  "experimentId": "onb-quiz-v1",
   "variants": [
     {
       "id": "control",
@@ -15,11 +15,48 @@
           "cta": "Get Started"
         },
         {
+          "id": "goal",
+          "type": "singleChoice",
+          "emoji": "🎯",
+          "title": "What brings you here?",
+          "subtitle": "We'll tune your daily reading around it.",
+          "cta": "Continue",
+          "options": [
+            { "id": "energy", "title": "More energy through the day", "emoji": "⚡" },
+            { "id": "mood", "title": "Steadier mood", "emoji": "🌈" },
+            { "id": "sleep", "title": "Better sleep", "emoji": "😴" },
+            { "id": "self", "title": "Understand myself deeper", "emoji": "🔮" }
+          ]
+        },
+        {
+          "id": "sensitivity",
+          "type": "singleChoice",
+          "emoji": "🌪️",
+          "title": "Do weather changes affect you?",
+          "subtitle": "Headaches, low energy or mood dips on stormy days?",
+          "cta": "Continue",
+          "options": [
+            { "id": "often", "title": "Yes, I feel them strongly", "emoji": "💯" },
+            { "id": "sometimes", "title": "Sometimes, I think so", "emoji": "🤔" },
+            { "id": "unsure", "title": "Not sure — let's find out", "emoji": "🧭" }
+          ]
+        },
+        {
+          "id": "name",
+          "type": "textInput",
+          "emoji": "👋",
+          "title": "What should we call you?",
+          "subtitle": "Your reading gets personal.",
+          "placeholder": "Your name",
+          "optional": true,
+          "cta": "Continue"
+        },
+        {
           "id": "birthdate",
           "type": "datePicker",
           "emoji": "🎂",
           "title": "When were you born?",
-          "subtitle": "Your birth date powers biorhythms, numerology and deeper personalization.",
+          "subtitle": "Your birth date powers biorhythms, numerology and your zodiac reading.",
           "cta": "Continue"
         },
         {
@@ -33,6 +70,7 @@
             { "id": "weather", "title": "Weather sensitivity", "emoji": "🌦️" },
             { "id": "magnetic", "title": "Magnetic storms", "emoji": "🧲" },
             { "id": "moon", "title": "Moon cycles", "emoji": "🌙" },
+            { "id": "zodiac", "title": "Zodiac & astrology", "emoji": "♌" },
             { "id": "biorhythms", "title": "Biorhythms", "emoji": "📈" },
             { "id": "numerology", "title": "Numerology", "emoji": "🔢" },
             { "id": "affirmations", "title": "Affirmations", "emoji": "🧘" }
@@ -53,7 +91,7 @@
           "permission": "notifications",
           "emoji": "🔔",
           "title": "Start mornings prepared",
-          "subtitle": "Get your Energy Index and the day's focus delivered every morning.",
+          "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
           "cta": "Enable Notifications"
         },
         {
@@ -68,7 +106,7 @@
           "Personal Energy Index, every day",
           "Daily guidance, affirmations & focus",
           "Magnetic storm & pressure tracking",
-          "Moon cycles, biorhythms & numerology"
+          "Zodiac, moon cycles & biorhythms"
         ],
         "plans": [
           {
