@@ -47,7 +47,8 @@
               "detail": "Zodiac, numerology and patterns — decoded daily"
             }
           ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "goal-ack",
@@ -90,7 +91,8 @@
               "emoji": "🧭"
             }
           ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/sensitivity.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/sensitivity.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "drain",
@@ -125,7 +127,8 @@
               "detail": "Daily focus tuned to steady your rhythm"
             }
           ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/drain.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/drain.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "name",
@@ -136,7 +139,8 @@
           "placeholder": "Your name",
           "optional": true,
           "cta": "Continue",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/name.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/name.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "birthdate",
@@ -146,7 +150,8 @@
           "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index.",
           "cta": "Continue",
           "footnote": "Moon & planet positions computed with astronomical precision",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthdate.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthdate.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "birthtime",
@@ -160,7 +165,8 @@
             "Aligning planets at your birth moment…",
             "Mapping your cosmic blueprint…"
           ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthtime.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthtime.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "birthplace",
@@ -171,7 +177,8 @@
           "placeholder": "City of birth",
           "optional": true,
           "cta": "Continue",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthplace.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/birthplace.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "sign-payoff",
@@ -225,7 +232,8 @@
               "emoji": "🧘"
             }
           ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/interests.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/interests.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "personalizing",
@@ -267,7 +275,8 @@
           "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
           "cta": "Allow Location",
           "footnote": "10,000+ weather stations · NOAA space-weather observatory",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/location.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/location.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "notifications",
@@ -277,7 +286,8 @@
           "title": "Start mornings prepared",
           "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
           "cta": "Enable Notifications",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/notifications.jpg"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/notifications.jpg",
+          "imageBlend": "screen"
         },
         {
           "id": "before-after",
