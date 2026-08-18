@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "experimentId": "onb-hollywood-v1",
   "variants": [
     {
@@ -138,7 +138,8 @@
           "afterTasks": [
             "Aligning planets at your birth moment…",
             "Mapping your cosmic blueprint…"
-          ]
+          ],
+          "afterDone": "Your cosmic blueprint is ready"
         },
         {
           "id": "birthplace",
@@ -262,7 +263,8 @@
             "Alerts before the storm hits",
             "Guidance tuned to YOU"
           ],
-          "cta": "I Want This"
+          "cta": "I Want This",
+          "footnote": "Powered by live NOAA space-weather data"
         },
         {
           "id": "paywall",
