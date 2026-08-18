@@ -157,6 +157,16 @@
             "Tracking magnetic field activity",
             "Calibrating your biorhythms",
             "Crafting your daily reading"
+          ],
+          "testimonials": [
+            {
+              "text": "PLACEHOLDER — заменить на реальные цитаты бета-тестеров перед сабмитом. The storm alerts turned out scary accurate for me.",
+              "author": "Beta tester"
+            },
+            {
+              "text": "PLACEHOLDER — It's the first app I actually open every morning.",
+              "author": "Beta tester"
+            }
           ]
         },
         {
