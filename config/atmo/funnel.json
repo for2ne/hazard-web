@@ -9,10 +9,10 @@
         {
           "id": "welcome",
           "type": "info",
-          "emoji": "🌤️",
           "title": "Your day, decoded",
           "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your personal rhythms to guide every day.",
-          "cta": "Begin the Journey"
+          "cta": "Begin the Journey",
+          "artwork": "hero"
         },
         {
           "id": "goal",
@@ -22,10 +22,26 @@
           "subtitle": "We'll tune your daily reading around it.",
           "cta": "Continue",
           "options": [
-            { "id": "energy", "title": "More energy through the day", "emoji": "⚡" },
-            { "id": "mood", "title": "Steadier mood", "emoji": "🌈" },
-            { "id": "sleep", "title": "Better sleep", "emoji": "😴" },
-            { "id": "self", "title": "Understand myself deeper", "emoji": "🔮" }
+            {
+              "id": "energy",
+              "title": "More energy through the day",
+              "emoji": "⚡"
+            },
+            {
+              "id": "mood",
+              "title": "Steadier mood",
+              "emoji": "🌈"
+            },
+            {
+              "id": "sleep",
+              "title": "Better sleep",
+              "emoji": "😴"
+            },
+            {
+              "id": "self",
+              "title": "Understand myself deeper",
+              "emoji": "🔮"
+            }
           ]
         },
         {
@@ -40,13 +56,25 @@
           "id": "sensitivity",
           "type": "singleChoice",
           "emoji": "🌪️",
-          "title": "Do weather changes affect you?",
-          "subtitle": "Headaches, low energy or mood dips on stormy days?",
+          "title": "Do you feel the weather?",
+          "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep.",
           "cta": "Continue",
           "options": [
-            { "id": "often", "title": "Yes, I feel them strongly", "emoji": "💯" },
-            { "id": "sometimes", "title": "Sometimes, I think so", "emoji": "🤔" },
-            { "id": "unsure", "title": "Not sure — let's find out", "emoji": "🧭" }
+            {
+              "id": "often",
+              "title": "Yes, I feel them strongly",
+              "emoji": "💯"
+            },
+            {
+              "id": "sometimes",
+              "title": "Sometimes, I think so",
+              "emoji": "🤔"
+            },
+            {
+              "id": "unsure",
+              "title": "Not sure — let's find out",
+              "emoji": "🧭"
+            }
           ]
         },
         {
@@ -83,13 +111,41 @@
           "subtitle": "Pick everything that resonates — your daily reading adapts.",
           "cta": "Continue",
           "options": [
-            { "id": "weather", "title": "Weather sensitivity", "emoji": "🌦️" },
-            { "id": "magnetic", "title": "Magnetic storms", "emoji": "🧲" },
-            { "id": "moon", "title": "Moon cycles", "emoji": "🌙" },
-            { "id": "zodiac", "title": "Zodiac & astrology", "emoji": "♌" },
-            { "id": "biorhythms", "title": "Biorhythms", "emoji": "📈" },
-            { "id": "numerology", "title": "Numerology", "emoji": "🔢" },
-            { "id": "affirmations", "title": "Affirmations", "emoji": "🧘" }
+            {
+              "id": "weather",
+              "title": "Weather sensitivity",
+              "emoji": "🌦️"
+            },
+            {
+              "id": "magnetic",
+              "title": "Magnetic storms",
+              "emoji": "🧲"
+            },
+            {
+              "id": "moon",
+              "title": "Moon cycles",
+              "emoji": "🌙"
+            },
+            {
+              "id": "zodiac",
+              "title": "Zodiac & astrology",
+              "emoji": "♌"
+            },
+            {
+              "id": "biorhythms",
+              "title": "Biorhythms",
+              "emoji": "📈"
+            },
+            {
+              "id": "numerology",
+              "title": "Numerology",
+              "emoji": "🔢"
+            },
+            {
+              "id": "affirmations",
+              "title": "Affirmations",
+              "emoji": "🧘"
+            }
           ]
         },
         {
