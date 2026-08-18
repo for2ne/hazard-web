@@ -25,22 +25,26 @@
             {
               "id": "energy",
               "title": "More energy through the day",
-              "emoji": "⚡"
+              "emoji": "⚡",
+              "detail": "Morning guidance built around your energy peaks"
             },
             {
               "id": "mood",
               "title": "Steadier mood",
-              "emoji": "🌈"
+              "emoji": "🌈",
+              "detail": "We'll track what actually moves your mood"
             },
             {
               "id": "sleep",
               "title": "Better sleep",
-              "emoji": "😴"
+              "emoji": "😴",
+              "detail": "Evenings become your protected ritual"
             },
             {
               "id": "self",
               "title": "Understand myself deeper",
-              "emoji": "🔮"
+              "emoji": "🔮",
+              "detail": "Zodiac, numerology and patterns — decoded daily"
             }
           ]
         },
@@ -78,6 +82,40 @@
           ]
         },
         {
+          "id": "drain",
+          "type": "singleChoice",
+          "emoji": "🫠",
+          "title": "What drains your energy most?",
+          "subtitle": "We'll build your daily reading to protect exactly that.",
+          "cta": "Continue",
+          "options": [
+            {
+              "id": "overthinking",
+              "title": "Overthinking & worry",
+              "emoji": "🌀",
+              "detail": "Your reading will flag high-tension days in advance"
+            },
+            {
+              "id": "sleep",
+              "title": "Poor sleep",
+              "emoji": "😴",
+              "detail": "Evening guidance will guard your wind-down"
+            },
+            {
+              "id": "weather",
+              "title": "Weather & storm days",
+              "emoji": "🌧️",
+              "detail": "Pressure and Kp alerts before they hit you"
+            },
+            {
+              "id": "stress",
+              "title": "Stress & mood swings",
+              "emoji": "😮‍💨",
+              "detail": "Daily focus tuned to steady your rhythm"
+            }
+          ]
+        },
+        {
           "id": "name",
           "type": "textInput",
           "emoji": "👋",
@@ -93,7 +131,8 @@
           "emoji": "🎂",
           "title": "When were you born?",
           "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index.",
-          "cta": "Continue"
+          "cta": "Continue",
+          "footnote": "Moon & planet positions computed with astronomical precision"
         },
         {
           "id": "birthtime",
@@ -102,7 +141,11 @@
           "title": "What time were you born?",
           "subtitle": "If you don't know — skip it, we'll calculate an approximate birth chart.",
           "cta": "Continue",
-          "skippable": true
+          "skippable": true,
+          "afterTasks": [
+            "Aligning planets at your birth moment…",
+            "Mapping your cosmic blueprint…"
+          ]
         },
         {
           "id": "birthplace",
@@ -113,15 +156,6 @@
           "placeholder": "City of birth",
           "optional": true,
           "cta": "Continue"
-        },
-        {
-          "id": "casting-chart",
-          "type": "progress",
-          "title": "Casting your birth chart…",
-          "tasks": [
-            "Aligning planets at your birth moment",
-            "Mapping your cosmic blueprint"
-          ]
         },
         {
           "id": "sign-payoff",
@@ -195,7 +229,8 @@
               "text": "PLACEHOLDER — It's the first app I actually open every morning.",
               "author": "Beta tester"
             }
-          ]
+          ],
+          "footnote": null
         },
         {
           "id": "location",
@@ -204,7 +239,8 @@
           "emoji": "📍",
           "title": "Weather where you are",
           "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
-          "cta": "Allow Location"
+          "cta": "Allow Location",
+          "footnote": "10,000+ weather stations · NOAA space-weather observatory"
         },
         {
           "id": "notifications",
