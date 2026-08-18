@@ -258,7 +258,7 @@
         }
       ],
       "paywall": {
-        "title": "Unlock your full forecast",
+        "title": "Your Daily Guide to Your Energy",
         "features": [
           "Personal Energy Index, every day",
           "Magnetic storm & pressure alerts",
@@ -269,19 +269,24 @@
           {
             "productId": "com.hazard.atmo.pro.yearly",
             "title": "Yearly",
-            "fallbackPrice": "$29.99/year",
+            "fallbackPrice": "$29.99",
+            "periodLabel": "per year",
             "badge": "BEST VALUE",
             "isDefault": true
           },
           {
             "productId": "com.hazard.atmo.pro.weekly",
             "title": "Weekly",
-            "fallbackPrice": "$4.99/week · 3-day free trial"
+            "fallbackPrice": "$4.99",
+            "periodLabel": "per week",
+            "note": "3-day free trial"
           },
           {
             "productId": "com.hazard.atmo.pro.lifetime",
             "title": "Lifetime",
-            "fallbackPrice": "$59.99 · pay once, yours forever",
+            "fallbackPrice": "$59.99",
+            "periodLabel": "one-time",
+            "note": "Pay once, enjoy forever",
             "badge": "FOREVER"
           }
         ],
@@ -298,7 +303,7 @@
           "Numerology",
           "Your Patterns",
           "10 Weather Metrics",
-          "Evening Check-ins",
+          "Check-ins",
           "Affirmations"
         ],
         "trustLine": "No commitment. Cancel anytime.",
@@ -307,7 +312,10 @@
           "author": "Beta tester"
         },
         "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
-        "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html"
+        "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
+        "brandName": "Solara",
+        "brandBadge": "PRO",
+        "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning."
       }
     }
   ]
