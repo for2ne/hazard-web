@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "experimentId": "onb-quiz-v1",
+  "version": 4,
+  "experimentId": "onb-hollywood-v1",
   "variants": [
     {
       "id": "control",
@@ -12,7 +12,7 @@
           "emoji": "🌤️",
           "title": "Your day, decoded",
           "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your personal rhythms to guide every day.",
-          "cta": "Get Started"
+          "cta": "Begin the Journey"
         },
         {
           "id": "goal",
@@ -27,6 +27,14 @@
             { "id": "sleep", "title": "Better sleep", "emoji": "😴" },
             { "id": "self", "title": "Understand myself deeper", "emoji": "🔮" }
           ]
+        },
+        {
+          "id": "goal-ack",
+          "type": "payoff",
+          "emoji": "🌟",
+          "title": "Great choice{withName|}",
+          "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
+          "cta": "Let's Go"
         },
         {
           "id": "sensitivity",
@@ -56,8 +64,16 @@
           "type": "datePicker",
           "emoji": "🎂",
           "title": "When were you born?",
-          "subtitle": "Your birth date powers biorhythms, numerology and your zodiac reading.",
-          "cta": "Continue"
+          "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index.",
+          "cta": "Reveal My Sign"
+        },
+        {
+          "id": "sign-payoff",
+          "type": "payoff",
+          "emoji": "{signEmoji|✨}",
+          "title": "You're a {sign|Star Child}",
+          "subtitle": "{element|Cosmic} energy runs through your chart{withName|}. Solara will tune every single day to it.",
+          "cta": "I Love That"
         },
         {
           "id": "interests",
@@ -74,6 +90,17 @@
             { "id": "biorhythms", "title": "Biorhythms", "emoji": "📈" },
             { "id": "numerology", "title": "Numerology", "emoji": "🔢" },
             { "id": "affirmations", "title": "Affirmations", "emoji": "🧘" }
+          ]
+        },
+        {
+          "id": "personalizing",
+          "type": "progress",
+          "title": "Personalizing your energy profile…",
+          "tasks": [
+            "Reading local weather patterns",
+            "Tracking magnetic field activity",
+            "Calibrating your biorhythms",
+            "Crafting your daily reading"
           ]
         },
         {
