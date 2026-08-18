@@ -261,9 +261,9 @@
         "title": "Unlock your full forecast",
         "features": [
           "Personal Energy Index, every day",
-          "Daily guidance, affirmations & focus",
-          "Magnetic storm & pressure tracking",
-          "Zodiac, moon cycles & biorhythms"
+          "Magnetic storm & pressure alerts",
+          "Zodiac, moon cycles & biorhythms",
+          "Patterns verified on YOUR check-ins"
         ],
         "plans": [
           {
@@ -277,10 +277,37 @@
             "productId": "com.hazard.atmo.pro.weekly",
             "title": "Weekly",
             "fallbackPrice": "$4.99/week · 3-day free trial"
+          },
+          {
+            "productId": "com.hazard.atmo.pro.lifetime",
+            "title": "Lifetime",
+            "fallbackPrice": "$59.99 · pay once, yours forever",
+            "badge": "FOREVER"
           }
         ],
         "cta": "Continue",
-        "closeDelaySeconds": 2
+        "closeDelaySeconds": 2,
+        "skippable": true,
+        "includedTitle": "What's Included",
+        "included": [
+          "Energy Index",
+          "Storm Alerts",
+          "Daily Zodiac",
+          "Moon Cycles",
+          "Biorhythms",
+          "Numerology",
+          "Your Patterns",
+          "10 Weather Metrics",
+          "Evening Check-ins",
+          "Affirmations"
+        ],
+        "trustLine": "No commitment. Cancel anytime.",
+        "testimonial": {
+          "text": "PLACEHOLDER — заменить на реальную цитату бета-тестера перед сабмитом.",
+          "author": "Beta tester"
+        },
+        "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
+        "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html"
       }
     }
   ]
