@@ -1,0 +1,92 @@
+{
+  "version": 2,
+  "experimentId": "onb-baseline",
+  "variants": [
+    {
+      "id": "control",
+      "weight": 1,
+      "steps": [
+        {
+          "id": "welcome",
+          "type": "info",
+          "emoji": "🌤️",
+          "title": "Your day, decoded",
+          "subtitle": "Atmo blends real weather science — pressure, magnetic storms, UV — with your personal rhythms to guide every day.",
+          "cta": "Get Started"
+        },
+        {
+          "id": "birthdate",
+          "type": "datePicker",
+          "emoji": "🎂",
+          "title": "When were you born?",
+          "subtitle": "Your birth date powers biorhythms, numerology and deeper personalization.",
+          "cta": "Continue"
+        },
+        {
+          "id": "interests",
+          "type": "multiChoice",
+          "emoji": "✨",
+          "title": "What should we tune in to?",
+          "subtitle": "Pick everything that resonates — your daily reading adapts.",
+          "cta": "Continue",
+          "options": [
+            { "id": "weather", "title": "Weather sensitivity", "emoji": "🌦️" },
+            { "id": "magnetic", "title": "Magnetic storms", "emoji": "🧲" },
+            { "id": "moon", "title": "Moon cycles", "emoji": "🌙" },
+            { "id": "biorhythms", "title": "Biorhythms", "emoji": "📈" },
+            { "id": "numerology", "title": "Numerology", "emoji": "🔢" },
+            { "id": "affirmations", "title": "Affirmations", "emoji": "🧘" }
+          ]
+        },
+        {
+          "id": "location",
+          "type": "permission",
+          "permission": "location",
+          "emoji": "📍",
+          "title": "Weather where you are",
+          "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
+          "cta": "Allow Location"
+        },
+        {
+          "id": "notifications",
+          "type": "permission",
+          "permission": "notifications",
+          "emoji": "🔔",
+          "title": "Start mornings prepared",
+          "subtitle": "Get your Energy Index and the day's focus delivered every morning.",
+          "cta": "Enable Notifications"
+        },
+        {
+          "id": "paywall",
+          "type": "paywall",
+          "title": "Paywall"
+        }
+      ],
+      "paywall": {
+        "title": "Unlock your full forecast",
+        "features": [
+          "Personal Energy Index, every day",
+          "Daily guidance, affirmations & focus",
+          "Magnetic storm & pressure tracking",
+          "Moon cycles, biorhythms & numerology"
+        ],
+        "plans": [
+          {
+            "productId": "com.hazard.atmo.pro.yearly",
+            "title": "Yearly",
+            "fallbackPrice": "$29.99/year",
+            "badge": "BEST VALUE",
+            "isDefault": true
+          },
+          {
+            "productId": "com.hazard.atmo.pro.weekly",
+            "title": "Weekly",
+            "fallbackPrice": "$4.99/week · 3-day free trial"
+          }
+        ],
+        "cta": "Continue",
+        "closeDelaySeconds": 2
+      }
+    }
+  ]
+}
