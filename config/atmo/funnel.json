@@ -47,8 +47,8 @@
               "detail": "Zodiac, numerology and patterns — decoded daily"
             }
           ],
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal.jpg",
-          "imageBlend": "screen"
+          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal.png",
+          "imageBlend": "float"
         },
         {
           "id": "goal-ack",
