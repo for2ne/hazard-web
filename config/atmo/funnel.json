@@ -128,7 +128,7 @@
           "type": "payoff",
           "emoji": "{signEmoji|✨}",
           "title": "You're a {sign|Star Child}",
-          "subtitle": "{element|Cosmic} energy runs through your chart{withName|}. Solara will tune every single day to it.",
+          "subtitle": "You're in the rare {rarity|8}% — {element|cosmic} energy combined with your sensitivity profile{withName|}. Solara tunes every single day to it.",
           "cta": "I Love That"
         },
         {
