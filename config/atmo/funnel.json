@@ -1,5 +1,5 @@
 {
-  "version": 14,
+  "version": 15,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -272,7 +272,9 @@
             "Guidance tuned to YOU"
           ],
           "cta": "I Want This",
-          "footnote": "Powered by live NOAA space-weather data"
+          "footnote": "Powered by live NOAA space-weather data",
+          "beforeImageURL": "https://for2ne.github.io/hazard-web/img/atmo/ba-before-v1.jpg",
+          "afterImageURL": "https://for2ne.github.io/hazard-web/img/atmo/ba-after-v1.jpg"
         },
         {
           "id": "paywall",
