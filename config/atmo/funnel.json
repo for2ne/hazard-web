@@ -1,5 +1,5 @@
 {
-  "version": 13,
+  "version": 14,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -152,7 +152,8 @@
           "subtitle": "Your birth place anchors your chart to the sky above it. 🌍",
           "placeholder": "City of birth",
           "optional": true,
-          "cta": "Continue"
+          "cta": "Continue",
+          "autocomplete": "city"
         },
         {
           "id": "sign-payoff",
