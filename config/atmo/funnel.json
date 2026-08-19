@@ -1,5 +1,5 @@
 {
-  "version": 18,
+  "version": 19,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -256,7 +256,7 @@
         {
           "id": "before-after",
           "type": "comparison",
-          "title": "Days with Solara hit different",
+          "title": "This is how your days change",
           "beforeTitle": "Without",
           "afterTitle": "With Solara",
           "before": [
