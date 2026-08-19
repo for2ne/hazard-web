@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -209,17 +209,13 @@
             "Calibrating your biorhythms",
             "Crafting your daily reading"
           ],
-          "testimonials": [
-            {
-              "text": "PLACEHOLDER — заменить на реальные цитаты бета-тестеров перед сабмитом. The storm alerts turned out scary accurate for me.",
-              "author": "Beta tester"
-            },
-            {
-              "text": "PLACEHOLDER — It's the first app I actually open every morning.",
-              "author": "Beta tester"
-            }
+          "facts": [
+            "Live NOAA space-weather feed",
+            "10,000+ weather stations worldwide",
+            "Moon & planets at astronomical precision",
+            "Your answers never leave this device"
           ],
-          "footnote": null
+          "afterDone": "Your energy profile is ready"
         },
         {
           "id": "value-science",
