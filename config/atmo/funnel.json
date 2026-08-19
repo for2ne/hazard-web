@@ -1,5 +1,5 @@
 {
-  "version": 21,
+  "version": 22,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -354,7 +354,7 @@
           "Check-ins",
           "Affirmations"
         ],
-        "trustLine": "No commitment. Cancel anytime.",
+        "trustLine": "Everything included. No extra fees. Cancel anytime.",
         "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
         "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
         "brandName": "Solara",
