@@ -1,5 +1,5 @@
 {
-  "version": 17,
+  "version": 18,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -353,35 +353,6 @@
             "label": "live sky data"
           }
         ]
-      },
-      "offer": {
-        "title": "One-time offer: 33% off",
-        "subtitle": "Your energy profile is built and ready. Keep it for less than $1.70 a month.",
-        "features": [
-          "Everything in Solara Plus",
-          "A full year of daily forecasts",
-          "Launch price locked in forever"
-        ],
-        "plans": [
-          {
-            "productId": "com.hazard.atmo.pro.yearly.off",
-            "title": "Yearly",
-            "fallbackPrice": "$19.99",
-            "periodLabel": "per year",
-            "equivalent": "≈ $0.38 / week",
-            "badge": "-33%",
-            "isDefault": true
-          }
-        ],
-        "cta": "Claim My 33% Off",
-        "closeDelaySeconds": 1,
-        "skippable": true,
-        "trustLine": "One-time offer. Cancel anytime.",
-        "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
-        "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
-        "brandName": "Solara",
-        "brandBadge": "PLUS",
-        "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero.jpg"
       }
     }
   ]
