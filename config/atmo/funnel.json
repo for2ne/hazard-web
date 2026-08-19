@@ -1,5 +1,5 @@
 {
-  "version": 11,
+  "version": 12,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -293,7 +293,7 @@
             "title": "Yearly",
             "fallbackPrice": "$29.99",
             "periodLabel": "per year",
-            "badge": "BEST VALUE",
+            "badge": "SAVE 88%",
             "isDefault": true,
             "equivalent": "≈ $0.58 / week"
           },
