@@ -1,5 +1,5 @@
 {
-  "version": 19,
+  "version": 20,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -112,6 +112,27 @@
               "id": "stress",
               "title": "Stress & mood swings",
               "detail": "Daily focus tuned to steady your rhythm"
+            }
+          ]
+        },
+        {
+          "id": "gender",
+          "type": "singleChoice",
+          "title": "How do you identify yourself?",
+          "subtitle": "Your reading adapts its tone and practices. 🤍",
+          "cta": "Continue",
+          "options": [
+            {
+              "id": "female",
+              "title": "Female"
+            },
+            {
+              "id": "male",
+              "title": "Male"
+            },
+            {
+              "id": "nonbinary",
+              "title": "Non-binary"
             }
           ]
         },
