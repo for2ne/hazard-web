@@ -1,5 +1,5 @@
 {
-  "version": 12,
+  "version": 13,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -318,7 +318,7 @@
         "skippable": true,
         "includedTitle": "What's Included",
         "included": [
-          "Energy Index",
+          "Energy Index ⚡",
           "Storm Alerts",
           "Daily Zodiac",
           "Moon Cycles",
