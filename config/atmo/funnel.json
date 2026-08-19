@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -161,6 +161,13 @@
           "title": "You're a {sign|Star Child}",
           "subtitle": "You're in the rare {rarity|8}% — {element|cosmic} energy combined with your sensitivity profile{withName|}. Solara tunes every single day to it.",
           "cta": "I Love That"
+        },
+        {
+          "id": "rating",
+          "type": "rating",
+          "title": "Loving the journey so far?",
+          "subtitle": "A rating takes a second — and helps others discover their daily energy.",
+          "cta": "Continue"
         },
         {
           "id": "interests",
