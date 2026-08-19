@@ -1,6 +1,10 @@
 {
-  "version": 7,
+  "version": 8,
   "experimentId": "onb-hollywood-v1",
+  "flags": {
+    "settings.replay": false,
+    "settings.upgrade": true
+  },
   "variants": [
     {
       "id": "control",
