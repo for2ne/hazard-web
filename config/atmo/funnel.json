@@ -1,5 +1,5 @@
 {
-  "version": 20,
+  "version": 21,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -134,7 +134,8 @@
               "id": "nonbinary",
               "title": "Non-binary"
             }
-          ]
+          ],
+          "autoAdvance": true
         },
         {
           "id": "name",
