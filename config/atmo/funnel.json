@@ -1,5 +1,5 @@
 {
-  "version": 10,
+  "version": 11,
   "experimentId": "onb-hollywood-v1",
   "flags": {
     "settings.replay": false,
@@ -294,7 +294,8 @@
             "fallbackPrice": "$29.99",
             "periodLabel": "per year",
             "badge": "BEST VALUE",
-            "isDefault": true
+            "isDefault": true,
+            "equivalent": "≈ $0.58 / week"
           },
           {
             "productId": "com.hazard.atmo.pro.weekly",
@@ -329,16 +330,26 @@
           "Affirmations"
         ],
         "trustLine": "No commitment. Cancel anytime.",
-        "testimonial": {
-          "text": "PLACEHOLDER — заменить на реальную цитату бета-тестера перед сабмитом.",
-          "author": "Beta tester"
-        },
         "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
         "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
         "brandName": "Solara",
         "brandBadge": "PLUS",
         "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning.",
-        "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero.jpg"
+        "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero.jpg",
+        "stats": [
+          {
+            "value": "10K+",
+            "label": "weather stations"
+          },
+          {
+            "value": "175",
+            "label": "countries"
+          },
+          {
+            "value": "24/7",
+            "label": "live sky data"
+          }
+        ]
       }
     }
   ]
