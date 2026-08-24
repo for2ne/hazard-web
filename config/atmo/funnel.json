@@ -1,381 +1,483 @@
 {
-  "version": 22,
-  "experimentId": "onb-hollywood-v1",
-  "flags": {
-    "settings.replay": false,
-    "settings.upgrade": true
-  },
-  "variants": [
+ "version": 23,
+ "experimentId": "onb-hollywood-v1",
+ "flags": {
+  "settings.replay": false,
+  "settings.upgrade": true
+ },
+ "variants": [
+  {
+   "id": "control",
+   "weight": 1,
+   "steps": [
     {
-      "id": "control",
-      "weight": 1,
-      "steps": [
-        {
-          "id": "welcome",
-          "type": "info",
-          "title": "Your day, decoded",
-          "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your personal rhythms to guide every day.",
-          "cta": "Begin the Journey",
-          "artwork": "hero"
-        },
-        {
-          "id": "goal",
-          "type": "singleChoice",
-          "title": "What brings you here?",
-          "subtitle": "We'll tune your daily reading around it. 🎯",
-          "cta": "Continue",
-          "options": [
-            {
-              "id": "energy",
-              "title": "More energy through the day",
-              "detail": "Morning guidance built around your energy peaks"
-            },
-            {
-              "id": "mood",
-              "title": "Steadier mood",
-              "detail": "We'll track what actually moves your mood"
-            },
-            {
-              "id": "sleep",
-              "title": "Better sleep",
-              "detail": "Evenings become your protected ritual"
-            },
-            {
-              "id": "self",
-              "title": "Understand myself deeper",
-              "detail": "Zodiac, numerology and patterns — decoded daily"
-            }
-          ]
-        },
-        {
-          "id": "goal-ack",
-          "type": "payoff",
-          "emoji": "🌟",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal-v2.png",
-          "title": "Great choice{withName|}",
-          "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
-          "cta": "Let's Go"
-        },
-        {
-          "id": "value-guidance",
-          "type": "info",
-          "title": "Daily guidance, tailored to you",
-          "subtitle": "Micro-insights, focus and affirmations — curated for this very day, powered by real sky data.",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-guidance.jpg",
-          "imageStyle": "poster",
-          "cta": "Feeling Cosmic!"
-        },
-        {
-          "id": "sensitivity",
-          "type": "singleChoice",
-          "title": "Do you feel the weather?",
-          "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep. 🌧️",
-          "cta": "Continue",
-          "options": [
-            {
-              "id": "often",
-              "title": "Yes, I feel them strongly"
-            },
-            {
-              "id": "sometimes",
-              "title": "Sometimes, I think so"
-            },
-            {
-              "id": "unsure",
-              "title": "Not sure — let's find out"
-            }
-          ]
-        },
-        {
-          "id": "drain",
-          "type": "singleChoice",
-          "title": "What drains your energy most?",
-          "subtitle": "We'll build your daily reading to protect exactly that. 🔋",
-          "cta": "Continue",
-          "options": [
-            {
-              "id": "overthinking",
-              "title": "Overthinking & worry",
-              "detail": "Your reading will flag high-tension days in advance"
-            },
-            {
-              "id": "sleep",
-              "title": "Poor sleep",
-              "detail": "Evening guidance will guard your wind-down"
-            },
-            {
-              "id": "weather",
-              "title": "Weather & storm days",
-              "detail": "Pressure and Kp alerts before they hit you"
-            },
-            {
-              "id": "stress",
-              "title": "Stress & mood swings",
-              "detail": "Daily focus tuned to steady your rhythm"
-            }
-          ]
-        },
-        {
-          "id": "gender",
-          "type": "singleChoice",
-          "title": "How do you identify yourself?",
-          "subtitle": "Your reading adapts its tone and practices. 🤍",
-          "cta": "Continue",
-          "options": [
-            {
-              "id": "female",
-              "title": "Female"
-            },
-            {
-              "id": "male",
-              "title": "Male"
-            },
-            {
-              "id": "nonbinary",
-              "title": "Non-binary"
-            }
-          ],
-          "autoAdvance": true
-        },
-        {
-          "id": "name",
-          "type": "textInput",
-          "title": "What should we call you?",
-          "subtitle": "Your reading gets personal. ✨",
-          "placeholder": "Your name",
-          "optional": true,
-          "cta": "Continue"
-        },
-        {
-          "id": "birthdate",
-          "type": "datePicker",
-          "title": "When were you born?",
-          "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index. 🎂",
-          "cta": "Continue",
-          "footnote": "Moon & planet positions computed with astronomical precision"
-        },
-        {
-          "id": "birthtime",
-          "type": "timePicker",
-          "title": "What time were you born?",
-          "subtitle": "If you don't know — skip it, we'll calculate an approximate birth chart. ⏳",
-          "cta": "Continue",
-          "skippable": true,
-          "afterTasks": [
-            "Aligning planets at your birth moment…",
-            "Mapping your cosmic blueprint…"
-          ],
-          "afterDone": "Your cosmic blueprint is ready"
-        },
-        {
-          "id": "birthplace",
-          "type": "textInput",
-          "title": "Where were you born?",
-          "subtitle": "Your birth place anchors your chart to the sky above it. 🌍",
-          "placeholder": "City of birth",
-          "optional": true,
-          "cta": "Continue",
-          "autocomplete": "city"
-        },
-        {
-          "id": "sign-payoff",
-          "type": "payoff",
-          "emoji": "{signEmoji|✨}",
-          "title": "You're a {sign|Star Child}",
-          "subtitle": "You're in the rare {rarity|8}% — {element|cosmic} energy combined with your sensitivity profile{withName|}. Solara tunes every single day to it.",
-          "cta": "I Love That"
-        },
-        {
-          "id": "rating",
-          "type": "rating",
-          "title": "Loving the journey so far?",
-          "subtitle": "A rating takes a second — and helps others discover their daily energy.",
-          "cta": "Continue"
-        },
-        {
-          "id": "interests",
-          "type": "multiChoice",
-          "title": "What should we tune in to?",
-          "subtitle": "Pick everything that resonates — your daily reading adapts. 💫",
-          "cta": "Continue",
-          "options": [
-            {
-              "id": "weather",
-              "title": "Weather sensitivity"
-            },
-            {
-              "id": "magnetic",
-              "title": "Magnetic storms"
-            },
-            {
-              "id": "moon",
-              "title": "Moon cycles"
-            },
-            {
-              "id": "zodiac",
-              "title": "Zodiac & astrology"
-            },
-            {
-              "id": "biorhythms",
-              "title": "Biorhythms"
-            },
-            {
-              "id": "numerology",
-              "title": "Numerology"
-            },
-            {
-              "id": "affirmations",
-              "title": "Affirmations"
-            }
-          ]
-        },
-        {
-          "id": "personalizing",
-          "type": "progress",
-          "title": "Personalizing your energy profile…",
-          "tasks": [
-            "Reading local weather patterns",
-            "Tracking magnetic field activity",
-            "Calibrating your biorhythms",
-            "Crafting your daily reading"
-          ],
-          "facts": [
-            "Live NOAA space-weather feed",
-            "10,000+ weather stations worldwide",
-            "Moon & planets at astronomical precision",
-            "Your answers never leave this device"
-          ],
-          "afterDone": "Your energy profile is ready"
-        },
-        {
-          "id": "value-science",
-          "type": "info",
-          "title": "Real data. Real sky.",
-          "subtitle": "Live space weather from NOAA and 10,000+ stations — science first, magic close behind.",
-          "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-science.jpg",
-          "imageStyle": "poster",
-          "cta": "Impressive!"
-        },
-        {
-          "id": "location",
-          "type": "permission",
-          "permission": "location",
-          "emoji": "📍",
-          "title": "Weather where you are",
-          "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
-          "cta": "Allow Location",
-          "footnote": "10,000+ weather stations · NOAA space-weather observatory"
-        },
-        {
-          "id": "notifications",
-          "type": "permission",
-          "permission": "notifications",
-          "emoji": "🔔",
-          "title": "Start mornings prepared",
-          "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
-          "cta": "Enable Notifications"
-        },
-        {
-          "id": "before-after",
-          "type": "comparison",
-          "title": "This is how your days change",
-          "beforeTitle": "Without",
-          "afterTitle": "With Solara",
-          "before": [
-            "Blindsided by heavy days",
-            "Guessing why energy dips",
-            "Storms hit out of nowhere",
-            "Generic advice for everyone"
-          ],
-          "after": [
-            "Know your day in advance",
-            "See what moves your energy",
-            "Alerts before the storm hits",
-            "Guidance tuned to YOU"
-          ],
-          "cta": "I Want This",
-          "footnote": "Powered by live NOAA space-weather data",
-          "beforeImageURL": "https://for2ne.github.io/hazard-web/img/atmo/ba-before-m1.jpg",
-          "afterImageURL": "https://for2ne.github.io/hazard-web/img/atmo/ba-after-m1.jpg"
-        },
-        {
-          "id": "paywall",
-          "type": "paywall",
-          "title": "Paywall"
-        }
-      ],
-      "paywall": {
-        "title": "Your Daily Guide to Your Energy",
-        "features": [
-          "Personal Energy Index, every day",
-          "Magnetic storm & pressure alerts",
-          "Zodiac, moon cycles & biorhythms",
-          "Patterns verified on YOUR check-ins"
-        ],
-        "plans": [
-          {
-            "productId": "com.hazard.atmo.pro.yearly",
-            "title": "Yearly",
-            "fallbackPrice": "$29.99",
-            "periodLabel": "per year",
-            "badge": "SAVE 88%",
-            "isDefault": true,
-            "equivalent": "≈ $0.58 / week"
-          },
-          {
-            "productId": "com.hazard.atmo.pro.weekly",
-            "title": "Weekly",
-            "fallbackPrice": "$4.99",
-            "periodLabel": "per week",
-            "note": "3-day free trial"
-          },
-          {
-            "productId": "com.hazard.atmo.pro.lifetime",
-            "title": "Lifetime",
-            "fallbackPrice": "$59.99",
-            "periodLabel": "one-time",
-            "note": "Pay once, enjoy forever",
-            "badge": "FOREVER"
-          }
-        ],
-        "cta": "Continue",
-        "closeDelaySeconds": 2,
-        "skippable": true,
-        "includedTitle": "What's Included",
-        "included": [
-          "Energy Index ⚡",
-          "Storm Alerts",
-          "Daily Zodiac",
-          "Moon Cycles",
-          "Biorhythms",
-          "Numerology",
-          "Your Patterns",
-          "10 Weather Metrics",
-          "Check-ins",
-          "Affirmations"
-        ],
-        "trustLine": "Everything included. No extra fees. Cancel anytime.",
-        "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
-        "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
-        "brandName": "Solara",
-        "brandBadge": "PLUS",
-        "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning.",
-        "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero.jpg",
-        "stats": [
-          {
-            "value": "10K+",
-            "label": "weather stations"
-          },
-          {
-            "value": "175",
-            "label": "countries"
-          },
-          {
-            "value": "24/7",
-            "label": "live sky data"
-          }
-        ]
+     "id": "welcome",
+     "type": "info",
+     "title": "Your day, decoded",
+     "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your personal rhythms to guide every day.",
+     "cta": "Begin the Journey",
+     "artwork": "hero"
+    },
+    {
+     "id": "goal",
+     "type": "singleChoice",
+     "title": "What brings you here?",
+     "subtitle": "We'll tune your daily reading around it. 🎯",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "energy",
+       "title": "More energy through the day",
+       "detail": "Morning guidance built around your energy peaks"
+      },
+      {
+       "id": "mood",
+       "title": "Steadier mood",
+       "detail": "We'll track what actually moves your mood"
+      },
+      {
+       "id": "sleep",
+       "title": "Better sleep",
+       "detail": "Evenings become your protected ritual"
+      },
+      {
+       "id": "self",
+       "title": "Understand myself deeper",
+       "detail": "Zodiac, numerology and patterns — decoded daily"
       }
+     ]
+    },
+    {
+     "id": "goal-ack",
+     "type": "payoff",
+     "emoji": "🌟",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal-v2.png",
+     "title": "Great choice{withName|}",
+     "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
+     "cta": "Let's Go"
+    },
+    {
+     "id": "value-guidance",
+     "type": "info",
+     "title": "Daily guidance, tailored to you",
+     "subtitle": "Micro-insights, focus and affirmations — curated for this very day, powered by real sky data.",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-guidance.jpg",
+     "imageStyle": "poster",
+     "cta": "Feeling Cosmic!"
+    },
+    {
+     "id": "sensitivity",
+     "type": "singleChoice",
+     "title": "Do you feel the weather?",
+     "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep. 🌧️",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "often",
+       "title": "Yes, I feel them strongly"
+      },
+      {
+       "id": "sometimes",
+       "title": "Sometimes, I think so"
+      },
+      {
+       "id": "unsure",
+       "title": "Not sure — let's find out"
+      }
+     ]
+    },
+    {
+     "id": "drain",
+     "type": "singleChoice",
+     "title": "What drains your energy most?",
+     "subtitle": "We'll build your daily reading to protect exactly that. 🔋",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "overthinking",
+       "title": "Overthinking & worry",
+       "detail": "Your reading will flag high-tension days in advance"
+      },
+      {
+       "id": "sleep",
+       "title": "Poor sleep",
+       "detail": "Evening guidance will guard your wind-down"
+      },
+      {
+       "id": "weather",
+       "title": "Weather & storm days",
+       "detail": "Pressure and Kp alerts before they hit you"
+      },
+      {
+       "id": "stress",
+       "title": "Stress & mood swings",
+       "detail": "Daily focus tuned to steady your rhythm"
+      }
+     ]
+    },
+    {
+     "id": "symptoms",
+     "type": "multiChoice",
+     "title": "When a day goes sideways — what shows up?",
+     "subtitle": "Pick what you recognize. Solara checks it against real sky data — honestly. 📓",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "headache",
+       "title": "Headaches"
+      },
+      {
+       "id": "joints",
+       "title": "Joints or muscles ache"
+      },
+      {
+       "id": "heart",
+       "title": "Racing heart / pressure"
+      },
+      {
+       "id": "sleep",
+       "title": "Poor sleep"
+      },
+      {
+       "id": "anxiety",
+       "title": "Anxiety or restlessness"
+      },
+      {
+       "id": "fatigue",
+       "title": "Heavy fatigue"
+      },
+      {
+       "id": "mood",
+       "title": "Mood swings"
+      },
+      {
+       "id": "none",
+       "title": "Nothing specific"
+      }
+     ]
+    },
+    {
+     "id": "sleep",
+     "type": "singleChoice",
+     "title": "How's your sleep lately?",
+     "subtitle": "Sleep is the fastest tell of your energy rhythm. 🌙",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "deep",
+       "title": "Deep and steady"
+      },
+      {
+       "id": "mixed",
+       "title": "Depends on the day"
+      },
+      {
+       "id": "poor",
+       "title": "Restless more often than not"
+      },
+      {
+       "id": "unsure",
+       "title": "I honestly don't track it"
+      }
+     ]
+    },
+    {
+     "id": "gender",
+     "type": "singleChoice",
+     "title": "How do you identify yourself?",
+     "subtitle": "Your reading adapts its tone and practices. 🤍",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "female",
+       "title": "Female"
+      },
+      {
+       "id": "male",
+       "title": "Male"
+      },
+      {
+       "id": "nonbinary",
+       "title": "Non-binary"
+      }
+     ],
+     "autoAdvance": true
+    },
+    {
+     "id": "name",
+     "type": "textInput",
+     "title": "What should we call you?",
+     "subtitle": "Your reading gets personal. ✨",
+     "placeholder": "Your name",
+     "optional": true,
+     "cta": "Continue"
+    },
+    {
+     "id": "birthdate",
+     "type": "datePicker",
+     "title": "When were you born?",
+     "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index. 🎂",
+     "cta": "Continue",
+     "footnote": "Moon & planet positions computed with astronomical precision"
+    },
+    {
+     "id": "birthtime",
+     "type": "timePicker",
+     "title": "What time were you born?",
+     "subtitle": "If you don't know — skip it, we'll calculate an approximate birth chart. ⏳",
+     "cta": "Continue",
+     "skippable": true,
+     "afterTasks": [
+      "Aligning planets at your birth moment…",
+      "Mapping your cosmic blueprint…"
+     ],
+     "afterDone": "Your cosmic blueprint is ready"
+    },
+    {
+     "id": "birthplace",
+     "type": "textInput",
+     "title": "Where were you born?",
+     "subtitle": "Your birth place anchors your chart to the sky above it. 🌍",
+     "placeholder": "City of birth",
+     "optional": true,
+     "cta": "Continue",
+     "autocomplete": "city"
+    },
+    {
+     "id": "sign-payoff",
+     "type": "payoff",
+     "emoji": "{signEmoji|✨}",
+     "title": "You're a {sign|Star Child}",
+     "subtitle": "You're in the rare {rarity|8}% — {element|cosmic} energy combined with your sensitivity profile{withName|}. Solara tunes every single day to it.",
+     "cta": "I Love That"
+    },
+    {
+     "id": "beliefs",
+     "type": "singleChoice",
+     "title": "What should Solara speak?",
+     "subtitle": "Your guidance, your language — switch anytime. 🔮",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "science",
+       "title": "Just the science — data & rhythms"
+      },
+      {
+       "id": "both",
+       "title": "Science + astrology, tarot & moon"
+      }
+     ]
+    },
+    {
+     "id": "about",
+     "type": "textInput",
+     "title": "In your own words…",
+     "subtitle": "What should Solara help you with? One line is enough. 💬",
+     "placeholder": "e.g. Why am I drained every autumn?",
+     "optional": true,
+     "cta": "Continue"
+    },
+    {
+     "id": "rating",
+     "type": "rating",
+     "title": "Loving the journey so far?",
+     "subtitle": "A rating takes a second — and helps others discover their daily energy.",
+     "cta": "Continue"
+    },
+    {
+     "id": "interests",
+     "type": "multiChoice",
+     "title": "What should we tune in to?",
+     "subtitle": "Pick everything that resonates — your daily reading adapts. 💫",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "weather",
+       "title": "Weather sensitivity"
+      },
+      {
+       "id": "magnetic",
+       "title": "Magnetic storms"
+      },
+      {
+       "id": "moon",
+       "title": "Moon cycles"
+      },
+      {
+       "id": "zodiac",
+       "title": "Zodiac & astrology"
+      },
+      {
+       "id": "biorhythms",
+       "title": "Biorhythms"
+      },
+      {
+       "id": "numerology",
+       "title": "Numerology"
+      },
+      {
+       "id": "affirmations",
+       "title": "Affirmations"
+      }
+     ]
+    },
+    {
+     "id": "personalizing",
+     "type": "progress",
+     "title": "Personalizing your energy profile…",
+     "tasks": [
+      "Reading local weather patterns",
+      "Tracking magnetic field activity",
+      "Calibrating your biorhythms",
+      "Crafting your daily reading"
+     ],
+     "facts": [
+      "Live NOAA space-weather feed",
+      "10,000+ weather stations worldwide",
+      "Moon & planets at astronomical precision",
+      "Your answers never leave this device"
+     ],
+     "afterDone": "Your energy profile is ready"
+    },
+    {
+     "id": "value-science",
+     "type": "info",
+     "title": "Real data. Real sky.",
+     "subtitle": "Live space weather from NOAA and 10,000+ stations — science first, magic close behind.",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-science.jpg",
+     "imageStyle": "poster",
+     "cta": "Impressive!"
+    },
+    {
+     "id": "location",
+     "type": "permission",
+     "permission": "location",
+     "emoji": "📍",
+     "title": "Weather where you are",
+     "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
+     "cta": "Allow Location",
+     "footnote": "10,000+ weather stations · NOAA space-weather observatory"
+    },
+    {
+     "id": "health",
+     "type": "permission",
+     "permission": "health",
+     "emoji": "❤️",
+     "title": "Let Solara feel your rhythm",
+     "subtitle": "Connect Apple Health — sleep, steps and heart rhythm make your patterns real. Read-only, never for ads.",
+     "cta": "Connect Apple Health",
+     "footnote": "Read-only · your health data never leaves your phone for ads or analytics"
+    },
+    {
+     "id": "notifications",
+     "type": "permission",
+     "permission": "notifications",
+     "emoji": "🔔",
+     "title": "Start mornings prepared",
+     "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
+     "cta": "Enable Notifications"
+    },
+    {
+     "id": "before-after",
+     "type": "comparison",
+     "title": "This is how your days change",
+     "beforeTitle": "Without",
+     "afterTitle": "With Solara",
+     "before": [
+      "Blindsided by heavy days",
+      "Guessing why energy dips",
+      "Storms hit out of nowhere",
+      "Generic advice for everyone"
+     ],
+     "after": [
+      "Know your day in advance",
+      "See what moves your energy",
+      "Alerts before the storm hits",
+      "Guidance tuned to YOU"
+     ],
+     "cta": "I Want This",
+     "footnote": "Powered by live NOAA space-weather data",
+     "beforeImageURL": "https://for2ne.github.io/hazard-web/img/atmo/ba-before-m1.jpg",
+     "afterImageURL": "https://for2ne.github.io/hazard-web/img/atmo/ba-after-m1.jpg"
+    },
+    {
+     "id": "paywall",
+     "type": "paywall",
+     "title": "Paywall"
     }
-  ]
+   ],
+   "paywall": {
+    "title": "Your Daily Guide to Your Energy",
+    "features": [
+     "Personal Energy Index, every day",
+     "Magnetic storm & pressure alerts",
+     "Zodiac, moon cycles & biorhythms",
+     "Patterns verified on YOUR check-ins"
+    ],
+    "plans": [
+     {
+      "productId": "com.hazard.atmo.pro.yearly",
+      "title": "Yearly",
+      "fallbackPrice": "$29.99",
+      "periodLabel": "per year",
+      "badge": "SAVE 88%",
+      "isDefault": true,
+      "equivalent": "≈ $0.58 / week"
+     },
+     {
+      "productId": "com.hazard.atmo.pro.weekly",
+      "title": "Weekly",
+      "fallbackPrice": "$4.99",
+      "periodLabel": "per week",
+      "note": "3-day free trial"
+     },
+     {
+      "productId": "com.hazard.atmo.pro.lifetime",
+      "title": "Lifetime",
+      "fallbackPrice": "$59.99",
+      "periodLabel": "one-time",
+      "note": "Pay once, enjoy forever",
+      "badge": "FOREVER"
+     }
+    ],
+    "cta": "Continue",
+    "closeDelaySeconds": 2,
+    "skippable": true,
+    "includedTitle": "What's Included",
+    "included": [
+     "Energy Index ⚡",
+     "Storm Alerts",
+     "Daily Zodiac",
+     "Moon Cycles",
+     "Biorhythms",
+     "Numerology",
+     "Your Patterns",
+     "10 Weather Metrics",
+     "Check-ins",
+     "Affirmations"
+    ],
+    "trustLine": "Everything included. No extra fees. Cancel anytime.",
+    "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
+    "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
+    "brandName": "Solara",
+    "brandBadge": "PLUS",
+    "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning.",
+    "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero.jpg",
+    "stats": [
+     {
+      "value": "10K+",
+      "label": "weather stations"
+     },
+     {
+      "value": "175",
+      "label": "countries"
+     },
+     {
+      "value": "24/7",
+      "label": "live sky data"
+     }
+    ]
+   }
+  }
+ ]
 }
