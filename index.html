@@ -43,8 +43,9 @@
     padding: 12px 24px; border-bottom: 4px solid var(--amber);
   }
   .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-  .brand img { width: 40px; height: auto; border: 2px solid var(--amber); }
+  .brand img { width: 46px; height: auto; }
   .brand span { font-family: var(--display); font-size: 22px; letter-spacing: 2px; color: var(--amber); }
+  .brand span em { font-style: normal; color: #8B877C; font-size: .78em; letter-spacing: 3px; }
   nav { display: flex; gap: 22px; }
   nav a {
     font-family: var(--display); font-size: 15px; letter-spacing: 2px;
@@ -74,18 +75,25 @@
   }
   .hero h1 {
     font-family: var(--display);
-    font-size: clamp(48px, 7vw, 96px);
+    font-size: clamp(56px, 8vw, 112px);
     line-height: .95; letter-spacing: 1px;
     color: var(--ink); text-transform: uppercase;
   }
   .hero h1 .stroke {
+    display: block;
+    font-size: .42em;
+    letter-spacing: 7px;
+    margin-top: 8px;
     color: transparent;
-    -webkit-text-stroke: 3px var(--ink);
+    -webkit-text-stroke: 2px var(--ink);
   }
   .hero .tag {
     font-family: var(--marker);
-    font-size: clamp(19px, 2.6vw, 28px);
-    color: var(--ink); transform: rotate(-1.5deg);
+    font-size: clamp(18px, 2.4vw, 26px);
+    background: var(--ink); color: var(--amber);
+    padding: 10px 20px;
+    box-shadow: 6px 6px 0 rgba(23,24,29,.35);
+    transform: rotate(-1.5deg);
   }
   .hero p.sub {
     font-size: 17px; line-height: 1.55; color: var(--ink-warm); font-weight: 500;
@@ -209,8 +217,8 @@
 
 <header>
   <a class="brand" href="/">
-    <img src="/img/brand/favicon-64.png" alt="Hazard Studio logo" width="40" height="40">
-    <span>HAZARD STUDIO</span>
+    <img src="/img/brand/favicon-64.png?v=3" alt="Hazard Studio logo" width="46" height="46">
+    <span>HAZARD <em>STUDIO</em></span>
   </a>
   <nav>
     <a href="#apps">Apps</a>
@@ -249,6 +257,13 @@
         <span class="badge">Coming soon · App Store</span>
         <p>Your day, decoded. Solara blends real weather science — pressure, geomagnetics, daylight — with how you actually feel, and turns it into a daily energy forecast that's actually useful.</p>
         <p><a href="/apps/solara/privacy.html" style="color:var(--amber)">Privacy</a> · <a href="/apps/solara/terms.html" style="color:var(--amber)">Terms</a></p>
+      </div>
+      <div class="card">
+        <img class="icon" src="/img/brand/widgets-icon.jpg" alt="Lock Screen Widget &amp; Themes app icon" width="96" height="96">
+        <h3>Widget &amp; Themes</h3>
+        <span class="badge">On the App Store · 4.2★</span>
+        <p>Lock Screen Widget &amp; Themes — a widget constructor and colorful themes that make your iPhone home screen actually yours. Our first ship, still going.</p>
+        <p><a href="https://apps.apple.com/us/app/lock-screen-widget-themes/id1581915122" style="color:var(--amber)">Download on the App Store ↗</a></p>
       </div>
       <div class="card lab">
         <span class="big">next drop in the lab…</span>
