@@ -55,20 +55,26 @@
   /* ── hero ────────────────────────────────── */
   .hero {
     background: var(--amber) url('/img/brand/hero-texture.jpg') center / cover no-repeat;
-    padding: 72px 24px 88px; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 36px;
+    min-height: calc(100svh - 69px);
+    padding: 40px 24px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: clamp(32px, 5vw, 72px);
   }
   .hero .poster {
-    width: min(320px, 70vw);
+    width: clamp(220px, 26vw, 320px); flex-shrink: 0;
     border: 6px solid var(--ink);
     box-shadow: 14px 14px 0 var(--ink);
     transform: rotate(-2deg);
     transition: transform .25s ease;
   }
   .hero .poster:hover { transform: rotate(0deg) scale(1.02); }
+  .hero .pitch {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
+    max-width: 560px;
+  }
   .hero h1 {
     font-family: var(--display);
-    font-size: clamp(52px, 10vw, 128px);
+    font-size: clamp(48px, 7vw, 96px);
     line-height: .95; letter-spacing: 1px;
     color: var(--ink); text-transform: uppercase;
   }
@@ -78,11 +84,18 @@
   }
   .hero .tag {
     font-family: var(--marker);
-    font-size: clamp(20px, 3.4vw, 34px);
+    font-size: clamp(19px, 2.6vw, 28px);
     color: var(--ink); transform: rotate(-1.5deg);
   }
   .hero p.sub {
-    max-width: 640px; font-size: 18px; line-height: 1.55; color: var(--ink-warm); font-weight: 500;
+    font-size: 17px; line-height: 1.55; color: var(--ink-warm); font-weight: 500;
+  }
+  .hero .btn { margin-top: 6px; }
+  @media (max-width: 720px) {
+    .hero { padding: 36px 20px 48px; }
+    .hero .poster { width: min(200px, 48vw); }
+    .hero .pitch { align-items: center; text-align: center; }
+    .hero h1 { font-size: clamp(44px, 12vw, 64px); }
   }
   .btn {
     display: inline-block; font-family: var(--display); letter-spacing: 2px;
@@ -198,10 +211,12 @@
 
 <div class="hero">
   <img class="poster" src="/img/brand/hazard-logo-720.png" alt="Hazard Studio — graffiti logo with a black broken heart" width="720" height="683">
-  <h1>Hazard<br><span class="stroke">Studio</span></h1>
-  <div class="tag">dangerously good apps ⚠️</div>
-  <p class="sub">An independent app studio. We design sharp, build solid, and ship mobile apps with character — the kind you actually open every day.</p>
-  <a class="btn" href="#apps">See what we're shipping</a>
+  <div class="pitch">
+    <h1>Hazard<br><span class="stroke">Studio</span></h1>
+    <div class="tag">dangerously good apps ⚠️</div>
+    <p class="sub">An independent app studio. We design sharp, build solid, and ship mobile apps with character — the kind you actually open every day.</p>
+    <a class="btn" href="#apps">See what we're shipping</a>
+  </div>
 </div>
 
 <div class="marquee" aria-hidden="true">
