@@ -101,7 +101,6 @@
   .hero p.sub {
     font-size: 17px; line-height: 1.55; color: var(--ink-warm); font-weight: 500;
   }
-  .hero .btn { margin-top: 6px; }
   @media (max-width: 720px) {
     .hero { padding: 36px 20px 48px; }
     .hero .poster { width: min(230px, 56vw); }
@@ -119,10 +118,7 @@
   }
   .btn:hover { transform: translate(-2px,-2px); box-shadow: 12px 12px 0 rgba(23,24,29,.35); }
   .btn.amber { background: var(--amber); color: var(--ink); border-color: var(--amber); box-shadow: 8px 8px 0 rgba(255,175,0,.25); }
-  .btn.cta { background: var(--paper); color: var(--ink); border-color: var(--ink); }
-  .btn .arrow { display: inline-block; margin-left: 8px; animation: nudge 1.6s ease-in-out infinite; }
-  @keyframes nudge { 50% { transform: translateY(5px); } }
-  @media (prefers-reduced-motion: reduce) { .btn .arrow, .marquee .track { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .marquee .track { animation: none; } }
 
   /* ── hazard stripes + marquee ────────────── */
   .stripes {
@@ -241,7 +237,6 @@
     <h1><span class="cap">H</span>AZAR<span class="cap">D</span><br><span class="stroke">STUDIO</span></h1>
     <div class="tag">dangerously good apps ⚠️</div>
     <p class="sub">An independent app studio. We design sharp, build solid, and ship mobile apps with character — the kind you actually open every day.</p>
-    <a class="btn cta" href="#apps">See what we're shipping <span class="arrow">↓</span></a>
   </div>
 </div>
 
