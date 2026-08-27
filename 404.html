@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 — Hazard Studio</title>
+<link rel="icon" type="image/png" href="/img/brand/favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 24px; background: #FFAF00; color: #17181D; text-align: center; padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  .stripes { position: fixed; left: 0; right: 0; height: 22px;
+    background: repeating-linear-gradient(-45deg, #17181D 0 24px, #FFAF00 24px 48px); }
+  .stripes.top { top: 0; } .stripes.bottom { bottom: 0; }
+  img { width: min(220px, 50vw); border: 6px solid #17181D; box-shadow: 12px 12px 0 #17181D; transform: rotate(-2deg); }
+  h1 { font-family: 'Anton', 'Arial Narrow', sans-serif; font-size: clamp(64px, 14vw, 140px); line-height: 1; }
+  p { font-family: 'Permanent Marker', cursive; font-size: clamp(18px, 3.5vw, 28px); transform: rotate(-1deg); }
+  a { display: inline-block; font-family: 'Anton', sans-serif; letter-spacing: 2px; text-transform: uppercase;
+      text-decoration: none; padding: 12px 30px; background: #17181D; color: #FFAF00;
+      box-shadow: 8px 8px 0 rgba(23,24,29,.35); }
+</style>
+</head>
+<body>
+<div class="stripes top"></div>
+<img src="/img/brand/hazard-logo-720.png" alt="Hazard Studio logo">
+<h1>404</h1>
+<p>you've wandered into the hazard zone — nothing here.</p>
+<a href="/">Back to safety</a>
+<div class="stripes bottom"></div>
+</body>
+</html>

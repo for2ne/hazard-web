@@ -1,1 +1,278 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>HazarD</title></head><body style="font-family:-apple-system,sans-serif;text-align:center;padding-top:20vh;color:#444"><h1>HazarD</h1><p><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Use</a></p></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hazard Studio — Dangerously Good Apps</title>
+<meta name="description" content="Hazard Studio is an independent app studio. We design, build, and ship mobile apps with character.">
+<link rel="canonical" href="https://hazard.studio/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hazard Studio">
+<meta property="og:description" content="Dangerously good apps. An independent studio crafting iOS apps with character.">
+<meta property="og:url" content="https://hazard.studio/">
+<meta property="og:image" content="https://hazard.studio/img/brand/og-banner.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#17181D">
+<link rel="icon" type="image/png" href="/img/brand/favicon-64.png">
+<link rel="apple-touch-icon" href="/img/brand/touch-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amber: #FFAF00;
+    --amber-bright: #FFC72C;
+    --ink: #17181D;
+    --ink-warm: #262422;
+    --paper: #FFFDF5;
+    --display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+    --marker: 'Permanent Marker', 'Comic Sans MS', cursive;
+    --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--body); background: var(--ink); color: var(--ink); }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+
+  /* ── top bar ─────────────────────────────── */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--ink); color: var(--amber);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px; border-bottom: 4px solid var(--amber);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 40px; height: auto; border: 2px solid var(--amber); }
+  .brand span { font-family: var(--display); font-size: 22px; letter-spacing: 2px; color: var(--amber); }
+  nav { display: flex; gap: 22px; }
+  nav a {
+    font-family: var(--display); font-size: 15px; letter-spacing: 2px;
+    color: var(--paper); text-decoration: none; padding: 4px 2px;
+  }
+  nav a:hover { color: var(--amber); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 3px; }
+
+  /* ── hero ────────────────────────────────── */
+  .hero {
+    background: var(--amber) url('/img/brand/hero-texture.jpg') center / cover no-repeat;
+    padding: 72px 24px 88px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 36px;
+  }
+  .hero .poster {
+    width: min(320px, 70vw);
+    border: 6px solid var(--ink);
+    box-shadow: 14px 14px 0 var(--ink);
+    transform: rotate(-2deg);
+    transition: transform .25s ease;
+  }
+  .hero .poster:hover { transform: rotate(0deg) scale(1.02); }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(52px, 10vw, 128px);
+    line-height: .95; letter-spacing: 1px;
+    color: var(--ink); text-transform: uppercase;
+  }
+  .hero h1 .stroke {
+    color: transparent;
+    -webkit-text-stroke: 3px var(--ink);
+  }
+  .hero .tag {
+    font-family: var(--marker);
+    font-size: clamp(20px, 3.4vw, 34px);
+    color: var(--ink); transform: rotate(-1.5deg);
+  }
+  .hero p.sub {
+    max-width: 640px; font-size: 18px; line-height: 1.55; color: var(--ink-warm); font-weight: 500;
+  }
+  .btn {
+    display: inline-block; font-family: var(--display); letter-spacing: 2px;
+    font-size: 18px; text-transform: uppercase; text-decoration: none;
+    padding: 14px 34px; border: 4px solid var(--ink);
+    background: var(--ink); color: var(--amber);
+    box-shadow: 8px 8px 0 rgba(23,24,29,.35);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: translate(-2px,-2px); box-shadow: 12px 12px 0 rgba(23,24,29,.35); }
+  .btn.amber { background: var(--amber); color: var(--ink); border-color: var(--amber); box-shadow: 8px 8px 0 rgba(255,175,0,.25); }
+
+  /* ── hazard stripes + marquee ────────────── */
+  .stripes {
+    height: 22px;
+    background: repeating-linear-gradient(-45deg, var(--ink) 0 24px, var(--amber) 24px 48px);
+    border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink);
+  }
+  .marquee {
+    overflow: hidden; background: var(--ink); padding: 14px 0;
+    border-bottom: 4px solid var(--amber);
+  }
+  .marquee .track {
+    display: flex; gap: 48px; width: max-content;
+    animation: scroll 22s linear infinite;
+    font-family: var(--display); font-size: 20px; letter-spacing: 3px;
+    color: var(--amber); text-transform: uppercase; white-space: nowrap;
+  }
+  @keyframes scroll { to { transform: translateX(-50%); } }
+
+  /* ── sections ────────────────────────────── */
+  section { padding: 80px 24px; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h2 {
+    font-family: var(--display); text-transform: uppercase;
+    font-size: clamp(36px, 6vw, 64px); letter-spacing: 1px; margin-bottom: 40px;
+  }
+  .kicker { font-family: var(--marker); font-size: 20px; display: block; margin-bottom: 6px; }
+
+  /* apps — dark */
+  .apps {
+    background: var(--ink) url('/img/brand/dark-texture.jpg') center / cover no-repeat;
+    color: var(--paper);
+  }
+  .apps h2 { color: var(--amber); }
+  .apps .kicker { color: var(--paper); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 32px; }
+  .card {
+    background: var(--ink-warm); border: 4px solid var(--amber);
+    box-shadow: 10px 10px 0 rgba(255,175,0,.28);
+    padding: 28px; display: flex; flex-direction: column; gap: 16px;
+    transform: rotate(-.6deg); transition: transform .2s ease;
+  }
+  .card:nth-child(2n) { transform: rotate(.7deg); }
+  .card:hover { transform: rotate(0) translateY(-4px); }
+  .card .icon { width: 96px; border-radius: 22px; border: 3px solid var(--paper); }
+  .card h3 { font-family: var(--display); font-size: 30px; letter-spacing: 1.5px; color: var(--amber); text-transform: uppercase; }
+  .card p { line-height: 1.55; color: #E8E4D8; }
+  .badge {
+    align-self: flex-start; font-family: var(--display); font-size: 13px; letter-spacing: 2px;
+    background: var(--amber); color: var(--ink); padding: 5px 12px; text-transform: uppercase;
+  }
+  .card.lab { border-style: dashed; box-shadow: none; opacity: .85; justify-content: center; align-items: center; text-align: center; min-height: 260px; }
+  .card.lab .big { font-family: var(--marker); font-size: 26px; color: var(--amber); transform: rotate(-2deg); }
+
+  /* about — amber */
+  .about { background: var(--amber); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 28px; }
+  .tile {
+    background: var(--paper); border: 4px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink); padding: 26px;
+  }
+  .tile h3 { font-family: var(--display); font-size: 24px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+  .tile p { line-height: 1.55; color: var(--ink-warm); }
+  .tile .scribble { font-family: var(--marker); color: var(--ink); }
+
+  /* contact — dark */
+  .contact { background: var(--ink); color: var(--paper); text-align: center; }
+  .contact h2 { color: var(--amber); }
+  .contact p { max-width: 520px; margin: 0 auto 36px; font-size: 18px; line-height: 1.6; }
+  .contact .mail { font-family: var(--display); font-size: clamp(20px, 4vw, 34px); letter-spacing: 1px; }
+
+  /* footer */
+  footer {
+    background: var(--ink); color: #9A968B;
+    padding: 36px 24px 44px; border-top: 4px solid var(--amber);
+    display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; font-size: 14px;
+  }
+  footer .links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+  footer a { color: var(--amber); text-decoration: none; font-family: var(--display); letter-spacing: 1.5px; font-size: 14px; text-transform: uppercase; }
+  footer a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  @media (max-width: 560px) {
+    nav { gap: 14px; } nav a { font-size: 13px; }
+    .brand span { font-size: 18px; }
+    section { padding: 60px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/">
+    <img src="/img/brand/favicon-64.png" alt="Hazard Studio logo" width="40" height="40">
+    <span>HAZARD STUDIO</span>
+  </a>
+  <nav>
+    <a href="#apps">Apps</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <img class="poster" src="/img/brand/hazard-logo-720.png" alt="Hazard Studio — graffiti logo with a black broken heart" width="720" height="683">
+  <h1>Hazard<br><span class="stroke">Studio</span></h1>
+  <div class="tag">dangerously good apps ⚠️</div>
+  <p class="sub">An independent app studio. We design sharp, build solid, and ship mobile apps with character — the kind you actually open every day.</p>
+  <a class="btn" href="#apps">See what we're shipping</a>
+</div>
+
+<div class="marquee" aria-hidden="true">
+  <div class="track">
+    <span>Dangerously good apps</span><span>✦</span><span>Hazard Studio</span><span>✦</span>
+    <span>Built with heart</span><span>✦</span><span>Shipped with pride</span><span>✦</span>
+    <span>Dangerously good apps</span><span>✦</span><span>Hazard Studio</span><span>✦</span>
+    <span>Built with heart</span><span>✦</span><span>Shipped with pride</span><span>✦</span>
+  </div>
+</div>
+
+<section class="apps" id="apps">
+  <div class="wrap">
+    <span class="kicker">fresh from the wall —</span>
+    <h2>Our Apps</h2>
+    <div class="cards">
+      <div class="card">
+        <img class="icon" src="/img/brand/solara-icon.png" alt="Solara app icon" width="96" height="96">
+        <h3>Solara</h3>
+        <span class="badge">Coming soon · App Store</span>
+        <p>Your day, decoded. Solara blends real weather science — pressure, geomagnetics, daylight — with how you actually feel, and turns it into a daily energy forecast that's actually useful.</p>
+        <p><a href="/apps/solara/privacy.html" style="color:var(--amber)">Privacy</a> · <a href="/apps/solara/terms.html" style="color:var(--amber)">Terms</a></p>
+      </div>
+      <div class="card lab">
+        <span class="big">next drop in the lab…</span>
+        <p>We only ship what we'd use ourselves. The next one is cooking.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stripes" aria-hidden="true"></div>
+
+<section class="about" id="about">
+  <div class="wrap">
+    <span class="kicker">who's behind this —</span>
+    <h2>The Studio</h2>
+    <div class="tiles">
+      <div class="tile">
+        <h3>Small crew</h3>
+        <p>No committees, no bloat. <span class="scribble">Craft over headcount.</span> Every screen gets obsessed over before it ships.</p>
+      </div>
+      <div class="tile">
+        <h3>Privacy first</h3>
+        <p>Your data lives on your phone, not on our servers. <span class="scribble">We sell apps, not you.</span></p>
+      </div>
+      <div class="tile">
+        <h3>Built with heart</h3>
+        <p>A slightly broken one — see the logo. <span class="scribble">We ship what we love,</span> and it shows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap">
+    <h2>Say Hi</h2>
+    <p>Press, partnership, support, or just want to talk apps — one inbox, a real human answers.</p>
+    <a class="btn amber mail" href="mailto:hello@hazard.studio">hello@hazard.studio</a>
+  </div>
+</section>
+
+<footer>
+  <div class="links">
+    <a href="/legal/privacy.html">Privacy</a>
+    <a href="/legal/terms.html">Terms</a>
+    <a href="mailto:hello@hazard.studio">Contact</a>
+  </div>
+  <div>© 2026 Hazard Studio. All rights reserved.</div>
+  <div>Hazard Studio is the independent app studio of Vitali Mikhailouski.<br>Apps are distributed on the App Store.</div>
+</footer>
+
+</body>
+</html>
