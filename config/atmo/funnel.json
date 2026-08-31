@@ -1,5 +1,5 @@
 {
- "version": 23,
+ "version": 24,
  "experimentId": "onb-hollywood-v1",
  "flags": {
   "settings.replay": false,
@@ -51,7 +51,7 @@
      "id": "goal-ack",
      "type": "payoff",
      "emoji": "🌟",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal-v2.png",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal-v3-light.jpg",
      "title": "Great choice{withName|}",
      "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
      "cta": "Let's Go"
@@ -61,7 +61,7 @@
      "type": "info",
      "title": "Daily guidance, tailored to you",
      "subtitle": "Micro-insights, focus and affirmations — curated for this very day, powered by real sky data.",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-guidance.jpg",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-guidance-light.jpg",
      "imageStyle": "poster",
      "cta": "Feeling Cosmic!"
     },
@@ -344,7 +344,7 @@
      "type": "info",
      "title": "Real data. Real sky.",
      "subtitle": "Live space weather from NOAA and 10,000+ stations — science first, magic close behind.",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-science.jpg",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-science-light.jpg",
      "imageStyle": "poster",
      "cta": "Impressive!"
     },
@@ -462,7 +462,7 @@
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning.",
-    "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero.jpg",
+    "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero-light.jpg",
     "stats": [
      {
       "value": "10K+",
@@ -476,7 +476,8 @@
       "value": "24/7",
       "label": "live sky data"
      }
-    ]
+    ],
+    "heroImageName": "SkyArtSunny"
    }
   }
  ]
