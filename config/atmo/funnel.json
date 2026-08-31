@@ -1,5 +1,5 @@
 {
- "version": 25,
+ "version": 26,
  "experimentId": "onb-hollywood-v1",
  "flags": {
   "settings.replay": false,
@@ -51,19 +51,22 @@
      "id": "goal-ack",
      "type": "payoff",
      "emoji": "🌟",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal-v4.jpg",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/goal-object.png",
      "title": "Great choice{withName|}",
      "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
-     "cta": "Let's Go"
+     "cta": "Let's Go",
+     "imageBlend": "float",
+     "imageHeight": 230
     },
     {
      "id": "value-guidance",
      "type": "info",
      "title": "Daily guidance, tailored to you",
      "subtitle": "Micro-insights, focus and affirmations — curated for this very day, powered by real sky data.",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-guidance-v4.jpg",
-     "imageStyle": "poster",
-     "cta": "Feeling Cosmic!"
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-guidance-object.png",
+     "cta": "Feeling Cosmic!",
+     "imageBlend": "float",
+     "imageHeight": 290
     },
     {
      "id": "sensitivity",
@@ -344,9 +347,10 @@
      "type": "info",
      "title": "Real data. Real sky.",
      "subtitle": "Live space weather from NOAA and 10,000+ stations — science first, magic close behind.",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-science-v4.jpg",
-     "imageStyle": "poster",
-     "cta": "Impressive!"
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/value-science-object.png",
+     "cta": "Impressive!",
+     "imageBlend": "float",
+     "imageHeight": 290
     },
     {
      "id": "location",
