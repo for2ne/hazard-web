@@ -1,5 +1,5 @@
 {
- "version": 42,
+ "version": 43,
  "experimentId": "onb-hollywood-v1",
  "flags": {
   "settings.replay": false,
@@ -345,30 +345,36 @@
      "id": "location",
      "type": "permission",
      "permission": "location",
-     "emoji": "📍",
      "title": "Weather where you are",
      "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
      "cta": "Allow Location",
-     "footnote": "10,000+ weather stations · NOAA space-weather observatory"
+     "footnote": "10,000+ weather stations · NOAA space-weather observatory",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/location-floodtop.png",
+     "imageStyle": "flood-top",
+     "imageHeight": 255
     },
     {
      "id": "health",
      "type": "permission",
      "permission": "health",
-     "emoji": "❤️",
      "title": "Let Solara feel your rhythm",
      "subtitle": "Connect Apple Health — sleep, steps and heart rhythm make your patterns real. Read-only, never for ads.",
      "cta": "Connect Apple Health",
-     "footnote": "Read-only · your health data never leaves your phone for ads or analytics"
+     "footnote": "Read-only · your health data never leaves your phone for ads or analytics",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/health-floodtop.png",
+     "imageStyle": "flood-top",
+     "imageHeight": 255
     },
     {
      "id": "notifications",
      "type": "permission",
      "permission": "notifications",
-     "emoji": "🔔",
      "title": "Start mornings prepared",
      "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
-     "cta": "Enable Notifications"
+     "cta": "Enable Notifications",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/notif-floodtop.png",
+     "imageStyle": "flood-top",
+     "imageHeight": 260
     },
     {
      "id": "before-after",
