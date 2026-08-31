@@ -417,29 +417,30 @@
      {
       "productId": "com.hazard.atmo.pro.yearly",
       "title": "Yearly",
-      "fallbackPrice": "$29.99",
+      "fallbackPrice": "$49.99",
       "periodLabel": "per year",
-      "badge": "SAVE 88%",
+      "badge": "SAVE 90%",
       "isDefault": true,
-      "equivalent": "≈ $0.58 / week"
+      "equivalent": "≈ $0.96 / week",
+      "note": "7 days free, then $49.99/year"
      },
      {
       "productId": "com.hazard.atmo.pro.weekly",
       "title": "Weekly",
-      "fallbackPrice": "$4.99",
+      "fallbackPrice": "$9.99",
       "periodLabel": "per week",
       "note": "3-day free trial"
      },
      {
       "productId": "com.hazard.atmo.pro.lifetime",
       "title": "Lifetime",
-      "fallbackPrice": "$59.99",
+      "fallbackPrice": "$129.99",
       "periodLabel": "one-time",
       "note": "Pay once, enjoy forever",
       "badge": "FOREVER"
      }
     ],
-    "cta": "Continue",
+    "cta": "Try 7 Days Free",
     "closeDelaySeconds": 2,
     "skippable": true,
     "includedTitle": "What's Included",
@@ -455,7 +456,7 @@
      "Check-ins",
      "Affirmations"
     ],
-    "trustLine": "Everything included. No extra fees. Cancel anytime.",
+    "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
     "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
     "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
     "brandName": "Solara",
