@@ -477,7 +477,8 @@
       "label": "live sky data"
      }
     ],
-    "heroImageName": "SkyArtSunny"
+    "heroImageName": "SkyArtSunny",
+    "showTrialTimeline": true
    }
   }
  ]
