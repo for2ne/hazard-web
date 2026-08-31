@@ -1,5 +1,5 @@
 {
- "version": 40,
+ "version": 41,
  "experimentId": "onb-hollywood-v1",
  "flags": {
   "settings.replay": false,
@@ -337,7 +337,7 @@
      "title": "Real data. Real sky.",
      "subtitle": "Live space weather from NOAA and 10,000+ stations — science first, magic close behind.",
      "cta": "Impressive!",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/science-floodtop2.png",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/science-floodtop3.png",
      "imageStyle": "flood-top",
      "imageHeight": 330
     },
