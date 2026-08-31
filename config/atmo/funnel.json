@@ -1,5 +1,5 @@
 {
- "version": 27,
+ "version": 28,
  "experimentId": "onb-hollywood-v1",
  "flags": {
   "settings.replay": false,
@@ -50,10 +50,10 @@
     {
      "id": "goal-ack",
      "type": "payoff",
-     "emoji": "✨",
      "title": "Great choice{withName|}",
      "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
-     "cta": "Let's Go"
+     "cta": "Let's Go",
+     "artwork": "hero"
     },
     {
      "id": "value-guidance",
