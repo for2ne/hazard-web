@@ -1,5 +1,5 @@
 {
- "version": 32,
+ "version": 33,
  "experimentId": "onb-hollywood-v1",
  "flags": {
   "settings.replay": false,
@@ -61,7 +61,7 @@
      "title": "Daily guidance, tailored to you",
      "subtitle": "Micro-insights, focus and affirmations — curated for this very day, powered by real sky data.",
      "cta": "Feeling Cosmic!",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/guidance-flood4.png",
+     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/guidance-flood5.png",
      "imageStyle": "flood"
     },
     {
