@@ -1,5 +1,5 @@
 {
- "version": 38,
+ "version": 39,
  "experimentId": "onb-hollywood-v1",
  "flags": {
   "settings.replay": false,
@@ -339,7 +339,7 @@
      "cta": "Impressive!",
      "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/science-floodtop.png",
      "imageStyle": "flood-top",
-     "imageHeight": 395
+     "imageHeight": 378
     },
     {
      "id": "location",
