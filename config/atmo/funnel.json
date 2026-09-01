@@ -437,7 +437,8 @@
       "fallbackPrice": "$129.99",
       "periodLabel": "one-time",
       "note": "Pay once, enjoy forever",
-      "badge": "FOREVER"
+      "badge": "FOREVER",
+      "cta": "Unlock Forever"
      }
     ],
     "cta": "Try 7 Days Free",
