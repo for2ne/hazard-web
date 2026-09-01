@@ -61,7 +61,7 @@
      "title": "Daily guidance, tailored to you",
      "subtitle": "Micro-insights, focus and affirmations — curated for this very day, powered by real sky data.",
      "cta": "Feeling Cosmic!",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/guidance-flood5.png",
+     "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
      "imageStyle": "flood"
     },
     {
@@ -337,7 +337,7 @@
      "title": "Real data. Real sky.",
      "subtitle": "Live space weather from NOAA and 10,000+ stations — science first, magic close behind.",
      "cta": "Impressive!",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/science-floodtop4.png",
+     "imageURL": "https://hazard.studio/img/atmo/science-floodtop4.png",
      "imageStyle": "flood-top",
      "imageHeight": 330
     },
@@ -349,7 +349,7 @@
      "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
      "cta": "Allow Location",
      "footnote": "10,000+ weather stations · NOAA space-weather observatory",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/location-floodtop3.png",
+     "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
      "imageStyle": "flood-top",
      "imageHeight": 270
     },
@@ -361,7 +361,7 @@
      "subtitle": "Connect Apple Health — sleep, steps and heart rhythm make your patterns real. Read-only, never for ads.",
      "cta": "Connect Apple Health",
      "footnote": "Read-only · your health data never leaves your phone for ads or analytics",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/health-floodtop3.png",
+     "imageURL": "https://hazard.studio/img/atmo/health-floodtop3.png",
      "imageStyle": "flood-top",
      "imageHeight": 270
     },
@@ -372,7 +372,7 @@
      "title": "Start mornings prepared",
      "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
      "cta": "Enable Notifications",
-     "imageURL": "https://for2ne.github.io/hazard-web/img/atmo/notif-floodtop2.png",
+     "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
      "imageStyle": "flood-top",
      "imageHeight": 285
     },
@@ -396,8 +396,8 @@
      ],
      "cta": "I Want This",
      "footnote": "Powered by live NOAA space-weather data",
-     "beforeImageURL": "https://for2ne.github.io/hazard-web/img/atmo/ba-before-m1.jpg",
-     "afterImageURL": "https://for2ne.github.io/hazard-web/img/atmo/ba-after-m1.jpg"
+     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
+     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
     {
      "id": "paywall",
@@ -457,12 +457,12 @@
      "Affirmations"
     ],
     "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
-    "termsURL": "https://for2ne.github.io/hazard-web/terms.html",
-    "privacyURL": "https://for2ne.github.io/hazard-web/privacy.html",
+    "termsURL": "https://hazard.studio/apps/solara/terms.html",
+    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning.",
-    "heroImageURL": "https://for2ne.github.io/hazard-web/img/atmo/paywall-hero-light.jpg",
+    "heroImageURL": "https://hazard.studio/img/atmo/paywall-hero-light.jpg",
     "stats": [
      {
       "value": "10K+",
