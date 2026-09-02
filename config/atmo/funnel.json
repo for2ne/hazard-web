@@ -442,7 +442,7 @@
      }
     ],
     "cta": "Try 7 Days Free",
-    "closeDelaySeconds": 2,
+    "closeDelaySeconds": 0,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
