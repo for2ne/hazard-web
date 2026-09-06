@@ -1,6 +1,6 @@
 {
- "version": 46,
- "experimentId": "onb-science-v1",
+ "version": 45,
+ "experimentId": "onb-hollywood-v1",
  "flags": {
   "settings.replay": false,
   "settings.upgrade": true
@@ -14,7 +14,7 @@
      "id": "welcome",
      "type": "info",
      "title": "Your day, decoded",
-     "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your body's rhythms to guide every day.",
+     "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your personal rhythms to guide every day.",
      "cta": "Begin the Journey",
      "artwork": "hero"
     },
@@ -42,8 +42,8 @@
       },
       {
        "id": "self",
-       "title": "Understand my patterns",
-       "detail": "See what really moves your energy — proven on your own days"
+       "title": "Understand myself deeper",
+       "detail": "Zodiac, numerology and patterns — decoded daily"
       }
      ]
     },
@@ -59,8 +59,8 @@
      "id": "value-guidance",
      "type": "info",
      "title": "Daily guidance, tailored to you",
-     "subtitle": "Micro-insights, focus and gentle advice — curated for this very day, from real sky data.",
-     "cta": "Continue",
+     "subtitle": "Micro-insights, focus and affirmations — curated for this very day, powered by real sky data.",
+     "cta": "Feeling Cosmic!",
      "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
      "imageStyle": "flood"
     },
@@ -215,9 +215,57 @@
      "id": "birthdate",
      "type": "datePicker",
      "title": "When were you born?",
-     "subtitle": "Why do we need this? Your birth date sets your physical, emotional and mental cycles — the personal half of your Energy Index. 🎂",
+     "subtitle": "Why do we need this? Your birth date maps your biorhythms, numerology and zodiac sign — the personal half of your Energy Index. 🎂",
      "cta": "Continue",
-     "footnote": "Biorhythm cycles computed from your birth date · never shared"
+     "footnote": "Moon & planet positions computed with astronomical precision"
+    },
+    {
+     "id": "birthtime",
+     "type": "timePicker",
+     "title": "What time were you born?",
+     "subtitle": "If you don't know — skip it, we'll calculate an approximate birth chart. ⏳",
+     "cta": "Continue",
+     "skippable": true,
+     "afterTasks": [
+      "Aligning planets at your birth moment…",
+      "Mapping your cosmic blueprint…"
+     ],
+     "afterDone": "Your cosmic blueprint is ready"
+    },
+    {
+     "id": "birthplace",
+     "type": "textInput",
+     "title": "Where were you born?",
+     "subtitle": "Your birth place anchors your chart to the sky above it. 🌍",
+     "placeholder": "City of birth",
+     "optional": true,
+     "cta": "Continue",
+     "autocomplete": "city"
+    },
+    {
+     "id": "sign-payoff",
+     "type": "payoff",
+     "emoji": "{signEmoji|✨}",
+     "title": "You're a {sign|Star Child}",
+     "subtitle": "You're in the rare {rarity|8}% — {element|cosmic} energy combined with your sensitivity profile{withName|}. Solara tunes every single day to it.",
+     "cta": "I Love That"
+    },
+    {
+     "id": "beliefs",
+     "type": "singleChoice",
+     "title": "What should Solara speak?",
+     "subtitle": "Your guidance, your language — switch anytime. 🔮",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "science",
+       "title": "Just the science — data & rhythms"
+      },
+      {
+       "id": "both",
+       "title": "Science + astrology, tarot & moon"
+      }
+     ]
     },
     {
      "id": "about",
@@ -248,16 +296,16 @@
        "title": "Moon cycles"
       },
       {
+       "id": "zodiac",
+       "title": "Zodiac & astrology"
+      },
+      {
        "id": "biorhythms",
        "title": "Biorhythms"
       },
       {
-       "id": "sleep",
-       "title": "Sleep & recovery"
-      },
-      {
-       "id": "air",
-       "title": "Air quality"
+       "id": "numerology",
+       "title": "Numerology"
       },
       {
        "id": "affirmations",
@@ -278,7 +326,7 @@
      "facts": [
       "Live NOAA space-weather feed",
       "10,000+ weather stations worldwide",
-      "Moon phase at astronomical precision",
+      "Moon & planets at astronomical precision",
       "Your answers never leave this device"
      ],
      "afterDone": "Your energy profile is ready"
@@ -287,7 +335,7 @@
      "id": "value-science",
      "type": "info",
      "title": "Real data. Real sky.",
-     "subtitle": "Live space weather from NOAA and 10,000+ stations — your forecast is built on real measurements and checked against your own days.",
+     "subtitle": "Live space weather from NOAA and 10,000+ stations — science first, magic close behind.",
      "cta": "Impressive!",
      "imageURL": "https://hazard.studio/img/atmo/science-floodtop4.png",
      "imageStyle": "flood-top",
@@ -362,7 +410,7 @@
     "features": [
      "Personal Energy Index, every day",
      "Magnetic storm & pressure alerts",
-     "Apple Health attached to every log",
+     "Zodiac, moon cycles & biorhythms",
      "Patterns verified on YOUR check-ins"
     ],
     "plans": [
@@ -400,10 +448,10 @@
     "included": [
      "Energy Index ⚡",
      "Storm Alerts",
-     "Sky Data",
-     "Apple Health",
+     "Daily Zodiac",
      "Moon Cycles",
      "Biorhythms",
+     "Numerology",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
@@ -414,8 +462,8 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
-    "heroImageName": "SkyArtSunny",
+    "subtitle": "Weather, cosmos and your own rhythms — one personal forecast, every morning.",
+    "heroImageURL": "https://hazard.studio/img/atmo/paywall-hero-light.jpg",
     "stats": [
      {
       "value": "10K+",
@@ -430,6 +478,7 @@
       "label": "live sky data"
      }
     ],
+    "heroImageName": "SkyArtSunny",
     "showTrialTimeline": true
    }
   }
