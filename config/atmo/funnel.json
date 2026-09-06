@@ -1,9 +1,10 @@
 {
- "version": 46,
+ "version": 47,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
-  "settings.upgrade": true
+  "settings.upgrade": true,
+  "mystic.module": false
  },
  "variants": [
   {
@@ -260,8 +261,8 @@
        "title": "Air quality"
       },
       {
-       "id": "affirmations",
-       "title": "Affirmations"
+       "id": "mood",
+       "title": "Mood tracking"
       }
      ]
     },
@@ -407,7 +408,7 @@
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
-     "Affirmations"
+     "Air Quality"
     ],
     "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
