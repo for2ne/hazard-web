@@ -328,7 +328,10 @@
       if (qs.get("step") === "paywall") { index = -1; history = []; go(steps.length - 1); return; }
       var k = steps.map(function (s) { return s.id; }).indexOf(qs.get("step")); if (k >= 0) { index = -1; history = [0]; go(k); return; }
     }
-    renderLanding();
+    // Two separate tests, two entry modes: default = quiz-first (onboarding test);
+    // ?mode=store = our store-like card with the icon A/B first (icon test). Sticky per browser.
+    var mode = qs.get("mode") || store.get("mode") || "quiz"; store.set("mode", mode); ctx.flow = mode; mp(function (m) { m.register({ flow: mode }); });
+    if (mode === "store") renderLanding(); else { px("QuizStart", {}, true); go(0); }
   }
   fetch(CONFIG_URL, { cache: "no-store" }).then(function (r) { return r.json(); }).then(boot).catch(function (e) {
     render('<h1>Solara</h1><p class="sub">Could not load the experience. <a href="/apps/solara/">Open the app page</a>.</p>', "c"); track("config_error", { error: String(e) });
