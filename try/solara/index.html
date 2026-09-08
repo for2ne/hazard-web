@@ -69,6 +69,9 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   .opt.on{background:var(--field-sel);border-color:var(--coral)} .opt.on .ck{background:linear-gradient(135deg,var(--coral),var(--coral2));border-color:transparent}
   .field{width:100%;padding:16px;border-radius:22px;border:1.5px solid rgba(61,51,82,.10);background:var(--field);font:inherit;font-size:18px;color:var(--ink);outline:none}
   .field:focus{border-color:var(--coral)}
+  .row{display:grid;grid-template-columns:1.5fr 1fr 1.2fr;gap:8px}
+  .sel{-webkit-appearance:none;appearance:none;color:var(--ink-soft);padding-right:34px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' fill='none' stroke='%239089A6' stroke-width='2' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 14px center;font-size:17px;text-align:left}
+  .sel.set{color:var(--ink);background-color:var(--field-sel);border-color:var(--coral)}
   .spacer{flex:1}
   .cta{width:100%;border:0;border-radius:999px;padding:17px 22px;font:inherit;font-size:18px;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--coral),var(--coral2));box-shadow:0 10px 24px rgba(248,119,104,.35);cursor:pointer;margin-top:14px}
   .cta:disabled{opacity:.45;box-shadow:none}
@@ -117,5 +120,5 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   <div class="top"><button class="back" id="back" aria-label="Back">‹</button><div class="bar"><i id="bar"></i></div></div>
   <div id="screen" class="screen"></div>
 </div>
-<script src="/try/solara/app.js?v=2"></script>
+<script src="/try/solara/app.js?v=3"></script>
 </body></html>

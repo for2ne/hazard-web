@@ -160,11 +160,28 @@
       var $s = document.getElementById("skip"); if ($s) $s.onclick = function () { answerEvent(step, "skipped"); advance(step, i); };
     },
     datePicker: function (step, i) {
-      var max = new Date(); max.setFullYear(max.getFullYear() - 13);
-      render(head(step) + '<input class="field" id="date" type="date" max="' + max.toISOString().slice(0, 10) + '" min="1920-01-01">' + ctaRow(step, "next") + (step.skippable ? '<button class="skip" id="skip">Skip</button>' : ""));
-      var $d = document.getElementById("date"), $next = document.getElementById("next"); $next.disabled = true;
-      $d.oninput = function () { $next.disabled = !$d.value; };
-      $next.onclick = function () { answers.birthDate = $d.value; answerEvent(step, "filled"); advance(step, i); };
+      // Three native selects styled as our fields: consistent on every browser (the bare <input type=date>
+      // renders as a foreign-looking dd.mm.yyyy box on desktop/Android); iOS still opens its wheel.
+      var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      var maxYear = new Date().getFullYear() - 13, minYear = 1920, opts = function (arr, ph) {
+        return '<option value="" disabled selected>' + ph + '</option>' + arr.map(function (v) { return '<option value="' + v[0] + '">' + v[1] + '</option>'; }).join("");
+      };
+      var days = [], years = [];
+      for (var d = 1; d <= 31; d++) days.push([d, d]);
+      for (var y = maxYear; y >= minYear; y--) years.push([y, y]);
+      render(head(step) + '<div class="row"><select class="field sel" id="m">' + opts(months.map(function (m, k) { return [k + 1, m]; }), "Month") + '</select>' +
+        '<select class="field sel" id="d">' + opts(days, "Day") + '</select><select class="field sel" id="y">' + opts(years, "Year") + '</select></div>' +
+        ctaRow(step, "next") + (step.skippable ? '<button class="skip" id="skip">Skip</button>' : ""));
+      var $m = document.getElementById("m"), $d = document.getElementById("d"), $y = document.getElementById("y"), $next = document.getElementById("next");
+      function value() {
+        if (!$m.value || !$d.value || !$y.value) return null;
+        var dt = new Date(Date.UTC(+$y.value, +$m.value - 1, +$d.value));
+        if (dt.getUTCMonth() !== +$m.value - 1) return null;                 // e.g. 31 February
+        return dt.toISOString().slice(0, 10);
+      }
+      function refresh() { $next.disabled = !value(); [$m, $d, $y].forEach(function (s) { s.classList.toggle("set", !!s.value); }); }
+      $next.disabled = true; [$m, $d, $y].forEach(function (s) { s.onchange = refresh; });
+      $next.onclick = function () { var v = value(); if (!v) return; answers.birthDate = v; answerEvent(step, "filled"); advance(step, i); };
       var $s = document.getElementById("skip"); if ($s) $s.onclick = function () { answerEvent(step, "skipped"); advance(step, i); };
     },
     timePicker: function (step, i) {
