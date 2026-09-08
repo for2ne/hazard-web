@@ -79,6 +79,13 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   .opt.on{background:var(--field-sel);border-color:var(--coral)} .opt.on .ck{background:linear-gradient(135deg,var(--coral),var(--coral2));border-color:transparent}
   .field{width:100%;height:52px;padding:0 16px;border-radius:16px;border:1.5px solid transparent;background:var(--field);font:inherit;font-size:16px;color:var(--ink);outline:none;text-align:center}
   .field::placeholder{color:rgba(144,137,166,.7)} .field:focus{border-color:var(--coral)}
+  .datewrap{position:relative;display:block}
+  .datewrap .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(144,137,166,.8);font-size:16px;pointer-events:none}
+  .datewrap.set .ph{display:none}
+  .field.date{-webkit-appearance:none;appearance:none;color:var(--ink);text-align:center;display:block;line-height:52px}
+  .field.date::-webkit-date-and-time-value{text-align:center}
+  .field.date::-webkit-calendar-picker-indicator{opacity:0;position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+  .datewrap:not(.set) .field.date{color:transparent}
   .row{display:grid;grid-template-columns:1.6fr 1fr 1.2fr;gap:8px}
   .sel{-webkit-appearance:none;appearance:none;color:var(--ink-soft);text-align:left;padding-right:30px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' fill='none' stroke='%239089A6' stroke-width='2' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 12px center;font-size:15px}
   .sel.set{color:var(--ink);background-color:var(--field-sel);border-color:var(--coral)}
@@ -163,5 +170,5 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   <div class="top"><button class="back" id="back" aria-label="Back"><svg viewBox="0 0 12 18" fill="none" stroke="#3D3352" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2 2.5 9l7 7"/></svg></button></div>
   <div id="screen" class="screen"></div>
 </div>
-<script src="/try/solara/app.js?v=10"></script>
+<script src="/try/solara/app.js?v=11"></script>
 </body></html>
