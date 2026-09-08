@@ -137,7 +137,10 @@
   }
   $back.onclick = function () { if (!history.length) return; var prev = history.pop(); track("onboarding_back", { from: steps[index].id }); go(prev, true); };
   function advance(step, i, gotoId) { go(nextIndex(steps, i, gotoId)); }
-  function answerEvent(step, value) { track("onboarding_answer", { step: step.id, value: value }); }
+  function answerEvent(step, value) {
+    track("onboarding_answer", { step: step.id, value: value });
+    if (step.type === "singleChoice" || step.type === "multiChoice") { var prop = {}; prop[step.id] = value; mp(function (m) { m.people.set(prop); }); }
+  }
 
   function titleBlock(step) {
     return '<h1>' + esc(template(step.title, answers)) + '</h1>' + (step.subtitle ? '<p class="sub">' + esc(template(step.subtitle, answers)) + '</p>' : "");
@@ -331,6 +334,11 @@
   function boot(cfg) {
     config = cfg; variant = pickVariant(cfg, qs.get("v") || store.get("variant")); store.set("variant", variant.id);
     ctx.variant = variant.id; ctx.experiment = cfg.experimentId || null; ctx.config_version = cfg.version; mp(function (m) { m.register(ctx); });
+    mp(function (m) {   // profile exists from the first step, so the Users view and group-bys work before anyone leaves an email
+      m.people.set({ variant: variant.id, icon_variant: icon, platform: "web", config_version: cfg.version });
+      var first = { first_seen_web: new Date().toISOString() }; ["utm_source", "utm_campaign", "utm_content", "fbclid"].forEach(function (k) { if (ctx[k]) first["first_" + k] = ctx[k]; });
+      m.people.set_once(first);
+    });
     steps = (variant.steps || []).filter(function (s) { return s.type !== "rating"; });
     if (qs.get("step")) {
       if (qs.get("step") === "paywall") { index = -1; history = []; go(steps.length - 1); return; }
