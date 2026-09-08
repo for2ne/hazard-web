@@ -52,7 +52,7 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   .back{width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.62);color:var(--ink);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
   .back.on{display:flex} .back svg{width:12px;height:18px}
   .screen{flex:1;display:flex;flex-direction:column;animation:in .28s ease}
-  .screen.center{justify-content:center}
+  .screen.center{justify-content:center;padding-top:6vh}
   @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   /* titles: serif semibold, 28 left (questions) / 30 centered (info) */
   h1{font-family:var(--serif);font-weight:600;font-size:28px;line-height:1.14;letter-spacing:-.01em;margin:0 0 8px;text-align:left}
@@ -71,7 +71,7 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   .flood:after{content:"";position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(transparent,var(--ground))}
   /* options */
   .opts{display:flex;flex-direction:column;gap:10px;margin:2px 0 12px}
-  .opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:52px;padding:14px 16px;border-radius:16px;border:1.5px solid transparent;background:var(--field);color:var(--ink);font:inherit;font-size:15.5px;font-weight:500;cursor:pointer;transition:transform .08s,background .15s}
+  .opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:52px;padding:14px 16px;border-radius:16px;border:1.5px solid transparent;background:var(--field);color:var(--ink);font:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:transform .08s,background .15s}
   .opt:active{transform:scale(.985)} .opt .em{font-size:20px;width:26px;text-align:center}
   .opt .t{flex:1;line-height:1.25} .opt small{display:none;color:var(--ink-soft);font-size:13px;font-weight:400;margin-top:3px;line-height:1.3}
   .opt.on small{display:block}
@@ -106,10 +106,10 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   .facts div{display:flex;align-items:center;gap:10px;background:var(--field);border-radius:14px;padding:13px 14px;font-size:14px;color:var(--ink);animation:in .4s ease}
   .facts .bd{width:18px;height:18px;font-size:10px}
   /* comparison (before/after) */
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:44px 0 12px;align-items:start}
-  .col{position:relative;border-radius:18px;padding:40px 14px 14px;background:var(--field);font-size:14px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:52px 0 12px;align-items:start}
+  .col{position:relative;border-radius:20px;padding:46px 14px 16px;background:var(--field);font-size:15px}
   .col.after{background:#FFF3EE;border:1.5px solid var(--coral);box-shadow:0 10px 26px rgba(248,119,104,.18)}
-  .col .por{position:absolute;top:-32px;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;object-fit:cover;box-shadow:0 6px 16px rgba(61,51,82,.16)}
+  .col .por{position:absolute;top:-36px;left:50%;transform:translateX(-50%);width:72px;height:72px;border-radius:50%;object-fit:cover;box-shadow:0 6px 16px rgba(61,51,82,.16)}
   .col h3{margin:0 0 8px;font-size:15px;font-weight:700;color:var(--ink-soft)} .col.after h3{color:var(--coral)}
   .col ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
   .col li{display:flex;gap:8px;align-items:flex-start;color:var(--ink-soft);line-height:1.3} .col.after li{color:var(--ink);font-weight:600}
@@ -163,5 +163,5 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   <div class="top"><button class="back" id="back" aria-label="Back"><svg viewBox="0 0 12 18" fill="none" stroke="#3D3352" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2 2.5 9l7 7"/></svg></button></div>
   <div id="screen" class="screen"></div>
 </div>
-<script src="/try/solara/app.js?v=7"></script>
+<script src="/try/solara/app.js?v=8"></script>
 </body></html>

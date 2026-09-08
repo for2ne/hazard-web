@@ -125,8 +125,8 @@
   function artBlock(step) {
     if (step.artwork === "hero") return '<div class="hero">' + orbHTML(96) + '</div>';
     if (step.imageURL) {
-      var h = step.imageHeight ? Math.round(step.imageHeight) : 340;
-      return '<div class="flood" style="height:' + h + 'px"><img src="' + esc(step.imageURL) + '" alt=""></div>';
+      // the app's flood art fills ~46% of the screen height regardless of imageHeight
+      return '<div class="flood" style="height:max(380px,46vh)"><img src="' + esc(step.imageURL) + '" alt=""></div>';
     }
     if (step.emoji) return '<div class="emoji">' + esc(step.emoji) + '</div>';
     return "";
@@ -224,7 +224,7 @@
     },
     // progress (ProgressStepView): orb, centered title, per-task capsule bars, facts revealed as cards
     progress: function (step, i) {
-      var tasks = step.tasks || [], facts = step.facts || [], per = 1100;
+      var tasks = step.tasks || [], facts = step.facts || [], per = 1700;
       render('<div class="spacer"></div><div class="hero">' + orbHTML(70) + '</div>' + titleBlock(step) +
         '<ul class="ptasks">' + tasks.map(function (t) { return '<li><div class="row2"><span class="lbl">' + esc(t) + '</span><span class="chk">✓</span></div><div class="track"><i></i></div></li>'; }).join("") + '</ul>' +
         '<div class="facts" id="facts"></div><div class="spacer"></div><p class="tiny" id="done"></p><div style="height:40px"></div>', "c");
