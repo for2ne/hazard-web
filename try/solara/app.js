@@ -99,7 +99,7 @@
       '<div class="as-head"><img class="as-icon" src="' + ICONS[icon] + '" alt="Solara"><div class="as-meta"><h2>Solara: Daily Energy Forecast</h2><p>Biorhythms &amp; Magnetic Storms</p>' +
       '<div class="as-getrow"><button class="as-get" id="get">GET</button><span class="as-iap">In-App Purchases</span></div></div></div>' +
       '<div class="as-stats"><div><small>Ratings</small><b>New</b><i>No ratings yet</i></div><div><small>Age</small><b>4+</b><i>Years Old</i></div>' +
-      '<div><small>Category</small><b>&#9825;</b><i>Health &amp; Fitness</i></div><div><small>Developer</small><b>&#9737;</b><i>Hazard Studio</i></div><div><small>Language</small><b>EN</b><i>English</i></div></div>' +
+      '<div><small>Category</small><b>&#9825;</b><i>Health &amp; Fitness</i></div><div><small>Developer</small><b>&#9737;</b><i>Vitali Mikhailouski</i></div><div><small>Language</small><b>EN</b><i>English</i></div></div>' +
       '<h3 class="as-h">Preview</h3>' +
       '<div class="as-shots" id="shots">' + SHOTS.map(function (u) { return '<img src="' + u + '" alt="" width="217" height="470">'; }).join("") + '</div>' +
       '<p class="as-desc" id="desc">' + esc(DESC).replace(/\n/g, "<br>") + '</p><button class="as-more" id="more">more</button>' +
@@ -109,11 +109,11 @@
       '<h3 class="as-h">App Privacy</h3><p class="as-p">The developer indicated that the app\'s privacy practices may include handling of data as described below.</p>' +
       '<div class="as-priv"><b>Data Not Linked to You</b><i>The following data may be collected but is not linked to your identity:</i><span>Location · Health &amp; Fitness · Usage Data · Identifiers · Diagnostics</span></div>' +
       '<h3 class="as-h">Information</h3><dl class="as-info">' +
-      '<dt>Provider</dt><dd>Hazard Studio</dd><dt>Category</dt><dd>Health &amp; Fitness</dd><dt>Compatibility</dt><dd>iPhone · Requires iOS 17.0 or later</dd>' +
+      '<dt>Provider</dt><dd>Vitali Mikhailouski</dd><dt>Category</dt><dd>Health &amp; Fitness</dd><dt>Compatibility</dt><dd>iPhone · Requires iOS 17.0 or later</dd>' +
       '<dt>Languages</dt><dd>English</dd><dt>Age Rating</dt><dd>4+</dd><dt>Price</dt><dd>Free</dd>' +
       '<dt>In-App Purchases</dt><dd>Solara Plus Yearly $49.99 · Weekly $9.99 · Lifetime $129.99</dd>' +
       '<dt>Developer Website</dt><dd><a href="https://hazard.studio">hazard.studio</a></dd><dt>Privacy Policy</dt><dd><a href="/apps/solara/privacy.html">hazard.studio/apps/solara/privacy</a></dd></dl>' +
-      '<p class="as-copy">© 2026 Hazard Studio</p>' +
+      '<p class="as-copy">© 2026 Vitali Mikhailouski (Hazard Studio)</p>' +
       '<p class="as-note">Preview page by Hazard Studio. Solara launches this month — tap GET to set up your profile now.</p>' +
       '</div>');
     track("store_view", { screen: "store" }); px("ViewContent", { content_name: "solara-store", content_category: icon });
