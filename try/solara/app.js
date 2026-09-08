@@ -103,11 +103,17 @@
       '<h3 class="as-h">Preview</h3>' +
       '<div class="as-shots" id="shots">' + SHOTS.map(function (u) { return '<img src="' + u + '" alt="" width="217" height="470">'; }).join("") + '</div>' +
       '<p class="as-desc" id="desc">' + esc(DESC).replace(/\n/g, "<br>") + '</p><button class="as-more" id="more">more</button>' +
+      '<h3 class="as-h">Ratings &amp; Reviews</h3><div class="as-rat"><div class="as-ratbig"><b>New</b><i>on the App Store</i></div><div class="as-ratbars">' +
+      [5, 4, 3, 2, 1].map(function (n) { return '<div><span class="stars">' + "★".repeat(n) + '</span><span class="bar"></span></div>'; }).join("") + '<i>No ratings yet</i></div></div>' +
+      '<h3 class="as-h">What\'s New</h3><div class="as-row"><span>Version 1.0</span><span class="grey">Coming this month</span></div><p class="as-p">Initial release: personal Energy Index, magnetic storm &amp; pressure alerts, evening check-ins and Your Patterns.</p>' +
+      '<h3 class="as-h">App Privacy</h3><p class="as-p">The developer indicated that the app\'s privacy practices may include handling of data as described below.</p>' +
+      '<div class="as-priv"><b>Data Not Linked to You</b><i>The following data may be collected but is not linked to your identity:</i><span>Location · Health &amp; Fitness · Usage Data · Identifiers · Diagnostics</span></div>' +
       '<h3 class="as-h">Information</h3><dl class="as-info">' +
       '<dt>Provider</dt><dd>Hazard Studio</dd><dt>Category</dt><dd>Health &amp; Fitness</dd><dt>Compatibility</dt><dd>iPhone · Requires iOS 17.0 or later</dd>' +
       '<dt>Languages</dt><dd>English</dd><dt>Age Rating</dt><dd>4+</dd><dt>Price</dt><dd>Free</dd>' +
       '<dt>In-App Purchases</dt><dd>Solara Plus Yearly $49.99 · Weekly $9.99 · Lifetime $129.99</dd>' +
-      '<dt>Privacy Policy</dt><dd><a href="/apps/solara/privacy.html">hazard.studio</a></dd></dl>' +
+      '<dt>Developer Website</dt><dd><a href="https://hazard.studio">hazard.studio</a></dd><dt>Privacy Policy</dt><dd><a href="/apps/solara/privacy.html">hazard.studio/apps/solara/privacy</a></dd></dl>' +
+      '<p class="as-copy">© 2026 Hazard Studio</p>' +
       '<p class="as-note">Preview page by Hazard Studio. Solara launches this month — tap GET to set up your profile now.</p>' +
       '</div>');
     track("store_view", { screen: "store" }); px("ViewContent", { content_name: "solara-store", content_category: icon });
