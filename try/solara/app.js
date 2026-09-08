@@ -224,7 +224,7 @@
     },
     // progress (ProgressStepView): orb, centered title, per-task capsule bars, facts revealed as cards
     progress: function (step, i) {
-      var tasks = step.tasks || [], facts = step.facts || [], per = 1700;
+      var tasks = step.tasks || [], facts = step.facts || [], per = 2600;
       render('<div class="spacer"></div><div class="hero">' + orbHTML(70) + '</div>' + titleBlock(step) +
         '<ul class="ptasks">' + tasks.map(function (t) { return '<li><div class="row2"><span class="lbl">' + esc(t) + '</span><span class="chk">✓</span></div><div class="track"><i></i></div></li>'; }).join("") + '</ul>' +
         '<div class="facts" id="facts"></div><div class="spacer"></div><p class="tiny" id="done"></p><div style="height:40px"></div>', "c");
