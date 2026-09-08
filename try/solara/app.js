@@ -84,7 +84,7 @@
 
   var $screen = document.getElementById("screen"), $back = document.getElementById("back");
   var config = null, variant = null, steps = [], index = -1, history = [], answers = { texts: {}, selections: {}, birthDate: null };
-  var timers = [];
+  var timers = [], lastStepAt = 0;
 
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
   function render(html, cls) { clearTimers(); $screen.className = "screen" + (cls ? " " + cls : ""); $screen.innerHTML = html; window.scrollTo(0, 0); }
@@ -123,9 +123,10 @@
   function go(i, viaBack) {
     if (i >= steps.length) return renderWaitlist();
     if (!viaBack && index >= 0) history.push(index);
-    index = i; var step = steps[i];
+    index = i; var step = steps[i]; var now = Date.now();
+    var prev = lastStepAt ? Math.round((now - lastStepAt) / 100) / 10 : null; lastStepAt = now;   // prev_seconds = time spent on the previous step (ANALYTICS.md)
     $back.classList.toggle("on", history.length > 0 && step.type !== "paywall" && step.type !== "progress");
-    track("onboarding_step", { step: step.id, index: i, type: step.type, variant: variant.id });
+    track("onboarding_step", { step: step.id, index: i, type: step.type, variant: variant.id, prev_seconds: prev, steps_total: steps.length });
     var r = renderers[step.type] || renderers.info; r(step, i);
   }
   $back.onclick = function () { if (!history.length) return; var prev = history.pop(); track("onboarding_back", { from: steps[index].id }); go(prev, true); };
@@ -276,7 +277,7 @@
         '<div class="spacer"></div><div class="ctabar"><p class="green"><span class="g">✓</span><span id="pline">' + esc(priceLine(sel)) + '</span></p>' +
         '<button class="cta" id="buy">' + esc(sel.cta || pw.cta) + '</button>' +
         '<p class="legal"><a href="' + esc(pw.termsURL || "/apps/solara/terms.html") + '">Terms</a> &nbsp; <a href="' + esc(pw.privacyURL || "/apps/solara/privacy.html") + '">Privacy</a> &nbsp; <a href="#" onclick="return false">Restore</a> &nbsp; <i>Auto-renews · Cancel anytime</i></p></div></div>');
-      track("paywall_shown", { variant: variant.id }); px("PaywallView", {}, true);
+      track("paywall_shown", { variant: variant.id, prev_seconds: lastStepAt ? Math.round((Date.now() - lastStepAt) / 100) / 10 : null }); px("PaywallView", {}, true);
       var $c = document.getElementById("close"); if ($c) $c.onclick = function () { track("paywall_skipped", {}); renderWaitlist(null); };
       Array.prototype.forEach.call($screen.querySelectorAll(".plan"), function (b) {
         b.onclick = function () {
