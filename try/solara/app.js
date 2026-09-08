@@ -37,6 +37,13 @@
   }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
+  var FACE = '<svg class="face" viewBox="0 0 100 100" aria-hidden="true">' +
+    '<ellipse cx="24" cy="58" rx="7.5" ry="4.5" fill="#FF87AE" opacity=".5"/><ellipse cx="76" cy="58" rx="7.5" ry="4.5" fill="#FF87AE" opacity=".5"/>' +
+    '<ellipse cx="39" cy="45" rx="5.2" ry="7.6" fill="#3D3352"/><ellipse cx="61" cy="45" rx="5.2" ry="7.6" fill="#3D3352"/>' +
+    '<circle cx="40.5" cy="42" r="1.9" fill="#fff"/><circle cx="62.5" cy="42" r="1.9" fill="#fff"/>' +
+    '<path d="M37 59 Q50 70 63 59" fill="none" stroke="#3D3352" stroke-width="4.2" stroke-linecap="round"/></svg>';
+  function orbHTML(size) { return '<div class="orbwrap" style="width:' + size + 'px;height:' + size + 'px"><img class="orb" src="/img/atmo/orb-body.png" alt="">' + FACE + '</div>'; }
+
   var pure = { pickWeighted: pickWeighted, webWeight: webWeight, pickVariant: pickVariant, template: template, nextIndex: nextIndex, esc: esc };
   if (typeof module !== "undefined" && module.exports) { module.exports = pure; }
   if (typeof window === "undefined") return;
@@ -75,9 +82,8 @@
       '<div class="meta"><span>Category<b>Health &amp; Fitness</b></span><span>Price<b>Free · Plus optional</b></span><span>Platform<b>iPhone</b></span></div>' +
       '<div class="shots">' + SHOTS.map(function (s) { return '<img src="' + s + '" alt="" loading="lazy">'; }).join("") + '</div>' +
       '<p class="desc">Solara reads the sky every morning — pressure, magnetic storms, UV, moon — and blends it with your own rhythms into one Energy Index. A 5-second evening check-in keeps it honest: after a week you see patterns built on <em>your</em> days.</p>' +
-      '<div class="spacer"></div>' +
-      '<button class="cta" id="get">Get</button>' +
-      '<p class="tiny">Free on the App Store · launching this month. Set up your profile now — it takes about a minute.</p>' +
+      '<div class="spacer"></div><div class="ctabar"><button class="cta" id="get">Get</button>' +
+      '<p class="tiny">Free on the App Store · launching this month. Set up your profile now — it takes about a minute.</p></div>' +
       '</div>');
     track("store_view", { screen: "landing" }); px("ViewContent", { content_name: "solara-landing", content_category: icon });
     document.getElementById("get").onclick = function () {
@@ -102,21 +108,21 @@
 
   function head(step, extraTop) {
     var art = "";
-    if (step.artwork === "hero") art = '<div class="hero"><img class="orb" src="' + ORB + '" alt=""></div>';
+    if (step.artwork === "hero") art = '<div class="hero">' + orbHTML(150) + '</div>';
     else if (step.imageURL) art = '<div class="flood"><img src="' + esc(step.imageURL) + '" alt="" style="' + (step.imageHeight ? "max-height:" + Math.round(step.imageHeight * 1.05) + "px" : "") + '"></div>';
     else if (step.emoji) art = '<div class="hero" style="font-size:64px">' + esc(step.emoji) + '</div>';
     return art + (extraTop || "") + '<h1>' + esc(template(step.title, answers)) + '</h1>' + (step.subtitle ? '<p class="sub">' + esc(template(step.subtitle, answers)) + '</p>' : "");
   }
-  function ctaRow(step, id, label) {
-    return '<div class="spacer"></div><button class="cta" id="' + id + '">' + esc(label || step.cta || "Continue") + '</button>' +
-      (step.footnote ? '<p class="foot">' + esc(step.footnote) + '</p>' : "");
+  function ctaRow(step, id, label, extra) {
+    return '<div class="spacer"></div><div class="ctabar"><button class="cta" id="' + id + '">' + esc(label || step.cta || "Continue") + '</button>' +
+      (step.footnote ? '<p class="foot">' + esc(step.footnote) + '</p>' : "") + (extra || "") + '</div>';
   }
 
   var renderers = {
     info: function (step, i) { render(head(step) + ctaRow(step, "next")); document.getElementById("next").onclick = function () { advance(step, i); }; },
     payoff: function (step, i) { renderers.info(step, i); },
     permission: function (step, i) {
-      render(head(step) + ctaRow(step, "next") + '<p class="tiny">You will be asked for this in the app — nothing is requested here.</p>');
+      render(head(step) + ctaRow(step, "next", null, '<p class="tiny">You will be asked for this in the app — nothing is requested here.</p>'));
       document.getElementById("next").onclick = function () { answerEvent(step, "continue"); advance(step, i); };
     },
     singleChoice: function (step, i) {
@@ -153,7 +159,7 @@
     },
     textInput: function (step, i) {
       render(head(step) + '<input class="field" id="txt" type="text" autocomplete="off" placeholder="' + esc(step.placeholder || "") + '">' +
-        ctaRow(step, "next") + (step.optional ? '<button class="skip" id="skip">Skip</button>' : ""));
+        ctaRow(step, "next", null, step.optional ? '<button class="skip" id="skip">Skip</button>' : ""));
       var $t = document.getElementById("txt"), $next = document.getElementById("next"); $next.disabled = !step.optional;
       $t.oninput = function () { $next.disabled = !step.optional && !$t.value.trim(); };
       $next.onclick = function () { var v = $t.value.trim(); if (v) answers.texts[step.id] = v; answerEvent(step, v ? "filled" : "skipped"); advance(step, i); };
@@ -171,7 +177,7 @@
       for (var y = maxYear; y >= minYear; y--) years.push([y, y]);
       render(head(step) + '<div class="row"><select class="field sel" id="m">' + opts(months.map(function (m, k) { return [k + 1, m]; }), "Month") + '</select>' +
         '<select class="field sel" id="d">' + opts(days, "Day") + '</select><select class="field sel" id="y">' + opts(years, "Year") + '</select></div>' +
-        ctaRow(step, "next") + (step.skippable ? '<button class="skip" id="skip">Skip</button>' : ""));
+        ctaRow(step, "next", null, step.skippable ? '<button class="skip" id="skip">Skip</button>' : ""));
       var $m = document.getElementById("m"), $d = document.getElementById("d"), $y = document.getElementById("y"), $next = document.getElementById("next");
       function value() {
         if (!$m.value || !$d.value || !$y.value) return null;
@@ -185,21 +191,26 @@
       var $s = document.getElementById("skip"); if ($s) $s.onclick = function () { answerEvent(step, "skipped"); advance(step, i); };
     },
     timePicker: function (step, i) {
-      render(head(step) + '<input class="field" id="time" type="time">' + ctaRow(step, "next") + '<button class="skip" id="skip">Skip</button>');
+      render(head(step) + '<input class="field" id="time" type="time">' + ctaRow(step, "next", null, '<button class="skip" id="skip">Skip</button>'));
       document.getElementById("next").onclick = function () { answerEvent(step, "filled"); advance(step, i); };
       document.getElementById("skip").onclick = function () { answerEvent(step, "skipped"); advance(step, i); };
     },
     progress: function (step, i) {
-      var tasks = step.tasks || [], facts = step.facts || [];
-      render(head(step) + '<ul class="tasks">' + tasks.map(function (t) { return '<li><span class="d">✓</span><span>' + esc(t) + '</span></li>'; }).join("") + '</ul>' +
+      var tasks = step.tasks || [], facts = step.facts || [], per = 1100;
+      render('<div class="hero">' + orbHTML(96) + '</div><h1 class="t2">' + esc(step.title) + '</h1>' +
+        '<ul class="ptasks">' + tasks.map(function (t) { return '<li><div class="row2"><span class="lbl">' + esc(t) + '</span><span class="chk">✓</span></div><div class="track"><i></i></div></li>'; }).join("") + '</ul>' +
         '<div class="facts" id="facts"></div><div class="spacer"></div><p class="tiny" id="done"></p>');
-      var lis = $screen.querySelectorAll(".tasks li"), $f = document.getElementById("facts");
+      var lis = $screen.querySelectorAll(".ptasks li"), $f = document.getElementById("facts");
       tasks.forEach(function (_, k) {
-        timers.push(setTimeout(function () { lis[k].classList.add("on"); if (facts[k]) $f.innerHTML += (k ? "<br>" : "") + esc(facts[k]); }, 300 + k * 900));
-        timers.push(setTimeout(function () { lis[k].classList.add("done"); }, 900 + k * 900));
+        timers.push(setTimeout(function () {
+          Array.prototype.forEach.call(lis, function (li) { li.classList.remove("active"); });
+          lis[k].classList.add("active"); lis[k].querySelector(".track i").style.width = "100%";
+          if (facts[k]) { var d = document.createElement("div"); d.textContent = facts[k]; $f.appendChild(d); }
+        }, 250 + k * per));
+        timers.push(setTimeout(function () { lis[k].classList.remove("active"); lis[k].classList.add("done"); }, 250 + (k + 1) * per - 80));
       });
-      timers.push(setTimeout(function () { document.getElementById("done").textContent = step.afterDone || ""; }, 500 + tasks.length * 900));
-      timers.push(setTimeout(function () { advance(step, i); }, 1400 + tasks.length * 900));
+      timers.push(setTimeout(function () { document.getElementById("done").textContent = step.afterDone || ""; }, 400 + tasks.length * per));
+      timers.push(setTimeout(function () { advance(step, i); }, 1500 + tasks.length * per));
     },
     comparison: function (step, i) {
       function col(cls, title, img, items) {
@@ -212,7 +223,7 @@
     paywall: function (step, i) {
       var pw = variant.paywall, plans = pw.plans || [], sel = plans.filter(function (p) { return p.isDefault; })[0] || plans[0];
       $back.classList.remove("on");
-      render('<div class="pw"><div class="flood"><img src="' + PAYWALL_HERO + '" alt="" style="max-height:230px"></div>' +
+      render('<div class="pw"><div class="pwhero"><img src="' + PAYWALL_HERO + '" alt=""></div>' +
         '<div class="brand"><img src="' + ICONS[icon] + '" alt=""><b>' + esc(pw.brandName || "Solara") + '</b>' + (pw.brandBadge ? '<em>' + esc(pw.brandBadge) + '</em>' : "") + '</div>' +
         '<h1>' + esc(pw.title) + '</h1>' + (pw.subtitle ? '<p class="sub">' + esc(pw.subtitle) + '</p>' : "") +
         (pw.stats ? '<div class="stats">' + pw.stats.map(function (s) { return '<span><b>' + esc(s.value) + '</b>' + esc(s.label) + '</span>'; }).join("") + '</div>' : "") +
@@ -223,9 +234,9 @@
             '<span class="p"><b>' + esc(p.fallbackPrice) + '</b><small>' + esc(p.periodLabel || "") + (p.equivalent ? " · " + esc(p.equivalent) : "") + '</small></span></button>';
         }).join("") + '</div>' +
         (pw.included ? '<div class="chips">' + pw.included.map(function (c) { return "<span>" + esc(c) + "</span>"; }).join("") + '</div>' : "") +
-        '<button class="cta" id="buy">' + esc(sel.cta || pw.cta) + '</button>' +
-        (pw.trustLine ? '<p class="foot">' + esc(pw.trustLine) + '</p>' : "") +
-        '<p class="legal"><a href="' + esc(pw.termsURL || "/apps/solara/terms.html") + '">Terms</a> · <a href="' + esc(pw.privacyURL || "/apps/solara/privacy.html") + '">Privacy</a></p></div>');
+        '<div class="spacer"></div><div class="ctabar"><button class="cta" id="buy">' + esc(sel.cta || pw.cta) + '</button>' +
+        '<p class="foot">' + esc(pw.trustLine || "") + '</p>' +
+        '<p class="legal"><a href="' + esc(pw.termsURL || "/apps/solara/terms.html") + '">Terms</a> · <a href="' + esc(pw.privacyURL || "/apps/solara/privacy.html") + '">Privacy</a></p></div></div>');
       track("paywall_shown", { variant: variant.id }); px("PaywallView", {}, true);
       Array.prototype.forEach.call($screen.querySelectorAll(".plan"), function (b) {
         b.onclick = function () {
@@ -248,7 +259,7 @@
   // ---------- honest ending: the app is not in the store yet ----------
   function renderWaitlist(plan) {
     $back.classList.remove("on"); setBar(1);
-    render('<div class="screen wait"><img class="orb" src="' + ORB + '" alt=""><h1>You\'re early — thank you</h1>' +
+    render('<div class="screen wait">' + orbHTML(120) + '<h1>You\'re early — thank you</h1>' +
       '<p class="sub">Solara launches on the App Store this month. Leave your email and we\'ll send your personal plan' + (plan ? (/lifetime/i.test(plan.title) ? ' and your lifetime unlock link' : ' and the ' + esc(plan.title.toLowerCase()) + ' trial link') : "") + ' the moment it\'s live. No newsletters, one message.</p>' +
       '<form id="wl"><input class="field" id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required>' +
       '<button class="cta" type="submit">Notify me at launch</button></form>' +
@@ -259,7 +270,7 @@
       ev.preventDefault(); var email = document.getElementById("email").value.trim(); if (!email) return;
       mp(function (m) { m.people.set({ $email: email, waitlist: "solara-prelaunch", variant: variant ? variant.id : null, icon_variant: icon }); });
       track("waitlist_email", { has_plan: !!plan }); px("Lead", { content_name: "solara-waitlist" });
-      $screen.querySelector(".wait").innerHTML = '<img class="orb" src="' + ORB + '" alt=""><h1>You\'re on the list</h1><p class="sub">We\'ll write once, when Solara is live. Your plan is saved.</p>';
+      $screen.querySelector(".wait").innerHTML = orbHTML(120) + '<h1>You\'re on the list</h1><p class="sub">We\'ll write once, when Solara is live. Your plan is saved.</p>';
     };
   }
 
