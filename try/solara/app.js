@@ -78,6 +78,10 @@
   if (!ICONS[icon]) icon = "a"; store.set("icon", icon); ctx.icon_variant = icon; ctx.platform = "web";
 
   function mp(fn) { try { if (window.mixpanel) fn(window.mixpanel); } catch (e) {} }
+  // Stable visitor id + identify(): without identify the JS SDK queues people.set for anonymous users and no profile
+  // ever appears in Users. The same id travels to the app via the Adapty deferred link at launch (one identity, web + app).
+  var uid = store.get("uid"); if (!uid) { uid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : "w-" + Date.now() + "-" + Math.random().toString(36).slice(2); store.set("uid", uid); }
+  mp(function (m) { m.identify(uid); }); ctx.web_uid = uid;
   function px(name, params, custom) { try { if (window.fbq) fbq(custom ? "trackCustom" : "track", name, params || {}); } catch (e) {} }
   function track(event, props) { var p = Object.assign({}, ctx, props || {}); mp(function (m) { m.track(event, p); }); }
   mp(function (m) { m.register(ctx); });
