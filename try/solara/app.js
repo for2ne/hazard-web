@@ -141,7 +141,7 @@
     // info: centered title; hero steps are vertically centered like the app's Spacer layout
     info: function (step, i) {
       var centered = step.artwork === "hero" || (!step.imageURL && !step.emoji);
-      render(artBlock(step) + '<div class="' + (centered ? "" : "") + '">' + titleBlock(step) + '</div>' + ctaRow(step, "next"), "c" + (centered ? " center" : ""));
+      render(artBlock(step) + (step.imageURL ? '<div class="spacer"></div>' : "") + titleBlock(step) + ctaRow(step, "next"), "c" + (centered ? " center" : ""));
       document.getElementById("next").onclick = function () { advance(step, i); };
     },
     // payoff ("Great choice"): the app shows a sparkle burst, not the orb
@@ -187,7 +187,7 @@
     },
     textInput: function (step, i) {
       render(titleBlock(step) + '<input class="field" id="txt" type="text" autocomplete="off" placeholder="' + esc(step.placeholder || "") + '">' +
-        ctaRow(step, "next", null, step.optional ? '<button class="skip" id="skip">Skip</button>' : ""), cls(step));
+        ctaRow(step, "next"), cls(step));
       var $t = document.getElementById("txt"), $next = document.getElementById("next"); $next.disabled = !step.optional;
       $t.oninput = function () { $next.disabled = !step.optional && !$t.value.trim(); };
       $next.onclick = function () { var v = $t.value.trim(); if (v) answers.texts[step.id] = v; answerEvent(step, v ? "filled" : "skipped"); advance(step, i); };
