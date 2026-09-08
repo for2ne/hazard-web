@@ -101,7 +101,7 @@
       '<div class="as-stats"><div><small>Ratings</small><b>New</b><i>No ratings yet</i></div><div><small>Age</small><b>4+</b><i>Years Old</i></div>' +
       '<div><small>Category</small><b>&#9825;</b><i>Health &amp; Fitness</i></div><div><small>Developer</small><b>&#9737;</b><i>Hazard Studio</i></div><div><small>Language</small><b>EN</b><i>English</i></div></div>' +
       '<h3 class="as-h">Preview</h3>' +
-      '<div class="as-shots">' + SHOTS.map(function (u) { return '<img src="' + u + '" alt="" loading="lazy">'; }).join("") + '</div>' +
+      '<div class="as-shots" id="shots">' + SHOTS.map(function (u) { return '<img src="' + u + '" alt="" width="217" height="470">'; }).join("") + '</div>' +
       '<p class="as-desc" id="desc">' + esc(DESC).replace(/\n/g, "<br>") + '</p><button class="as-more" id="more">more</button>' +
       '<h3 class="as-h">Information</h3><dl class="as-info">' +
       '<dt>Provider</dt><dd>Hazard Studio</dd><dt>Category</dt><dd>Health &amp; Fitness</dd><dt>Compatibility</dt><dd>iPhone · Requires iOS 17.0 or later</dd>' +
