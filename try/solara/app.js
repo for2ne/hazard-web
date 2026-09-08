@@ -46,11 +46,14 @@
     return d ? d + "-day free trial, then " + plan.fallbackPrice + " per " + period : plan.fallbackPrice + " per " + period;
   }
 
-  var FACE = '<svg class="face" viewBox="0 0 100 100" aria-hidden="true">' +
-    '<ellipse cx="24" cy="58" rx="7.5" ry="4.5" fill="#FF87AE" opacity=".5"/><ellipse cx="76" cy="58" rx="7.5" ry="4.5" fill="#FF87AE" opacity=".5"/>' +
-    '<ellipse cx="39" cy="45" rx="5.2" ry="7.6" fill="#3D3352"/><ellipse cx="61" cy="45" rx="5.2" ry="7.6" fill="#3D3352"/>' +
-    '<circle cx="40.5" cy="42" r="1.9" fill="#fff"/><circle cx="62.5" cy="42" r="1.9" fill="#fff"/>' +
-    '<path d="M37 59 Q50 70 63 59" fill="none" stroke="#3D3352" stroke-width="4.2" stroke-linecap="round"/></svg>';
+  // FaceOrb geometry from the app (sphere size S = 55.87 units of a 100-unit canvas; canvas = 1.79 S):
+  // eyes 0.105×0.145 S, 0.20 S apart, y −0.03 S, catchlight 0.038 S at (+0.018, −0.035) S; blush 0.15×0.09 S, 0.44 S apart, y +0.11 S;
+  // mouth 0.26×0.11 S frame at y +0.16 S, stroke 0.045 S, ink #4A2B45.
+  var FACE = '<svg class="face" viewBox="0 0 100 100" aria-hidden="true"><defs><filter id="bl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.2"/></filter></defs>' +
+    '<g filter="url(#bl)"><ellipse cx="33.5" cy="56.1" rx="4.19" ry="2.51" fill="#FF87AE" opacity=".5"/><ellipse cx="66.5" cy="56.1" rx="4.19" ry="2.51" fill="#FF87AE" opacity=".5"/></g>' +
+    '<ellipse cx="41.48" cy="48.32" rx="2.93" ry="4.05" fill="#4A2B45"/><ellipse cx="58.52" cy="48.32" rx="2.93" ry="4.05" fill="#4A2B45"/>' +
+    '<circle cx="42.5" cy="46.4" r="1.06" fill="#fff" opacity=".95"/><circle cx="59.5" cy="46.4" r="1.06" fill="#fff" opacity=".95"/>' +
+    '<path d="M42.7 57.2 Q50 62.4 57.3 57.2" fill="none" stroke="#4A2B45" stroke-width="2.5" stroke-linecap="round"/></svg>';
   // FaceOrb(size): the sphere is 0.558 of the OrbBody canvas → the image frame is size × 1.79
   function orbHTML(size) { var f = Math.round(size * 1.79); return '<div class="orbwrap" style="width:' + f + 'px;height:' + f + 'px"><img class="orb" src="' + ORB + '" alt="">' + FACE + '</div>'; }
   var ICON_SVG = {
