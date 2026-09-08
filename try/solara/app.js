@@ -89,23 +89,33 @@
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
   function render(html, cls) { clearTimers(); $screen.className = "screen" + (cls ? " " + cls : ""); $screen.innerHTML = html; window.scrollTo(0, 0); }
 
-  // ---------- landing (our own store-like card; not an App Store imitation) ----------
+  // ---------- store mock (icon / screenshot test): a product-page layout in the system look, no Apple branding,
+  // no invented ratings or reviews. GET → quiz. ----------
+  var DESC = "Solara feels your day before it happens. Every morning it reads the world around you — weather, air pressure, geomagnetic activity, UV, air quality, moon phase — and blends it with your own rhythms into one personal Energy Index. One glance, and you know what kind of day is coming and how to live it softer.\n\nWHY SOLARA IS DIFFERENT\nSolara checks itself against you. Log a 5-second check-in in the evening, and Solara compares its forecast with how your day actually felt. After a week you see Your Patterns — honest correlations built on your own check-ins, not generic advice.";
   function renderLanding() {
-    $back.classList.remove("on");
+    $back.classList.remove("on"); document.body.classList.add("white");
     render(
-      '<div class="store">' +
-      '<div class="head"><img class="icon" src="' + ICONS[icon] + '" alt="Solara">' +
-      '<div><h1>Solara</h1><p class="sub">Daily Energy Forecast<br>Biorhythms &amp; Magnetic Storms</p></div></div>' +
-      '<div class="meta"><span>Category<b>Health &amp; Fitness</b></span><span>Price<b>Free · Plus optional</b></span><span>Platform<b>iPhone</b></span></div>' +
-      '<div class="shots">' + SHOTS.map(function (s) { return '<img src="' + s + '" alt="" loading="lazy">'; }).join("") + '</div>' +
-      '<p class="desc">Solara reads the sky every morning — pressure, magnetic storms, UV, moon — and blends it with your own rhythms into one Energy Index. A 5-second evening check-in keeps it honest: after a week you see patterns built on <em>your</em> days.</p>' +
-      '<div class="spacer"></div><div class="ctabar"><button class="cta" id="get">Get</button>' +
-      '<p class="tiny">Free on the App Store · launching this month. Set up your profile now — it takes about a minute.</p></div>' +
+      '<div class="as">' +
+      '<div class="as-head"><img class="as-icon" src="' + ICONS[icon] + '" alt="Solara"><div class="as-meta"><h2>Solara: Daily Energy Forecast</h2><p>Biorhythms &amp; Magnetic Storms</p>' +
+      '<div class="as-getrow"><button class="as-get" id="get">GET</button><span class="as-iap">In-App Purchases</span></div></div></div>' +
+      '<div class="as-stats"><div><small>Ratings</small><b>New</b><i>No ratings yet</i></div><div><small>Age</small><b>4+</b><i>Years Old</i></div>' +
+      '<div><small>Category</small><b>&#9825;</b><i>Health &amp; Fitness</i></div><div><small>Developer</small><b>&#9737;</b><i>Hazard Studio</i></div><div><small>Language</small><b>EN</b><i>English</i></div></div>' +
+      '<h3 class="as-h">Preview</h3>' +
+      '<div class="as-shots">' + SHOTS.map(function (u) { return '<img src="' + u + '" alt="" loading="lazy">'; }).join("") + '</div>' +
+      '<p class="as-desc" id="desc">' + esc(DESC).replace(/\n/g, "<br>") + '</p><button class="as-more" id="more">more</button>' +
+      '<h3 class="as-h">Information</h3><dl class="as-info">' +
+      '<dt>Provider</dt><dd>Hazard Studio</dd><dt>Category</dt><dd>Health &amp; Fitness</dd><dt>Compatibility</dt><dd>iPhone · Requires iOS 17.0 or later</dd>' +
+      '<dt>Languages</dt><dd>English</dd><dt>Age Rating</dt><dd>4+</dd><dt>Price</dt><dd>Free</dd>' +
+      '<dt>In-App Purchases</dt><dd>Solara Plus Yearly $49.99 · Weekly $9.99 · Lifetime $129.99</dd>' +
+      '<dt>Privacy Policy</dt><dd><a href="/apps/solara/privacy.html">hazard.studio</a></dd></dl>' +
+      '<p class="as-note">Preview page by Hazard Studio. Solara launches this month — tap GET to set up your profile now.</p>' +
       '</div>');
-    track("store_view", { screen: "landing" }); px("ViewContent", { content_name: "solara-landing", content_category: icon });
+    track("store_view", { screen: "store" }); px("ViewContent", { content_name: "solara-store", content_category: icon });
+    var $d = document.getElementById("desc"), $m = document.getElementById("more");
+    $m.onclick = function () { $d.classList.add("open"); $m.style.display = "none"; track("store_more_tap", {}); };
     document.getElementById("get").onclick = function () {
       track("store_get_tap", {}); px("GetTap", { icon: icon }, true); px("QuizStart", {}, true);
-      go(0);
+      document.body.classList.remove("white"); go(0);
     };
   }
 

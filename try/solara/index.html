@@ -160,6 +160,33 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px} .chips span{font-size:13px;padding:7px 11px;border-radius:999px;background:var(--field)}
   .green{display:flex;justify-content:center;align-items:center;gap:7px;font-size:13px;color:var(--ink);margin:0 0 12px} .green .g{width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
   .legal{color:var(--ink-soft);font-size:11px;text-align:center;margin:10px 0 0} .legal a{color:var(--ink-soft);text-decoration:none} .legal i{font-style:normal;opacity:.7}
+  /* ===== store mock (mode=store): product-page layout in the system look — no Apple branding, no invented ratings ===== */
+  body.white{background:#fff} body.white .sky{display:none} body.white .app{padding:0 20px}
+  .as{font-family:-apple-system,"SF Pro Text","SF Pro Display",system-ui,sans-serif;color:#000;-webkit-font-smoothing:antialiased}
+  .as-head{display:flex;gap:16px;padding:6px 0 18px;align-items:flex-start}
+  .as-icon{width:118px;height:118px;border-radius:26px;flex:none;box-shadow:0 0 0 .5px rgba(0,0,0,.12)}
+  .as-meta{flex:1;min-width:0;display:flex;flex-direction:column;height:118px}
+  .as-meta h2{margin:0;font-size:21px;line-height:1.15;font-weight:700;letter-spacing:-.3px} .as-meta p{margin:4px 0 0;font-size:15px;color:#8E8E93;line-height:1.25}
+  .as-getrow{margin-top:auto;display:flex;align-items:center;gap:10px}
+  .as-get{height:30px;padding:0 20px;border:0;border-radius:15px;background:rgba(118,118,128,.12);color:#007AFF;font:inherit;font-size:15px;font-weight:700;letter-spacing:-.2px;cursor:pointer}
+  .as-iap{font-size:9px;color:#8E8E93;text-transform:uppercase;letter-spacing:.02em;line-height:1.1;max-width:60px}
+  .as-stats{display:flex;overflow-x:auto;gap:0;border-top:.5px solid rgba(60,60,67,.29);border-bottom:.5px solid rgba(60,60,67,.29);padding:10px 0;margin:0 -20px 18px;scrollbar-width:none}
+  .as-stats::-webkit-scrollbar{display:none}
+  .as-stats div{flex:none;min-width:104px;padding:0 14px;text-align:center;border-left:.5px solid rgba(60,60,67,.29);display:flex;flex-direction:column;gap:3px}
+  .as-stats div:first-child{border:0;margin-left:6px}
+  .as-stats small{font-size:10px;font-weight:600;color:#8E8E93;text-transform:uppercase;letter-spacing:.06em}
+  .as-stats b{font-size:20px;font-weight:700;color:#8E8E93;line-height:1.1} .as-stats i{font-style:normal;font-size:11px;color:#8E8E93}
+  .as-h{font-size:22px;font-weight:700;letter-spacing:-.3px;margin:0 0 12px}
+  .as-shots{display:flex;gap:10px;overflow-x:auto;margin:0 -20px 18px;padding:0 20px 6px;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .as-shots::-webkit-scrollbar{display:none}
+  .as-shots img{height:470px;border-radius:20px;scroll-snap-align:start;flex:none;box-shadow:0 0 0 .5px rgba(0,0,0,.08)}
+  .as-desc{font-size:15px;line-height:1.35;margin:0;color:#000;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .as-desc.open{display:block;-webkit-line-clamp:unset}
+  .as-more{display:block;margin:-20px 0 22px auto;background:#fff;border:0;color:#007AFF;font:inherit;font-size:15px;padding:0 0 0 12px;position:relative}
+  .as-info{display:grid;grid-template-columns:1fr 1.4fr;gap:0;margin:0 0 20px;font-size:14px}
+  .as-info dt,.as-info dd{margin:0;padding:10px 0;border-bottom:.5px solid rgba(60,60,67,.29)}
+  .as-info dt{color:#8E8E93} .as-info dd{text-align:right;color:#000} .as-info a{color:#007AFF;text-decoration:none}
+  .as-note{font-size:12px;color:#8E8E93;text-align:center;margin:0 0 30px;line-height:1.4}
   /* waitlist */
   .wait{align-items:center;text-align:center} .wait form{width:100%;margin-top:6px}
   @media (min-width:700px){.app{margin:24px auto;min-height:calc(100% - 48px);border-radius:32px;background:rgba(255,255,255,.35);box-shadow:var(--shadow)}}
@@ -171,5 +198,5 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   <div class="top"><button class="back" id="back" aria-label="Back"><svg viewBox="0 0 12 18" fill="none" stroke="#3D3352" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2 2.5 9l7 7"/></svg></button></div>
   <div id="screen" class="screen"></div>
 </div>
-<script src="/try/solara/app.js?v=14"></script>
+<script src="/try/solara/app.js?v=15"></script>
 </body></html>
