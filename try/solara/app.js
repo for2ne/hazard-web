@@ -215,6 +215,8 @@
           Array.prototype.forEach.call($screen.querySelectorAll(".plan"), function (x) { x.classList.remove("on"); }); b.classList.add("on");
           sel = plans.filter(function (p) { return p.productId === b.dataset.id; })[0] || sel;
           document.getElementById("buy").textContent = sel.cta || pw.cta; track("plan_selected", { product: sel.productId });
+          var $trust = $screen.querySelector(".pw .foot");
+          if ($trust) $trust.textContent = /lifetime/i.test(sel.title) ? "One-time payment. Yours forever, no subscription." : (pw.trustLine || "");
         };
       });
       document.getElementById("buy").onclick = function () {
@@ -230,7 +232,7 @@
   function renderWaitlist(plan) {
     $back.classList.remove("on"); setBar(1);
     render('<div class="screen wait"><img class="orb" src="' + ORB + '" alt=""><h1>You\'re early — thank you</h1>' +
-      '<p class="sub">Solara launches on the App Store this month. Leave your email and we\'ll send your personal plan' + (plan ? ' and the ' + esc(plan.title.toLowerCase()) + ' trial link' : "") + ' the moment it\'s live. No newsletters, one message.</p>' +
+      '<p class="sub">Solara launches on the App Store this month. Leave your email and we\'ll send your personal plan' + (plan ? (/lifetime/i.test(plan.title) ? ' and your lifetime unlock link' : ' and the ' + esc(plan.title.toLowerCase()) + ' trial link') : "") + ' the moment it\'s live. No newsletters, one message.</p>' +
       '<form id="wl"><input class="field" id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required>' +
       '<button class="cta" type="submit">Notify me at launch</button></form>' +
       '<p class="tiny">Your answers are saved on this device — the app will pick them up.</p></div>');
