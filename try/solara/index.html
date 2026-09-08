@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Solara — Daily Energy Forecast</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="Weather, magnetic storms and your own rhythms — one personal forecast every morning, checked against how you actually felt.">
@@ -40,7 +40,7 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
     --pad:24px; --topbar:58px;
   }
   *{box-sizing:border-box} html,body{height:100%}
-  body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--ground);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--ground);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;touch-action:manipulation;overscroll-behavior-y:none}
   /* FloFunnelBackground: sun halo top-center, pink glow right, lavender glow bottom-left */
   .sky{position:fixed;inset:0;z-index:-1;background:
     radial-gradient(46vw 46vw at 50% -6%, rgba(255,179,108,.32), transparent 70%),
