@@ -338,7 +338,7 @@
     }
     // Two separate tests, two entry modes: default = quiz-first (onboarding test);
     // ?mode=store = our store-like card with the icon A/B first (icon test). Sticky per browser.
-    var mode = qs.get("mode") || store.get("mode") || "quiz"; store.set("mode", mode); ctx.flow = mode; mp(function (m) { m.register({ flow: mode }); });
+    var mode = qs.get("mode") === "store" ? "store" : "quiz"; ctx.flow = mode; mp(function (m) { m.register({ flow: mode }); });   // mode comes from the ad URL only — never sticky, so store-test visitors are not misrouted by a later quiz ad
     if (mode === "store") renderLanding(); else { px("QuizStart", {}, true); go(0); }
   }
   fetch(CONFIG_URL, { cache: "no-store" }).then(function (r) { return r.json(); }).then(boot).catch(function (e) {
