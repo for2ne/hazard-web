@@ -39,7 +39,7 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
     --sans:ui-rounded,-apple-system,"SF Pro Rounded","SF Pro Text",system-ui,sans-serif;
     --pad:24px; --topbar:58px;
   }
-  *{box-sizing:border-box} html,body{height:100%}
+  *{box-sizing:border-box} html,body{min-height:100%} @supports (height:100dvh){html,body{min-height:100dvh}}
   body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--ground);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;touch-action:manipulation;overscroll-behavior-y:none}
   /* FloFunnelBackground: sun halo top-center, pink glow right, lavender glow bottom-left */
   .sky{position:fixed;inset:0;z-index:-1;background:
@@ -47,7 +47,8 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
     radial-gradient(30vw 30vw at 92% 34%, rgba(247,166,196,.14), transparent 70%),
     radial-gradient(32vw 32vw at 6% 72%, rgba(185,168,240,.13), transparent 70%),
     var(--ground);}
-  .app{max-width:430px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 var(--pad);position:relative}
+  .app{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:0 var(--pad);position:relative}
+  @supports (height:100dvh){.app{min-height:100dvh}}
   .top{height:calc(var(--topbar) + env(safe-area-inset-top));padding-top:calc(12px + env(safe-area-inset-top));display:flex;align-items:flex-start;margin:0 -4px;position:relative;z-index:2}
   .back{width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.62);color:var(--ink);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
   .back.on{display:flex} .back svg{width:12px;height:18px}
@@ -207,5 +208,5 @@ mixpanel.init("c9185ff47f6235fb0e3e3effab258e84", {track_pageview: false, persis
   <div class="top"><button class="back" id="back" aria-label="Back"><svg viewBox="0 0 12 18" fill="none" stroke="#3D3352" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2 2.5 9l7 7"/></svg></button></div>
   <div id="screen" class="screen"></div>
 </div>
-<script src="/try/solara/app.js?v=22"></script>
+<script src="/try/solara/app.js?v=23"></script>
 </body></html>
