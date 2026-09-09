@@ -364,7 +364,14 @@
     // Two separate tests, two entry modes: default = quiz-first (onboarding test);
     // ?mode=store = our store-like card with the icon A/B first (icon test). Sticky per browser.
     var mode = qs.get("mode") === "store" ? "store" : "quiz"; ctx.flow = mode; mp(function (m) { m.register({ flow: mode }); });   // mode comes from the ad URL only — never sticky, so store-test visitors are not misrouted by a later quiz ad
-    if (mode === "store") renderLanding(); else { px("QuizStart", {}, true); go(0); if (window.__wantStart && steps.length > 1) { answerEvent(steps[0], "tapped-before-config"); go(1); } }
+    if (mode === "store") { renderLanding(); return; }
+    px("QuizStart", {}, true);
+    // Paid traffic lands on the first QUESTION: the ad was the hook, and 9/9 ad visitors bounced on the welcome screen
+    // even with the CTA visible (09.09). Organic/direct visitors still get the welcome. Both variants skip equally.
+    var questionFirst = !!(ctx.utm_source || ctx.fbclid) && qs.get("welcome") !== "1" && steps.length > 1 && steps[0].id === "welcome";
+    ctx.entry = questionFirst ? "question-first" : "welcome"; mp(function (m) { m.register({ entry: ctx.entry }); });
+    if (questionFirst) { track("welcome_skipped", {}); index = 0; history = []; go(1); return; }
+    go(0); if (window.__wantStart && steps.length > 1) { answerEvent(steps[0], "tapped-before-config"); go(1); }
   }
   fetch(CONFIG_URL, { cache: "no-store" }).then(function (r) { return r.json(); }).then(boot).catch(function (e) {
     render('<h1>Solara</h1><p class="sub">Could not load the experience. <a href="/apps/solara/">Open the app page</a>.</p>', "c"); track("config_error", { error: String(e) });
