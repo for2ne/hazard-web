@@ -91,7 +91,20 @@
   var timers = [], lastStepAt = 0;
 
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
-  function render(html, cls) { clearTimers(); $screen.className = "screen" + (cls ? " " + cls : ""); $screen.innerHTML = html; window.scrollTo(0, 0); }
+  function render(html, cls) {
+    clearTimers(); $screen.className = "screen" + (cls ? " " + cls : ""); $screen.innerHTML = html; window.scrollTo(0, 0);
+    timers.push(setTimeout(function () {          // diagnostics: was the CTA actually on screen? (FB/IG in-app browsers misreport 100vh)
+      var b = document.getElementById("next") || document.getElementById("buy") || document.getElementById("get") || document.getElementById("notify");
+      if (!b) return; var r = b.getBoundingClientRect(), vh = window.innerHeight;
+      track("cta_check", { step: steps[index] ? steps[index].id : "landing", visible: r.top >= 0 && r.bottom <= vh + 2, cta_bottom: Math.round(r.bottom), inner_height: vh, doc_height: document.documentElement.scrollHeight, vv_height: window.visualViewport ? Math.round(window.visualViewport.height) : null });
+    }, 600));
+  }
+  // time on the current step when the tab is hidden / closed (sendBeacon so it survives navigation away)
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "hidden" || !lastStepAt) return;
+    var p = Object.assign({}, ctx, { step: steps[index] ? steps[index].id : "landing", seconds: Math.round((Date.now() - lastStepAt) / 100) / 10 });
+    mp(function (m) { m.track("page_leave", p, { transport: "sendBeacon" }); });
+  });
 
   // ---------- store mock (icon / screenshot test): a product-page layout in the system look, no Apple branding,
   // no invented ratings or reviews. GET → quiz. ----------
