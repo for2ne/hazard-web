@@ -154,8 +154,10 @@
   }
   $back.onclick = function () { if (!history.length) return; var prev = history.pop(); track("onboarding_back", { from: steps[index].id }); go(prev, true); };
   function advance(step, i, gotoId) { go(nextIndex(steps, i, gotoId)); }
+  var firstAnswerSent = false;
   function answerEvent(step, value) {
     track("onboarding_answer", { step: step.id, value: value });
+    if (!firstAnswerSent) { firstAnswerSent = true; px("FirstAnswer", { step: step.id }, true); }   // one per visit — the conversion Meta can optimise for (QuizStart fires on load = PageView)
     if (step.type === "singleChoice" || step.type === "multiChoice") { var prop = {}; prop[step.id] = value; mp(function (m) { m.people.set(prop); }); }
   }
 
