@@ -154,6 +154,7 @@
   }
   $back.onclick = function () { if (!history.length) return; var prev = history.pop(); track("onboarding_back", { from: steps[index].id }); go(prev, true); };
   function advance(step, i, gotoId) { go(nextIndex(steps, i, gotoId)); }
+  setTimeout(function () { if (document.visibilityState === "visible") px("Engaged8s", {}, true); }, 8000);   // "not an accidental tap": 8 s on a visible page — frequent enough for Meta to learn on, fallback optimisation event
   var firstAnswerSent = false;
   function answerEvent(step, value) {
     track("onboarding_answer", { step: step.id, value: value });
