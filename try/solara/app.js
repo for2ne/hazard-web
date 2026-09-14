@@ -328,22 +328,35 @@
   };
 
   // ---------- honest ending: the app is not in the store yet ----------
+  var WAITLIST_ENDPOINT = "";   // optional second store for waitlist emails (Google Apps Script web app URL); empty = Mixpanel only
+  var REASONS = [["price", "The price"], ["unsure", "Not sure it's for me"], ["try", "Want to try it first"], ["looking", "Just looking"]];
   function renderWaitlist(plan) {
     $back.classList.remove("on");
-    var lifetime = plan && /lifetime/i.test(plan.title || "");
+    var lifetime = plan && /lifetime/i.test(plan.title || ""), reason = null;
+    var reasonsHTML = plan ? "" : '<p class="q">What stopped you? <span>optional</span></p><div class="reasons" id="reasons">' +
+      REASONS.map(function (r) { return '<button type="button" class="chip" data-r="' + r[0] + '">' + r[1] + '</button>'; }).join("") + '</div>';
     render('<div class="hero">' + orbHTML(70) + '</div><h1>You\'re early — thank you</h1>' +
       '<p class="sub">Solara launches on the App Store this month. Leave your email and we\'ll send your personal plan' +
       (plan ? (lifetime ? ' and your lifetime unlock link' : ' and the ' + esc((plan.title || "").toLowerCase()) + ' trial link') : "") + ' the moment it\'s live. No newsletters, one message.</p>' +
-      '<form id="wl"><input class="field" id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required></form>' +
+      reasonsHTML + '<form id="wl"><input class="field" id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required></form>' +
       '<div class="spacer"></div><div class="ctabar"><button class="cta" id="notify">Notify me at launch</button>' +
       '<p class="tiny">Your answers are saved on this device — the app will pick them up.</p></div>', "c center wait");
     track("quiz_complete", { variant: variant ? variant.id : null }); px("QuizComplete", {}, true);
     try { localStorage.setItem("solara.try.answers", JSON.stringify(answers)); } catch (e) {}
+    var $rs = document.getElementById("reasons");
+    if ($rs) $rs.onclick = function (ev) {
+      var b = ev.target.closest(".chip"); if (!b) return;
+      reason = b.getAttribute("data-r"); Array.prototype.forEach.call($rs.children, function (c) { c.classList.toggle("on", c === b); });
+      track("paywall_reason", { reason: reason }); mp(function (m) { m.people.set({ paywall_reason: reason }); });
+    };
     function submit() {
       var $e = document.getElementById("email"), email = $e.value.trim();
       if (!email || !$e.checkValidity()) { $e.focus(); return; }
       mp(function (m) { m.people.set({ $email: email, waitlist: "solara-prelaunch", variant: variant ? variant.id : null, icon_variant: icon }); });
-      track("waitlist_email", { has_plan: !!plan }); px("Lead", { content_name: "solara-waitlist" });
+      track("waitlist_email", { has_plan: !!plan, reason: reason }); px("Lead", { content_name: "solara-waitlist" });
+      if (WAITLIST_ENDPOINT) { try { fetch(WAITLIST_ENDPOINT, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({ email: email, web_uid: ctx.web_uid, variant: variant ? variant.id : null, icon: icon, plan: plan ? plan.productId : null, reason: reason,
+          utm_source: ctx.utm_source || null, utm_content: ctx.utm_content || null, answers: answers, ts: new Date().toISOString() }) }); } catch (e) {} }
       render('<div class="hero">' + orbHTML(70) + '</div><h1>You\'re on the list</h1><p class="sub">We\'ll write once, when Solara is live. Your plan is saved.</p>', "c center wait");
     }
     document.getElementById("wl").onsubmit = function (ev) { ev.preventDefault(); submit(); };
