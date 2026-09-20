@@ -31,9 +31,23 @@
   // to the target so the tracking link keeps the attribution context.
   var CONFIG = {
     pixelId: "2131738047419101",                                          // Meta Pixel ID; empty = pixel off
-    target: "https://apps.apple.com/app/id6802366596",   // → Adapty tracking link once created
+    adaptyClick: "https://api-ua.adapty.io/api/v1/attribution/click",     // Adapty Attribution tracking link (created 20.09.2026)
+    adaptyCid: "MTAxMDY6MTc1OTE6OTkz",
+    storeUrl: "https://apps.apple.com/app/id6802366596",                  // + "?pt=<provider>&ct=<batch>&mt=8" once the App Analytics campaign token exists
     delayMs: 1800
   };
+  // Meta macros ({{ad.id}} …) only resolve on the ad's own destination URL, so the quiz/ad forwards them as query params
+  // (campaign_id, adset_id, ad_id, campaign_name, adset_name; ad_name = utm_content) and this page rebuilds the Adapty link.
+  function buildTarget(params) {
+    var g = function (k, alt) { return params.get(k) || (alt ? params.get(alt) : "") || ""; };
+    var q = new URLSearchParams();
+    q.set("adpt_cid", CONFIG.adaptyCid);
+    q.set("campaign_id", g("campaign_id")); q.set("adset_id", g("adset_id")); q.set("ad_id", g("ad_id"));
+    q.set("campaign_name", g("campaign_name", "utm_campaign")); q.set("adset_name", g("adset_name")); q.set("ad_name", g("ad_name", "utm_content"));
+    ["fbclid", "web_uid", "variant", "plan", "via", "utm_source"].forEach(function (k) { if (params.get(k)) q.set(k, params.get(k)); });
+    q.set("redirect_url", CONFIG.storeUrl);
+    return CONFIG.adaptyClick + "?" + q.toString();
+  }
 </script>
 </head>
 <body>
@@ -56,9 +70,7 @@
       });
     } catch (e) {}
 
-    var url = CONFIG.target;
-    var qs = params.toString();
-    if (qs) url += (url.indexOf("?") === -1 ? "?" : "&") + qs;
+    var url = buildTarget(params);
     document.getElementById("go").href = url;
 
     if (CONFIG.pixelId) {

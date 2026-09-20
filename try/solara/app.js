@@ -8,7 +8,7 @@
   var STORE_LINK = "/go/solara/";              // app is live (19.09.2026): bridge page → App Store; bridge target becomes the Adapty tracking link
   function goStore(plan, how) {
     var q = new URLSearchParams();
-    ["fbclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(function (k) { if (ctx[k]) q.set(k, ctx[k]); });
+    ["fbclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "campaign_id", "adset_id", "ad_id", "campaign_name", "adset_name"].forEach(function (k) { if (ctx[k]) q.set(k, ctx[k]); });
     if (ctx.web_uid) q.set("web_uid", ctx.web_uid); if (variant) q.set("variant", variant.id); if (plan && plan.productId) q.set("plan", plan.productId); q.set("via", how);
     track("store_click", { how: how, plan: plan ? plan.productId : null }); px("StoreClick", { how: how }, true);
     setTimeout(function () { location.href = STORE_LINK + "?" + q.toString(); }, 150);   // let the beacons leave
@@ -78,7 +78,7 @@
   var store = { get: function (k) { try { return localStorage.getItem("solara.try." + k); } catch (e) { return null; } },
                 set: function (k, v) { try { localStorage.setItem("solara.try." + k, v); } catch (e) {} } };
   var ctx = {};                                             // super properties for every event
-  ["fbclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(function (k) {
+  ["fbclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "campaign_id", "adset_id", "ad_id", "campaign_name", "adset_name"].forEach(function (k) {
     var v = qs.get(k) || store.get(k); if (v) { ctx[k] = v; store.set(k, v); }
   });
   var icon = (qs.get("icon") || store.get("icon") || (Math.random() < 0.5 ? "a" : "b")).toLowerCase();
