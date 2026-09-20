@@ -5,7 +5,14 @@
 (function (root) {
   "use strict";
   var CONFIG_URL = "/config/atmo/funnel.json";
-  var STORE_LINK = null;                       // set to the Adapty tracking link at launch
+  var STORE_LINK = "/go/solara/";              // app is live (19.09.2026): bridge page → App Store; bridge target becomes the Adapty tracking link
+  function goStore(plan, how) {
+    var q = new URLSearchParams();
+    ["fbclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(function (k) { if (ctx[k]) q.set(k, ctx[k]); });
+    if (ctx.web_uid) q.set("web_uid", ctx.web_uid); if (variant) q.set("variant", variant.id); if (plan && plan.productId) q.set("plan", plan.productId); q.set("via", how);
+    track("store_click", { how: how, plan: plan ? plan.productId : null }); px("StoreClick", { how: how }, true);
+    setTimeout(function () { location.href = STORE_LINK + "?" + q.toString(); }, 150);   // let the beacons leave
+  }
   var ICONS = { a: "/img/atmo/icon-a.png", b: "/img/atmo/icon-b.png" };
   var SHOTS = ["01-today", "02-why", "03-checkin", "04-payoff", "05-patterns"].map(function (n) { return "/img/atmo/store/" + n + ".jpg"; });
   var ORB = "/img/atmo/orb-body.png";
@@ -307,7 +314,7 @@
         '<button class="cta" id="buy">' + esc(sel.cta || pw.cta) + '</button>' +
         '<p class="legal"><a href="' + esc(pw.termsURL || "/apps/solara/terms.html") + '">Terms</a> &nbsp; <a href="' + esc(pw.privacyURL || "/apps/solara/privacy.html") + '">Privacy</a> &nbsp; <a href="#" onclick="return false">Restore</a> &nbsp; <i>Auto-renews · Cancel anytime</i></p></div></div>');
       track("paywall_shown", { variant: variant.id, prev_seconds: lastStepAt ? Math.round((Date.now() - lastStepAt) / 100) / 10 : null }); px("PaywallView", {}, true);
-      var $c = document.getElementById("close"); if ($c) $c.onclick = function () { track("paywall_skipped", {}); renderWaitlist(null); };
+      var $c = document.getElementById("close"); if ($c) $c.onclick = function () { track("paywall_skipped", {}); STORE_LINK ? renderStoreGate() : renderWaitlist(null); };
       Array.prototype.forEach.call($screen.querySelectorAll(".plan"), function (b) {
         b.onclick = function () {
           Array.prototype.forEach.call($screen.querySelectorAll(".plan"), function (x) { x.classList.remove("on"); x.querySelector(".r").textContent = ""; });
@@ -321,13 +328,25 @@
       document.getElementById("buy").onclick = function () {
         track("purchase_started", { product: sel.productId, price: sel.fallbackPrice, variant: variant.id });
         px("InitiateCheckout", { content_ids: [sel.productId], content_type: "product", value: parseFloat(String(sel.fallbackPrice).replace(/[^0-9.]/g, "")) || 0, currency: "USD" });
-        if (STORE_LINK) { location.href = STORE_LINK; return; }
+        if (STORE_LINK) { goStore(sel, "buy"); return; }
         renderWaitlist(sel);
       };
     }
   };
 
-  // ---------- honest ending: the app is not in the store yet ----------
+  // ---------- post-launch ending after a paywall skip: plan is ready, get the app (free) ----------
+  function renderStoreGate() {
+    $back.classList.remove("on");
+    render('<div class="hero">' + orbHTML(70) + '</div><h1>Your plan is ready</h1>' +
+      '<p class="sub">Solara is free to start. Your answers are saved on this device — the app picks them up.</p>' +
+      '<div class="spacer"></div><div class="ctabar"><button class="cta" id="getapp">Get Solara on the App Store</button>' +
+      '<p class="tiny">Free download · optional subscription inside</p></div>', "c center wait");
+    track("quiz_complete", { variant: variant ? variant.id : null }); px("QuizComplete", {}, true);
+    try { localStorage.setItem("solara.try.answers", JSON.stringify(answers)); } catch (e) {}
+    document.getElementById("getapp").onclick = function () { goStore(null, "gate"); };
+  }
+
+  // ---------- pre-launch ending (kept for reference; unused while STORE_LINK is set) ----------
   var WAITLIST_ENDPOINT = "";   // optional second store for waitlist emails (Google Apps Script web app URL); empty = Mixpanel only
   var REASONS = [["price", "The price"], ["unsure", "Not sure it's for me"], ["try", "Want to try it first"], ["looking", "Just looking"]];
   function renderWaitlist(plan) {
