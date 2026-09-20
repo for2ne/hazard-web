@@ -33,7 +33,8 @@
     pixelId: "2131738047419101",                                          // Meta Pixel ID; empty = pixel off
     adaptyClick: "https://api-ua.adapty.io/api/v1/attribution/click",     // Adapty Attribution tracking link (created 20.09.2026)
     adaptyCid: "MTAxMDY6MTc1OTE6OTkz",
-    storeUrl: "https://apps.apple.com/app/id6802366596",                  // + "?pt=<provider>&ct=<batch>&mt=8" once the App Analytics campaign token exists
+    storeUrl: "https://apps.apple.com/app/apple-store/id6802366596",      // App Analytics campaign link: pt = provider token, ct = batch (utm_campaign)
+    providerToken: "123393606",
     delayMs: 1800
   };
   // Meta macros ({{ad.id}} …) only resolve on the ad's own destination URL, so the quiz/ad forwards them as query params
@@ -45,7 +46,8 @@
     q.set("campaign_id", g("campaign_id")); q.set("adset_id", g("adset_id")); q.set("ad_id", g("ad_id"));
     q.set("campaign_name", g("campaign_name", "utm_campaign")); q.set("adset_name", g("adset_name")); q.set("ad_name", g("ad_name", "utm_content"));
     ["fbclid", "web_uid", "variant", "plan", "via", "utm_source"].forEach(function (k) { if (params.get(k)) q.set(k, params.get(k)); });
-    q.set("redirect_url", CONFIG.storeUrl);
+    var ct = (g("ct", "utm_campaign") || "web").replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 40);   // ASC Campaigns row = batch
+    q.set("redirect_url", CONFIG.storeUrl + "?pt=" + CONFIG.providerToken + "&ct=" + ct + "&mt=8");
     return CONFIG.adaptyClick + "?" + q.toString();
   }
 </script>
