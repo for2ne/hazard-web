@@ -1,5 +1,5 @@
 {
- "version": 49,
+ "version": 50,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -395,7 +395,7 @@
      }
     ],
     "cta": "Try 7 Days Free",
-    "closeDelaySeconds": 2,
+    "closeDelaySeconds": 0,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
