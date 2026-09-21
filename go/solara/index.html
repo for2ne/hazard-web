@@ -46,6 +46,12 @@
     q.set("campaign_id", g("campaign_id")); q.set("adset_id", g("adset_id")); q.set("ad_id", g("ad_id"));
     q.set("campaign_name", g("campaign_name", "utm_campaign")); q.set("adset_name", g("adset_name")); q.set("ad_name", g("ad_name", "utm_content"));
     ["fbclid", "web_uid", "variant", "plan", "via", "utm_source"].forEach(function (k) { if (params.get(k)) q.set(k, params.get(k)); });
+    // Adapty passes arbitrary click params to the app ONLY via ios_deferred_data (verified on TestFlight 1.0.1, 21.09):
+    // one string → the app parses JSON. Keep it short: web_uid, variant, fbclid, plan, via, ad_name, campaign_name.
+    var deferred = {};
+    [["web_uid", "web_uid"], ["variant", "variant"], ["fbclid", "fbclid"], ["plan", "plan"], ["via", "via"]].forEach(function (kv) { if (params.get(kv[1])) deferred[kv[0]] = params.get(kv[1]); });
+    deferred.ad_name = g("ad_name", "utm_content") || undefined; deferred.campaign_name = g("campaign_name", "utm_campaign") || undefined;
+    q.set("ios_deferred_data", JSON.stringify(deferred));
     // Adapty delivers custom click data to the app ONLY via ios_deferred_data /
     // android_deferred_data (payload keys seen in prod 21.09); the app parses JSON.
     var deferred = {};
