@@ -1,5 +1,5 @@
 {
- "version": 48,
+ "version": 49,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -767,6 +767,588 @@
     ],
     "showTrialTimeline": true
    }
+  },
+  {
+   "id": "bridge-plan-ready",
+   "weight": 0,
+   "webWeight": 0,
+   "steps": [
+    {
+     "id": "plan-ready",
+     "type": "payoff",
+     "title": "Your plan is ready{withName|}",
+     "subtitle": "We kept your answers. One more detail and your first forecast is on its way.",
+     "cta": "Continue",
+     "artwork": "hero"
+    },
+    {
+     "id": "birthdate",
+     "type": "datePicker",
+     "title": "When were you born?",
+     "subtitle": "Why do we need this? Your birth date sets your physical, emotional and mental cycles — the personal half of your Energy Index. 🎂",
+     "cta": "Continue",
+     "footnote": "Biorhythm cycles computed from your birth date · never shared"
+    },
+    {
+     "id": "location",
+     "type": "permission",
+     "permission": "location",
+     "title": "Weather where you are",
+     "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
+     "cta": "Continue",
+     "footnote": "10,000+ weather stations · NOAA space-weather observatory",
+     "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
+     "imageStyle": "flood-top",
+     "imageHeight": 270
+    },
+    {
+     "id": "notifications",
+     "type": "permission",
+     "permission": "notifications",
+     "title": "Start mornings prepared",
+     "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
+     "cta": "Continue",
+     "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
+     "imageStyle": "flood-top",
+     "imageHeight": 285
+    },
+    {
+     "id": "paywall",
+     "type": "paywall",
+     "title": "Paywall"
+    }
+   ],
+   "paywall": {
+    "title": "Your Daily Guide to Your Energy",
+    "features": [
+     "Personal Energy Index, every day",
+     "Magnetic storm & pressure alerts",
+     "Apple Health attached to every log",
+     "Patterns verified on YOUR check-ins"
+    ],
+    "plans": [
+     {
+      "productId": "com.hazard.atmo.pro.yearly",
+      "title": "Yearly",
+      "fallbackPrice": "$49.99",
+      "periodLabel": "per year",
+      "badge": "SAVE 90%",
+      "isDefault": true,
+      "equivalent": "≈ $0.96 / week",
+      "note": "7 days free, then $49.99/year"
+     },
+     {
+      "productId": "com.hazard.atmo.pro.weekly",
+      "title": "Weekly",
+      "fallbackPrice": "$9.99",
+      "periodLabel": "per week",
+      "note": "3-day free trial"
+     },
+     {
+      "productId": "com.hazard.atmo.pro.lifetime",
+      "title": "Lifetime",
+      "fallbackPrice": "$129.99",
+      "periodLabel": "one-time",
+      "note": "Pay once, enjoy forever",
+      "badge": "FOREVER",
+      "cta": "Unlock Forever"
+     }
+    ],
+    "cta": "Try 7 Days Free",
+    "closeDelaySeconds": 2,
+    "skippable": true,
+    "includedTitle": "What's Included",
+    "included": [
+     "Energy Index ⚡",
+     "Storm Alerts",
+     "Sky Data",
+     "Apple Health",
+     "Moon Cycles",
+     "Biorhythms",
+     "Your Patterns",
+     "10 Weather Metrics",
+     "Check-ins",
+     "Air Quality"
+    ],
+    "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+    "termsURL": "https://hazard.studio/apps/solara/terms.html",
+    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+    "brandName": "Solara",
+    "brandBadge": "PLUS",
+    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+    "heroImageName": "SkyArtSunny",
+    "stats": [
+     {
+      "value": "10K+",
+      "label": "weather stations"
+     },
+     {
+      "value": "175",
+      "label": "countries"
+     },
+     {
+      "value": "24/7",
+      "label": "live sky data"
+     }
+    ],
+    "showTrialTimeline": true
+   }
+  },
+  {
+   "id": "short-v1",
+   "weight": 0,
+   "webWeight": 0,
+   "steps": [
+    {
+     "id": "goal",
+     "type": "singleChoice",
+     "title": "What brings you here?",
+     "subtitle": "We'll tune your daily reading around it. 🎯",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "energy",
+       "title": "More energy through the day",
+       "detail": "Morning guidance built around your energy peaks"
+      },
+      {
+       "id": "mood",
+       "title": "Steadier mood",
+       "detail": "We'll track what actually moves your mood"
+      },
+      {
+       "id": "sleep",
+       "title": "Better sleep",
+       "detail": "Evenings become your protected ritual"
+      },
+      {
+       "id": "self",
+       "title": "Understand my patterns",
+       "detail": "See what really moves your energy — proven on your own days"
+      }
+     ]
+    },
+    {
+     "id": "sensitivity",
+     "type": "singleChoice",
+     "title": "Do you feel the weather?",
+     "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep. 🌧️",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "often",
+       "title": "Yes, I feel them strongly"
+      },
+      {
+       "id": "sometimes",
+       "title": "Sometimes, I think so"
+      },
+      {
+       "id": "unsure",
+       "title": "Not sure — let's find out"
+      }
+     ]
+    },
+    {
+     "id": "symptoms",
+     "type": "multiChoice",
+     "title": "When a day goes sideways — what shows up?",
+     "subtitle": "Pick what you recognize. Solara checks it against real sky data — honestly. 📓",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "headache",
+       "title": "Headaches"
+      },
+      {
+       "id": "joints",
+       "title": "Joints or muscles ache"
+      },
+      {
+       "id": "heart",
+       "title": "Racing heart / pressure"
+      },
+      {
+       "id": "sleep",
+       "title": "Poor sleep"
+      },
+      {
+       "id": "anxiety",
+       "title": "Anxiety or restlessness"
+      },
+      {
+       "id": "fatigue",
+       "title": "Heavy fatigue"
+      },
+      {
+       "id": "mood",
+       "title": "Mood swings"
+      },
+      {
+       "id": "none",
+       "title": "Nothing specific"
+      }
+     ]
+    },
+    {
+     "id": "sleep",
+     "type": "singleChoice",
+     "title": "How's your sleep lately?",
+     "subtitle": "Sleep is the fastest tell of your energy rhythm. 🌙",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "deep",
+       "title": "Deep and steady"
+      },
+      {
+       "id": "mixed",
+       "title": "Depends on the day"
+      },
+      {
+       "id": "poor",
+       "title": "Restless more often than not"
+      },
+      {
+       "id": "unsure",
+       "title": "I honestly don't track it"
+      }
+     ]
+    },
+    {
+     "id": "name",
+     "type": "textInput",
+     "title": "What should we call you?",
+     "subtitle": "Your reading gets personal. ✨",
+     "placeholder": "Your name",
+     "optional": true,
+     "cta": "Continue"
+    },
+    {
+     "id": "birthdate",
+     "type": "datePicker",
+     "title": "When were you born?",
+     "subtitle": "Why do we need this? Your birth date sets your physical, emotional and mental cycles — the personal half of your Energy Index. 🎂",
+     "cta": "Continue",
+     "footnote": "Biorhythm cycles computed from your birth date · never shared"
+    },
+    {
+     "id": "personalizing",
+     "type": "progress",
+     "title": "Personalizing your energy profile…",
+     "tasks": [
+      "Reading local weather patterns",
+      "Tracking magnetic field activity",
+      "Calibrating your biorhythms",
+      "Crafting your daily reading"
+     ],
+     "facts": [
+      "Live NOAA space-weather feed",
+      "10,000+ weather stations worldwide",
+      "Moon phase at astronomical precision",
+      "Your answers never leave this device"
+     ],
+     "afterDone": "Your energy profile is ready"
+    },
+    {
+     "id": "location",
+     "type": "permission",
+     "permission": "location",
+     "title": "Weather where you are",
+     "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
+     "cta": "Continue",
+     "footnote": "10,000+ weather stations · NOAA space-weather observatory",
+     "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
+     "imageStyle": "flood-top",
+     "imageHeight": 270
+    },
+    {
+     "id": "health",
+     "type": "permission",
+     "permission": "health",
+     "title": "Let Solara feel your rhythm",
+     "subtitle": "With your permission, Solara attaches your sleep, steps and heart rhythm to every log. Read-only, never for ads.",
+     "cta": "Continue",
+     "footnote": "Read-only · your health data never leaves your phone for ads or analytics",
+     "imageURL": "https://hazard.studio/img/atmo/health-floodtop3.png",
+     "imageStyle": "flood-top",
+     "imageHeight": 270
+    },
+    {
+     "id": "notifications",
+     "type": "permission",
+     "permission": "notifications",
+     "title": "Start mornings prepared",
+     "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
+     "cta": "Continue",
+     "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
+     "imageStyle": "flood-top",
+     "imageHeight": 285
+    },
+    {
+     "id": "paywall",
+     "type": "paywall",
+     "title": "Paywall"
+    }
+   ],
+   "paywall": {
+    "title": "Your Daily Guide to Your Energy",
+    "features": [
+     "Personal Energy Index, every day",
+     "Magnetic storm & pressure alerts",
+     "Apple Health attached to every log",
+     "Patterns verified on YOUR check-ins"
+    ],
+    "plans": [
+     {
+      "productId": "com.hazard.atmo.pro.yearly",
+      "title": "Yearly",
+      "fallbackPrice": "$49.99",
+      "periodLabel": "per year",
+      "badge": "SAVE 90%",
+      "isDefault": true,
+      "equivalent": "≈ $0.96 / week",
+      "note": "7 days free, then $49.99/year"
+     },
+     {
+      "productId": "com.hazard.atmo.pro.weekly",
+      "title": "Weekly",
+      "fallbackPrice": "$9.99",
+      "periodLabel": "per week",
+      "note": "3-day free trial"
+     },
+     {
+      "productId": "com.hazard.atmo.pro.lifetime",
+      "title": "Lifetime",
+      "fallbackPrice": "$129.99",
+      "periodLabel": "one-time",
+      "note": "Pay once, enjoy forever",
+      "badge": "FOREVER",
+      "cta": "Unlock Forever"
+     }
+    ],
+    "cta": "Try 7 Days Free",
+    "closeDelaySeconds": 2,
+    "skippable": true,
+    "includedTitle": "What's Included",
+    "included": [
+     "Energy Index ⚡",
+     "Storm Alerts",
+     "Sky Data",
+     "Apple Health",
+     "Moon Cycles",
+     "Biorhythms",
+     "Your Patterns",
+     "10 Weather Metrics",
+     "Check-ins",
+     "Air Quality"
+    ],
+    "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+    "termsURL": "https://hazard.studio/apps/solara/terms.html",
+    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+    "brandName": "Solara",
+    "brandBadge": "PLUS",
+    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+    "heroImageName": "SkyArtSunny",
+    "stats": [
+     {
+      "value": "10K+",
+      "label": "weather stations"
+     },
+     {
+      "value": "175",
+      "label": "countries"
+     },
+     {
+      "value": "24/7",
+      "label": "live sky data"
+     }
+    ],
+    "showTrialTimeline": true
+   }
+  }
+ ],
+ "params": {
+  "weather.host": "",
+  "weather.aqHost": "",
+  "weather.apikey": ""
+ },
+ "paywalls": {
+  "web_cohort": {
+   "title": "Your plan is ready to start",
+   "features": [
+    "Personal Energy Index, every day",
+    "Magnetic storm & pressure alerts",
+    "Apple Health attached to every log",
+    "Patterns verified on YOUR check-ins"
+   ],
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.yearly",
+     "title": "Yearly",
+     "fallbackPrice": "$49.99",
+     "periodLabel": "per year",
+     "badge": "SAVE 90%",
+     "isDefault": true,
+     "equivalent": "≈ $0.96 / week",
+     "note": "7 days free, then $49.99/year"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "note": "3-day free trial"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.lifetime",
+     "title": "Lifetime",
+     "fallbackPrice": "$129.99",
+     "periodLabel": "one-time",
+     "note": "Pay once, enjoy forever",
+     "badge": "FOREVER",
+     "cta": "Unlock Forever"
+    }
+   ],
+   "cta": "Try 7 Days Free",
+   "closeDelaySeconds": 2,
+   "skippable": true,
+   "includedTitle": "What's Included",
+   "included": [
+    "Energy Index ⚡",
+    "Storm Alerts",
+    "Sky Data",
+    "Apple Health",
+    "Moon Cycles",
+    "Biorhythms",
+    "Your Patterns",
+    "10 Weather Metrics",
+    "Check-ins",
+    "Air Quality"
+   ],
+   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "brandName": "Solara",
+   "brandBadge": "PLUS",
+   "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+   "heroImageName": "SkyArtSunny",
+   "stats": [
+    {
+     "value": "10K+",
+     "label": "weather stations"
+    },
+    {
+     "value": "175",
+     "label": "countries"
+    },
+    {
+     "value": "24/7",
+     "label": "live sky data"
+    }
+   ],
+   "showTrialTimeline": true
+  },
+  "paid_default": {
+   "title": "Your Daily Guide to Your Energy",
+   "features": [
+    "Personal Energy Index, every day",
+    "Magnetic storm & pressure alerts",
+    "Apple Health attached to every log",
+    "Patterns verified on YOUR check-ins"
+   ],
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.yearly",
+     "title": "Yearly",
+     "fallbackPrice": "$49.99",
+     "periodLabel": "per year",
+     "badge": "SAVE 90%",
+     "isDefault": true,
+     "equivalent": "≈ $0.96 / week",
+     "note": "7 days free, then $49.99/year"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "note": "3-day free trial"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.lifetime",
+     "title": "Lifetime",
+     "fallbackPrice": "$129.99",
+     "periodLabel": "one-time",
+     "note": "Pay once, enjoy forever",
+     "badge": "FOREVER",
+     "cta": "Unlock Forever"
+    }
+   ],
+   "cta": "Try 7 Days Free",
+   "closeDelaySeconds": 3,
+   "skippable": true,
+   "includedTitle": "What's Included",
+   "included": [
+    "Energy Index ⚡",
+    "Storm Alerts",
+    "Sky Data",
+    "Apple Health",
+    "Moon Cycles",
+    "Biorhythms",
+    "Your Patterns",
+    "10 Weather Metrics",
+    "Check-ins",
+    "Air Quality"
+   ],
+   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "brandName": "Solara",
+   "brandBadge": "PLUS",
+   "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+   "heroImageName": "SkyArtSunny",
+   "stats": [
+    {
+     "value": "10K+",
+     "label": "weather stations"
+    },
+    {
+     "value": "175",
+     "label": "countries"
+    },
+    {
+     "value": "24/7",
+     "label": "live sky data"
+    }
+   ],
+   "showTrialTimeline": true
+  }
+ },
+ "routing": [
+  {
+   "when": {
+    "source": "web"
+   },
+   "variant": "bridge-plan-ready",
+   "paywall": "web_cohort"
+  },
+  {
+   "when": {
+    "source": "meta"
+   },
+   "variant": "short-v1",
+   "paywall": "paid_default"
+  },
+  {
+   "when": {
+    "source": "asa"
+   },
+   "variant": "control"
+  },
+  {
+   "default": true,
+   "variant": "control"
   }
  ]
 }
