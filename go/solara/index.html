@@ -46,6 +46,13 @@
     q.set("campaign_id", g("campaign_id")); q.set("adset_id", g("adset_id")); q.set("ad_id", g("ad_id"));
     q.set("campaign_name", g("campaign_name", "utm_campaign")); q.set("adset_name", g("adset_name")); q.set("ad_name", g("ad_name", "utm_content"));
     ["fbclid", "web_uid", "variant", "plan", "via", "utm_source"].forEach(function (k) { if (params.get(k)) q.set(k, params.get(k)); });
+    // Adapty delivers custom click data to the app ONLY via ios_deferred_data /
+    // android_deferred_data (payload keys seen in prod 21.09); the app parses JSON.
+    var deferred = {};
+    ["web_uid", "variant", "fbclid", "plan", "via"].forEach(function (k) { if (params.get(k)) deferred[k] = params.get(k); });
+    deferred.ad_name = g("ad_name", "utm_content"); deferred.campaign_name = g("campaign_name", "utm_campaign");
+    var deferredJson = JSON.stringify(deferred);
+    q.set("ios_deferred_data", deferredJson); q.set("android_deferred_data", deferredJson);
     var ct = (g("ct", "utm_campaign") || "web").replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 40);   // ASC Campaigns row = batch
     q.set("redirect_url", CONFIG.storeUrl + "?pt=" + CONFIG.providerToken + "&ct=" + ct + "&mt=8");
     return CONFIG.adaptyClick + "?" + q.toString();
