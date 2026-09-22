@@ -25,37 +25,42 @@
   .fine a{color:var(--soft)}
 </style>
 <script>
-  // Bridge page for paid campaigns (Meta → web → store). Branded, 1–3 s,
-  // visible fallback button — never a bare 0-second redirect (those get
-  // flagged as bridge pages). All click params (fbclid, utm_*) are forwarded
-  // to the target so the tracking link keeps the attribution context.
+  // Bridge page for paid campaigns (Meta → web → store). Branded, visible fallback
+  // button — never a bare 0-second redirect (those get flagged as bridge pages).
+  // It waits until the Meta Pixel has really run (it sets _fbp, and _fbc when the URL
+  // carries fbclid) so the landing page view is registered and the click id travels
+  // on to Adapty / the app — but never longer than maxWaitMs (22.09: was a fixed 1.8 s,
+  // which sometimes redirected before the pixel loaded → lost fbc → Meta can't attribute
+  // Adapty's CAPI events to the click). All click params (fbclid, utm_*) are forwarded.
   var CONFIG = {
     pixelId: "2131738047419101",                                          // Meta Pixel ID; empty = pixel off
     adaptyClick: "https://api-ua.adapty.io/api/v1/attribution/click",     // Adapty Attribution tracking link (created 20.09.2026)
     adaptyCid: "MTAxMDY6MTc1OTE6OTkz",
     storeUrl: "https://apps.apple.com/app/apple-store/id6802366596",      // App Analytics campaign link: pt = provider token, ct = batch (utm_campaign)
     providerToken: "123393606",
-    delayMs: 1800
+    minWaitMs: 1200,        // keep the branded screen visible at least this long
+    maxWaitMs: 7000         // hard cap: redirect even if the pixel never loads (blockers, slow in-app browser)
   };
   // Meta macros ({{ad.id}} …) only resolve on the ad's own destination URL, so the quiz/ad forwards them as query params
   // (campaign_id, adset_id, ad_id, campaign_name, adset_name; ad_name = utm_content) and this page rebuilds the Adapty link.
-  function buildTarget(params) {
+  function buildTarget(params, ids) {
+    ids = ids || {};
     var g = function (k, alt) { return params.get(k) || (alt ? params.get(alt) : "") || ""; };
     var q = new URLSearchParams();
     q.set("adpt_cid", CONFIG.adaptyCid);
     q.set("campaign_id", g("campaign_id")); q.set("adset_id", g("adset_id")); q.set("ad_id", g("ad_id"));
     q.set("campaign_name", g("campaign_name", "utm_campaign")); q.set("adset_name", g("adset_name")); q.set("ad_name", g("ad_name", "utm_content"));
     ["fbclid", "web_uid", "variant", "plan", "via", "utm_source"].forEach(function (k) { if (params.get(k)) q.set(k, params.get(k)); });
-    // Adapty passes arbitrary click params to the app ONLY via ios_deferred_data (verified on TestFlight 1.0.1, 21.09):
-    // one string → the app parses JSON. Keep it short: web_uid, variant, fbclid, plan, via, ad_name, campaign_name.
-    var deferred = {};
-    [["web_uid", "web_uid"], ["variant", "variant"], ["fbclid", "fbclid"], ["plan", "plan"], ["via", "via"]].forEach(function (kv) { if (params.get(kv[1])) deferred[kv[0]] = params.get(kv[1]); });
-    deferred.ad_name = g("ad_name", "utm_content") || undefined; deferred.campaign_name = g("campaign_name", "utm_campaign") || undefined;
-    q.set("ios_deferred_data", JSON.stringify(deferred));
-    // Adapty delivers custom click data to the app ONLY via ios_deferred_data /
-    // android_deferred_data (payload keys seen in prod 21.09); the app parses JSON.
+    // Meta browser/click ids from the pixel cookies (_fbp / _fbc) — passed on so Adapty (if it forwards them) or our own
+    // CAPI relay can send events with fbc/fbp = click-level attribution instead of IP/UA matching.
+    if (ids.fbp) q.set("fbp", ids.fbp);
+    if (ids.fbc) q.set("fbc", ids.fbc);
+    // Adapty delivers custom click data to the app ONLY via ios_deferred_data / android_deferred_data
+    // (verified on TestFlight 1.0.1, 21.09): one string → the app parses JSON. Keep it short.
     var deferred = {};
     ["web_uid", "variant", "fbclid", "plan", "via"].forEach(function (k) { if (params.get(k)) deferred[k] = params.get(k); });
+    if (ids.fbc) deferred.fbc = ids.fbc;
+    if (ids.fbp) deferred.fbp = ids.fbp;
     deferred.ad_name = g("ad_name", "utm_content"); deferred.campaign_name = g("campaign_name", "utm_campaign");
     var deferredJson = JSON.stringify(deferred);
     q.set("ios_deferred_data", deferredJson); q.set("android_deferred_data", deferredJson);
@@ -85,8 +90,15 @@
       });
     } catch (e) {}
 
-    var url = buildTarget(params);
-    document.getElementById("go").href = url;
+    function cookie(name) { var m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : ""; }
+    var start = Date.now(), fired = false;
+    document.getElementById("go").href = buildTarget(params);          // fallback button works from the first frame
+    function go() {
+      if (fired) return; fired = true;
+      var url = buildTarget(params, { fbp: cookie("_fbp"), fbc: cookie("_fbc") });
+      document.getElementById("go").href = url;
+      location.replace(url);
+    }
 
     if (CONFIG.pixelId) {
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -99,7 +111,15 @@
       fbq('trackCustom', 'StoreRedirect', { app: 'solara' });
     }
 
-    setTimeout(function () { location.replace(url); }, CONFIG.delayMs);
+    // Redirect as soon as the pixel has done its job (cookies present) and the branded screen was up ≥ minWaitMs;
+    // otherwise at maxWaitMs regardless. Without a pixel there is nothing to wait for.
+    var needFbc = params.has("fbclid");
+    (function tick() {
+      var elapsed = Date.now() - start;
+      var ready = !!cookie("_fbp") && (!needFbc || !!cookie("_fbc"));
+      if (!CONFIG.pixelId || (ready && elapsed >= CONFIG.minWaitMs) || elapsed >= CONFIG.maxWaitMs) return go();
+      setTimeout(tick, 100);
+    })();
   })();
 </script>
 </body></html>
