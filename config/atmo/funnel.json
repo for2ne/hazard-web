@@ -1,5 +1,5 @@
 {
- "version": 52,
+ "version": 53,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -362,7 +362,7 @@
     "title": "Your Daily Guide to Your Energy",
     "features": [
      "Personal Energy Index, every day",
-     "Magnetic storm & pressure alerts",
+     "Magnetic storm & pressure forecast",
      "Apple Health attached to every log",
      "Patterns verified on YOUR check-ins"
     ],
@@ -696,7 +696,7 @@
     "title": "Your Daily Guide to Your Energy",
     "features": [
      "Personal Energy Index, every day",
-     "Magnetic storm & pressure alerts",
+     "Magnetic storm & pressure forecast",
      "Apple Health attached to every log",
      "Patterns verified on YOUR check-ins"
     ],
@@ -822,7 +822,7 @@
     "title": "Your Daily Guide to Your Energy",
     "features": [
      "Personal Energy Index, every day",
-     "Magnetic storm & pressure alerts",
+     "Magnetic storm & pressure forecast",
      "Apple Health attached to every log",
      "Patterns verified on YOUR check-ins"
     ],
@@ -1095,7 +1095,7 @@
     "title": "Your Daily Guide to Your Energy",
     "features": [
      "Personal Energy Index, every day",
-     "Magnetic storm & pressure alerts",
+     "Magnetic storm & pressure forecast",
      "Apple Health attached to every log",
      "Patterns verified on YOUR check-ins"
     ],
@@ -1522,7 +1522,7 @@
     "title": "Your Daily Guide to Your Energy",
     "features": [
      "Personal Energy Index, every day",
-     "Magnetic storm & pressure alerts",
+     "Magnetic storm & pressure forecast",
      "Apple Health attached to every log",
      "Patterns verified on YOUR check-ins"
     ],
@@ -1607,7 +1607,7 @@
    "title": "Your plan is ready to start",
    "features": [
     "Personal Energy Index, every day",
-    "Magnetic storm & pressure alerts",
+    "Magnetic storm & pressure forecast",
     "Apple Health attached to every log",
     "Patterns verified on YOUR check-ins"
    ],
@@ -1682,7 +1682,7 @@
    "title": "Your Daily Guide to Your Energy",
    "features": [
     "Personal Energy Index, every day",
-    "Magnetic storm & pressure alerts",
+    "Magnetic storm & pressure forecast",
     "Apple Health attached to every log",
     "Patterns verified on YOUR check-ins"
    ],
