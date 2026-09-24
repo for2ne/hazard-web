@@ -4,7 +4,8 @@
  "flags": {
   "settings.replay": false,
   "settings.upgrade": true,
-  "mystic.module": false
+  "mystic.module": false,
+  "preview_enabled": true
  },
  "variants": [
   {
