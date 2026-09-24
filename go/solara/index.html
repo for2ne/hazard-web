@@ -69,7 +69,9 @@
     var deferredJson = JSON.stringify(deferred);
     q.set("ios_deferred_data", deferredJson); q.set("android_deferred_data", deferredJson);
     var ct = (g("ct", "utm_campaign") || "web").replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 40);   // ASC Campaigns row = batch
-    q.set("redirect_url", CONFIG.storeUrl + "?pt=" + CONFIG.providerToken + "&ct=" + ct + "&mt=8");
+    // Custom Product Page per creative angle: the ad link carries ppid=<appCustomProductPages id> (asc/cpp.py list); absent → default page
+    var ppid = (params.get("ppid") || "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 40);
+    q.set("redirect_url", CONFIG.storeUrl + "?pt=" + CONFIG.providerToken + "&ct=" + ct + "&mt=8" + (ppid ? "&ppid=" + ppid : ""));
     return CONFIG.adaptyClick + "?" + q.toString();
   }
 </script>
