@@ -1,5 +1,5 @@
 {
- "version": 51,
+ "version": 52,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -1759,8 +1759,9 @@
    "when": {
     "source": "web"
    },
-   "variant": "bridge-plan-ready",
-   "paywall": "web_cohort"
+   "variant": "paid-full-v1",
+   "paywall": "paid_default",
+   "_doc": "24.09: the bridge mints web_uid for every ad click → the app classifies it as source=web; the quiz is off, so web = paid direct → full onboarding. Restore bridge-plan-ready only when the quiz sends via=quiz."
   },
   {
    "when": {

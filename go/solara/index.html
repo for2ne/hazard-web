@@ -50,7 +50,10 @@
     q.set("adpt_cid", CONFIG.adaptyCid);
     q.set("campaign_id", g("campaign_id")); q.set("adset_id", g("adset_id")); q.set("ad_id", g("ad_id"));
     q.set("campaign_name", g("campaign_name", "utm_campaign")); q.set("adset_name", g("adset_name")); q.set("ad_name", g("ad_name", "utm_content"));
-    ["fbclid", "web_uid", "variant", "plan", "via", "utm_source"].forEach(function (k) { if (params.get(k)) q.set(k, params.get(k)); });
+    ["fbclid", "variant", "plan", "via", "utm_source"].forEach(function (k) { if (params.get(k)) q.set(k, params.get(k)); });
+    // One person = one id from the click on: the quiz used to mint web_uid; since 22.09 ads go straight through this bridge,
+    // so the bridge mints it (or reuses the quiz's / a previous visit's). The app identifies Mixpanel + Adapty with it (1.0.1).
+    q.set("web_uid", ids.web_uid || params.get("web_uid") || "");
     // Meta browser/click ids from the pixel cookies (_fbp / _fbc) — passed on so Adapty (if it forwards them) or our own
     // CAPI relay can send events with fbc/fbp = click-level attribution instead of IP/UA matching.
     if (ids.fbp) q.set("fbp", ids.fbp);
@@ -58,7 +61,8 @@
     // Adapty delivers custom click data to the app ONLY via ios_deferred_data / android_deferred_data
     // (verified on TestFlight 1.0.1, 21.09): one string → the app parses JSON. Keep it short.
     var deferred = {};
-    ["web_uid", "variant", "fbclid", "plan", "via"].forEach(function (k) { if (params.get(k)) deferred[k] = params.get(k); });
+    ["variant", "fbclid", "plan", "via"].forEach(function (k) { if (params.get(k)) deferred[k] = params.get(k); });
+    deferred.web_uid = ids.web_uid || params.get("web_uid") || undefined;
     if (ids.fbc) deferred.fbc = ids.fbc;
     if (ids.fbp) deferred.fbp = ids.fbp;
     deferred.ad_name = g("ad_name", "utm_content"); deferred.campaign_name = g("campaign_name", "utm_campaign");
@@ -91,12 +95,30 @@
     } catch (e) {}
 
     function cookie(name) { var m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : ""; }
+    function uuid() { try { return crypto.randomUUID(); } catch (e) { return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0; return (c === "x" ? r : (r & 3 | 8)).toString(16); }); } }
+    // web_uid: from the quiz if it sent one, else the one this browser got before, else a fresh UUID (kept for repeat clicks)
+    var webUid = params.get("web_uid") || "";
+    try { webUid = webUid || localStorage.getItem("solara.web_uid") || ""; if (!webUid) { webUid = uuid(); } localStorage.setItem("solara.web_uid", webUid); } catch (e) { webUid = webUid || uuid(); }
     var start = Date.now(), fired = false;
-    document.getElementById("go").href = buildTarget(params);          // fallback button works from the first frame
+    document.getElementById("go").href = buildTarget(params, { web_uid: webUid });   // fallback button works from the first frame
+    // Mixpanel: the click itself, under the same id the app will identify with (HTTP track, no SDK → nothing to wait for)
+    function mpTrack(event, props) {
+      try {
+        var payload = { event: event, properties: Object.assign({ token: "c9185ff47f6235fb0e3e3effab258e84", distinct_id: webUid, $insert_id: webUid.slice(0, 8) + "-" + Date.now(),
+          platform: "web", page: "bridge", utm_source: params.get("utm_source") || "", utm_campaign: params.get("utm_campaign") || "", utm_content: params.get("utm_content") || "",
+          ad_name: params.get("ad_name") || params.get("utm_content") || "", campaign_id: params.get("campaign_id") || "", adset_id: params.get("adset_id") || "", ad_id: params.get("ad_id") || "",
+          has_fbclid: params.has("fbclid"), web_uid: webUid }, props || {}) };
+        var body = "data=" + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload))))) + "&ip=1";
+        if (navigator.sendBeacon) navigator.sendBeacon("https://api.mixpanel.com/track", new Blob([body], { type: "application/x-www-form-urlencoded" }));
+        else fetch("https://api.mixpanel.com/track", { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, keepalive: true });
+      } catch (e) {}
+    }
+    mpTrack("bridge_view");
     function go() {
       if (fired) return; fired = true;
-      var url = buildTarget(params, { fbp: cookie("_fbp"), fbc: cookie("_fbc") });
+      var url = buildTarget(params, { fbp: cookie("_fbp"), fbc: cookie("_fbc"), web_uid: webUid });
       document.getElementById("go").href = url;
+      mpTrack("bridge_redirect", { waited_ms: Date.now() - start, has_fbc: !!cookie("_fbc"), has_fbp: !!cookie("_fbp") });
       location.replace(url);
     }
 
