@@ -70,7 +70,7 @@
     q.set("ios_deferred_data", deferredJson); q.set("android_deferred_data", deferredJson);
     var ct = (g("ct", "utm_campaign") || "web").replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 40);   // ASC Campaigns row = batch
     // Custom Product Page per creative angle: the ad link carries ppid=<appCustomProductPages id> (asc/cpp.py list); absent → default page
-    var ppid = (params.get("ppid") || "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 40);
+    var ppid = (params.get("ppid") || "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 40) || ids.ppid || "";
     q.set("redirect_url", CONFIG.storeUrl + "?pt=" + CONFIG.providerToken + "&ct=" + ct + "&mt=8" + (ppid ? "&ppid=" + ppid : ""));
     return CONFIG.adaptyClick + "?" + q.toString();
   }
@@ -101,15 +101,23 @@
     // web_uid: from the quiz if it sent one, else the one this browser got before, else a fresh UUID (kept for repeat clicks)
     var webUid = params.get("web_uid") || "";
     try { webUid = webUid || localStorage.getItem("solara.web_uid") || ""; if (!webUid) { webUid = uuid(); } localStorage.setItem("solara.web_uid", webUid); } catch (e) { webUid = webUid || uuid(); }
+    // CPP by creative angle (approved 25.09). 50/50 holdout by web_uid so the lift is measurable: arm "cpp" → angle page, "default" → main page.
+    var CPP = { energy: "0b1b36a4-1479-4867-878c-dc58a8fa6293", storm: "a4f40798-8ccc-4b0c-88ea-8b11e57825e4", sky: "eb3c1d2f-3be1-408f-bcab-4946855b136d" };
+    var HOOK_ANGLE = { h01: "energy", h02: "energy", h03: "energy", h05: "energy", h04: "storm", n01: "storm", n02: "storm", n03: "storm", n04: "storm" };
+    var adName = params.get("ad_name") || params.get("utm_content") || "";
+    var hook = (adName.match(/-(h\d\d|n\d\d)-/) || [])[1] || "";
+    var angle = HOOK_ANGLE[hook] || (adName ? "energy" : "");
+    var cppArm = params.get("ppid") ? "explicit" : (angle ? (parseInt(webUid.replace(/-/g, "").slice(-2), 16) % 2 ? "cpp" : "default") : "none");
+    var cppPpid = cppArm === "cpp" ? CPP[angle] : "";
     var start = Date.now(), fired = false;
-    document.getElementById("go").href = buildTarget(params, { web_uid: webUid });   // fallback button works from the first frame
+    document.getElementById("go").href = buildTarget(params, { web_uid: webUid, ppid: cppPpid });   // fallback button works from the first frame
     // Mixpanel: the click itself, under the same id the app will identify with (HTTP track, no SDK → nothing to wait for)
     function mpTrack(event, props) {
       try {
         var payload = { event: event, properties: Object.assign({ token: "c9185ff47f6235fb0e3e3effab258e84", distinct_id: webUid, $insert_id: webUid.slice(0, 8) + "-" + Date.now(),
           platform: "web", page: "bridge", utm_source: params.get("utm_source") || "", utm_campaign: params.get("utm_campaign") || "", utm_content: params.get("utm_content") || "",
           ad_name: params.get("ad_name") || params.get("utm_content") || "", campaign_id: params.get("campaign_id") || "", adset_id: params.get("adset_id") || "", ad_id: params.get("ad_id") || "",
-          has_fbclid: params.has("fbclid"), web_uid: webUid }, props || {}) };
+          has_fbclid: params.has("fbclid"), web_uid: webUid, cpp_arm: cppArm, cpp_angle: angle, ppid: cppPpid || params.get("ppid") || "" }, props || {}) };
         var body = "data=" + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload))))) + "&ip=1";
         if (navigator.sendBeacon) navigator.sendBeacon("https://api.mixpanel.com/track", new Blob([body], { type: "application/x-www-form-urlencoded" }));
         else fetch("https://api.mixpanel.com/track", { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, keepalive: true });
@@ -118,7 +126,7 @@
     mpTrack("bridge_view");
     function go() {
       if (fired) return; fired = true;
-      var url = buildTarget(params, { fbp: cookie("_fbp"), fbc: cookie("_fbc"), web_uid: webUid });
+      var url = buildTarget(params, { fbp: cookie("_fbp"), fbc: cookie("_fbc"), web_uid: webUid, ppid: cppPpid });
       document.getElementById("go").href = url;
       mpTrack("bridge_redirect", { waited_ms: Date.now() - start, has_fbc: !!cookie("_fbc"), has_fbp: !!cookie("_fbp") });
       location.replace(url);
