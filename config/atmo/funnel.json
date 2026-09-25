@@ -1,11 +1,11 @@
 {
- "version": 53,
+ "version": 54,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
   "settings.upgrade": true,
   "mystic.module": false,
-  "preview_enabled": false
+  "preview_enabled": true
  },
  "variants": [
   {
@@ -1737,6 +1737,219 @@
    "brandName": "Solara",
    "brandBadge": "PLUS",
    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+   "heroImageName": "SkyArtSunny",
+   "stats": [
+    {
+     "value": "10K+",
+     "label": "weather stations"
+    },
+    {
+     "value": "175",
+     "label": "countries"
+    },
+    {
+     "value": "24/7",
+     "label": "live sky data"
+    }
+   ],
+   "showTrialTimeline": true
+  },
+  "preview_end": {
+   "title": "Keep your full forecast",
+   "features": [
+    "Tomorrow's forecast and the week ahead",
+    "Every factor behind your number",
+    "Patterns verified on YOUR check-ins",
+    "Storm & pressure alerts the night before"
+   ],
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.yearly",
+     "title": "Yearly",
+     "fallbackPrice": "$49.99",
+     "periodLabel": "per year",
+     "badge": "SAVE 90%",
+     "isDefault": true,
+     "equivalent": "≈ $0.96 / week",
+     "note": "7 days free, then $49.99/year"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.monthly",
+     "title": "Monthly",
+     "fallbackPrice": "$14.99",
+     "periodLabel": "per month",
+     "note": "3-day free trial, then $14.99/month"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "note": "3-day free trial"
+    }
+   ],
+   "cta": "Try 7 Days Free",
+   "skippable": true,
+   "includedTitle": "What's Included",
+   "included": [
+    "Tomorrow's Forecast",
+    "7-Day Outlook",
+    "Every Factor",
+    "Your Patterns",
+    "Storm Alerts",
+    "Energy Index ⚡",
+    "Apple Health",
+    "Check-ins",
+    "Air Quality"
+   ],
+   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "brandName": "Solara",
+   "brandBadge": "PLUS",
+   "subtitle": "Tomorrow, the week ahead, every factor behind your number and your patterns — back in one tap.",
+   "heroImageName": "SkyArtSunny",
+   "stats": [
+    {
+     "value": "10K+",
+     "label": "weather stations"
+    },
+    {
+     "value": "175",
+     "label": "countries"
+    },
+    {
+     "value": "24/7",
+     "label": "live sky data"
+    }
+   ],
+   "showTrialTimeline": true
+  },
+  "lock": {
+   "title": "See what's coming",
+   "features": [
+    "Tomorrow's forecast and the week ahead",
+    "Every factor behind your number",
+    "Patterns verified on YOUR check-ins",
+    "Storm & pressure alerts the night before"
+   ],
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.yearly",
+     "title": "Yearly",
+     "fallbackPrice": "$49.99",
+     "periodLabel": "per year",
+     "badge": "SAVE 90%",
+     "isDefault": true,
+     "equivalent": "≈ $0.96 / week",
+     "note": "7 days free, then $49.99/year"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.monthly",
+     "title": "Monthly",
+     "fallbackPrice": "$14.99",
+     "periodLabel": "per month",
+     "note": "3-day free trial, then $14.99/month"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "note": "3-day free trial"
+    }
+   ],
+   "cta": "Try 7 Days Free",
+   "skippable": true,
+   "includedTitle": "What's Included",
+   "included": [
+    "Tomorrow's Forecast",
+    "7-Day Outlook",
+    "Every Factor",
+    "Your Patterns",
+    "Storm Alerts",
+    "Energy Index ⚡",
+    "Apple Health",
+    "Check-ins",
+    "Air Quality"
+   ],
+   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "brandName": "Solara",
+   "brandBadge": "PLUS",
+   "subtitle": "Plan around tomorrow and the week ahead — with every factor and your own patterns.",
+   "heroImageName": "SkyArtSunny",
+   "stats": [
+    {
+     "value": "10K+",
+     "label": "weather stations"
+    },
+    {
+     "value": "175",
+     "label": "countries"
+    },
+    {
+     "value": "24/7",
+     "label": "live sky data"
+    }
+   ],
+   "showTrialTimeline": true
+  },
+  "match_peak": {
+   "title": "Solara felt it. Tomorrow's ready",
+   "features": [
+    "Tomorrow's forecast and the week ahead",
+    "Every factor behind your number",
+    "Patterns verified on YOUR check-ins",
+    "Storm & pressure alerts the night before"
+   ],
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.yearly",
+     "title": "Yearly",
+     "fallbackPrice": "$49.99",
+     "periodLabel": "per year",
+     "badge": "SAVE 90%",
+     "isDefault": true,
+     "equivalent": "≈ $0.96 / week",
+     "note": "7 days free, then $49.99/year"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.monthly",
+     "title": "Monthly",
+     "fallbackPrice": "$14.99",
+     "periodLabel": "per month",
+     "note": "3-day free trial, then $14.99/month"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "note": "3-day free trial"
+    }
+   ],
+   "cta": "Try 7 Days Free",
+   "skippable": true,
+   "includedTitle": "What's Included",
+   "included": [
+    "Tomorrow's Forecast",
+    "7-Day Outlook",
+    "Every Factor",
+    "Your Patterns",
+    "Storm Alerts",
+    "Energy Index ⚡",
+    "Apple Health",
+    "Check-ins",
+    "Air Quality"
+   ],
+   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "brandName": "Solara",
+   "brandBadge": "PLUS",
+   "subtitle": "Today's forecast matched how you felt — see tomorrow and the week ahead before they happen.",
    "heroImageName": "SkyArtSunny",
    "stats": [
     {
