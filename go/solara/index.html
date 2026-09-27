@@ -117,7 +117,7 @@
         var payload = { event: event, properties: Object.assign({ token: "c9185ff47f6235fb0e3e3effab258e84", distinct_id: webUid, $insert_id: webUid.slice(0, 8) + "-" + Date.now(),
           platform: "web", page: "bridge", utm_source: params.get("utm_source") || "", utm_campaign: params.get("utm_campaign") || "", utm_content: params.get("utm_content") || "",
           ad_name: params.get("ad_name") || params.get("utm_content") || "", campaign_id: params.get("campaign_id") || "", adset_id: params.get("adset_id") || "", ad_id: params.get("ad_id") || "",
-          has_fbclid: params.has("fbclid"), web_uid: webUid, cpp_arm: cppArm, cpp_angle: angle, ppid: cppPpid || params.get("ppid") || "" }, props || {}) };
+          has_fbclid: params.has("fbclid"), web_uid: webUid, ua: navigator.userAgent.slice(0, 300), cpp_arm: cppArm, cpp_angle: angle, ppid: cppPpid || params.get("ppid") || "" }, props || {}) };
         var body = "data=" + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload))))) + "&ip=1";
         if (navigator.sendBeacon) navigator.sendBeacon("https://api.mixpanel.com/track", new Blob([body], { type: "application/x-www-form-urlencoded" }));
         else fetch("https://api.mixpanel.com/track", { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, keepalive: true });
