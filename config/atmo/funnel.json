@@ -1,5 +1,5 @@
 {
- "version": 55,
+ "version": 56,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -107,7 +107,7 @@
       {
        "id": "weather",
        "title": "Weather & storm days",
-       "detail": "Pressure and Kp alerts before they hit you"
+       "detail": "Pressure and Kp in your forecast before they hit you"
       },
       {
        "id": "stress",
@@ -345,7 +345,7 @@
      "after": [
       "Know your day in advance",
       "See what moves your energy",
-      "Alerts before the storm hits",
+      "A heads-up in tomorrow's forecast",
       "Guidance tuned to YOU"
      ],
      "cta": "I Want This",
@@ -360,63 +360,52 @@
     }
    ],
    "paywall": {
-    "title": "Your Daily Guide to Your Energy",
+    "title": "Know your heavy days before they happen",
     "features": [
-     "Personal Energy Index, every day",
-     "Magnetic storm & pressure forecast",
-     "Apple Health attached to every log",
-     "Patterns verified on YOUR check-ins"
+     "Tomorrow's forecast and the 7-day outlook",
+     "Every factor in real numbers: pressure, storms, humidity",
+     "Patterns from your own check-ins",
+     "Apple Health next to every day"
     ],
     "plans": [
+     {
+      "productId": "com.hazard.atmo.pro.weekly",
+      "title": "Weekly",
+      "fallbackPrice": "$9.99",
+      "periodLabel": "per week",
+      "isDefault": true,
+      "note": "3 days free, then $9.99/week"
+     },
      {
       "productId": "com.hazard.atmo.pro.yearly",
       "title": "Yearly",
       "fallbackPrice": "$49.99",
       "periodLabel": "per year",
       "badge": "SAVE 90%",
-      "isDefault": true,
       "equivalent": "≈ $0.96 / week",
-      "note": "7 days free, then $49.99/year"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.weekly",
-      "title": "Weekly",
-      "fallbackPrice": "$9.99",
-      "periodLabel": "per week",
-      "note": "3-day free trial"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.lifetime",
-      "title": "Lifetime",
-      "fallbackPrice": "$129.99",
-      "periodLabel": "one-time",
-      "note": "Pay once, enjoy forever",
-      "badge": "FOREVER",
-      "cta": "Unlock Forever"
+      "note": "3 days free, then $49.99/year"
      }
     ],
-    "cta": "Try 7 Days Free",
+    "cta": "Try 3 Days Free",
     "closeDelaySeconds": 2,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
-     "Storm Alerts",
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
-     "Biorhythms",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -519,7 +508,7 @@
       {
        "id": "weather",
        "title": "Weather & storm days",
-       "detail": "Pressure and Kp alerts before they hit you"
+       "detail": "Pressure and Kp in your forecast before they hit you"
       },
       {
        "id": "stress",
@@ -679,7 +668,7 @@
      "after": [
       "Know your day in advance",
       "See what moves your energy",
-      "Alerts before the storm hits",
+      "A heads-up in tomorrow's forecast",
       "Guidance tuned to YOU"
      ],
      "cta": "I Want This",
@@ -694,63 +683,52 @@
     }
    ],
    "paywall": {
-    "title": "Your Daily Guide to Your Energy",
+    "title": "Know your heavy days before they happen",
     "features": [
-     "Personal Energy Index, every day",
-     "Magnetic storm & pressure forecast",
-     "Apple Health attached to every log",
-     "Patterns verified on YOUR check-ins"
+     "Tomorrow's forecast and the 7-day outlook",
+     "Every factor in real numbers: pressure, storms, humidity",
+     "Patterns from your own check-ins",
+     "Apple Health next to every day"
     ],
     "plans": [
+     {
+      "productId": "com.hazard.atmo.pro.weekly",
+      "title": "Weekly",
+      "fallbackPrice": "$9.99",
+      "periodLabel": "per week",
+      "isDefault": true,
+      "note": "3 days free, then $9.99/week"
+     },
      {
       "productId": "com.hazard.atmo.pro.yearly",
       "title": "Yearly",
       "fallbackPrice": "$49.99",
       "periodLabel": "per year",
       "badge": "SAVE 90%",
-      "isDefault": true,
       "equivalent": "≈ $0.96 / week",
-      "note": "7 days free, then $49.99/year"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.weekly",
-      "title": "Weekly",
-      "fallbackPrice": "$9.99",
-      "periodLabel": "per week",
-      "note": "3-day free trial"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.lifetime",
-      "title": "Lifetime",
-      "fallbackPrice": "$129.99",
-      "periodLabel": "one-time",
-      "note": "Pay once, enjoy forever",
-      "badge": "FOREVER",
-      "cta": "Unlock Forever"
+      "note": "3 days free, then $49.99/year"
      }
     ],
-    "cta": "Try 7 Days Free",
+    "cta": "Try 3 Days Free",
     "closeDelaySeconds": 2,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
-     "Storm Alerts",
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
-     "Biorhythms",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -820,63 +798,52 @@
     }
    ],
    "paywall": {
-    "title": "Your Daily Guide to Your Energy",
+    "title": "Know your heavy days before they happen",
     "features": [
-     "Personal Energy Index, every day",
-     "Magnetic storm & pressure forecast",
-     "Apple Health attached to every log",
-     "Patterns verified on YOUR check-ins"
+     "Tomorrow's forecast and the 7-day outlook",
+     "Every factor in real numbers: pressure, storms, humidity",
+     "Patterns from your own check-ins",
+     "Apple Health next to every day"
     ],
     "plans": [
+     {
+      "productId": "com.hazard.atmo.pro.weekly",
+      "title": "Weekly",
+      "fallbackPrice": "$9.99",
+      "periodLabel": "per week",
+      "isDefault": true,
+      "note": "3 days free, then $9.99/week"
+     },
      {
       "productId": "com.hazard.atmo.pro.yearly",
       "title": "Yearly",
       "fallbackPrice": "$49.99",
       "periodLabel": "per year",
       "badge": "SAVE 90%",
-      "isDefault": true,
       "equivalent": "≈ $0.96 / week",
-      "note": "7 days free, then $49.99/year"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.weekly",
-      "title": "Weekly",
-      "fallbackPrice": "$9.99",
-      "periodLabel": "per week",
-      "note": "3-day free trial"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.lifetime",
-      "title": "Lifetime",
-      "fallbackPrice": "$129.99",
-      "periodLabel": "one-time",
-      "note": "Pay once, enjoy forever",
-      "badge": "FOREVER",
-      "cta": "Unlock Forever"
+      "note": "3 days free, then $49.99/year"
      }
     ],
-    "cta": "Try 7 Days Free",
+    "cta": "Try 3 Days Free",
     "closeDelaySeconds": 2,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
-     "Storm Alerts",
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
-     "Biorhythms",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -1093,63 +1060,52 @@
     }
    ],
    "paywall": {
-    "title": "Your Daily Guide to Your Energy",
+    "title": "Know your heavy days before they happen",
     "features": [
-     "Personal Energy Index, every day",
-     "Magnetic storm & pressure forecast",
-     "Apple Health attached to every log",
-     "Patterns verified on YOUR check-ins"
+     "Tomorrow's forecast and the 7-day outlook",
+     "Every factor in real numbers: pressure, storms, humidity",
+     "Patterns from your own check-ins",
+     "Apple Health next to every day"
     ],
     "plans": [
+     {
+      "productId": "com.hazard.atmo.pro.weekly",
+      "title": "Weekly",
+      "fallbackPrice": "$9.99",
+      "periodLabel": "per week",
+      "isDefault": true,
+      "note": "3 days free, then $9.99/week"
+     },
      {
       "productId": "com.hazard.atmo.pro.yearly",
       "title": "Yearly",
       "fallbackPrice": "$49.99",
       "periodLabel": "per year",
       "badge": "SAVE 90%",
-      "isDefault": true,
       "equivalent": "≈ $0.96 / week",
-      "note": "7 days free, then $49.99/year"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.weekly",
-      "title": "Weekly",
-      "fallbackPrice": "$9.99",
-      "periodLabel": "per week",
-      "note": "3-day free trial"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.lifetime",
-      "title": "Lifetime",
-      "fallbackPrice": "$129.99",
-      "periodLabel": "one-time",
-      "note": "Pay once, enjoy forever",
-      "badge": "FOREVER",
-      "cta": "Unlock Forever"
+      "note": "3 days free, then $49.99/year"
      }
     ],
-    "cta": "Try 7 Days Free",
+    "cta": "Try 3 Days Free",
     "closeDelaySeconds": 2,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
-     "Storm Alerts",
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
-     "Biorhythms",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -1267,7 +1223,7 @@
       {
        "id": "weather",
        "title": "Weather & storm days",
-       "detail": "Pressure and Kp alerts before they hit you"
+       "detail": "Pressure and Kp in your forecast before they hit you"
       },
       {
        "id": "stress",
@@ -1505,7 +1461,7 @@
      "after": [
       "Know your day in advance",
       "See what moves your energy",
-      "Alerts before the storm hits",
+      "A heads-up in tomorrow's forecast",
       "Guidance tuned to YOU"
      ],
      "cta": "I Want This",
@@ -1520,63 +1476,52 @@
     }
    ],
    "paywall": {
-    "title": "Your Daily Guide to Your Energy",
+    "title": "Know your heavy days before they happen",
     "features": [
-     "Personal Energy Index, every day",
-     "Magnetic storm & pressure forecast",
-     "Apple Health attached to every log",
-     "Patterns verified on YOUR check-ins"
+     "Tomorrow's forecast and the 7-day outlook",
+     "Every factor in real numbers: pressure, storms, humidity",
+     "Patterns from your own check-ins",
+     "Apple Health next to every day"
     ],
     "plans": [
+     {
+      "productId": "com.hazard.atmo.pro.weekly",
+      "title": "Weekly",
+      "fallbackPrice": "$9.99",
+      "periodLabel": "per week",
+      "isDefault": true,
+      "note": "3 days free, then $9.99/week"
+     },
      {
       "productId": "com.hazard.atmo.pro.yearly",
       "title": "Yearly",
       "fallbackPrice": "$49.99",
       "periodLabel": "per year",
       "badge": "SAVE 90%",
-      "isDefault": true,
       "equivalent": "≈ $0.96 / week",
-      "note": "7 days free, then $49.99/year"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.weekly",
-      "title": "Weekly",
-      "fallbackPrice": "$9.99",
-      "periodLabel": "per week",
-      "note": "3-day free trial"
-     },
-     {
-      "productId": "com.hazard.atmo.pro.lifetime",
-      "title": "Lifetime",
-      "fallbackPrice": "$129.99",
-      "periodLabel": "one-time",
-      "note": "Pay once, enjoy forever",
-      "badge": "FOREVER",
-      "cta": "Unlock Forever"
+      "note": "3 days free, then $49.99/year"
      }
     ],
-    "cta": "Try 7 Days Free",
+    "cta": "Try 3 Days Free",
     "closeDelaySeconds": 2,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
-     "Storm Alerts",
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
-     "Biorhythms",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -1614,49 +1559,38 @@
    ],
    "plans": [
     {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "isDefault": true,
+     "note": "3 days free, then $9.99/week"
+    },
+    {
      "productId": "com.hazard.atmo.pro.yearly",
      "title": "Yearly",
      "fallbackPrice": "$49.99",
      "periodLabel": "per year",
      "badge": "SAVE 90%",
-     "isDefault": true,
      "equivalent": "≈ $0.96 / week",
-     "note": "7 days free, then $49.99/year"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.weekly",
-     "title": "Weekly",
-     "fallbackPrice": "$9.99",
-     "periodLabel": "per week",
-     "note": "3-day free trial"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.lifetime",
-     "title": "Lifetime",
-     "fallbackPrice": "$129.99",
-     "periodLabel": "one-time",
-     "note": "Pay once, enjoy forever",
-     "badge": "FOREVER",
-     "cta": "Unlock Forever"
+     "note": "3 days free, then $49.99/year"
     }
    ],
-   "cta": "Try 7 Days Free",
+   "cta": "Try 3 Days Free",
    "closeDelaySeconds": 2,
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
     "Energy Index ⚡",
-    "Storm Alerts",
     "Sky Data",
     "Apple Health",
     "Moon Cycles",
-    "Biorhythms",
     "Your Patterns",
     "10 Weather Metrics",
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1680,63 +1614,52 @@
    "showTrialTimeline": true
   },
   "paid_default": {
-   "title": "Your Daily Guide to Your Energy",
+   "title": "Know your heavy days before they happen",
    "features": [
-    "Personal Energy Index, every day",
-    "Magnetic storm & pressure forecast",
-    "Apple Health attached to every log",
-    "Patterns verified on YOUR check-ins"
+    "Tomorrow's forecast and the 7-day outlook",
+    "Every factor in real numbers: pressure, storms, humidity",
+    "Patterns from your own check-ins",
+    "Apple Health next to every day"
    ],
    "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "isDefault": true,
+     "note": "3 days free, then $9.99/week"
+    },
     {
      "productId": "com.hazard.atmo.pro.yearly",
      "title": "Yearly",
      "fallbackPrice": "$49.99",
      "periodLabel": "per year",
      "badge": "SAVE 90%",
-     "isDefault": true,
      "equivalent": "≈ $0.96 / week",
-     "note": "7 days free, then $49.99/year"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.weekly",
-     "title": "Weekly",
-     "fallbackPrice": "$9.99",
-     "periodLabel": "per week",
-     "note": "3-day free trial"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.lifetime",
-     "title": "Lifetime",
-     "fallbackPrice": "$129.99",
-     "periodLabel": "one-time",
-     "note": "Pay once, enjoy forever",
-     "badge": "FOREVER",
-     "cta": "Unlock Forever"
+     "note": "3 days free, then $49.99/year"
     }
    ],
-   "cta": "Try 7 Days Free",
+   "cta": "Try 3 Days Free",
    "closeDelaySeconds": 6,
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
     "Energy Index ⚡",
-    "Storm Alerts",
     "Sky Data",
     "Apple Health",
     "Moon Cycles",
-    "Biorhythms",
     "Your Patterns",
     "10 Weather Metrics",
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
    "brandBadge": "PLUS",
-   "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
+   "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
    "heroImageName": "SkyArtSunny",
    "stats": [
     {
@@ -1760,35 +1683,28 @@
     "Tomorrow's forecast and the week ahead",
     "Every factor behind your number",
     "Patterns verified on YOUR check-ins",
-    "Storm & pressure alerts the night before"
+    "Apple Health next to every day"
    ],
    "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "isDefault": true,
+     "note": "3 days free, then $9.99/week"
+    },
     {
      "productId": "com.hazard.atmo.pro.yearly",
      "title": "Yearly",
      "fallbackPrice": "$49.99",
      "periodLabel": "per year",
      "badge": "SAVE 90%",
-     "isDefault": true,
      "equivalent": "≈ $0.96 / week",
-     "note": "7 days free, then $49.99/year"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.monthly",
-     "title": "Monthly",
-     "fallbackPrice": "$14.99",
-     "periodLabel": "per month",
-     "note": "3-day free trial, then $14.99/month"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.weekly",
-     "title": "Weekly",
-     "fallbackPrice": "$9.99",
-     "periodLabel": "per week",
-     "note": "3-day free trial"
+     "note": "3 days free, then $49.99/year"
     }
    ],
-   "cta": "Try 7 Days Free",
+   "cta": "Try 3 Days Free",
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
@@ -1796,13 +1712,12 @@
     "7-Day Outlook",
     "Every Factor",
     "Your Patterns",
-    "Storm Alerts",
     "Energy Index ⚡",
     "Apple Health",
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1831,35 +1746,28 @@
     "Tomorrow's forecast and the week ahead",
     "Every factor behind your number",
     "Patterns verified on YOUR check-ins",
-    "Storm & pressure alerts the night before"
+    "Apple Health next to every day"
    ],
    "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "isDefault": true,
+     "note": "3 days free, then $9.99/week"
+    },
     {
      "productId": "com.hazard.atmo.pro.yearly",
      "title": "Yearly",
      "fallbackPrice": "$49.99",
      "periodLabel": "per year",
      "badge": "SAVE 90%",
-     "isDefault": true,
      "equivalent": "≈ $0.96 / week",
-     "note": "7 days free, then $49.99/year"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.monthly",
-     "title": "Monthly",
-     "fallbackPrice": "$14.99",
-     "periodLabel": "per month",
-     "note": "3-day free trial, then $14.99/month"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.weekly",
-     "title": "Weekly",
-     "fallbackPrice": "$9.99",
-     "periodLabel": "per week",
-     "note": "3-day free trial"
+     "note": "3 days free, then $49.99/year"
     }
    ],
-   "cta": "Try 7 Days Free",
+   "cta": "Try 3 Days Free",
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
@@ -1867,13 +1775,12 @@
     "7-Day Outlook",
     "Every Factor",
     "Your Patterns",
-    "Storm Alerts",
     "Energy Index ⚡",
     "Apple Health",
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1902,35 +1809,28 @@
     "Tomorrow's forecast and the week ahead",
     "Every factor behind your number",
     "Patterns verified on YOUR check-ins",
-    "Storm & pressure alerts the night before"
+    "Apple Health next to every day"
    ],
    "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "isDefault": true,
+     "note": "3 days free, then $9.99/week"
+    },
     {
      "productId": "com.hazard.atmo.pro.yearly",
      "title": "Yearly",
      "fallbackPrice": "$49.99",
      "periodLabel": "per year",
      "badge": "SAVE 90%",
-     "isDefault": true,
      "equivalent": "≈ $0.96 / week",
-     "note": "7 days free, then $49.99/year"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.monthly",
-     "title": "Monthly",
-     "fallbackPrice": "$14.99",
-     "periodLabel": "per month",
-     "note": "3-day free trial, then $14.99/month"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.weekly",
-     "title": "Weekly",
-     "fallbackPrice": "$9.99",
-     "periodLabel": "per week",
-     "note": "3-day free trial"
+     "note": "3 days free, then $49.99/year"
     }
    ],
-   "cta": "Try 7 Days Free",
+   "cta": "Try 3 Days Free",
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
@@ -1938,13 +1838,12 @@
     "7-Day Outlook",
     "Every Factor",
     "Your Patterns",
-    "Storm Alerts",
     "Energy Index ⚡",
     "Apple Health",
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "7 days free, then $49.99/year. Cancel anytime in the App Store.",
+   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
