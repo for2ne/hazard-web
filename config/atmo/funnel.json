@@ -1,5 +1,5 @@
 {
- "version": 56,
+ "version": 57,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -107,7 +107,7 @@
       {
        "id": "weather",
        "title": "Weather & storm days",
-       "detail": "Pressure and Kp in your forecast before they hit you"
+       "detail": "Pressure and Kp alerts before they hit you"
       },
       {
        "id": "stress",
@@ -345,7 +345,7 @@
      "after": [
       "Know your day in advance",
       "See what moves your energy",
-      "A heads-up in tomorrow's forecast",
+      "Alerts before the storm hits",
       "Guidance tuned to YOU"
      ],
      "cta": "I Want This",
@@ -365,7 +365,7 @@
      "Tomorrow's forecast and the 7-day outlook",
      "Every factor in real numbers: pressure, storms, humidity",
      "Patterns from your own check-ins",
-     "Apple Health next to every day"
+     "Storm & pressure heads-up the night before"
     ],
     "plans": [
      {
@@ -395,6 +395,7 @@
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
+     "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
@@ -508,7 +509,7 @@
       {
        "id": "weather",
        "title": "Weather & storm days",
-       "detail": "Pressure and Kp in your forecast before they hit you"
+       "detail": "Pressure and Kp alerts before they hit you"
       },
       {
        "id": "stress",
@@ -668,7 +669,7 @@
      "after": [
       "Know your day in advance",
       "See what moves your energy",
-      "A heads-up in tomorrow's forecast",
+      "Alerts before the storm hits",
       "Guidance tuned to YOU"
      ],
      "cta": "I Want This",
@@ -688,7 +689,7 @@
      "Tomorrow's forecast and the 7-day outlook",
      "Every factor in real numbers: pressure, storms, humidity",
      "Patterns from your own check-ins",
-     "Apple Health next to every day"
+     "Storm & pressure heads-up the night before"
     ],
     "plans": [
      {
@@ -718,6 +719,7 @@
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
+     "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
@@ -803,7 +805,7 @@
      "Tomorrow's forecast and the 7-day outlook",
      "Every factor in real numbers: pressure, storms, humidity",
      "Patterns from your own check-ins",
-     "Apple Health next to every day"
+     "Storm & pressure heads-up the night before"
     ],
     "plans": [
      {
@@ -833,6 +835,7 @@
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
+     "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
@@ -1065,7 +1068,7 @@
      "Tomorrow's forecast and the 7-day outlook",
      "Every factor in real numbers: pressure, storms, humidity",
      "Patterns from your own check-ins",
-     "Apple Health next to every day"
+     "Storm & pressure heads-up the night before"
     ],
     "plans": [
      {
@@ -1095,6 +1098,7 @@
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
+     "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
@@ -1223,7 +1227,7 @@
       {
        "id": "weather",
        "title": "Weather & storm days",
-       "detail": "Pressure and Kp in your forecast before they hit you"
+       "detail": "Pressure and Kp alerts before they hit you"
       },
       {
        "id": "stress",
@@ -1461,7 +1465,7 @@
      "after": [
       "Know your day in advance",
       "See what moves your energy",
-      "A heads-up in tomorrow's forecast",
+      "Alerts before the storm hits",
       "Guidance tuned to YOU"
      ],
      "cta": "I Want This",
@@ -1481,7 +1485,7 @@
      "Tomorrow's forecast and the 7-day outlook",
      "Every factor in real numbers: pressure, storms, humidity",
      "Patterns from your own check-ins",
-     "Apple Health next to every day"
+     "Storm & pressure heads-up the night before"
     ],
     "plans": [
      {
@@ -1511,6 +1515,7 @@
      "Sky Data",
      "Apple Health",
      "Moon Cycles",
+     "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
      "Check-ins",
@@ -1555,7 +1560,7 @@
     "Personal Energy Index, every day",
     "Magnetic storm & pressure forecast",
     "Apple Health attached to every log",
-    "Patterns verified on YOUR check-ins"
+    "Storm & pressure heads-up the night before"
    ],
    "plans": [
     {
@@ -1585,6 +1590,7 @@
     "Sky Data",
     "Apple Health",
     "Moon Cycles",
+    "Storm Alerts",
     "Your Patterns",
     "10 Weather Metrics",
     "Check-ins",
@@ -1619,7 +1625,7 @@
     "Tomorrow's forecast and the 7-day outlook",
     "Every factor in real numbers: pressure, storms, humidity",
     "Patterns from your own check-ins",
-    "Apple Health next to every day"
+    "Storm & pressure heads-up the night before"
    ],
    "plans": [
     {
@@ -1649,6 +1655,7 @@
     "Sky Data",
     "Apple Health",
     "Moon Cycles",
+    "Storm Alerts",
     "Your Patterns",
     "10 Weather Metrics",
     "Check-ins",
@@ -1683,7 +1690,7 @@
     "Tomorrow's forecast and the week ahead",
     "Every factor behind your number",
     "Patterns verified on YOUR check-ins",
-    "Apple Health next to every day"
+    "Storm & pressure heads-up the night before"
    ],
    "plans": [
     {
@@ -1712,6 +1719,7 @@
     "7-Day Outlook",
     "Every Factor",
     "Your Patterns",
+    "Storm Alerts",
     "Energy Index ⚡",
     "Apple Health",
     "Check-ins",
@@ -1746,7 +1754,7 @@
     "Tomorrow's forecast and the week ahead",
     "Every factor behind your number",
     "Patterns verified on YOUR check-ins",
-    "Apple Health next to every day"
+    "Storm & pressure heads-up the night before"
    ],
    "plans": [
     {
@@ -1775,6 +1783,7 @@
     "7-Day Outlook",
     "Every Factor",
     "Your Patterns",
+    "Storm Alerts",
     "Energy Index ⚡",
     "Apple Health",
     "Check-ins",
@@ -1809,7 +1818,7 @@
     "Tomorrow's forecast and the week ahead",
     "Every factor behind your number",
     "Patterns verified on YOUR check-ins",
-    "Apple Health next to every day"
+    "Storm & pressure heads-up the night before"
    ],
    "plans": [
     {
@@ -1838,6 +1847,7 @@
     "7-Day Outlook",
     "Every Factor",
     "Your Patterns",
+    "Storm Alerts",
     "Energy Index ⚡",
     "Apple Health",
     "Check-ins",
