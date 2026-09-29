@@ -1,5 +1,5 @@
 {
- "version": 57,
+ "version": 58,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -387,7 +387,7 @@
      }
     ],
     "cta": "Try 3 Days Free",
-    "closeDelaySeconds": 2,
+    "closeDelaySeconds": 0,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
@@ -711,7 +711,7 @@
      }
     ],
     "cta": "Try 3 Days Free",
-    "closeDelaySeconds": 2,
+    "closeDelaySeconds": 0,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
@@ -827,7 +827,7 @@
      }
     ],
     "cta": "Try 3 Days Free",
-    "closeDelaySeconds": 2,
+    "closeDelaySeconds": 0,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
@@ -1090,7 +1090,7 @@
      }
     ],
     "cta": "Try 3 Days Free",
-    "closeDelaySeconds": 2,
+    "closeDelaySeconds": 0,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
@@ -1507,7 +1507,7 @@
      }
     ],
     "cta": "Try 3 Days Free",
-    "closeDelaySeconds": 2,
+    "closeDelaySeconds": 0,
     "skippable": true,
     "includedTitle": "What's Included",
     "included": [
@@ -1582,7 +1582,7 @@
     }
    ],
    "cta": "Try 3 Days Free",
-   "closeDelaySeconds": 2,
+   "closeDelaySeconds": 0,
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
@@ -1647,7 +1647,7 @@
     }
    ],
    "cta": "Try 3 Days Free",
-   "closeDelaySeconds": 6,
+   "closeDelaySeconds": 0,
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
@@ -1746,7 +1746,8 @@
      "label": "live sky data"
     }
    ],
-   "showTrialTimeline": true
+   "showTrialTimeline": true,
+   "closeDelaySeconds": 0
   },
   "lock": {
    "title": "See what's coming",
@@ -1810,7 +1811,8 @@
      "label": "live sky data"
     }
    ],
-   "showTrialTimeline": true
+   "showTrialTimeline": true,
+   "closeDelaySeconds": 0
   },
   "match_peak": {
    "title": "Solara felt it. Tomorrow's ready",
@@ -1874,7 +1876,8 @@
      "label": "live sky data"
     }
    ],
-   "showTrialTimeline": true
+   "showTrialTimeline": true,
+   "closeDelaySeconds": 0
   }
  },
  "routing": [
