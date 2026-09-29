@@ -1,5 +1,5 @@
 {
- "version": 59,
+ "version": 60,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -360,12 +360,12 @@
     }
    ],
    "paywall": {
-    "title": "Know your heavy days before they happen",
+    "title": "Headaches, achy joints, heavy days — see them coming",
     "features": [
-     "Tomorrow's forecast and the 7-day outlook",
-     "Every factor in real numbers: pressure, storms, humidity",
-     "Patterns from your own check-ins",
-     "Storm & pressure heads-up the night before"
+     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "A heads-up the night before a pressure drop or storm",
+     "Your own triggers: which weather comes before your headaches or joint pain",
+     "A 7-day outlook to plan around your heavy days"
     ],
     "plans": [
      {
@@ -406,7 +406,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
+    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -684,12 +684,12 @@
     }
    ],
    "paywall": {
-    "title": "Know your heavy days before they happen",
+    "title": "Headaches, achy joints, heavy days — see them coming",
     "features": [
-     "Tomorrow's forecast and the 7-day outlook",
-     "Every factor in real numbers: pressure, storms, humidity",
-     "Patterns from your own check-ins",
-     "Storm & pressure heads-up the night before"
+     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "A heads-up the night before a pressure drop or storm",
+     "Your own triggers: which weather comes before your headaches or joint pain",
+     "A 7-day outlook to plan around your heavy days"
     ],
     "plans": [
      {
@@ -730,7 +730,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
+    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -800,12 +800,12 @@
     }
    ],
    "paywall": {
-    "title": "Know your heavy days before they happen",
+    "title": "Headaches, achy joints, heavy days — see them coming",
     "features": [
-     "Tomorrow's forecast and the 7-day outlook",
-     "Every factor in real numbers: pressure, storms, humidity",
-     "Patterns from your own check-ins",
-     "Storm & pressure heads-up the night before"
+     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "A heads-up the night before a pressure drop or storm",
+     "Your own triggers: which weather comes before your headaches or joint pain",
+     "A 7-day outlook to plan around your heavy days"
     ],
     "plans": [
      {
@@ -846,7 +846,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
+    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -1063,12 +1063,12 @@
     }
    ],
    "paywall": {
-    "title": "Know your heavy days before they happen",
+    "title": "Headaches, achy joints, heavy days — see them coming",
     "features": [
-     "Tomorrow's forecast and the 7-day outlook",
-     "Every factor in real numbers: pressure, storms, humidity",
-     "Patterns from your own check-ins",
-     "Storm & pressure heads-up the night before"
+     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "A heads-up the night before a pressure drop or storm",
+     "Your own triggers: which weather comes before your headaches or joint pain",
+     "A 7-day outlook to plan around your heavy days"
     ],
     "plans": [
      {
@@ -1109,7 +1109,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
+    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -1480,12 +1480,12 @@
     }
    ],
    "paywall": {
-    "title": "Know your heavy days before they happen",
+    "title": "Headaches, achy joints, heavy days — see them coming",
     "features": [
-     "Tomorrow's forecast and the 7-day outlook",
-     "Every factor in real numbers: pressure, storms, humidity",
-     "Patterns from your own check-ins",
-     "Storm & pressure heads-up the night before"
+     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "A heads-up the night before a pressure drop or storm",
+     "Your own triggers: which weather comes before your headaches or joint pain",
+     "A 7-day outlook to plan around your heavy days"
     ],
     "plans": [
      {
@@ -1526,7 +1526,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
+    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -1620,12 +1620,12 @@
    "showTrialTimeline": false
   },
   "paid_default": {
-   "title": "Know your heavy days before they happen",
+   "title": "Headaches, achy joints, heavy days — see them coming",
    "features": [
-    "Tomorrow's forecast and the 7-day outlook",
-    "Every factor in real numbers: pressure, storms, humidity",
-    "Patterns from your own check-ins",
-    "Storm & pressure heads-up the night before"
+    "Tomorrow's risk: pressure, storms, humidity in real numbers",
+    "A heads-up the night before a pressure drop or storm",
+    "Your own triggers: which weather comes before your headaches or joint pain",
+    "A 7-day outlook to plan around your heavy days"
    ],
    "plans": [
     {
@@ -1666,7 +1666,7 @@
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
    "brandBadge": "PLUS",
-   "subtitle": "Pressure, magnetic storms and humidity turned into one personal forecast — today, tomorrow and the week ahead.",
+   "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
    "heroImageName": "SkyArtSunny",
    "stats": [
     {
