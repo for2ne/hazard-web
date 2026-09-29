@@ -1,5 +1,5 @@
 {
- "version": 58,
+ "version": 59,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -401,7 +401,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -422,7 +422,7 @@
       "label": "live sky data"
      }
     ],
-    "showTrialTimeline": true
+    "showTrialTimeline": false
    },
    "webWeight": 1
   },
@@ -725,7 +725,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -746,7 +746,7 @@
       "label": "live sky data"
      }
     ],
-    "showTrialTimeline": true
+    "showTrialTimeline": false
    }
   },
   {
@@ -841,7 +841,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -862,7 +862,7 @@
       "label": "live sky data"
      }
     ],
-    "showTrialTimeline": true
+    "showTrialTimeline": false
    }
   },
   {
@@ -1104,7 +1104,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -1125,7 +1125,7 @@
       "label": "live sky data"
      }
     ],
-    "showTrialTimeline": true
+    "showTrialTimeline": false
    }
   },
   {
@@ -1521,7 +1521,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -1542,7 +1542,7 @@
       "label": "live sky data"
      }
     ],
-    "showTrialTimeline": true
+    "showTrialTimeline": false
    },
    "webWeight": 0,
    "_doc": "Full 20-step onboarding for paid cohorts (direct-to-store ads, ASA). Same steps as control; paywall placement paid_default overrides close delay (6 s) and tapToBuy. Added 24.09.2026 after the web quiz was dropped."
@@ -1596,7 +1596,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1617,7 +1617,7 @@
      "label": "live sky data"
     }
    ],
-   "showTrialTimeline": true
+   "showTrialTimeline": false
   },
   "paid_default": {
    "title": "Know your heavy days before they happen",
@@ -1661,7 +1661,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1682,7 +1682,7 @@
      "label": "live sky data"
     }
    ],
-   "showTrialTimeline": true
+   "showTrialTimeline": false
   },
   "preview_end": {
    "title": "Keep your full forecast",
@@ -1725,7 +1725,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1746,7 +1746,7 @@
      "label": "live sky data"
     }
    ],
-   "showTrialTimeline": true,
+   "showTrialTimeline": false,
    "closeDelaySeconds": 0
   },
   "lock": {
@@ -1790,7 +1790,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1811,7 +1811,7 @@
      "label": "live sky data"
     }
    ],
-   "showTrialTimeline": true,
+   "showTrialTimeline": false,
    "closeDelaySeconds": 0
   },
   "match_peak": {
@@ -1855,7 +1855,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free, then billed as shown. Cancel anytime in the App Store before the trial ends.",
+   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1876,7 +1876,7 @@
      "label": "live sky data"
     }
    ],
-   "showTrialTimeline": true,
+   "showTrialTimeline": false,
    "closeDelaySeconds": 0
   }
  },
