@@ -1,11 +1,11 @@
 {
- "version": 60,
+ "version": 61,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
   "settings.upgrade": true,
   "mystic.module": false,
-  "preview_enabled": true
+  "preview_enabled": false
  },
  "variants": [
   {
