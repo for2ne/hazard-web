@@ -1,5 +1,5 @@
 {
- "version": 63,
+ "version": 64,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -15,53 +15,53 @@
     {
      "id": "welcome",
      "type": "info",
-     "title": "Your day, decoded",
-     "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your body's rhythms to guide every day.",
-     "cta": "Begin the Journey",
+     "title": "Your pain forecast",
+     "subtitle": "Pressure drops, storms and humidity hit many people as headaches, achy joints and heavy days. Solara warns you before they do.",
+     "cta": "Get Started",
      "artwork": "hero"
     },
     {
      "id": "goal",
      "type": "singleChoice",
-     "title": "What brings you here?",
-     "subtitle": "We'll tune your daily reading around it. 🎯",
+     "title": "What would you like help with?",
+     "subtitle": "Your forecast will focus on it. 🎯",
      "cta": "Continue",
      "options": [
       {
        "id": "energy",
-       "title": "More energy through the day",
-       "detail": "Morning guidance built around your energy peaks"
+       "title": "Fewer headache days",
+       "detail": "Know the headache-risk days in advance"
       },
       {
        "id": "mood",
-       "title": "Steadier mood",
-       "detail": "We'll track what actually moves your mood"
+       "title": "Less anxiety & low mood",
+       "detail": "See which weather sets you on edge"
       },
       {
        "id": "sleep",
        "title": "Better sleep",
-       "detail": "Evenings become your protected ritual"
+       "detail": "Spot the nights the weather will disturb"
       },
       {
        "id": "self",
-       "title": "Understand my patterns",
-       "detail": "See what really moves your energy — proven on your own days"
+       "title": "Understand my triggers",
+       "detail": "Find what really sets off your bad days — proven on your own data"
       }
      ]
     },
     {
      "id": "goal-ack",
      "type": "payoff",
-     "title": "Great choice{withName|}",
-     "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
+     "title": "Got it{withName|}",
+     "subtitle": "Your forecast will focus on it. A few quick questions and it becomes yours.",
      "cta": "Let's Go",
      "artwork": "hero"
     },
     {
      "id": "value-guidance",
      "type": "info",
-     "title": "Daily guidance, tailored to you",
-     "subtitle": "Micro-insights, focus and gentle advice — curated for this very day, from real sky data.",
+     "title": "Know before it hits",
+     "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a heavy day never catches you off guard.",
      "cta": "Continue",
      "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
      "imageStyle": "flood"
@@ -69,13 +69,13 @@
     {
      "id": "sensitivity",
      "type": "singleChoice",
-     "title": "Do you feel the weather?",
-     "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep. 🌧️",
+     "title": "Are you weather-sensitive?",
+     "subtitle": "Many people feel a pressure drop or a storm before the sky changes — as headaches, aching joints or fatigue. 🌧️",
      "cta": "Continue",
      "options": [
       {
        "id": "often",
-       "title": "Yes, I feel them strongly"
+       "title": "Yes, I feel the weather strongly"
       },
       {
        "id": "sometimes",
@@ -90,37 +90,37 @@
     {
      "id": "drain",
      "type": "singleChoice",
-     "title": "What drains your energy most?",
-     "subtitle": "We'll build your daily reading to protect exactly that. 🔋",
+     "title": "What usually sets off your bad days?",
+     "subtitle": "Solara will watch it alongside the weather. 🔍",
      "cta": "Continue",
      "options": [
       {
        "id": "overthinking",
-       "title": "Overthinking & worry",
-       "detail": "Your reading will flag high-tension days in advance"
+       "title": "Stress & worry",
+       "detail": "We'll flag high-tension days in advance"
       },
       {
        "id": "sleep",
        "title": "Poor sleep",
-       "detail": "Evening guidance will guard your wind-down"
+       "detail": "We'll track how weather and sleep add up"
       },
       {
        "id": "weather",
-       "title": "Weather & storm days",
-       "detail": "Pressure and Kp alerts before they hit you"
+       "title": "Weather changes",
+       "detail": "Pressure and storm alerts the evening before"
       },
       {
        "id": "stress",
-       "title": "Stress & mood swings",
-       "detail": "Daily focus tuned to steady your rhythm"
+       "title": "Not sure yet",
+       "detail": "Your check-ins will show it within a few weeks"
       }
      ]
     },
     {
      "id": "symptoms",
      "type": "multiChoice",
-     "title": "When a day goes sideways — what shows up?",
-     "subtitle": "Pick what you recognize. Solara checks it against real sky data — honestly. 📓",
+     "title": "Which of these do you get?",
+     "subtitle": "Pick all that apply — Solara tracks them against pressure, storms and humidity. 📓",
      "cta": "Continue",
      "options": [
       {
@@ -161,7 +161,7 @@
      "id": "sleep",
      "type": "singleChoice",
      "title": "How's your sleep lately?",
-     "subtitle": "Sleep is the fastest tell of your energy rhythm. 🌙",
+     "subtitle": "Poor sleep makes pain days worse — and it's easy to track. 🌙",
      "cta": "Continue",
      "options": [
       {
@@ -186,7 +186,7 @@
      "id": "gender",
      "type": "singleChoice",
      "title": "How do you identify yourself?",
-     "subtitle": "Your reading adapts its tone and practices. 🤍",
+     "subtitle": "Pain patterns differ — this helps us read yours. 🤍",
      "cta": "Continue",
      "options": [
       {
@@ -208,7 +208,7 @@
      "id": "name",
      "type": "textInput",
      "title": "What should we call you?",
-     "subtitle": "Your reading gets personal. ✨",
+     "subtitle": "So Solara can talk to you. ✨",
      "placeholder": "Your name",
      "optional": true,
      "cta": "Continue"
@@ -217,15 +217,15 @@
      "id": "birthdate",
      "type": "datePicker",
      "title": "When were you born?",
-     "subtitle": "Why do we need this? Your birth date sets your physical, emotional and mental cycles — the personal half of your Energy Index. 🎂",
+     "subtitle": "Weather sensitivity often changes with age — this helps tune your forecast. 🎂",
      "cta": "Continue",
-     "footnote": "Biorhythm cycles computed from your birth date · never shared"
+     "footnote": "Used only to tune your forecast · never shared"
     },
     {
      "id": "about",
      "type": "textInput",
      "title": "In your own words…",
-     "subtitle": "What should Solara help you with? One line is enough. 💬",
+     "subtitle": "What should Solara help you with? E.g. “migraines before rain”. 💬",
      "placeholder": "e.g. Why am I drained every autumn?",
      "optional": true,
      "cta": "Continue"
@@ -233,25 +233,17 @@
     {
      "id": "interests",
      "type": "multiChoice",
-     "title": "What should we tune in to?",
-     "subtitle": "Pick everything that resonates — your daily reading adapts. 💫",
+     "title": "What should your forecast track?",
+     "subtitle": "Pick everything you want to see. 🌡️",
      "cta": "Continue",
      "options": [
       {
        "id": "weather",
-       "title": "Weather sensitivity"
+       "title": "Pressure changes"
       },
       {
        "id": "magnetic",
        "title": "Magnetic storms"
-      },
-      {
-       "id": "moon",
-       "title": "Moon cycles"
-      },
-      {
-       "id": "biorhythms",
-       "title": "Biorhythms"
       },
       {
        "id": "sleep",
@@ -259,37 +251,33 @@
       },
       {
        "id": "air",
-       "title": "Air quality"
-      },
-      {
-       "id": "mood",
-       "title": "Mood tracking"
+       "title": "Humidity & air quality"
       }
      ]
     },
     {
      "id": "personalizing",
      "type": "progress",
-     "title": "Personalizing your energy profile…",
+     "title": "Building your pain-trigger profile…",
      "tasks": [
-      "Reading local weather patterns",
-      "Tracking magnetic field activity",
-      "Calibrating your biorhythms",
-      "Crafting your daily reading"
+      "Reading local pressure & humidity",
+      "Checking magnetic storm activity",
+      "Matching your symptoms to weather",
+      "Building your 7-day pain forecast"
      ],
      "facts": [
       "Live NOAA space-weather feed",
       "10,000+ weather stations worldwide",
-      "Moon phase at astronomical precision",
+      "Barometric pressure, hour by hour",
       "Your answers never leave this device"
      ],
-     "afterDone": "Your energy profile is ready"
+     "afterDone": "Your pain forecast is ready"
     },
     {
      "id": "value-science",
      "type": "info",
-     "title": "Real data. Real sky.",
-     "subtitle": "Live space weather from NOAA and 10,000+ stations — your forecast is built on real measurements and checked against your own days.",
+     "title": "Real weather data",
+     "subtitle": "Live pressure, storms and humidity from NOAA and 10,000+ stations — checked against your own days.",
      "cta": "Impressive!",
      "imageURL": "https://hazard.studio/img/atmo/science-floodtop4.png",
      "imageStyle": "flood-top",
@@ -300,7 +288,7 @@
      "type": "permission",
      "permission": "location",
      "title": "Weather where you are",
-     "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
+     "subtitle": "So your pain forecast matches the pressure and storms right where you live.",
      "cta": "Continue",
      "footnote": "10,000+ weather stations · NOAA space-weather observatory",
      "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
@@ -311,8 +299,8 @@
      "id": "health",
      "type": "permission",
      "permission": "health",
-     "title": "Let Solara feel your rhythm",
-     "subtitle": "With your permission, Solara attaches your sleep, steps and heart rhythm to every log. Read-only, never for ads.",
+     "title": "Connect Apple Health",
+     "subtitle": "Sleep, steps and heart rate next to every day you log. Read-only, never for ads.",
      "cta": "Continue",
      "footnote": "Read-only · your health data never leaves your phone for ads or analytics",
      "imageURL": "https://hazard.studio/img/atmo/health-floodtop3.png",
@@ -323,8 +311,8 @@
      "id": "notifications",
      "type": "permission",
      "permission": "notifications",
-     "title": "Start mornings prepared",
-     "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
+     "title": "Get warned the evening before",
+     "subtitle": "A heads-up before a pressure drop or storm, and a one-tap check-in each evening.",
      "cta": "Continue",
      "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
      "imageStyle": "flood-top",
@@ -337,19 +325,19 @@
      "beforeTitle": "Without",
      "afterTitle": "With Solara",
      "before": [
-      "Blindsided by heavy days",
-      "Guessing why energy dips",
+      "Blindsided by headache days",
+      "Guessing what set it off",
       "Storms hit out of nowhere",
-      "Generic advice for everyone"
+      "Cancelled plans, again"
      ],
      "after": [
-      "Know your day in advance",
-      "See what moves your energy",
-      "Alerts before the storm hits",
-      "Guidance tuned to YOU"
+      "Know tomorrow's pain risk",
+      "See your own triggers",
+      "A warning the evening before",
+      "Plan around the heavy days"
      ],
      "cta": "I Want This",
-     "footnote": "Powered by live NOAA space-weather data",
+     "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
@@ -360,9 +348,9 @@
     }
    ],
    "paywall": {
-    "title": "Headaches, achy joints, heavy days — see them coming",
+    "title": "Get your pain forecast",
     "features": [
-     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "Tomorrow's pain risk from pressure, storms and humidity",
      "A heads-up the night before a pressure drop or storm",
      "Your own triggers: which weather comes before your headaches or joint pain",
      "A 7-day outlook to plan around your heavy days"
@@ -393,10 +381,10 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Energy Index ⚡",
+     "Pain Risk Forecast",
      "Sky Data",
      "Apple Health",
-     "Moon Cycles",
+     "Pressure & Humidity",
      "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
@@ -408,7 +396,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
+    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -436,50 +424,50 @@
     {
      "id": "welcome",
      "type": "info",
-     "title": "Your day, decoded",
-     "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your body's rhythms to guide every day.",
-     "cta": "Begin the Journey",
+     "title": "Your pain forecast",
+     "subtitle": "Pressure drops, storms and humidity hit many people as headaches, achy joints and heavy days. Solara warns you before they do.",
+     "cta": "Get Started",
      "artwork": "hero"
     },
     {
      "id": "goal",
      "type": "singleChoice",
-     "title": "What brings you here?",
-     "subtitle": "We'll tune your daily reading around it. 🎯",
+     "title": "What would you like help with?",
+     "subtitle": "Your forecast will focus on it. 🎯",
      "cta": "Continue",
      "options": [
       {
        "id": "energy",
-       "title": "More energy through the day",
-       "detail": "Morning guidance built around your energy peaks"
+       "title": "Fewer headache days",
+       "detail": "Know the headache-risk days in advance"
       },
       {
        "id": "mood",
-       "title": "Steadier mood",
-       "detail": "We'll track what actually moves your mood"
+       "title": "Less anxiety & low mood",
+       "detail": "See which weather sets you on edge"
       },
       {
        "id": "sleep",
        "title": "Better sleep",
-       "detail": "Evenings become your protected ritual"
+       "detail": "Spot the nights the weather will disturb"
       },
       {
        "id": "self",
-       "title": "Understand my patterns",
-       "detail": "See what really moves your energy — proven on your own days"
+       "title": "Understand my triggers",
+       "detail": "Find what really sets off your bad days — proven on your own data"
       }
      ]
     },
     {
      "id": "sensitivity",
      "type": "singleChoice",
-     "title": "Do you feel the weather?",
-     "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep. 🌧️",
+     "title": "Are you weather-sensitive?",
+     "subtitle": "Many people feel a pressure drop or a storm before the sky changes — as headaches, aching joints or fatigue. 🌧️",
      "cta": "Continue",
      "options": [
       {
        "id": "often",
-       "title": "Yes, I feel them strongly"
+       "title": "Yes, I feel the weather strongly"
       },
       {
        "id": "sometimes",
@@ -494,37 +482,37 @@
     {
      "id": "drain",
      "type": "singleChoice",
-     "title": "What drains your energy most?",
-     "subtitle": "We'll build your daily reading to protect exactly that. 🔋",
+     "title": "What usually sets off your bad days?",
+     "subtitle": "Solara will watch it alongside the weather. 🔍",
      "cta": "Continue",
      "options": [
       {
        "id": "overthinking",
-       "title": "Overthinking & worry",
-       "detail": "Your reading will flag high-tension days in advance"
+       "title": "Stress & worry",
+       "detail": "We'll flag high-tension days in advance"
       },
       {
        "id": "sleep",
        "title": "Poor sleep",
-       "detail": "Evening guidance will guard your wind-down"
+       "detail": "We'll track how weather and sleep add up"
       },
       {
        "id": "weather",
-       "title": "Weather & storm days",
-       "detail": "Pressure and Kp alerts before they hit you"
+       "title": "Weather changes",
+       "detail": "Pressure and storm alerts the evening before"
       },
       {
        "id": "stress",
-       "title": "Stress & mood swings",
-       "detail": "Daily focus tuned to steady your rhythm"
+       "title": "Not sure yet",
+       "detail": "Your check-ins will show it within a few weeks"
       }
      ]
     },
     {
      "id": "symptoms",
      "type": "multiChoice",
-     "title": "When a day goes sideways — what shows up?",
-     "subtitle": "Pick what you recognize. Solara checks it against real sky data — honestly. 📓",
+     "title": "Which of these do you get?",
+     "subtitle": "Pick all that apply — Solara tracks them against pressure, storms and humidity. 📓",
      "cta": "Continue",
      "options": [
       {
@@ -565,7 +553,7 @@
      "id": "gender",
      "type": "singleChoice",
      "title": "How do you identify yourself?",
-     "subtitle": "Your reading adapts its tone and practices. 🤍",
+     "subtitle": "Pain patterns differ — this helps us read yours. 🤍",
      "cta": "Continue",
      "options": [
       {
@@ -587,32 +575,24 @@
      "id": "birthdate",
      "type": "datePicker",
      "title": "When were you born?",
-     "subtitle": "Why do we need this? Your birth date sets your physical, emotional and mental cycles — the personal half of your Energy Index. 🎂",
+     "subtitle": "Weather sensitivity often changes with age — this helps tune your forecast. 🎂",
      "cta": "Continue",
-     "footnote": "Biorhythm cycles computed from your birth date · never shared"
+     "footnote": "Used only to tune your forecast · never shared"
     },
     {
      "id": "interests",
      "type": "multiChoice",
-     "title": "What should we tune in to?",
-     "subtitle": "Pick everything that resonates — your daily reading adapts. 💫",
+     "title": "What should your forecast track?",
+     "subtitle": "Pick everything you want to see. 🌡️",
      "cta": "Continue",
      "options": [
       {
        "id": "weather",
-       "title": "Weather sensitivity"
+       "title": "Pressure changes"
       },
       {
        "id": "magnetic",
        "title": "Magnetic storms"
-      },
-      {
-       "id": "moon",
-       "title": "Moon cycles"
-      },
-      {
-       "id": "biorhythms",
-       "title": "Biorhythms"
       },
       {
        "id": "sleep",
@@ -620,37 +600,33 @@
       },
       {
        "id": "air",
-       "title": "Air quality"
-      },
-      {
-       "id": "mood",
-       "title": "Mood tracking"
+       "title": "Humidity & air quality"
       }
      ]
     },
     {
      "id": "personalizing",
      "type": "progress",
-     "title": "Personalizing your energy profile…",
+     "title": "Building your pain-trigger profile…",
      "tasks": [
-      "Reading local weather patterns",
-      "Tracking magnetic field activity",
-      "Calibrating your biorhythms",
-      "Crafting your daily reading"
+      "Reading local pressure & humidity",
+      "Checking magnetic storm activity",
+      "Matching your symptoms to weather",
+      "Building your 7-day pain forecast"
      ],
      "facts": [
       "Live NOAA space-weather feed",
       "10,000+ weather stations worldwide",
-      "Moon phase at astronomical precision",
+      "Barometric pressure, hour by hour",
       "Your answers never leave this device"
      ],
-     "afterDone": "Your energy profile is ready"
+     "afterDone": "Your pain forecast is ready"
     },
     {
      "id": "value-science",
      "type": "info",
-     "title": "Real data. Real sky.",
-     "subtitle": "Live space weather from NOAA and 10,000+ stations — your forecast is built on real measurements and checked against your own days.",
+     "title": "Real weather data",
+     "subtitle": "Live pressure, storms and humidity from NOAA and 10,000+ stations — checked against your own days.",
      "cta": "Impressive!",
      "imageURL": "https://hazard.studio/img/atmo/science-floodtop4.png",
      "imageStyle": "flood-top",
@@ -663,19 +639,19 @@
      "beforeTitle": "Without",
      "afterTitle": "With Solara",
      "before": [
-      "Blindsided by heavy days",
-      "Guessing why energy dips",
+      "Blindsided by headache days",
+      "Guessing what set it off",
       "Storms hit out of nowhere",
-      "Generic advice for everyone"
+      "Cancelled plans, again"
      ],
      "after": [
-      "Know your day in advance",
-      "See what moves your energy",
-      "Alerts before the storm hits",
-      "Guidance tuned to YOU"
+      "Know tomorrow's pain risk",
+      "See your own triggers",
+      "A warning the evening before",
+      "Plan around the heavy days"
      ],
      "cta": "I Want This",
-     "footnote": "Powered by live NOAA space-weather data",
+     "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
@@ -686,9 +662,9 @@
     }
    ],
    "paywall": {
-    "title": "Headaches, achy joints, heavy days — see them coming",
+    "title": "Get your pain forecast",
     "features": [
-     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "Tomorrow's pain risk from pressure, storms and humidity",
      "A heads-up the night before a pressure drop or storm",
      "Your own triggers: which weather comes before your headaches or joint pain",
      "A 7-day outlook to plan around your heavy days"
@@ -719,10 +695,10 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Energy Index ⚡",
+     "Pain Risk Forecast",
      "Sky Data",
      "Apple Health",
-     "Moon Cycles",
+     "Pressure & Humidity",
      "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
@@ -734,7 +710,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
+    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -770,16 +746,16 @@
      "id": "birthdate",
      "type": "datePicker",
      "title": "When were you born?",
-     "subtitle": "Why do we need this? Your birth date sets your physical, emotional and mental cycles — the personal half of your Energy Index. 🎂",
+     "subtitle": "Weather sensitivity often changes with age — this helps tune your forecast. 🎂",
      "cta": "Continue",
-     "footnote": "Biorhythm cycles computed from your birth date · never shared"
+     "footnote": "Used only to tune your forecast · never shared"
     },
     {
      "id": "location",
      "type": "permission",
      "permission": "location",
      "title": "Weather where you are",
-     "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
+     "subtitle": "So your pain forecast matches the pressure and storms right where you live.",
      "cta": "Continue",
      "footnote": "10,000+ weather stations · NOAA space-weather observatory",
      "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
@@ -790,8 +766,8 @@
      "id": "notifications",
      "type": "permission",
      "permission": "notifications",
-     "title": "Start mornings prepared",
-     "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
+     "title": "Get warned the evening before",
+     "subtitle": "A heads-up before a pressure drop or storm, and a one-tap check-in each evening.",
      "cta": "Continue",
      "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
      "imageStyle": "flood-top",
@@ -804,9 +780,9 @@
     }
    ],
    "paywall": {
-    "title": "Headaches, achy joints, heavy days — see them coming",
+    "title": "Get your pain forecast",
     "features": [
-     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "Tomorrow's pain risk from pressure, storms and humidity",
      "A heads-up the night before a pressure drop or storm",
      "Your own triggers: which weather comes before your headaches or joint pain",
      "A 7-day outlook to plan around your heavy days"
@@ -837,10 +813,10 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Energy Index ⚡",
+     "Pain Risk Forecast",
      "Sky Data",
      "Apple Health",
-     "Moon Cycles",
+     "Pressure & Humidity",
      "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
@@ -852,7 +828,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
+    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -879,42 +855,42 @@
     {
      "id": "goal",
      "type": "singleChoice",
-     "title": "What brings you here?",
-     "subtitle": "We'll tune your daily reading around it. 🎯",
+     "title": "What would you like help with?",
+     "subtitle": "Your forecast will focus on it. 🎯",
      "cta": "Continue",
      "options": [
       {
        "id": "energy",
-       "title": "More energy through the day",
-       "detail": "Morning guidance built around your energy peaks"
+       "title": "Fewer headache days",
+       "detail": "Know the headache-risk days in advance"
       },
       {
        "id": "mood",
-       "title": "Steadier mood",
-       "detail": "We'll track what actually moves your mood"
+       "title": "Less anxiety & low mood",
+       "detail": "See which weather sets you on edge"
       },
       {
        "id": "sleep",
        "title": "Better sleep",
-       "detail": "Evenings become your protected ritual"
+       "detail": "Spot the nights the weather will disturb"
       },
       {
        "id": "self",
-       "title": "Understand my patterns",
-       "detail": "See what really moves your energy — proven on your own days"
+       "title": "Understand my triggers",
+       "detail": "Find what really sets off your bad days — proven on your own data"
       }
      ]
     },
     {
      "id": "sensitivity",
      "type": "singleChoice",
-     "title": "Do you feel the weather?",
-     "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep. 🌧️",
+     "title": "Are you weather-sensitive?",
+     "subtitle": "Many people feel a pressure drop or a storm before the sky changes — as headaches, aching joints or fatigue. 🌧️",
      "cta": "Continue",
      "options": [
       {
        "id": "often",
-       "title": "Yes, I feel them strongly"
+       "title": "Yes, I feel the weather strongly"
       },
       {
        "id": "sometimes",
@@ -929,8 +905,8 @@
     {
      "id": "symptoms",
      "type": "multiChoice",
-     "title": "When a day goes sideways — what shows up?",
-     "subtitle": "Pick what you recognize. Solara checks it against real sky data — honestly. 📓",
+     "title": "Which of these do you get?",
+     "subtitle": "Pick all that apply — Solara tracks them against pressure, storms and humidity. 📓",
      "cta": "Continue",
      "options": [
       {
@@ -971,7 +947,7 @@
      "id": "sleep",
      "type": "singleChoice",
      "title": "How's your sleep lately?",
-     "subtitle": "Sleep is the fastest tell of your energy rhythm. 🌙",
+     "subtitle": "Poor sleep makes pain days worse — and it's easy to track. 🌙",
      "cta": "Continue",
      "options": [
       {
@@ -996,7 +972,7 @@
      "id": "name",
      "type": "textInput",
      "title": "What should we call you?",
-     "subtitle": "Your reading gets personal. ✨",
+     "subtitle": "So Solara can talk to you. ✨",
      "placeholder": "Your name",
      "optional": true,
      "cta": "Continue"
@@ -1005,34 +981,34 @@
      "id": "birthdate",
      "type": "datePicker",
      "title": "When were you born?",
-     "subtitle": "Why do we need this? Your birth date sets your physical, emotional and mental cycles — the personal half of your Energy Index. 🎂",
+     "subtitle": "Weather sensitivity often changes with age — this helps tune your forecast. 🎂",
      "cta": "Continue",
-     "footnote": "Biorhythm cycles computed from your birth date · never shared"
+     "footnote": "Used only to tune your forecast · never shared"
     },
     {
      "id": "personalizing",
      "type": "progress",
-     "title": "Personalizing your energy profile…",
+     "title": "Building your pain-trigger profile…",
      "tasks": [
-      "Reading local weather patterns",
-      "Tracking magnetic field activity",
-      "Calibrating your biorhythms",
-      "Crafting your daily reading"
+      "Reading local pressure & humidity",
+      "Checking magnetic storm activity",
+      "Matching your symptoms to weather",
+      "Building your 7-day pain forecast"
      ],
      "facts": [
       "Live NOAA space-weather feed",
       "10,000+ weather stations worldwide",
-      "Moon phase at astronomical precision",
+      "Barometric pressure, hour by hour",
       "Your answers never leave this device"
      ],
-     "afterDone": "Your energy profile is ready"
+     "afterDone": "Your pain forecast is ready"
     },
     {
      "id": "location",
      "type": "permission",
      "permission": "location",
      "title": "Weather where you are",
-     "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
+     "subtitle": "So your pain forecast matches the pressure and storms right where you live.",
      "cta": "Continue",
      "footnote": "10,000+ weather stations · NOAA space-weather observatory",
      "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
@@ -1043,8 +1019,8 @@
      "id": "health",
      "type": "permission",
      "permission": "health",
-     "title": "Let Solara feel your rhythm",
-     "subtitle": "With your permission, Solara attaches your sleep, steps and heart rhythm to every log. Read-only, never for ads.",
+     "title": "Connect Apple Health",
+     "subtitle": "Sleep, steps and heart rate next to every day you log. Read-only, never for ads.",
      "cta": "Continue",
      "footnote": "Read-only · your health data never leaves your phone for ads or analytics",
      "imageURL": "https://hazard.studio/img/atmo/health-floodtop3.png",
@@ -1055,8 +1031,8 @@
      "id": "notifications",
      "type": "permission",
      "permission": "notifications",
-     "title": "Start mornings prepared",
-     "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
+     "title": "Get warned the evening before",
+     "subtitle": "A heads-up before a pressure drop or storm, and a one-tap check-in each evening.",
      "cta": "Continue",
      "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
      "imageStyle": "flood-top",
@@ -1069,9 +1045,9 @@
     }
    ],
    "paywall": {
-    "title": "Headaches, achy joints, heavy days — see them coming",
+    "title": "Get your pain forecast",
     "features": [
-     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "Tomorrow's pain risk from pressure, storms and humidity",
      "A heads-up the night before a pressure drop or storm",
      "Your own triggers: which weather comes before your headaches or joint pain",
      "A 7-day outlook to plan around your heavy days"
@@ -1102,10 +1078,10 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Energy Index ⚡",
+     "Pain Risk Forecast",
      "Sky Data",
      "Apple Health",
-     "Moon Cycles",
+     "Pressure & Humidity",
      "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
@@ -1117,7 +1093,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
+    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -1143,53 +1119,53 @@
     {
      "id": "welcome",
      "type": "info",
-     "title": "Your day, decoded",
-     "subtitle": "Solara blends real weather science — pressure, magnetic storms, UV — with your body's rhythms to guide every day.",
-     "cta": "Begin the Journey",
+     "title": "Your pain forecast",
+     "subtitle": "Pressure drops, storms and humidity hit many people as headaches, achy joints and heavy days. Solara warns you before they do.",
+     "cta": "Get Started",
      "artwork": "hero"
     },
     {
      "id": "goal",
      "type": "singleChoice",
-     "title": "What brings you here?",
-     "subtitle": "We'll tune your daily reading around it. 🎯",
+     "title": "What would you like help with?",
+     "subtitle": "Your forecast will focus on it. 🎯",
      "cta": "Continue",
      "options": [
       {
        "id": "energy",
-       "title": "More energy through the day",
-       "detail": "Morning guidance built around your energy peaks"
+       "title": "Fewer headache days",
+       "detail": "Know the headache-risk days in advance"
       },
       {
        "id": "mood",
-       "title": "Steadier mood",
-       "detail": "We'll track what actually moves your mood"
+       "title": "Less anxiety & low mood",
+       "detail": "See which weather sets you on edge"
       },
       {
        "id": "sleep",
        "title": "Better sleep",
-       "detail": "Evenings become your protected ritual"
+       "detail": "Spot the nights the weather will disturb"
       },
       {
        "id": "self",
-       "title": "Understand my patterns",
-       "detail": "See what really moves your energy — proven on your own days"
+       "title": "Understand my triggers",
+       "detail": "Find what really sets off your bad days — proven on your own data"
       }
      ]
     },
     {
      "id": "goal-ack",
      "type": "payoff",
-     "title": "Great choice{withName|}",
-     "subtitle": "Your daily reading will be tuned around it. A few more questions and your profile comes alive.",
+     "title": "Got it{withName|}",
+     "subtitle": "Your forecast will focus on it. A few quick questions and it becomes yours.",
      "cta": "Let's Go",
      "artwork": "hero"
     },
     {
      "id": "value-guidance",
      "type": "info",
-     "title": "Daily guidance, tailored to you",
-     "subtitle": "Micro-insights, focus and gentle advice — curated for this very day, from real sky data.",
+     "title": "Know before it hits",
+     "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a heavy day never catches you off guard.",
      "cta": "Continue",
      "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
      "imageStyle": "flood"
@@ -1197,13 +1173,13 @@
     {
      "id": "sensitivity",
      "type": "singleChoice",
-     "title": "Do you feel the weather?",
-     "subtitle": "Some people sense a storm before the sky changes — headaches, low energy, restless sleep. 🌧️",
+     "title": "Are you weather-sensitive?",
+     "subtitle": "Many people feel a pressure drop or a storm before the sky changes — as headaches, aching joints or fatigue. 🌧️",
      "cta": "Continue",
      "options": [
       {
        "id": "often",
-       "title": "Yes, I feel them strongly"
+       "title": "Yes, I feel the weather strongly"
       },
       {
        "id": "sometimes",
@@ -1218,37 +1194,37 @@
     {
      "id": "drain",
      "type": "singleChoice",
-     "title": "What drains your energy most?",
-     "subtitle": "We'll build your daily reading to protect exactly that. 🔋",
+     "title": "What usually sets off your bad days?",
+     "subtitle": "Solara will watch it alongside the weather. 🔍",
      "cta": "Continue",
      "options": [
       {
        "id": "overthinking",
-       "title": "Overthinking & worry",
-       "detail": "Your reading will flag high-tension days in advance"
+       "title": "Stress & worry",
+       "detail": "We'll flag high-tension days in advance"
       },
       {
        "id": "sleep",
        "title": "Poor sleep",
-       "detail": "Evening guidance will guard your wind-down"
+       "detail": "We'll track how weather and sleep add up"
       },
       {
        "id": "weather",
-       "title": "Weather & storm days",
-       "detail": "Pressure and Kp alerts before they hit you"
+       "title": "Weather changes",
+       "detail": "Pressure and storm alerts the evening before"
       },
       {
        "id": "stress",
-       "title": "Stress & mood swings",
-       "detail": "Daily focus tuned to steady your rhythm"
+       "title": "Not sure yet",
+       "detail": "Your check-ins will show it within a few weeks"
       }
      ]
     },
     {
      "id": "symptoms",
      "type": "multiChoice",
-     "title": "When a day goes sideways — what shows up?",
-     "subtitle": "Pick what you recognize. Solara checks it against real sky data — honestly. 📓",
+     "title": "Which of these do you get?",
+     "subtitle": "Pick all that apply — Solara tracks them against pressure, storms and humidity. 📓",
      "cta": "Continue",
      "options": [
       {
@@ -1289,7 +1265,7 @@
      "id": "sleep",
      "type": "singleChoice",
      "title": "How's your sleep lately?",
-     "subtitle": "Sleep is the fastest tell of your energy rhythm. 🌙",
+     "subtitle": "Poor sleep makes pain days worse — and it's easy to track. 🌙",
      "cta": "Continue",
      "options": [
       {
@@ -1314,7 +1290,7 @@
      "id": "gender",
      "type": "singleChoice",
      "title": "How do you identify yourself?",
-     "subtitle": "Your reading adapts its tone and practices. 🤍",
+     "subtitle": "Pain patterns differ — this helps us read yours. 🤍",
      "cta": "Continue",
      "options": [
       {
@@ -1336,7 +1312,7 @@
      "id": "name",
      "type": "textInput",
      "title": "What should we call you?",
-     "subtitle": "Your reading gets personal. ✨",
+     "subtitle": "So Solara can talk to you. ✨",
      "placeholder": "Your name",
      "optional": true,
      "cta": "Continue"
@@ -1345,15 +1321,15 @@
      "id": "birthdate",
      "type": "datePicker",
      "title": "When were you born?",
-     "subtitle": "Why do we need this? Your birth date sets your physical, emotional and mental cycles — the personal half of your Energy Index. 🎂",
+     "subtitle": "Weather sensitivity often changes with age — this helps tune your forecast. 🎂",
      "cta": "Continue",
-     "footnote": "Biorhythm cycles computed from your birth date · never shared"
+     "footnote": "Used only to tune your forecast · never shared"
     },
     {
      "id": "about",
      "type": "textInput",
      "title": "In your own words…",
-     "subtitle": "What should Solara help you with? One line is enough. 💬",
+     "subtitle": "What should Solara help you with? E.g. “migraines before rain”. 💬",
      "placeholder": "e.g. Why am I drained every autumn?",
      "optional": true,
      "cta": "Continue"
@@ -1361,25 +1337,17 @@
     {
      "id": "interests",
      "type": "multiChoice",
-     "title": "What should we tune in to?",
-     "subtitle": "Pick everything that resonates — your daily reading adapts. 💫",
+     "title": "What should your forecast track?",
+     "subtitle": "Pick everything you want to see. 🌡️",
      "cta": "Continue",
      "options": [
       {
        "id": "weather",
-       "title": "Weather sensitivity"
+       "title": "Pressure changes"
       },
       {
        "id": "magnetic",
        "title": "Magnetic storms"
-      },
-      {
-       "id": "moon",
-       "title": "Moon cycles"
-      },
-      {
-       "id": "biorhythms",
-       "title": "Biorhythms"
       },
       {
        "id": "sleep",
@@ -1387,37 +1355,33 @@
       },
       {
        "id": "air",
-       "title": "Air quality"
-      },
-      {
-       "id": "mood",
-       "title": "Mood tracking"
+       "title": "Humidity & air quality"
       }
      ]
     },
     {
      "id": "personalizing",
      "type": "progress",
-     "title": "Personalizing your energy profile…",
+     "title": "Building your pain-trigger profile…",
      "tasks": [
-      "Reading local weather patterns",
-      "Tracking magnetic field activity",
-      "Calibrating your biorhythms",
-      "Crafting your daily reading"
+      "Reading local pressure & humidity",
+      "Checking magnetic storm activity",
+      "Matching your symptoms to weather",
+      "Building your 7-day pain forecast"
      ],
      "facts": [
       "Live NOAA space-weather feed",
       "10,000+ weather stations worldwide",
-      "Moon phase at astronomical precision",
+      "Barometric pressure, hour by hour",
       "Your answers never leave this device"
      ],
-     "afterDone": "Your energy profile is ready"
+     "afterDone": "Your pain forecast is ready"
     },
     {
      "id": "value-science",
      "type": "info",
-     "title": "Real data. Real sky.",
-     "subtitle": "Live space weather from NOAA and 10,000+ stations — your forecast is built on real measurements and checked against your own days.",
+     "title": "Real weather data",
+     "subtitle": "Live pressure, storms and humidity from NOAA and 10,000+ stations — checked against your own days.",
      "cta": "Impressive!",
      "imageURL": "https://hazard.studio/img/atmo/science-floodtop4.png",
      "imageStyle": "flood-top",
@@ -1428,7 +1392,7 @@
      "type": "permission",
      "permission": "location",
      "title": "Weather where you are",
-     "subtitle": "Allow location access so your forecast and Energy Index match your exact spot.",
+     "subtitle": "So your pain forecast matches the pressure and storms right where you live.",
      "cta": "Continue",
      "footnote": "10,000+ weather stations · NOAA space-weather observatory",
      "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
@@ -1439,8 +1403,8 @@
      "id": "health",
      "type": "permission",
      "permission": "health",
-     "title": "Let Solara feel your rhythm",
-     "subtitle": "With your permission, Solara attaches your sleep, steps and heart rhythm to every log. Read-only, never for ads.",
+     "title": "Connect Apple Health",
+     "subtitle": "Sleep, steps and heart rate next to every day you log. Read-only, never for ads.",
      "cta": "Continue",
      "footnote": "Read-only · your health data never leaves your phone for ads or analytics",
      "imageURL": "https://hazard.studio/img/atmo/health-floodtop3.png",
@@ -1451,8 +1415,8 @@
      "id": "notifications",
      "type": "permission",
      "permission": "notifications",
-     "title": "Start mornings prepared",
-     "subtitle": "Your Energy Index every morning, and a one-tap check-in each evening.",
+     "title": "Get warned the evening before",
+     "subtitle": "A heads-up before a pressure drop or storm, and a one-tap check-in each evening.",
      "cta": "Continue",
      "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
      "imageStyle": "flood-top",
@@ -1465,19 +1429,19 @@
      "beforeTitle": "Without",
      "afterTitle": "With Solara",
      "before": [
-      "Blindsided by heavy days",
-      "Guessing why energy dips",
+      "Blindsided by headache days",
+      "Guessing what set it off",
       "Storms hit out of nowhere",
-      "Generic advice for everyone"
+      "Cancelled plans, again"
      ],
      "after": [
-      "Know your day in advance",
-      "See what moves your energy",
-      "Alerts before the storm hits",
-      "Guidance tuned to YOU"
+      "Know tomorrow's pain risk",
+      "See your own triggers",
+      "A warning the evening before",
+      "Plan around the heavy days"
      ],
      "cta": "I Want This",
-     "footnote": "Powered by live NOAA space-weather data",
+     "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
@@ -1488,9 +1452,9 @@
     }
    ],
    "paywall": {
-    "title": "Headaches, achy joints, heavy days — see them coming",
+    "title": "Get your pain forecast",
     "features": [
-     "Tomorrow's risk: pressure, storms, humidity in real numbers",
+     "Tomorrow's pain risk from pressure, storms and humidity",
      "A heads-up the night before a pressure drop or storm",
      "Your own triggers: which weather comes before your headaches or joint pain",
      "A 7-day outlook to plan around your heavy days"
@@ -1521,10 +1485,10 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Energy Index ⚡",
+     "Pain Risk Forecast",
      "Sky Data",
      "Apple Health",
-     "Moon Cycles",
+     "Pressure & Humidity",
      "Storm Alerts",
      "Your Patterns",
      "10 Weather Metrics",
@@ -1536,7 +1500,7 @@
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
-    "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
+    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtSunny",
     "stats": [
      {
@@ -1567,7 +1531,7 @@
   "web_cohort": {
    "title": "Your plan is ready to start",
    "features": [
-    "Personal Energy Index, every day",
+    "Tomorrow's pain risk, every evening",
     "Magnetic storm & pressure forecast",
     "Apple Health attached to every log",
     "Storm & pressure heads-up the night before"
@@ -1598,10 +1562,10 @@
    "skippable": false,
    "includedTitle": "What's Included",
    "included": [
-    "Energy Index ⚡",
+    "Pain Risk Forecast",
     "Sky Data",
     "Apple Health",
-    "Moon Cycles",
+    "Pressure & Humidity",
     "Storm Alerts",
     "Your Patterns",
     "10 Weather Metrics",
@@ -1632,9 +1596,9 @@
    "showTrialTimeline": false
   },
   "paid_default": {
-   "title": "Headaches, achy joints, heavy days — see them coming",
+   "title": "Get your pain forecast",
    "features": [
-    "Tomorrow's risk: pressure, storms, humidity in real numbers",
+    "Tomorrow's pain risk from pressure, storms and humidity",
     "A heads-up the night before a pressure drop or storm",
     "Your own triggers: which weather comes before your headaches or joint pain",
     "A 7-day outlook to plan around your heavy days"
@@ -1665,10 +1629,10 @@
    "skippable": false,
    "includedTitle": "What's Included",
    "included": [
-    "Energy Index ⚡",
+    "Pain Risk Forecast",
     "Sky Data",
     "Apple Health",
-    "Moon Cycles",
+    "Pressure & Humidity",
     "Storm Alerts",
     "Your Patterns",
     "10 Weather Metrics",
@@ -1680,7 +1644,7 @@
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
    "brandBadge": "PLUS",
-   "subtitle": "Solara watches the pressure drops, magnetic storms and humidity that weather-sensitive people feel — and tells you which days to watch.",
+   "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
    "heroImageName": "SkyArtSunny",
    "stats": [
     {
@@ -1736,7 +1700,7 @@
     "Every Factor",
     "Your Patterns",
     "Storm Alerts",
-    "Energy Index ⚡",
+    "Pain Risk Forecast",
     "Apple Health",
     "Check-ins",
     "Air Quality"
@@ -1803,7 +1767,7 @@
     "Every Factor",
     "Your Patterns",
     "Storm Alerts",
-    "Energy Index ⚡",
+    "Pain Risk Forecast",
     "Apple Health",
     "Check-ins",
     "Air Quality"
@@ -1870,7 +1834,7 @@
     "Every Factor",
     "Your Patterns",
     "Storm Alerts",
-    "Energy Index ⚡",
+    "Pain Risk Forecast",
     "Apple Health",
     "Check-ins",
     "Air Quality"
