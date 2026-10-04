@@ -1,5 +1,5 @@
 {
- "version": 62,
+ "version": 63,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -374,7 +374,8 @@
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
       "isDefault": true,
-      "note": "3 days free, then $9.99/week"
+      "note": "$9.99/week, starts today. Cancel anytime",
+      "cta": "Start Plus"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -383,12 +384,13 @@
       "periodLabel": "per year",
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
-      "note": "3 days free, then $49.99/year"
+      "note": "3 days free, then $49.99/year",
+      "cta": "Try 3 Days Free"
      }
     ],
-    "cta": "Try 3 Days Free",
+    "cta": "Continue",
     "closeDelaySeconds": 0,
-    "skippable": true,
+    "skippable": false,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
@@ -401,7 +403,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -698,7 +700,8 @@
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
       "isDefault": true,
-      "note": "3 days free, then $9.99/week"
+      "note": "$9.99/week, starts today. Cancel anytime",
+      "cta": "Start Plus"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -707,12 +710,13 @@
       "periodLabel": "per year",
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
-      "note": "3 days free, then $49.99/year"
+      "note": "3 days free, then $49.99/year",
+      "cta": "Try 3 Days Free"
      }
     ],
-    "cta": "Try 3 Days Free",
+    "cta": "Continue",
     "closeDelaySeconds": 0,
-    "skippable": true,
+    "skippable": false,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
@@ -725,7 +729,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -814,7 +818,8 @@
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
       "isDefault": true,
-      "note": "3 days free, then $9.99/week"
+      "note": "$9.99/week, starts today. Cancel anytime",
+      "cta": "Start Plus"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -823,12 +828,13 @@
       "periodLabel": "per year",
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
-      "note": "3 days free, then $49.99/year"
+      "note": "3 days free, then $49.99/year",
+      "cta": "Try 3 Days Free"
      }
     ],
-    "cta": "Try 3 Days Free",
+    "cta": "Continue",
     "closeDelaySeconds": 0,
-    "skippable": true,
+    "skippable": false,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
@@ -841,7 +847,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -1077,7 +1083,8 @@
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
       "isDefault": true,
-      "note": "3 days free, then $9.99/week"
+      "note": "$9.99/week, starts today. Cancel anytime",
+      "cta": "Start Plus"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1086,12 +1093,13 @@
       "periodLabel": "per year",
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
-      "note": "3 days free, then $49.99/year"
+      "note": "3 days free, then $49.99/year",
+      "cta": "Try 3 Days Free"
      }
     ],
-    "cta": "Try 3 Days Free",
+    "cta": "Continue",
     "closeDelaySeconds": 0,
-    "skippable": true,
+    "skippable": false,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
@@ -1104,7 +1112,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -1494,7 +1502,8 @@
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
       "isDefault": true,
-      "note": "3 days free, then $9.99/week"
+      "note": "$9.99/week, starts today. Cancel anytime",
+      "cta": "Start Plus"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1503,12 +1512,13 @@
       "periodLabel": "per year",
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
-      "note": "3 days free, then $49.99/year"
+      "note": "3 days free, then $49.99/year",
+      "cta": "Try 3 Days Free"
      }
     ],
-    "cta": "Try 3 Days Free",
+    "cta": "Continue",
     "closeDelaySeconds": 0,
-    "skippable": true,
+    "skippable": false,
     "includedTitle": "What's Included",
     "included": [
      "Energy Index ⚡",
@@ -1521,7 +1531,7 @@
      "Check-ins",
      "Air Quality"
     ],
-    "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -1569,7 +1579,8 @@
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
      "isDefault": true,
-     "note": "3 days free, then $9.99/week"
+     "note": "$9.99/week, starts today. Cancel anytime",
+     "cta": "Start Plus"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1578,12 +1589,13 @@
      "periodLabel": "per year",
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
-     "note": "3 days free, then $49.99/year"
+     "note": "3 days free, then $49.99/year",
+     "cta": "Try 3 Days Free"
     }
    ],
-   "cta": "Try 3 Days Free",
+   "cta": "Continue",
    "closeDelaySeconds": 0,
-   "skippable": true,
+   "skippable": false,
    "includedTitle": "What's Included",
    "included": [
     "Energy Index ⚡",
@@ -1596,7 +1608,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1634,7 +1646,8 @@
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
      "isDefault": true,
-     "note": "3 days free, then $9.99/week"
+     "note": "$9.99/week, starts today. Cancel anytime",
+     "cta": "Start Plus"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1643,12 +1656,13 @@
      "periodLabel": "per year",
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
-     "note": "3 days free, then $49.99/year"
+     "note": "3 days free, then $49.99/year",
+     "cta": "Try 3 Days Free"
     }
    ],
-   "cta": "Try 3 Days Free",
+   "cta": "Continue",
    "closeDelaySeconds": 0,
-   "skippable": true,
+   "skippable": false,
    "includedTitle": "What's Included",
    "included": [
     "Energy Index ⚡",
@@ -1661,7 +1675,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1699,7 +1713,8 @@
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
      "isDefault": true,
-     "note": "3 days free, then $9.99/week"
+     "note": "$9.99/week, starts today. Cancel anytime",
+     "cta": "Start Plus"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1708,10 +1723,11 @@
      "periodLabel": "per year",
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
-     "note": "3 days free, then $49.99/year"
+     "note": "3 days free, then $49.99/year",
+     "cta": "Try 3 Days Free"
     }
    ],
-   "cta": "Try 3 Days Free",
+   "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
@@ -1725,7 +1741,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1764,7 +1780,8 @@
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
      "isDefault": true,
-     "note": "3 days free, then $9.99/week"
+     "note": "$9.99/week, starts today. Cancel anytime",
+     "cta": "Start Plus"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1773,10 +1790,11 @@
      "periodLabel": "per year",
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
-     "note": "3 days free, then $49.99/year"
+     "note": "3 days free, then $49.99/year",
+     "cta": "Try 3 Days Free"
     }
    ],
-   "cta": "Try 3 Days Free",
+   "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
@@ -1790,7 +1808,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1829,7 +1847,8 @@
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
      "isDefault": true,
-     "note": "3 days free, then $9.99/week"
+     "note": "$9.99/week, starts today. Cancel anytime",
+     "cta": "Start Plus"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1838,10 +1857,11 @@
      "periodLabel": "per year",
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
-     "note": "3 days free, then $49.99/year"
+     "note": "3 days free, then $49.99/year",
+     "cta": "Try 3 Days Free"
     }
    ],
-   "cta": "Try 3 Days Free",
+   "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
@@ -1855,7 +1875,7 @@
     "Check-ins",
     "Air Quality"
    ],
-   "trustLine": "3 days free. We'll remind you a day before it ends. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1908,5 +1928,6 @@
    "variant": "control"
   }
  ],
- "attribution_wait_seconds": 4
+ "attribution_wait_seconds": 4,
+ "preview_days": 0
 }
