@@ -102,12 +102,14 @@
     var webUid = params.get("web_uid") || "";
     try { webUid = webUid || localStorage.getItem("solara.web_uid") || ""; if (!webUid) { webUid = uuid(); } localStorage.setItem("solara.web_uid", webUid); } catch (e) { webUid = webUid || uuid(); }
     // CPP by creative angle (approved 25.09). 50/50 holdout by web_uid so the lift is measurable: arm "cpp" → angle page, "default" → main page.
-    var CPP = { energy: "0b1b36a4-1479-4867-878c-dc58a8fa6293", storm: "a4f40798-8ccc-4b0c-88ea-8b11e57825e4", sky: "eb3c1d2f-3be1-408f-bcab-4946855b136d" };
+    var CPP = { energy: "0b1b36a4-1479-4867-878c-dc58a8fa6293", storm: "a4f40798-8ccc-4b0c-88ea-8b11e57825e4", sky: "eb3c1d2f-3be1-408f-bcab-4946855b136d", pain: "dccd7547-81fd-4662-8b47-d7eda9e6323e" };
     var HOOK_ANGLE = { h01: "energy", h02: "energy", h03: "energy", h05: "energy", h04: "storm", n01: "storm", n02: "storm", n03: "storm", n04: "storm" };
     var adName = params.get("ad_name") || params.get("utm_content") || "";
     var hook = (adName.match(/-(h\d\d|n\d\d)-/) || [])[1] || "";
-    var angle = HOOK_ANGLE[hook] || (adName ? "energy" : "");
-    var cppArm = params.get("ppid") ? "explicit" : (angle ? (parseInt(webUid.replace(/-/g, "").slice(-2), 16) % 2 ? "cpp" : "default") : "none");
+    // Pain-forecast ads (Migraine Help clones b08+, 05.10): always the "Pain Forecast" page — the store must match the ad's promise, no holdout
+    var pain = /^b(0[8-9]|[1-9]\d)-/.test(adName);
+    var angle = pain ? "pain" : (HOOK_ANGLE[hook] || (adName ? "energy" : ""));
+    var cppArm = params.get("ppid") ? "explicit" : (pain ? "cpp" : (angle ? (parseInt(webUid.replace(/-/g, "").slice(-2), 16) % 2 ? "cpp" : "default") : "none"));
     var cppPpid = cppArm === "cpp" ? CPP[angle] : "";
     var start = Date.now(), fired = false;
     document.getElementById("go").href = buildTarget(params, { web_uid: webUid, ppid: cppPpid });   // fallback button works from the first frame
