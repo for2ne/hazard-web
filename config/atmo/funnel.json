@@ -1,5 +1,5 @@
 {
- "version": 64,
+ "version": 65,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -15,67 +15,58 @@
     {
      "id": "welcome",
      "type": "info",
+     "artwork": "hero",
      "title": "Your pain forecast",
-     "subtitle": "Pressure drops, storms and humidity hit many people as headaches, achy joints and heavy days. Solara warns you before they do.",
-     "cta": "Get Started",
-     "artwork": "hero"
+     "subtitle": "Pressure drops, storms and humidity hit many people as headaches and achy joints. Solara warns you the evening before.",
+     "cta": "Get Started"
     },
     {
      "id": "goal",
      "type": "singleChoice",
      "title": "What would you like help with?",
-     "subtitle": "Your forecast will focus on it. 🎯",
+     "subtitle": "We'll build your forecast around it.",
      "cta": "Continue",
      "options": [
       {
        "id": "energy",
        "title": "Fewer headache days",
-       "detail": "Know the headache-risk days in advance"
+       "detail": "Know the high-risk days in advance"
       },
       {
-       "id": "mood",
-       "title": "Less anxiety & low mood",
-       "detail": "See which weather sets you on edge"
+       "id": "joints",
+       "title": "Fewer achy-joint days",
+       "detail": "See which weather sets your joints off"
       },
       {
-       "id": "sleep",
-       "title": "Better sleep",
-       "detail": "Spot the nights the weather will disturb"
+       "id": "both",
+       "title": "Headaches and joints",
+       "detail": "One forecast for both"
       },
       {
        "id": "self",
        "title": "Understand my triggers",
-       "detail": "Find what really sets off your bad days — proven on your own data"
+       "detail": "Find what really sets off your bad days — on your own data"
       }
      ]
     },
     {
      "id": "goal-ack",
      "type": "payoff",
-     "title": "Got it{withName|}",
-     "subtitle": "Your forecast will focus on it. A few quick questions and it becomes yours.",
-     "cta": "Let's Go",
-     "artwork": "hero"
-    },
-    {
-     "id": "value-guidance",
-     "type": "info",
-     "title": "Know before it hits",
-     "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a heavy day never catches you off guard.",
-     "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
-     "imageStyle": "flood"
+     "artwork": "hero",
+     "title": "You're in the right place",
+     "subtitle": "Most people who feel the weather never learn what's behind it. A few quick questions — then you'll see your forecast.",
+     "cta": "Let's Go"
     },
     {
      "id": "sensitivity",
      "type": "singleChoice",
-     "title": "Are you weather-sensitive?",
-     "subtitle": "Many people feel a pressure drop or a storm before the sky changes — as headaches, aching joints or fatigue. 🌧️",
+     "title": "Do you feel weather changes in your body?",
+     "subtitle": "Many people feel a pressure drop or a storm before the sky changes.",
      "cta": "Continue",
      "options": [
       {
        "id": "often",
-       "title": "Yes, I feel the weather strongly"
+       "title": "Yes, strongly"
       },
       {
        "id": "sometimes",
@@ -88,52 +79,23 @@
      ]
     },
     {
-     "id": "drain",
-     "type": "singleChoice",
-     "title": "What usually sets off your bad days?",
-     "subtitle": "Solara will watch it alongside the weather. 🔍",
-     "cta": "Continue",
-     "options": [
-      {
-       "id": "overthinking",
-       "title": "Stress & worry",
-       "detail": "We'll flag high-tension days in advance"
-      },
-      {
-       "id": "sleep",
-       "title": "Poor sleep",
-       "detail": "We'll track how weather and sleep add up"
-      },
-      {
-       "id": "weather",
-       "title": "Weather changes",
-       "detail": "Pressure and storm alerts the evening before"
-      },
-      {
-       "id": "stress",
-       "title": "Not sure yet",
-       "detail": "Your check-ins will show it within a few weeks"
-      }
-     ]
-    },
-    {
      "id": "symptoms",
      "type": "multiChoice",
-     "title": "Which of these do you get?",
-     "subtitle": "Pick all that apply — Solara tracks them against pressure, storms and humidity. 📓",
+     "title": "What do you get on bad days?",
+     "subtitle": "Pick all that apply — Solara tracks each one against the weather.",
      "cta": "Continue",
      "options": [
       {
        "id": "headache",
-       "title": "Headaches"
+       "title": "Headaches or migraines"
       },
       {
        "id": "joints",
-       "title": "Joints or muscles ache"
+       "title": "Aching joints or muscles"
       },
       {
-       "id": "heart",
-       "title": "Racing heart / pressure"
+       "id": "fatigue",
+       "title": "Heavy fatigue"
       },
       {
        "id": "sleep",
@@ -144,12 +106,12 @@
        "title": "Anxiety or restlessness"
       },
       {
-       "id": "fatigue",
-       "title": "Heavy fatigue"
+       "id": "mood",
+       "title": "Low mood"
       },
       {
-       "id": "mood",
-       "title": "Mood swings"
+       "id": "heart",
+       "title": "Racing heart"
       },
       {
        "id": "none",
@@ -158,36 +120,21 @@
      ]
     },
     {
-     "id": "sleep",
-     "type": "singleChoice",
-     "title": "How's your sleep lately?",
-     "subtitle": "Poor sleep makes pain days worse — and it's easy to track. 🌙",
+     "id": "value-guidance",
+     "type": "info",
+     "title": "Know before it hits",
+     "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a bad day never catches you off guard.",
      "cta": "Continue",
-     "options": [
-      {
-       "id": "deep",
-       "title": "Deep and steady"
-      },
-      {
-       "id": "mixed",
-       "title": "Depends on the day"
-      },
-      {
-       "id": "poor",
-       "title": "Restless more often than not"
-      },
-      {
-       "id": "unsure",
-       "title": "I honestly don't track it"
-      }
-     ]
+     "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
+     "imageStyle": "flood"
     },
     {
      "id": "gender",
      "type": "singleChoice",
-     "title": "How do you identify yourself?",
-     "subtitle": "Pain patterns differ — this helps us read yours. 🤍",
+     "title": "How do you identify?",
+     "subtitle": "Weather sensitivity differs between women and men.",
      "cta": "Continue",
+     "autoAdvance": true,
      "options": [
       {
        "id": "female",
@@ -201,109 +148,228 @@
        "id": "nonbinary",
        "title": "Non-binary"
       }
-     ],
-     "autoAdvance": true
-    },
-    {
-     "id": "name",
-     "type": "textInput",
-     "title": "What should we call you?",
-     "subtitle": "So Solara can talk to you. ✨",
-     "placeholder": "Your name",
-     "optional": true,
-     "cta": "Continue"
+     ]
     },
     {
      "id": "birthdate",
      "type": "datePicker",
      "title": "When were you born?",
-     "subtitle": "Weather sensitivity often changes with age — this helps tune your forecast. 🎂",
+     "subtitle": "Weather sensitivity often changes with age.",
      "cta": "Continue",
      "footnote": "Used only to tune your forecast · never shared"
     },
     {
-     "id": "about",
+     "id": "name",
      "type": "textInput",
-     "title": "In your own words…",
-     "subtitle": "What should Solara help you with? E.g. “migraines before rain”. 💬",
-     "placeholder": "e.g. Why am I drained every autumn?",
+     "title": "What should we call you?",
+     "subtitle": "For your forecast and evening warnings.",
+     "placeholder": "Your first name",
      "optional": true,
      "cta": "Continue"
     },
     {
-     "id": "interests",
-     "type": "multiChoice",
-     "title": "What should your forecast track?",
-     "subtitle": "Pick everything you want to see. 🌡️",
+     "id": "pain_days",
+     "type": "singleChoice",
+     "title": "In a typical month, how many days do headaches or aches slow you down?",
+     "subtitle": "A rough guess is fine.",
      "cta": "Continue",
      "options": [
       {
-       "id": "weather",
-       "title": "Pressure changes"
+       "id": "d0_3",
+       "title": "1–3 days",
+       "goto": "build-d0_3"
       },
       {
-       "id": "magnetic",
-       "title": "Magnetic storms"
+       "id": "d4_8",
+       "title": "4–8 days",
+       "goto": "build-d4_8"
       },
       {
-       "id": "sleep",
-       "title": "Sleep & recovery"
+       "id": "d9_15",
+       "title": "9–15 days",
+       "goto": "build-d9_15"
       },
       {
-       "id": "air",
-       "title": "Humidity & air quality"
+       "id": "d15p",
+       "title": "More than 15",
+       "goto": "build-d15p"
+      },
+      {
+       "id": "unsure",
+       "title": "Hard to say",
+       "goto": "build-unsure"
       }
      ]
     },
     {
-     "id": "personalizing",
      "type": "progress",
-     "title": "Building your pain-trigger profile…",
+     "title": "Building your pain forecast…",
      "tasks": [
-      "Reading local pressure & humidity",
-      "Checking magnetic storm activity",
-      "Matching your symptoms to weather",
-      "Building your 7-day pain forecast"
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
      ],
      "facts": [
-      "Live NOAA space-weather feed",
-      "10,000+ weather stations worldwide",
-      "Barometric pressure, hour by hour",
-      "Your answers never leave this device"
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
      ],
-     "afterDone": "Your pain forecast is ready"
+     "afterDone": "Your forecast is ready",
+     "id": "build-d0_3"
     },
     {
-     "id": "value-science",
-     "type": "info",
-     "title": "Real weather data",
-     "subtitle": "Live pressure, storms and humidity from NOAA and 10,000+ stations — checked against your own days.",
-     "cta": "Impressive!",
-     "imageURL": "https://hazard.studio/img/atmo/science-floodtop4.png",
-     "imageStyle": "flood-top",
-     "imageHeight": 330
+     "id": "result-d0_3",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "Up to 3 bad days a month — up to 36 a year.",
+     "subtitle": "Days like these often land on pressure drops and storms. Knowing the evening before lets you plan around them instead of losing them.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
+    },
+    {
+     "type": "progress",
+     "title": "Building your pain forecast…",
+     "tasks": [
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
+     ],
+     "facts": [
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
+     ],
+     "afterDone": "Your forecast is ready",
+     "id": "build-d4_8"
+    },
+    {
+     "id": "result-d4_8",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "4–8 bad days a month — up to 96 a year.",
+     "subtitle": "That's more than three months of your year. For many weather-sensitive people, a big share of those days follows pressure drops and storms — and those can be seen coming.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
+    },
+    {
+     "type": "progress",
+     "title": "Building your pain forecast…",
+     "tasks": [
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
+     ],
+     "facts": [
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
+     ],
+     "afterDone": "Your forecast is ready",
+     "id": "build-d9_15"
+    },
+    {
+     "id": "result-d9_15",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "9–15 bad days a month — up to half your days.",
+     "subtitle": "Weather is one of the few triggers you can see coming. Solara warns you the evening before every pressure drop or storm, so fewer days catch you off guard.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
+    },
+    {
+     "type": "progress",
+     "title": "Building your pain forecast…",
+     "tasks": [
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
+     ],
+     "facts": [
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
+     ],
+     "afterDone": "Your forecast is ready",
+     "id": "build-d15p"
+    },
+    {
+     "id": "result-d15p",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "More bad days than good ones.",
+     "subtitle": "You deserve a heads-up. Solara warns you the evening before pressure drops and storms, and keeps a simple log of your days and the weather behind them — worth showing your doctor.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
+    },
+    {
+     "type": "progress",
+     "title": "Building your pain forecast…",
+     "tasks": [
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
+     ],
+     "facts": [
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
+     ],
+     "afterDone": "Your forecast is ready",
+     "id": "build-unsure"
+    },
+    {
+     "id": "result-unsure",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "Most people underestimate it.",
+     "subtitle": "A 10-second check-in each evening shows how many days the weather really takes from you — and which weather it is.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
     },
     {
      "id": "location",
      "type": "permission",
      "permission": "location",
-     "title": "Weather where you are",
-     "subtitle": "So your pain forecast matches the pressure and storms right where you live.",
+     "title": "Your local weather",
+     "subtitle": "Pressure and storms are local — your forecast needs your area to warn you in time.",
      "cta": "Continue",
-     "footnote": "10,000+ weather stations · NOAA space-weather observatory",
+     "footnote": "Used only for your forecast · never shared",
      "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
-     "imageStyle": "flood-top",
-     "imageHeight": 270
-    },
-    {
-     "id": "health",
-     "type": "permission",
-     "permission": "health",
-     "title": "Connect Apple Health",
-     "subtitle": "Sleep, steps and heart rate next to every day you log. Read-only, never for ads.",
-     "cta": "Continue",
-     "footnote": "Read-only · your health data never leaves your phone for ads or analytics",
-     "imageURL": "https://hazard.studio/img/atmo/health-floodtop3.png",
      "imageStyle": "flood-top",
      "imageHeight": 270
     },
@@ -312,7 +378,7 @@
      "type": "permission",
      "permission": "notifications",
      "title": "Get warned the evening before",
-     "subtitle": "A heads-up before a pressure drop or storm, and a one-tap check-in each evening.",
+     "subtitle": "One quiet heads-up before a pressure drop or storm — the moment your forecast is built for.",
      "cta": "Continue",
      "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
      "imageStyle": "flood-top",
@@ -321,20 +387,20 @@
     {
      "id": "before-after",
      "type": "comparison",
-     "title": "This is how your days change",
+     "title": "How your days change",
      "beforeTitle": "Without",
      "afterTitle": "With Solara",
      "before": [
-      "Blindsided by headache days",
+      "Blindsided by bad days",
       "Guessing what set it off",
-      "Storms hit out of nowhere",
-      "Cancelled plans, again"
+      "Cancelled plans, again",
+      "Pushing through the pain"
      ],
      "after": [
-      "Know tomorrow's pain risk",
-      "See your own triggers",
       "A warning the evening before",
-      "Plan around the heavy days"
+      "Your own weather triggers",
+      "Plans made around heavy days",
+      "A 7-day pain outlook"
      ],
      "cta": "I Want This",
      "footnote": "Powered by live NOAA and weather-station data",
@@ -348,12 +414,12 @@
     }
    ],
    "paywall": {
-    "title": "Get your pain forecast",
+    "title": "Your pain forecast is ready",
     "features": [
      "Tomorrow's pain risk from pressure, storms and humidity",
-     "A heads-up the night before a pressure drop or storm",
-     "Your own triggers: which weather comes before your headaches or joint pain",
-     "A 7-day outlook to plan around your heavy days"
+     "A warning the evening before a pressure drop or storm",
+     "Your own triggers — which weather comes before your bad days",
+     "A 7-day outlook to plan around heavy days"
     ],
     "plans": [
      {
@@ -361,9 +427,9 @@
       "title": "Weekly",
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
-      "isDefault": true,
+      "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Start Plus"
+      "cta": "Get My Forecast"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -373,7 +439,8 @@
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
       "note": "3 days free, then $49.99/year",
-      "cta": "Try 3 Days Free"
+      "cta": "Try 3 Days Free",
+      "isDefault": true
      }
     ],
     "cta": "Continue",
@@ -382,13 +449,13 @@
     "includedTitle": "What's Included",
     "included": [
      "Pain Risk Forecast",
-     "Sky Data",
-     "Apple Health",
+     "Evening Warnings",
+     "7-Day Outlook",
+     "Your Triggers",
      "Pressure & Humidity",
      "Storm Alerts",
-     "Your Patterns",
-     "10 Weather Metrics",
-     "Check-ins",
+     "Daily Check-ins",
+     "Apple Health",
      "Air Quality"
     ],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -397,7 +464,7 @@
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
-    "heroImageName": "SkyArtSunny",
+    "heroImageName": "SkyArtGolden",
     "stats": [
      {
       "value": "10K+",
@@ -408,8 +475,8 @@
       "label": "countries"
      },
      {
-      "value": "24/7",
-      "label": "live sky data"
+      "value": "Hourly",
+      "label": "pressure data"
      }
     ],
     "showTrialTimeline": false
@@ -662,12 +729,12 @@
     }
    ],
    "paywall": {
-    "title": "Get your pain forecast",
+    "title": "Your pain forecast is ready",
     "features": [
      "Tomorrow's pain risk from pressure, storms and humidity",
-     "A heads-up the night before a pressure drop or storm",
-     "Your own triggers: which weather comes before your headaches or joint pain",
-     "A 7-day outlook to plan around your heavy days"
+     "A warning the evening before a pressure drop or storm",
+     "Your own triggers — which weather comes before your bad days",
+     "A 7-day outlook to plan around heavy days"
     ],
     "plans": [
      {
@@ -675,9 +742,9 @@
       "title": "Weekly",
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
-      "isDefault": true,
+      "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Start Plus"
+      "cta": "Get My Forecast"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -687,7 +754,8 @@
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
       "note": "3 days free, then $49.99/year",
-      "cta": "Try 3 Days Free"
+      "cta": "Try 3 Days Free",
+      "isDefault": true
      }
     ],
     "cta": "Continue",
@@ -696,13 +764,13 @@
     "includedTitle": "What's Included",
     "included": [
      "Pain Risk Forecast",
-     "Sky Data",
-     "Apple Health",
+     "Evening Warnings",
+     "7-Day Outlook",
+     "Your Triggers",
      "Pressure & Humidity",
      "Storm Alerts",
-     "Your Patterns",
-     "10 Weather Metrics",
-     "Check-ins",
+     "Daily Check-ins",
+     "Apple Health",
      "Air Quality"
     ],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -711,7 +779,7 @@
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
-    "heroImageName": "SkyArtSunny",
+    "heroImageName": "SkyArtGolden",
     "stats": [
      {
       "value": "10K+",
@@ -722,8 +790,8 @@
       "label": "countries"
      },
      {
-      "value": "24/7",
-      "label": "live sky data"
+      "value": "Hourly",
+      "label": "pressure data"
      }
     ],
     "showTrialTimeline": false
@@ -780,12 +848,12 @@
     }
    ],
    "paywall": {
-    "title": "Get your pain forecast",
+    "title": "Your pain forecast is ready",
     "features": [
      "Tomorrow's pain risk from pressure, storms and humidity",
-     "A heads-up the night before a pressure drop or storm",
-     "Your own triggers: which weather comes before your headaches or joint pain",
-     "A 7-day outlook to plan around your heavy days"
+     "A warning the evening before a pressure drop or storm",
+     "Your own triggers — which weather comes before your bad days",
+     "A 7-day outlook to plan around heavy days"
     ],
     "plans": [
      {
@@ -793,9 +861,9 @@
       "title": "Weekly",
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
-      "isDefault": true,
+      "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Start Plus"
+      "cta": "Get My Forecast"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -805,7 +873,8 @@
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
       "note": "3 days free, then $49.99/year",
-      "cta": "Try 3 Days Free"
+      "cta": "Try 3 Days Free",
+      "isDefault": true
      }
     ],
     "cta": "Continue",
@@ -814,13 +883,13 @@
     "includedTitle": "What's Included",
     "included": [
      "Pain Risk Forecast",
-     "Sky Data",
-     "Apple Health",
+     "Evening Warnings",
+     "7-Day Outlook",
+     "Your Triggers",
      "Pressure & Humidity",
      "Storm Alerts",
-     "Your Patterns",
-     "10 Weather Metrics",
-     "Check-ins",
+     "Daily Check-ins",
+     "Apple Health",
      "Air Quality"
     ],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -829,7 +898,7 @@
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
-    "heroImageName": "SkyArtSunny",
+    "heroImageName": "SkyArtGolden",
     "stats": [
      {
       "value": "10K+",
@@ -840,8 +909,8 @@
       "label": "countries"
      },
      {
-      "value": "24/7",
-      "label": "live sky data"
+      "value": "Hourly",
+      "label": "pressure data"
      }
     ],
     "showTrialTimeline": false
@@ -1045,12 +1114,12 @@
     }
    ],
    "paywall": {
-    "title": "Get your pain forecast",
+    "title": "Your pain forecast is ready",
     "features": [
      "Tomorrow's pain risk from pressure, storms and humidity",
-     "A heads-up the night before a pressure drop or storm",
-     "Your own triggers: which weather comes before your headaches or joint pain",
-     "A 7-day outlook to plan around your heavy days"
+     "A warning the evening before a pressure drop or storm",
+     "Your own triggers — which weather comes before your bad days",
+     "A 7-day outlook to plan around heavy days"
     ],
     "plans": [
      {
@@ -1058,9 +1127,9 @@
       "title": "Weekly",
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
-      "isDefault": true,
+      "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Start Plus"
+      "cta": "Get My Forecast"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1070,7 +1139,8 @@
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
       "note": "3 days free, then $49.99/year",
-      "cta": "Try 3 Days Free"
+      "cta": "Try 3 Days Free",
+      "isDefault": true
      }
     ],
     "cta": "Continue",
@@ -1079,13 +1149,13 @@
     "includedTitle": "What's Included",
     "included": [
      "Pain Risk Forecast",
-     "Sky Data",
-     "Apple Health",
+     "Evening Warnings",
+     "7-Day Outlook",
+     "Your Triggers",
      "Pressure & Humidity",
      "Storm Alerts",
-     "Your Patterns",
-     "10 Weather Metrics",
-     "Check-ins",
+     "Daily Check-ins",
+     "Apple Health",
      "Air Quality"
     ],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -1094,7 +1164,7 @@
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
-    "heroImageName": "SkyArtSunny",
+    "heroImageName": "SkyArtGolden",
     "stats": [
      {
       "value": "10K+",
@@ -1105,8 +1175,8 @@
       "label": "countries"
      },
      {
-      "value": "24/7",
-      "label": "live sky data"
+      "value": "Hourly",
+      "label": "pressure data"
      }
     ],
     "showTrialTimeline": false
@@ -1119,67 +1189,58 @@
     {
      "id": "welcome",
      "type": "info",
+     "artwork": "hero",
      "title": "Your pain forecast",
-     "subtitle": "Pressure drops, storms and humidity hit many people as headaches, achy joints and heavy days. Solara warns you before they do.",
-     "cta": "Get Started",
-     "artwork": "hero"
+     "subtitle": "Pressure drops, storms and humidity hit many people as headaches and achy joints. Solara warns you the evening before.",
+     "cta": "Get Started"
     },
     {
      "id": "goal",
      "type": "singleChoice",
      "title": "What would you like help with?",
-     "subtitle": "Your forecast will focus on it. 🎯",
+     "subtitle": "We'll build your forecast around it.",
      "cta": "Continue",
      "options": [
       {
        "id": "energy",
        "title": "Fewer headache days",
-       "detail": "Know the headache-risk days in advance"
+       "detail": "Know the high-risk days in advance"
       },
       {
-       "id": "mood",
-       "title": "Less anxiety & low mood",
-       "detail": "See which weather sets you on edge"
+       "id": "joints",
+       "title": "Fewer achy-joint days",
+       "detail": "See which weather sets your joints off"
       },
       {
-       "id": "sleep",
-       "title": "Better sleep",
-       "detail": "Spot the nights the weather will disturb"
+       "id": "both",
+       "title": "Headaches and joints",
+       "detail": "One forecast for both"
       },
       {
        "id": "self",
        "title": "Understand my triggers",
-       "detail": "Find what really sets off your bad days — proven on your own data"
+       "detail": "Find what really sets off your bad days — on your own data"
       }
      ]
     },
     {
      "id": "goal-ack",
      "type": "payoff",
-     "title": "Got it{withName|}",
-     "subtitle": "Your forecast will focus on it. A few quick questions and it becomes yours.",
-     "cta": "Let's Go",
-     "artwork": "hero"
-    },
-    {
-     "id": "value-guidance",
-     "type": "info",
-     "title": "Know before it hits",
-     "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a heavy day never catches you off guard.",
-     "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
-     "imageStyle": "flood"
+     "artwork": "hero",
+     "title": "You're in the right place",
+     "subtitle": "Most people who feel the weather never learn what's behind it. A few quick questions — then you'll see your forecast.",
+     "cta": "Let's Go"
     },
     {
      "id": "sensitivity",
      "type": "singleChoice",
-     "title": "Are you weather-sensitive?",
-     "subtitle": "Many people feel a pressure drop or a storm before the sky changes — as headaches, aching joints or fatigue. 🌧️",
+     "title": "Do you feel weather changes in your body?",
+     "subtitle": "Many people feel a pressure drop or a storm before the sky changes.",
      "cta": "Continue",
      "options": [
       {
        "id": "often",
-       "title": "Yes, I feel the weather strongly"
+       "title": "Yes, strongly"
       },
       {
        "id": "sometimes",
@@ -1192,52 +1253,23 @@
      ]
     },
     {
-     "id": "drain",
-     "type": "singleChoice",
-     "title": "What usually sets off your bad days?",
-     "subtitle": "Solara will watch it alongside the weather. 🔍",
-     "cta": "Continue",
-     "options": [
-      {
-       "id": "overthinking",
-       "title": "Stress & worry",
-       "detail": "We'll flag high-tension days in advance"
-      },
-      {
-       "id": "sleep",
-       "title": "Poor sleep",
-       "detail": "We'll track how weather and sleep add up"
-      },
-      {
-       "id": "weather",
-       "title": "Weather changes",
-       "detail": "Pressure and storm alerts the evening before"
-      },
-      {
-       "id": "stress",
-       "title": "Not sure yet",
-       "detail": "Your check-ins will show it within a few weeks"
-      }
-     ]
-    },
-    {
      "id": "symptoms",
      "type": "multiChoice",
-     "title": "Which of these do you get?",
-     "subtitle": "Pick all that apply — Solara tracks them against pressure, storms and humidity. 📓",
+     "title": "What do you get on bad days?",
+     "subtitle": "Pick all that apply — Solara tracks each one against the weather.",
      "cta": "Continue",
      "options": [
       {
        "id": "headache",
-       "title": "Headaches"
+       "title": "Headaches or migraines"
       },
       {
        "id": "joints",
-       "title": "Joints or muscles ache"
+       "title": "Aching joints or muscles"
       },
       {
-       "id": "heart",
-       "title": "Racing heart / pressure"
+       "id": "fatigue",
+       "title": "Heavy fatigue"
       },
       {
        "id": "sleep",
@@ -1248,12 +1280,12 @@
        "title": "Anxiety or restlessness"
       },
       {
-       "id": "fatigue",
-       "title": "Heavy fatigue"
+       "id": "mood",
+       "title": "Low mood"
       },
       {
-       "id": "mood",
-       "title": "Mood swings"
+       "id": "heart",
+       "title": "Racing heart"
       },
       {
        "id": "none",
@@ -1262,36 +1294,21 @@
      ]
     },
     {
-     "id": "sleep",
-     "type": "singleChoice",
-     "title": "How's your sleep lately?",
-     "subtitle": "Poor sleep makes pain days worse — and it's easy to track. 🌙",
+     "id": "value-guidance",
+     "type": "info",
+     "title": "Know before it hits",
+     "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a bad day never catches you off guard.",
      "cta": "Continue",
-     "options": [
-      {
-       "id": "deep",
-       "title": "Deep and steady"
-      },
-      {
-       "id": "mixed",
-       "title": "Depends on the day"
-      },
-      {
-       "id": "poor",
-       "title": "Restless more often than not"
-      },
-      {
-       "id": "unsure",
-       "title": "I honestly don't track it"
-      }
-     ]
+     "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
+     "imageStyle": "flood"
     },
     {
      "id": "gender",
      "type": "singleChoice",
-     "title": "How do you identify yourself?",
-     "subtitle": "Pain patterns differ — this helps us read yours. 🤍",
+     "title": "How do you identify?",
+     "subtitle": "Weather sensitivity differs between women and men.",
      "cta": "Continue",
+     "autoAdvance": true,
      "options": [
       {
        "id": "female",
@@ -1305,109 +1322,228 @@
        "id": "nonbinary",
        "title": "Non-binary"
       }
-     ],
-     "autoAdvance": true
-    },
-    {
-     "id": "name",
-     "type": "textInput",
-     "title": "What should we call you?",
-     "subtitle": "So Solara can talk to you. ✨",
-     "placeholder": "Your name",
-     "optional": true,
-     "cta": "Continue"
+     ]
     },
     {
      "id": "birthdate",
      "type": "datePicker",
      "title": "When were you born?",
-     "subtitle": "Weather sensitivity often changes with age — this helps tune your forecast. 🎂",
+     "subtitle": "Weather sensitivity often changes with age.",
      "cta": "Continue",
      "footnote": "Used only to tune your forecast · never shared"
     },
     {
-     "id": "about",
+     "id": "name",
      "type": "textInput",
-     "title": "In your own words…",
-     "subtitle": "What should Solara help you with? E.g. “migraines before rain”. 💬",
-     "placeholder": "e.g. Why am I drained every autumn?",
+     "title": "What should we call you?",
+     "subtitle": "For your forecast and evening warnings.",
+     "placeholder": "Your first name",
      "optional": true,
      "cta": "Continue"
     },
     {
-     "id": "interests",
-     "type": "multiChoice",
-     "title": "What should your forecast track?",
-     "subtitle": "Pick everything you want to see. 🌡️",
+     "id": "pain_days",
+     "type": "singleChoice",
+     "title": "In a typical month, how many days do headaches or aches slow you down?",
+     "subtitle": "A rough guess is fine.",
      "cta": "Continue",
      "options": [
       {
-       "id": "weather",
-       "title": "Pressure changes"
+       "id": "d0_3",
+       "title": "1–3 days",
+       "goto": "build-d0_3"
       },
       {
-       "id": "magnetic",
-       "title": "Magnetic storms"
+       "id": "d4_8",
+       "title": "4–8 days",
+       "goto": "build-d4_8"
       },
       {
-       "id": "sleep",
-       "title": "Sleep & recovery"
+       "id": "d9_15",
+       "title": "9–15 days",
+       "goto": "build-d9_15"
       },
       {
-       "id": "air",
-       "title": "Humidity & air quality"
+       "id": "d15p",
+       "title": "More than 15",
+       "goto": "build-d15p"
+      },
+      {
+       "id": "unsure",
+       "title": "Hard to say",
+       "goto": "build-unsure"
       }
      ]
     },
     {
-     "id": "personalizing",
      "type": "progress",
-     "title": "Building your pain-trigger profile…",
+     "title": "Building your pain forecast…",
      "tasks": [
-      "Reading local pressure & humidity",
-      "Checking magnetic storm activity",
-      "Matching your symptoms to weather",
-      "Building your 7-day pain forecast"
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
      ],
      "facts": [
-      "Live NOAA space-weather feed",
-      "10,000+ weather stations worldwide",
-      "Barometric pressure, hour by hour",
-      "Your answers never leave this device"
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
      ],
-     "afterDone": "Your pain forecast is ready"
+     "afterDone": "Your forecast is ready",
+     "id": "build-d0_3"
     },
     {
-     "id": "value-science",
-     "type": "info",
-     "title": "Real weather data",
-     "subtitle": "Live pressure, storms and humidity from NOAA and 10,000+ stations — checked against your own days.",
-     "cta": "Impressive!",
-     "imageURL": "https://hazard.studio/img/atmo/science-floodtop4.png",
-     "imageStyle": "flood-top",
-     "imageHeight": 330
+     "id": "result-d0_3",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "Up to 3 bad days a month — up to 36 a year.",
+     "subtitle": "Days like these often land on pressure drops and storms. Knowing the evening before lets you plan around them instead of losing them.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
+    },
+    {
+     "type": "progress",
+     "title": "Building your pain forecast…",
+     "tasks": [
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
+     ],
+     "facts": [
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
+     ],
+     "afterDone": "Your forecast is ready",
+     "id": "build-d4_8"
+    },
+    {
+     "id": "result-d4_8",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "4–8 bad days a month — up to 96 a year.",
+     "subtitle": "That's more than three months of your year. For many weather-sensitive people, a big share of those days follows pressure drops and storms — and those can be seen coming.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
+    },
+    {
+     "type": "progress",
+     "title": "Building your pain forecast…",
+     "tasks": [
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
+     ],
+     "facts": [
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
+     ],
+     "afterDone": "Your forecast is ready",
+     "id": "build-d9_15"
+    },
+    {
+     "id": "result-d9_15",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "9–15 bad days a month — up to half your days.",
+     "subtitle": "Weather is one of the few triggers you can see coming. Solara warns you the evening before every pressure drop or storm, so fewer days catch you off guard.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
+    },
+    {
+     "type": "progress",
+     "title": "Building your pain forecast…",
+     "tasks": [
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
+     ],
+     "facts": [
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
+     ],
+     "afterDone": "Your forecast is ready",
+     "id": "build-d15p"
+    },
+    {
+     "id": "result-d15p",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "More bad days than good ones.",
+     "subtitle": "You deserve a heads-up. Solara warns you the evening before pressure drops and storms, and keeps a simple log of your days and the weather behind them — worth showing your doctor.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
+    },
+    {
+     "type": "progress",
+     "title": "Building your pain forecast…",
+     "tasks": [
+      "Matching your symptoms to weather patterns",
+      "Checking pressure and storm models",
+      "Setting up your evening warnings",
+      "Building your 7-day pain outlook"
+     ],
+     "facts": [
+      "Pressure, humidity and storms, hour by hour",
+      "Space-weather data from NOAA",
+      "Your answers stay private — never sold or used for ads"
+     ],
+     "afterDone": "Your forecast is ready",
+     "id": "build-unsure"
+    },
+    {
+     "id": "result-unsure",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "Most people underestimate it.",
+     "subtitle": "A 10-second check-in each evening shows how many days the weather really takes from you — and which weather it is.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "yes",
+       "title": "That's me — show my forecast",
+       "goto": "location"
+      }
+     ]
     },
     {
      "id": "location",
      "type": "permission",
      "permission": "location",
-     "title": "Weather where you are",
-     "subtitle": "So your pain forecast matches the pressure and storms right where you live.",
+     "title": "Your local weather",
+     "subtitle": "Pressure and storms are local — your forecast needs your area to warn you in time.",
      "cta": "Continue",
-     "footnote": "10,000+ weather stations · NOAA space-weather observatory",
+     "footnote": "Used only for your forecast · never shared",
      "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
-     "imageStyle": "flood-top",
-     "imageHeight": 270
-    },
-    {
-     "id": "health",
-     "type": "permission",
-     "permission": "health",
-     "title": "Connect Apple Health",
-     "subtitle": "Sleep, steps and heart rate next to every day you log. Read-only, never for ads.",
-     "cta": "Continue",
-     "footnote": "Read-only · your health data never leaves your phone for ads or analytics",
-     "imageURL": "https://hazard.studio/img/atmo/health-floodtop3.png",
      "imageStyle": "flood-top",
      "imageHeight": 270
     },
@@ -1416,7 +1552,7 @@
      "type": "permission",
      "permission": "notifications",
      "title": "Get warned the evening before",
-     "subtitle": "A heads-up before a pressure drop or storm, and a one-tap check-in each evening.",
+     "subtitle": "One quiet heads-up before a pressure drop or storm — the moment your forecast is built for.",
      "cta": "Continue",
      "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
      "imageStyle": "flood-top",
@@ -1425,20 +1561,20 @@
     {
      "id": "before-after",
      "type": "comparison",
-     "title": "This is how your days change",
+     "title": "How your days change",
      "beforeTitle": "Without",
      "afterTitle": "With Solara",
      "before": [
-      "Blindsided by headache days",
+      "Blindsided by bad days",
       "Guessing what set it off",
-      "Storms hit out of nowhere",
-      "Cancelled plans, again"
+      "Cancelled plans, again",
+      "Pushing through the pain"
      ],
      "after": [
-      "Know tomorrow's pain risk",
-      "See your own triggers",
       "A warning the evening before",
-      "Plan around the heavy days"
+      "Your own weather triggers",
+      "Plans made around heavy days",
+      "A 7-day pain outlook"
      ],
      "cta": "I Want This",
      "footnote": "Powered by live NOAA and weather-station data",
@@ -1452,12 +1588,12 @@
     }
    ],
    "paywall": {
-    "title": "Get your pain forecast",
+    "title": "Your pain forecast is ready",
     "features": [
      "Tomorrow's pain risk from pressure, storms and humidity",
-     "A heads-up the night before a pressure drop or storm",
-     "Your own triggers: which weather comes before your headaches or joint pain",
-     "A 7-day outlook to plan around your heavy days"
+     "A warning the evening before a pressure drop or storm",
+     "Your own triggers — which weather comes before your bad days",
+     "A 7-day outlook to plan around heavy days"
     ],
     "plans": [
      {
@@ -1465,9 +1601,9 @@
       "title": "Weekly",
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
-      "isDefault": true,
+      "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Start Plus"
+      "cta": "Get My Forecast"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1477,7 +1613,8 @@
       "badge": "SAVE 90%",
       "equivalent": "≈ $0.96 / week",
       "note": "3 days free, then $49.99/year",
-      "cta": "Try 3 Days Free"
+      "cta": "Try 3 Days Free",
+      "isDefault": true
      }
     ],
     "cta": "Continue",
@@ -1486,13 +1623,13 @@
     "includedTitle": "What's Included",
     "included": [
      "Pain Risk Forecast",
-     "Sky Data",
-     "Apple Health",
+     "Evening Warnings",
+     "7-Day Outlook",
+     "Your Triggers",
      "Pressure & Humidity",
      "Storm Alerts",
-     "Your Patterns",
-     "10 Weather Metrics",
-     "Check-ins",
+     "Daily Check-ins",
+     "Apple Health",
      "Air Quality"
     ],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -1501,7 +1638,7 @@
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
-    "heroImageName": "SkyArtSunny",
+    "heroImageName": "SkyArtGolden",
     "stats": [
      {
       "value": "10K+",
@@ -1512,8 +1649,8 @@
       "label": "countries"
      },
      {
-      "value": "24/7",
-      "label": "live sky data"
+      "value": "Hourly",
+      "label": "pressure data"
      }
     ],
     "showTrialTimeline": false
@@ -1529,79 +1666,12 @@
  },
  "paywalls": {
   "web_cohort": {
-   "title": "Your plan is ready to start",
-   "features": [
-    "Tomorrow's pain risk, every evening",
-    "Magnetic storm & pressure forecast",
-    "Apple Health attached to every log",
-    "Storm & pressure heads-up the night before"
-   ],
-   "plans": [
-    {
-     "productId": "com.hazard.atmo.pro.weekly",
-     "title": "Weekly",
-     "fallbackPrice": "$9.99",
-     "periodLabel": "per week",
-     "isDefault": true,
-     "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Start Plus"
-    },
-    {
-     "productId": "com.hazard.atmo.pro.yearly",
-     "title": "Yearly",
-     "fallbackPrice": "$49.99",
-     "periodLabel": "per year",
-     "badge": "SAVE 90%",
-     "equivalent": "≈ $0.96 / week",
-     "note": "3 days free, then $49.99/year",
-     "cta": "Try 3 Days Free"
-    }
-   ],
-   "cta": "Continue",
-   "closeDelaySeconds": 0,
-   "skippable": false,
-   "includedTitle": "What's Included",
-   "included": [
-    "Pain Risk Forecast",
-    "Sky Data",
-    "Apple Health",
-    "Pressure & Humidity",
-    "Storm Alerts",
-    "Your Patterns",
-    "10 Weather Metrics",
-    "Check-ins",
-    "Air Quality"
-   ],
-   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
-   "termsURL": "https://hazard.studio/apps/solara/terms.html",
-   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
-   "brandName": "Solara",
-   "brandBadge": "PLUS",
-   "subtitle": "Weather, space weather and your own rhythms — one personal forecast, every morning.",
-   "heroImageName": "SkyArtSunny",
-   "stats": [
-    {
-     "value": "10K+",
-     "label": "weather stations"
-    },
-    {
-     "value": "175",
-     "label": "countries"
-    },
-    {
-     "value": "24/7",
-     "label": "live sky data"
-    }
-   ],
-   "showTrialTimeline": false
-  },
-  "paid_default": {
-   "title": "Get your pain forecast",
+   "title": "Your pain forecast is ready",
    "features": [
     "Tomorrow's pain risk from pressure, storms and humidity",
-    "A heads-up the night before a pressure drop or storm",
-    "Your own triggers: which weather comes before your headaches or joint pain",
-    "A 7-day outlook to plan around your heavy days"
+    "A warning the evening before a pressure drop or storm",
+    "Your own triggers — which weather comes before your bad days",
+    "A 7-day outlook to plan around heavy days"
    ],
    "plans": [
     {
@@ -1609,9 +1679,9 @@
      "title": "Weekly",
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
-     "isDefault": true,
+     "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Start Plus"
+     "cta": "Get My Forecast"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1621,7 +1691,8 @@
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
      "note": "3 days free, then $49.99/year",
-     "cta": "Try 3 Days Free"
+     "cta": "Try 3 Days Free",
+     "isDefault": true
     }
    ],
    "cta": "Continue",
@@ -1630,13 +1701,13 @@
    "includedTitle": "What's Included",
    "included": [
     "Pain Risk Forecast",
-    "Sky Data",
-    "Apple Health",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers",
     "Pressure & Humidity",
     "Storm Alerts",
-    "Your Patterns",
-    "10 Weather Metrics",
-    "Check-ins",
+    "Daily Check-ins",
+    "Apple Health",
     "Air Quality"
    ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -1645,7 +1716,7 @@
    "brandName": "Solara",
    "brandBadge": "PLUS",
    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
-   "heroImageName": "SkyArtSunny",
+   "heroImageName": "SkyArtGolden",
    "stats": [
     {
      "value": "10K+",
@@ -1656,19 +1727,19 @@
      "label": "countries"
     },
     {
-     "value": "24/7",
-     "label": "live sky data"
+     "value": "Hourly",
+     "label": "pressure data"
     }
    ],
    "showTrialTimeline": false
   },
-  "preview_end": {
-   "title": "Keep your full forecast",
+  "paid_default": {
+   "title": "Your pain forecast is ready",
    "features": [
-    "Tomorrow's forecast and the week ahead",
-    "Every factor behind your number",
-    "Patterns verified on YOUR check-ins",
-    "Storm & pressure heads-up the night before"
+    "Tomorrow's pain risk from pressure, storms and humidity",
+    "A warning the evening before a pressure drop or storm",
+    "Your own triggers — which weather comes before your bad days",
+    "A 7-day outlook to plan around heavy days"
    ],
    "plans": [
     {
@@ -1676,9 +1747,9 @@
      "title": "Weekly",
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
-     "isDefault": true,
+     "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Start Plus"
+     "cta": "Get My Forecast"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1688,21 +1759,23 @@
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
      "note": "3 days free, then $49.99/year",
-     "cta": "Try 3 Days Free"
+     "cta": "Try 3 Days Free",
+     "isDefault": true
     }
    ],
    "cta": "Continue",
-   "skippable": true,
+   "closeDelaySeconds": 0,
+   "skippable": false,
    "includedTitle": "What's Included",
    "included": [
-    "Tomorrow's Forecast",
-    "7-Day Outlook",
-    "Every Factor",
-    "Your Patterns",
-    "Storm Alerts",
     "Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers",
+    "Pressure & Humidity",
+    "Storm Alerts",
+    "Daily Check-ins",
     "Apple Health",
-    "Check-ins",
     "Air Quality"
    ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -1710,8 +1783,8 @@
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
    "brandBadge": "PLUS",
-   "subtitle": "Tomorrow, the week ahead, every factor behind your number and your patterns — back in one tap.",
-   "heroImageName": "SkyArtSunny",
+   "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
+   "heroImageName": "SkyArtGolden",
    "stats": [
     {
      "value": "10K+",
@@ -1722,20 +1795,87 @@
      "label": "countries"
     },
     {
-     "value": "24/7",
-     "label": "live sky data"
+     "value": "Hourly",
+     "label": "pressure data"
+    }
+   ],
+   "showTrialTimeline": false
+  },
+  "preview_end": {
+   "title": "Your pain forecast is ready",
+   "features": [
+    "Tomorrow's pain risk from pressure, storms and humidity",
+    "A warning the evening before a pressure drop or storm",
+    "Your own triggers — which weather comes before your bad days",
+    "A 7-day outlook to plan around heavy days"
+   ],
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$9.99",
+     "periodLabel": "per week",
+     "isDefault": false,
+     "note": "$9.99/week, starts today. Cancel anytime",
+     "cta": "Get My Forecast"
+    },
+    {
+     "productId": "com.hazard.atmo.pro.yearly",
+     "title": "Yearly",
+     "fallbackPrice": "$49.99",
+     "periodLabel": "per year",
+     "badge": "SAVE 90%",
+     "equivalent": "≈ $0.96 / week",
+     "note": "3 days free, then $49.99/year",
+     "cta": "Try 3 Days Free",
+     "isDefault": true
+    }
+   ],
+   "cta": "Continue",
+   "skippable": true,
+   "includedTitle": "What's Included",
+   "included": [
+    "Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers",
+    "Pressure & Humidity",
+    "Storm Alerts",
+    "Daily Check-ins",
+    "Apple Health",
+    "Air Quality"
+   ],
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "brandName": "Solara",
+   "brandBadge": "PLUS",
+   "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
+   "heroImageName": "SkyArtGolden",
+   "stats": [
+    {
+     "value": "10K+",
+     "label": "weather stations"
+    },
+    {
+     "value": "175",
+     "label": "countries"
+    },
+    {
+     "value": "Hourly",
+     "label": "pressure data"
     }
    ],
    "showTrialTimeline": false,
    "closeDelaySeconds": 0
   },
   "lock": {
-   "title": "See what's coming",
+   "title": "Your pain forecast is ready",
    "features": [
-    "Tomorrow's forecast and the week ahead",
-    "Every factor behind your number",
-    "Patterns verified on YOUR check-ins",
-    "Storm & pressure heads-up the night before"
+    "Tomorrow's pain risk from pressure, storms and humidity",
+    "A warning the evening before a pressure drop or storm",
+    "Your own triggers — which weather comes before your bad days",
+    "A 7-day outlook to plan around heavy days"
    ],
    "plans": [
     {
@@ -1743,9 +1883,9 @@
      "title": "Weekly",
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
-     "isDefault": true,
+     "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Start Plus"
+     "cta": "Get My Forecast"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1755,21 +1895,22 @@
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
      "note": "3 days free, then $49.99/year",
-     "cta": "Try 3 Days Free"
+     "cta": "Try 3 Days Free",
+     "isDefault": true
     }
    ],
    "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
-    "Tomorrow's Forecast",
-    "7-Day Outlook",
-    "Every Factor",
-    "Your Patterns",
-    "Storm Alerts",
     "Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers",
+    "Pressure & Humidity",
+    "Storm Alerts",
+    "Daily Check-ins",
     "Apple Health",
-    "Check-ins",
     "Air Quality"
    ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -1777,8 +1918,8 @@
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
    "brandBadge": "PLUS",
-   "subtitle": "Plan around tomorrow and the week ahead — with every factor and your own patterns.",
-   "heroImageName": "SkyArtSunny",
+   "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
+   "heroImageName": "SkyArtGolden",
    "stats": [
     {
      "value": "10K+",
@@ -1789,20 +1930,20 @@
      "label": "countries"
     },
     {
-     "value": "24/7",
-     "label": "live sky data"
+     "value": "Hourly",
+     "label": "pressure data"
     }
    ],
    "showTrialTimeline": false,
    "closeDelaySeconds": 0
   },
   "match_peak": {
-   "title": "Solara felt it. Tomorrow's ready",
+   "title": "Your pain forecast is ready",
    "features": [
-    "Tomorrow's forecast and the week ahead",
-    "Every factor behind your number",
-    "Patterns verified on YOUR check-ins",
-    "Storm & pressure heads-up the night before"
+    "Tomorrow's pain risk from pressure, storms and humidity",
+    "A warning the evening before a pressure drop or storm",
+    "Your own triggers — which weather comes before your bad days",
+    "A 7-day outlook to plan around heavy days"
    ],
    "plans": [
     {
@@ -1810,9 +1951,9 @@
      "title": "Weekly",
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
-     "isDefault": true,
+     "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Start Plus"
+     "cta": "Get My Forecast"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1822,21 +1963,22 @@
      "badge": "SAVE 90%",
      "equivalent": "≈ $0.96 / week",
      "note": "3 days free, then $49.99/year",
-     "cta": "Try 3 Days Free"
+     "cta": "Try 3 Days Free",
+     "isDefault": true
     }
    ],
    "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
-    "Tomorrow's Forecast",
-    "7-Day Outlook",
-    "Every Factor",
-    "Your Patterns",
-    "Storm Alerts",
     "Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers",
+    "Pressure & Humidity",
+    "Storm Alerts",
+    "Daily Check-ins",
     "Apple Health",
-    "Check-ins",
     "Air Quality"
    ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
@@ -1844,8 +1986,8 @@
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
    "brandBadge": "PLUS",
-   "subtitle": "Today's forecast matched how you felt — see tomorrow and the week ahead before they happen.",
-   "heroImageName": "SkyArtSunny",
+   "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
+   "heroImageName": "SkyArtGolden",
    "stats": [
     {
      "value": "10K+",
@@ -1856,8 +1998,8 @@
      "label": "countries"
     },
     {
-     "value": "24/7",
-     "label": "live sky data"
+     "value": "Hourly",
+     "label": "pressure data"
     }
    ],
    "showTrialTimeline": false,
