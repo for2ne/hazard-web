@@ -1,5 +1,5 @@
 {
- "version": 66,
+ "version": 67,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -125,7 +125,7 @@
      "title": "Know before it hits",
      "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a bad day never catches you off guard.",
      "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/guidance-flood4.png",
+     "imageURL": "https://hazard.studio/img/atmo/guidance-pain1.png",
      "imageStyle": "flood"
     },
     {
@@ -369,7 +369,7 @@
      "subtitle": "Pressure and storms are local — your forecast needs your area to warn you in time.",
      "cta": "Continue",
      "footnote": "Used only for your forecast · never shared",
-     "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
+     "imageURL": "https://hazard.studio/img/atmo/location-pain1.png",
      "imageStyle": "flood-top",
      "imageHeight": 270
     },
@@ -380,7 +380,7 @@
      "title": "Get warned the evening before",
      "subtitle": "One quiet heads-up before a pressure drop or storm — the moment your forecast is built for.",
      "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
+     "imageURL": "https://hazard.studio/img/atmo/notif-pain1.png",
      "imageStyle": "flood-top",
      "imageHeight": 285
     },
@@ -1299,7 +1299,7 @@
      "title": "Know before it hits",
      "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a bad day never catches you off guard.",
      "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/guidance-flood4.png",
+     "imageURL": "https://hazard.studio/img/atmo/guidance-pain1.png",
      "imageStyle": "flood"
     },
     {
@@ -1543,7 +1543,7 @@
      "subtitle": "Pressure and storms are local — your forecast needs your area to warn you in time.",
      "cta": "Continue",
      "footnote": "Used only for your forecast · never shared",
-     "imageURL": "https://hazard.studio/img/atmo/location-floodtop3.png",
+     "imageURL": "https://hazard.studio/img/atmo/location-pain1.png",
      "imageStyle": "flood-top",
      "imageHeight": 270
     },
@@ -1554,7 +1554,7 @@
      "title": "Get warned the evening before",
      "subtitle": "One quiet heads-up before a pressure drop or storm — the moment your forecast is built for.",
      "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/notif-floodtop2.png",
+     "imageURL": "https://hazard.studio/img/atmo/notif-pain1.png",
      "imageStyle": "flood-top",
      "imageHeight": 285
     },
