@@ -1,5 +1,5 @@
 {
- "version": 67,
+ "version": 68,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -402,7 +402,7 @@
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
-     "cta": "I Want This",
+     "cta": "Unlock My Forecast",
      "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-w50.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-w50.jpg"
@@ -448,7 +448,7 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Pain Risk Forecast",
+     "🌦️ Pain Risk Forecast",
      "Evening Warnings",
      "7-Day Outlook",
      "Your Triggers",
@@ -763,7 +763,7 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Pain Risk Forecast",
+     "🌦️ Pain Risk Forecast",
      "Evening Warnings",
      "7-Day Outlook",
      "Your Triggers",
@@ -882,7 +882,7 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Pain Risk Forecast",
+     "🌦️ Pain Risk Forecast",
      "Evening Warnings",
      "7-Day Outlook",
      "Your Triggers",
@@ -1148,7 +1148,7 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Pain Risk Forecast",
+     "🌦️ Pain Risk Forecast",
      "Evening Warnings",
      "7-Day Outlook",
      "Your Triggers",
@@ -1576,7 +1576,7 @@
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
-     "cta": "I Want This",
+     "cta": "Unlock My Forecast",
      "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-w50.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-w50.jpg"
@@ -1622,7 +1622,7 @@
     "skippable": false,
     "includedTitle": "What's Included",
     "included": [
-     "Pain Risk Forecast",
+     "🌦️ Pain Risk Forecast",
      "Evening Warnings",
      "7-Day Outlook",
      "Your Triggers",
@@ -1700,7 +1700,7 @@
    "skippable": false,
    "includedTitle": "What's Included",
    "included": [
-    "Pain Risk Forecast",
+    "🌦️ Pain Risk Forecast",
     "Evening Warnings",
     "7-Day Outlook",
     "Your Triggers",
@@ -1768,7 +1768,7 @@
    "skippable": false,
    "includedTitle": "What's Included",
    "included": [
-    "Pain Risk Forecast",
+    "🌦️ Pain Risk Forecast",
     "Evening Warnings",
     "7-Day Outlook",
     "Your Triggers",
@@ -1835,7 +1835,7 @@
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
-    "Pain Risk Forecast",
+    "🌦️ Pain Risk Forecast",
     "Evening Warnings",
     "7-Day Outlook",
     "Your Triggers",
@@ -1903,7 +1903,7 @@
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
-    "Pain Risk Forecast",
+    "🌦️ Pain Risk Forecast",
     "Evening Warnings",
     "7-Day Outlook",
     "Your Triggers",
@@ -1971,7 +1971,7 @@
    "skippable": true,
    "includedTitle": "What's Included",
    "included": [
-    "Pain Risk Forecast",
+    "🌦️ Pain Risk Forecast",
     "Evening Warnings",
     "7-Day Outlook",
     "Your Triggers",
