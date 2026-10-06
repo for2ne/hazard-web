@@ -1,5 +1,5 @@
 {
- "version": 65,
+ "version": 66,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -125,7 +125,7 @@
      "title": "Know before it hits",
      "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a bad day never catches you off guard.",
      "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
+     "imageURL": "https://hazard.studio/img/atmo/guidance-flood4.png",
      "imageStyle": "flood"
     },
     {
@@ -404,8 +404,8 @@
      ],
      "cta": "I Want This",
      "footnote": "Powered by live NOAA and weather-station data",
-     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
-     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
+     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-w50.jpg",
+     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-w50.jpg"
     },
     {
      "id": "paywall",
@@ -1299,7 +1299,7 @@
      "title": "Know before it hits",
      "subtitle": "Every evening: tomorrow's pain risk from pressure, storms and humidity — so a bad day never catches you off guard.",
      "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/guidance-flood5.png",
+     "imageURL": "https://hazard.studio/img/atmo/guidance-flood4.png",
      "imageStyle": "flood"
     },
     {
@@ -1578,8 +1578,8 @@
      ],
      "cta": "I Want This",
      "footnote": "Powered by live NOAA and weather-station data",
-     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
-     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
+     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-w50.jpg",
+     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-w50.jpg"
     },
     {
      "id": "paywall",
