@@ -1,5 +1,5 @@
 {
- "version": 71,
+ "version": 72,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -373,6 +373,20 @@
      "imageURL": "https://hazard.studio/img/atmo/location-pain2.webp",
      "imageStyle": "flood-top",
      "imageHeight": 340
+    },
+    {
+     "id": "forecast",
+     "type": "info",
+     "content": "forecastPreview",
+     "skipIfNoForecast": true,
+     "title": "Your forecast is ready",
+     "subtitle": "We'll warn you the evening before pressure drops and storms near you.",
+     "cta": "Continue",
+     "loadingTitle": "Checking the sky near you…",
+     "forecastTitle": "{day}: {risk} near you",
+     "forecastSubtitle": "{label}. You said {painDays|some days} a month slow you down — now you'll know the evening before.",
+     "calmTitle": "No sharp swings near you this week",
+     "calmSubtitle": "A calm stretch ahead. You said {painDays|some days} a month slow you down — we'll warn you the evening before the next pressure drop or storm."
     },
     {
      "id": "notifications",
@@ -1548,6 +1562,20 @@
      "imageURL": "https://hazard.studio/img/atmo/location-pain2.webp",
      "imageStyle": "flood-top",
      "imageHeight": 340
+    },
+    {
+     "id": "forecast",
+     "type": "info",
+     "content": "forecastPreview",
+     "skipIfNoForecast": true,
+     "title": "Your forecast is ready",
+     "subtitle": "We'll warn you the evening before pressure drops and storms near you.",
+     "cta": "Continue",
+     "loadingTitle": "Checking the sky near you…",
+     "forecastTitle": "{day}: {risk} near you",
+     "forecastSubtitle": "{label}. You said {painDays|some days} a month slow you down — now you'll know the evening before.",
+     "calmTitle": "No sharp swings near you this week",
+     "calmSubtitle": "A calm stretch ahead. You said {painDays|some days} a month slow you down — we'll warn you the evening before the next pressure drop or storm."
     },
     {
      "id": "notifications",
