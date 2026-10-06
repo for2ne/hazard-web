@@ -107,7 +107,8 @@
     var adName = params.get("ad_name") || params.get("utm_content") || "";
     var hook = (adName.match(/-(h\d\d|n\d\d)-/) || [])[1] || "";
     // Pain-forecast ads (Migraine Help clones b08+, 05.10): always the "Pain Forecast" page — the store must match the ad's promise, no holdout
-    var pain = !adName || /^b(0[8-9]|[1-9]\d)-/.test(adName);   // no ad params (Ad Library preview, shared link) → also the pain page
+    // 06.10: notice (b03-n01) too — the whole funnel after the store is "pain forecast" now
+    var pain = !adName || /^b(0[8-9]|[1-9]\d)-/.test(adName) || /^b03-n01-/.test(adName);   // no ad params (Ad Library preview, shared link) → also the pain page
     var angle = pain ? "pain" : (HOOK_ANGLE[hook] || (adName ? "energy" : ""));
     var cppArm = params.get("ppid") ? "explicit" : (pain ? "cpp" : (angle ? (parseInt(webUid.replace(/-/g, "").slice(-2), 16) % 2 ? "cpp" : "default") : "none"));
     var cppPpid = cppArm === "cpp" ? CPP[angle] : "";
