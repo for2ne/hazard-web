@@ -1,5 +1,5 @@
 {
- "version": 72,
+ "version": 73,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -417,7 +417,7 @@
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
-     "cta": "Unlock My Forecast",
+     "cta": "Continue",
      "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-w50.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-w50.jpg"
@@ -444,7 +444,7 @@
       "periodLabel": "per week",
       "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Unlock My Forecast"
+      "cta": "Continue"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -759,7 +759,7 @@
       "periodLabel": "per week",
       "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Unlock My Forecast"
+      "cta": "Continue"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -878,7 +878,7 @@
       "periodLabel": "per week",
       "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Unlock My Forecast"
+      "cta": "Continue"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1144,7 +1144,7 @@
       "periodLabel": "per week",
       "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Unlock My Forecast"
+      "cta": "Continue"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1606,7 +1606,7 @@
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
-     "cta": "Unlock My Forecast",
+     "cta": "Continue",
      "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-w50.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-w50.jpg"
@@ -1633,7 +1633,7 @@
       "periodLabel": "per week",
       "isDefault": false,
       "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Unlock My Forecast"
+      "cta": "Continue"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1711,7 +1711,7 @@
      "periodLabel": "per week",
      "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Unlock My Forecast"
+     "cta": "Continue"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1779,7 +1779,7 @@
      "periodLabel": "per week",
      "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Unlock My Forecast"
+     "cta": "Continue"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1847,7 +1847,7 @@
      "periodLabel": "per week",
      "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Unlock My Forecast"
+     "cta": "Continue"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1915,7 +1915,7 @@
      "periodLabel": "per week",
      "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Unlock My Forecast"
+     "cta": "Continue"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1983,7 +1983,7 @@
      "periodLabel": "per week",
      "isDefault": false,
      "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Unlock My Forecast"
+     "cta": "Continue"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
