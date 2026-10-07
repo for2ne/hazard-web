@@ -1,5 +1,5 @@
 {
- "version": 73,
+ "version": 74,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -133,31 +133,87 @@
      "id": "gender",
      "type": "singleChoice",
      "title": "How do you identify?",
-     "subtitle": "Weather sensitivity differs between women and men.",
+     "subtitle": "Weather sensitivity can differ between women and men.",
      "cta": "Continue",
      "autoAdvance": true,
      "options": [
       {
        "id": "female",
-       "title": "Female"
+       "title": "Female",
+       "goto": "menopause"
       },
       {
        "id": "male",
-       "title": "Male"
+       "title": "Male",
+       "goto": "age"
       },
       {
        "id": "nonbinary",
-       "title": "Non-binary"
+       "title": "Non-binary",
+       "goto": "age"
+      },
+      {
+       "id": "na",
+       "title": "Prefer not to say",
+       "goto": "age"
       }
      ]
     },
     {
-     "id": "birthdate",
-     "type": "datePicker",
-     "title": "When were you born?",
-     "subtitle": "Weather sensitivity often changes with age.",
+     "id": "menopause",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "Are you going through perimenopause or menopause?",
+     "subtitle": "Many women notice weather hits harder in these years — this helps us tailor Solara for you.",
      "cta": "Continue",
-     "footnote": "Used only to tune your forecast · never shared"
+     "options": [
+      {
+       "id": "yes",
+       "title": "Yes"
+      },
+      {
+       "id": "maybe",
+       "title": "Maybe — not sure"
+      },
+      {
+       "id": "no",
+       "title": "No"
+      },
+      {
+       "id": "na",
+       "title": "Prefer not to say"
+      }
+     ]
+    },
+    {
+     "id": "age",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "How old are you?",
+     "subtitle": "Helps us make Solara better for people like you.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "u40",
+       "title": "Under 40"
+      },
+      {
+       "id": "a40",
+       "title": "40–49"
+      },
+      {
+       "id": "a50",
+       "title": "50–59"
+      },
+      {
+       "id": "a60",
+       "title": "60–69"
+      },
+      {
+       "id": "a70",
+       "title": "70+"
+      }
+     ]
     },
     {
      "id": "name",
@@ -395,7 +451,7 @@
      "title": "Get warned the evening before",
      "subtitle": "One quiet heads-up before a pressure drop or storm — the moment your forecast is built for.",
      "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/notif-pain2.webp",
+     "imageURL": "https://hazard.studio/img/atmo/notif-pain3.webp",
      "imageStyle": "flood-top",
      "imageHeight": 340
     },
@@ -431,10 +487,10 @@
    "paywall": {
     "title": "Your pain forecast is ready",
     "features": [
-     "Tomorrow's pain risk from pressure, storms and humidity",
-     "A warning the evening before a pressure drop or storm",
-     "Your own triggers — which weather comes before your bad days",
-     "A 7-day outlook to plan around heavy days"
+     "A warning the evening before a pressure drop, storm or cold snap",
+     "Your pain risk for today, tomorrow and the week ahead",
+     "See which weather comes before your bad days",
+     "A one-tap evening log — Solara learns your pattern"
     ],
     "plans": [
      {
@@ -462,17 +518,7 @@
     "closeDelaySeconds": 0,
     "skippable": false,
     "includedTitle": "What's Included",
-    "included": [
-     "🌦️ Pain Risk Forecast",
-     "Evening Warnings",
-     "7-Day Outlook",
-     "Your Triggers",
-     "Pressure & Humidity",
-     "Storm Alerts",
-     "Daily Check-ins",
-     "Apple Health",
-     "Air Quality"
-    ],
+    "included": [],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -486,8 +532,8 @@
       "label": "weather stations"
      },
      {
-      "value": "175",
-      "label": "countries"
+      "value": "NOAA",
+      "label": "space-weather data"
      },
      {
       "value": "Hourly",
@@ -1322,31 +1368,87 @@
      "id": "gender",
      "type": "singleChoice",
      "title": "How do you identify?",
-     "subtitle": "Weather sensitivity differs between women and men.",
+     "subtitle": "Weather sensitivity can differ between women and men.",
      "cta": "Continue",
      "autoAdvance": true,
      "options": [
       {
        "id": "female",
-       "title": "Female"
+       "title": "Female",
+       "goto": "menopause"
       },
       {
        "id": "male",
-       "title": "Male"
+       "title": "Male",
+       "goto": "age"
       },
       {
        "id": "nonbinary",
-       "title": "Non-binary"
+       "title": "Non-binary",
+       "goto": "age"
+      },
+      {
+       "id": "na",
+       "title": "Prefer not to say",
+       "goto": "age"
       }
      ]
     },
     {
-     "id": "birthdate",
-     "type": "datePicker",
-     "title": "When were you born?",
-     "subtitle": "Weather sensitivity often changes with age.",
+     "id": "menopause",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "Are you going through perimenopause or menopause?",
+     "subtitle": "Many women notice weather hits harder in these years — this helps us tailor Solara for you.",
      "cta": "Continue",
-     "footnote": "Used only to tune your forecast · never shared"
+     "options": [
+      {
+       "id": "yes",
+       "title": "Yes"
+      },
+      {
+       "id": "maybe",
+       "title": "Maybe — not sure"
+      },
+      {
+       "id": "no",
+       "title": "No"
+      },
+      {
+       "id": "na",
+       "title": "Prefer not to say"
+      }
+     ]
+    },
+    {
+     "id": "age",
+     "type": "singleChoice",
+     "autoAdvance": true,
+     "title": "How old are you?",
+     "subtitle": "Helps us make Solara better for people like you.",
+     "cta": "Continue",
+     "options": [
+      {
+       "id": "u40",
+       "title": "Under 40"
+      },
+      {
+       "id": "a40",
+       "title": "40–49"
+      },
+      {
+       "id": "a50",
+       "title": "50–59"
+      },
+      {
+       "id": "a60",
+       "title": "60–69"
+      },
+      {
+       "id": "a70",
+       "title": "70+"
+      }
+     ]
     },
     {
      "id": "name",
@@ -1584,7 +1686,7 @@
      "title": "Get warned the evening before",
      "subtitle": "One quiet heads-up before a pressure drop or storm — the moment your forecast is built for.",
      "cta": "Continue",
-     "imageURL": "https://hazard.studio/img/atmo/notif-pain2.webp",
+     "imageURL": "https://hazard.studio/img/atmo/notif-pain3.webp",
      "imageStyle": "flood-top",
      "imageHeight": 340
     },
@@ -1620,10 +1722,10 @@
    "paywall": {
     "title": "Your pain forecast is ready",
     "features": [
-     "Tomorrow's pain risk from pressure, storms and humidity",
-     "A warning the evening before a pressure drop or storm",
-     "Your own triggers — which weather comes before your bad days",
-     "A 7-day outlook to plan around heavy days"
+     "A warning the evening before a pressure drop, storm or cold snap",
+     "Your pain risk for today, tomorrow and the week ahead",
+     "See which weather comes before your bad days",
+     "A one-tap evening log — Solara learns your pattern"
     ],
     "plans": [
      {
@@ -1651,17 +1753,7 @@
     "closeDelaySeconds": 0,
     "skippable": false,
     "includedTitle": "What's Included",
-    "included": [
-     "🌦️ Pain Risk Forecast",
-     "Evening Warnings",
-     "7-Day Outlook",
-     "Your Triggers",
-     "Pressure & Humidity",
-     "Storm Alerts",
-     "Daily Check-ins",
-     "Apple Health",
-     "Air Quality"
-    ],
+    "included": [],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1675,8 +1767,8 @@
       "label": "weather stations"
      },
      {
-      "value": "175",
-      "label": "countries"
+      "value": "NOAA",
+      "label": "space-weather data"
      },
      {
       "value": "Hourly",
@@ -1698,10 +1790,10 @@
   "web_cohort": {
    "title": "Your pain forecast is ready",
    "features": [
-    "Tomorrow's pain risk from pressure, storms and humidity",
-    "A warning the evening before a pressure drop or storm",
-    "Your own triggers — which weather comes before your bad days",
-    "A 7-day outlook to plan around heavy days"
+    "A warning the evening before a pressure drop, storm or cold snap",
+    "Your pain risk for today, tomorrow and the week ahead",
+    "See which weather comes before your bad days",
+    "A one-tap evening log — Solara learns your pattern"
    ],
    "plans": [
     {
@@ -1729,17 +1821,7 @@
    "closeDelaySeconds": 0,
    "skippable": false,
    "includedTitle": "What's Included",
-   "included": [
-    "🌦️ Pain Risk Forecast",
-    "Evening Warnings",
-    "7-Day Outlook",
-    "Your Triggers",
-    "Pressure & Humidity",
-    "Storm Alerts",
-    "Daily Check-ins",
-    "Apple Health",
-    "Air Quality"
-   ],
+   "included": [],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1753,8 +1835,8 @@
      "label": "weather stations"
     },
     {
-     "value": "175",
-     "label": "countries"
+     "value": "NOAA",
+     "label": "space-weather data"
     },
     {
      "value": "Hourly",
@@ -1766,10 +1848,10 @@
   "paid_default": {
    "title": "Your pain forecast is ready",
    "features": [
-    "Tomorrow's pain risk from pressure, storms and humidity",
-    "A warning the evening before a pressure drop or storm",
-    "Your own triggers — which weather comes before your bad days",
-    "A 7-day outlook to plan around heavy days"
+    "A warning the evening before a pressure drop, storm or cold snap",
+    "Your pain risk for today, tomorrow and the week ahead",
+    "See which weather comes before your bad days",
+    "A one-tap evening log — Solara learns your pattern"
    ],
    "plans": [
     {
@@ -1797,17 +1879,7 @@
    "closeDelaySeconds": 0,
    "skippable": false,
    "includedTitle": "What's Included",
-   "included": [
-    "🌦️ Pain Risk Forecast",
-    "Evening Warnings",
-    "7-Day Outlook",
-    "Your Triggers",
-    "Pressure & Humidity",
-    "Storm Alerts",
-    "Daily Check-ins",
-    "Apple Health",
-    "Air Quality"
-   ],
+   "included": [],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1821,8 +1893,8 @@
      "label": "weather stations"
     },
     {
-     "value": "175",
-     "label": "countries"
+     "value": "NOAA",
+     "label": "space-weather data"
     },
     {
      "value": "Hourly",
@@ -1834,10 +1906,10 @@
   "preview_end": {
    "title": "Your pain forecast is ready",
    "features": [
-    "Tomorrow's pain risk from pressure, storms and humidity",
-    "A warning the evening before a pressure drop or storm",
-    "Your own triggers — which weather comes before your bad days",
-    "A 7-day outlook to plan around heavy days"
+    "A warning the evening before a pressure drop, storm or cold snap",
+    "Your pain risk for today, tomorrow and the week ahead",
+    "See which weather comes before your bad days",
+    "A one-tap evening log — Solara learns your pattern"
    ],
    "plans": [
     {
@@ -1864,17 +1936,7 @@
    "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
-   "included": [
-    "🌦️ Pain Risk Forecast",
-    "Evening Warnings",
-    "7-Day Outlook",
-    "Your Triggers",
-    "Pressure & Humidity",
-    "Storm Alerts",
-    "Daily Check-ins",
-    "Apple Health",
-    "Air Quality"
-   ],
+   "included": [],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1888,8 +1950,8 @@
      "label": "weather stations"
     },
     {
-     "value": "175",
-     "label": "countries"
+     "value": "NOAA",
+     "label": "space-weather data"
     },
     {
      "value": "Hourly",
@@ -1902,10 +1964,10 @@
   "lock": {
    "title": "Your pain forecast is ready",
    "features": [
-    "Tomorrow's pain risk from pressure, storms and humidity",
-    "A warning the evening before a pressure drop or storm",
-    "Your own triggers — which weather comes before your bad days",
-    "A 7-day outlook to plan around heavy days"
+    "A warning the evening before a pressure drop, storm or cold snap",
+    "Your pain risk for today, tomorrow and the week ahead",
+    "See which weather comes before your bad days",
+    "A one-tap evening log — Solara learns your pattern"
    ],
    "plans": [
     {
@@ -1932,17 +1994,7 @@
    "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
-   "included": [
-    "🌦️ Pain Risk Forecast",
-    "Evening Warnings",
-    "7-Day Outlook",
-    "Your Triggers",
-    "Pressure & Humidity",
-    "Storm Alerts",
-    "Daily Check-ins",
-    "Apple Health",
-    "Air Quality"
-   ],
+   "included": [],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1956,8 +2008,8 @@
      "label": "weather stations"
     },
     {
-     "value": "175",
-     "label": "countries"
+     "value": "NOAA",
+     "label": "space-weather data"
     },
     {
      "value": "Hourly",
@@ -1970,10 +2022,10 @@
   "match_peak": {
    "title": "Your pain forecast is ready",
    "features": [
-    "Tomorrow's pain risk from pressure, storms and humidity",
-    "A warning the evening before a pressure drop or storm",
-    "Your own triggers — which weather comes before your bad days",
-    "A 7-day outlook to plan around heavy days"
+    "A warning the evening before a pressure drop, storm or cold snap",
+    "Your pain risk for today, tomorrow and the week ahead",
+    "See which weather comes before your bad days",
+    "A one-tap evening log — Solara learns your pattern"
    ],
    "plans": [
     {
@@ -2000,17 +2052,7 @@
    "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
-   "included": [
-    "🌦️ Pain Risk Forecast",
-    "Evening Warnings",
-    "7-Day Outlook",
-    "Your Triggers",
-    "Pressure & Humidity",
-    "Storm Alerts",
-    "Daily Check-ins",
-    "Apple Health",
-    "Air Quality"
-   ],
+   "included": [],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -2024,8 +2066,8 @@
      "label": "weather stations"
     },
     {
-     "value": "175",
-     "label": "countries"
+     "value": "NOAA",
+     "label": "space-weather data"
     },
     {
      "value": "Hourly",
