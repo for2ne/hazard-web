@@ -1,5 +1,5 @@
 {
- "version": 75,
+ "version": 76,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -545,7 +545,7 @@
       "label": "pressure data"
      }
     ],
-    "showTrialTimeline": false
+    "showTrialTimeline": true
    },
    "webWeight": 1
   },
@@ -860,7 +860,7 @@
       "label": "pressure data"
      }
     ],
-    "showTrialTimeline": false
+    "showTrialTimeline": true
    }
   },
   {
@@ -979,7 +979,7 @@
       "label": "pressure data"
      }
     ],
-    "showTrialTimeline": false
+    "showTrialTimeline": true
    }
   },
   {
@@ -1245,7 +1245,7 @@
       "label": "pressure data"
      }
     ],
-    "showTrialTimeline": false
+    "showTrialTimeline": true
    }
   },
   {
@@ -1785,7 +1785,7 @@
       "label": "pressure data"
      }
     ],
-    "showTrialTimeline": false
+    "showTrialTimeline": true
    },
    "webWeight": 0,
    "_doc": "Full 20-step onboarding for paid cohorts (direct-to-store ads, ASA). Same steps as control; paywall placement paid_default overrides close delay (6 s) and tapToBuy. Added 24.09.2026 after the web quiz was dropped."
@@ -1858,7 +1858,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": false
+   "showTrialTimeline": true
   },
   "paid_default": {
    "title": "Your pain forecast is ready",
@@ -1921,7 +1921,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": false
+   "showTrialTimeline": true
   },
   "preview_end": {
    "title": "Your pain forecast is ready",
@@ -1983,7 +1983,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": false,
+   "showTrialTimeline": true,
    "closeDelaySeconds": 0
   },
   "lock": {
@@ -2046,7 +2046,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": false,
+   "showTrialTimeline": true,
    "closeDelaySeconds": 0
   },
   "match_peak": {
@@ -2109,7 +2109,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": false,
+   "showTrialTimeline": true,
    "closeDelaySeconds": 0
   }
  },
