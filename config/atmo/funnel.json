@@ -1,5 +1,5 @@
 {
- "version": 74,
+ "version": 75,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -518,7 +518,12 @@
     "closeDelaySeconds": 0,
     "skippable": false,
     "includedTitle": "What's Included",
-    "included": [],
+    "included": [
+     "🌦️ Pain Risk Forecast",
+     "Evening Warnings",
+     "7-Day Outlook",
+     "Your Triggers"
+    ],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1753,7 +1758,12 @@
     "closeDelaySeconds": 0,
     "skippable": false,
     "includedTitle": "What's Included",
-    "included": [],
+    "included": [
+     "🌦️ Pain Risk Forecast",
+     "Evening Warnings",
+     "7-Day Outlook",
+     "Your Triggers"
+    ],
     "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1821,7 +1831,12 @@
    "closeDelaySeconds": 0,
    "skippable": false,
    "includedTitle": "What's Included",
-   "included": [],
+   "included": [
+    "🌦️ Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers"
+   ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1879,7 +1894,12 @@
    "closeDelaySeconds": 0,
    "skippable": false,
    "includedTitle": "What's Included",
-   "included": [],
+   "included": [
+    "🌦️ Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers"
+   ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1936,7 +1956,12 @@
    "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
-   "included": [],
+   "included": [
+    "🌦️ Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers"
+   ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -1994,7 +2019,12 @@
    "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
-   "included": [],
+   "included": [
+    "🌦️ Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers"
+   ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
@@ -2052,7 +2082,12 @@
    "cta": "Continue",
    "skippable": true,
    "includedTitle": "What's Included",
-   "included": [],
+   "included": [
+    "🌦️ Pain Risk Forecast",
+    "Evening Warnings",
+    "7-Day Outlook",
+    "Your Triggers"
+   ],
    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
