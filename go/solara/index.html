@@ -110,8 +110,8 @@
     // 06.10: notice (b03-n01) too — the whole funnel after the store is "pain forecast" now
     var pain = !adName || /^b(0[8-9]|[1-9]\d)-/.test(adName) || /^b03-n01-/.test(adName);   // no ad params (Ad Library preview, shared link) → also the pain page
     var angle = pain ? "pain" : (HOOK_ANGLE[hook] || (adName ? "energy" : ""));
-    // 08.10: 1.0.5 is live with the pain-v6 screenshots on the DEFAULT page (the "Pain" CPP still has pain-v4) → pain ads go to the default page
-    var cppArm = params.get("ppid") ? "explicit" : (pain ? "default" : (angle ? (parseInt(webUid.replace(/-/g, "").slice(-2), 16) % 2 ? "cpp" : "default") : "none"));
+    // 08.10: pain ads → default page (pain-v6). 10.10: back to the "Pain" CPP (pain-v4) — notice bridge→install fell 38% (07.10) → 8% (08.10) right after the switch
+    var cppArm = params.get("ppid") ? "explicit" : (pain ? "cpp" : (angle ? (parseInt(webUid.replace(/-/g, "").slice(-2), 16) % 2 ? "cpp" : "default") : "none"));
     var cppPpid = cppArm === "cpp" ? CPP[angle] : "";
     var start = Date.now(), fired = false;
     document.getElementById("go").href = buildTarget(params, { web_uid: webUid, ppid: cppPpid });   // fallback button works from the first frame
