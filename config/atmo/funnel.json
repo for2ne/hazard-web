@@ -1,5 +1,5 @@
 {
- "version": 79,
+ "version": 80,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -512,39 +512,27 @@
       "note": "3 days free, then $49.99/year",
       "cta": "Try 3 Days Free",
       "isDefault": true
+     },
+     {
+      "productId": "com.hazard.atmo.pro.lifetime",
+      "title": "Lifetime",
+      "fallbackPrice": "$129.99",
+      "periodLabel": "one time",
+      "isDefault": false,
+      "note": "Pay once, yours forever",
+      "cta": "Continue"
      }
     ],
     "cta": "Continue",
     "closeDelaySeconds": 0,
     "skippable": false,
-    "includedTitle": "What's Included",
-    "included": [
-     "🌦️ Pain Risk Forecast",
-     "Evening Warnings",
-     "7-Day Outlook",
-     "Your Triggers"
-    ],
-    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Lifetime: one payment. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtGolden",
-    "stats": [
-     {
-      "value": "10K+",
-      "label": "weather stations"
-     },
-     {
-      "value": "NOAA",
-      "label": "space-weather data"
-     },
-     {
-      "value": "Hourly",
-      "label": "pressure data"
-     }
-    ],
     "showTrialTimeline": true
    },
    "webWeight": 1
@@ -1752,39 +1740,27 @@
       "note": "3 days free, then $49.99/year",
       "cta": "Try 3 Days Free",
       "isDefault": false
+     },
+     {
+      "productId": "com.hazard.atmo.pro.lifetime",
+      "title": "Lifetime",
+      "fallbackPrice": "$129.99",
+      "periodLabel": "one time",
+      "isDefault": false,
+      "note": "Pay once, yours forever",
+      "cta": "Continue"
      }
     ],
     "cta": "Continue",
     "closeDelaySeconds": 0,
     "skippable": false,
-    "includedTitle": "What's Included",
-    "included": [
-     "🌦️ Pain Risk Forecast",
-     "Evening Warnings",
-     "7-Day Outlook",
-     "Your Triggers"
-    ],
-    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Lifetime: one payment. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtGolden",
-    "stats": [
-     {
-      "value": "10K+",
-      "label": "weather stations"
-     },
-     {
-      "value": "NOAA",
-      "label": "space-weather data"
-     },
-     {
-      "value": "Hourly",
-      "label": "pressure data"
-     }
-    ],
     "showTrialTimeline": true
    },
    "webWeight": 0,
@@ -1888,39 +1864,27 @@
      "note": "3 days free, then $49.99/year",
      "cta": "Try 3 Days Free",
      "isDefault": false
+    },
+    {
+     "productId": "com.hazard.atmo.pro.lifetime",
+     "title": "Lifetime",
+     "fallbackPrice": "$129.99",
+     "periodLabel": "one time",
+     "isDefault": false,
+     "note": "Pay once, yours forever",
+     "cta": "Continue"
     }
    ],
    "cta": "Continue",
    "closeDelaySeconds": 0,
    "skippable": false,
-   "includedTitle": "What's Included",
-   "included": [
-    "🌦️ Pain Risk Forecast",
-    "Evening Warnings",
-    "7-Day Outlook",
-    "Your Triggers"
-   ],
-   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Lifetime: one payment. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
    "brandBadge": "PLUS",
    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
    "heroImageName": "SkyArtGolden",
-   "stats": [
-    {
-     "value": "10K+",
-     "label": "weather stations"
-    },
-    {
-     "value": "NOAA",
-     "label": "space-weather data"
-    },
-    {
-     "value": "Hourly",
-     "label": "pressure data"
-    }
-   ],
    "showTrialTimeline": true
   },
   "preview_end": {
