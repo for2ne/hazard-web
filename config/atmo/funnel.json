@@ -1,5 +1,5 @@
 {
- "version": 76,
+ "version": 77,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -1713,10 +1713,10 @@
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
-     "cta": "Continue",
+     "cta": "I Want This",
      "footnote": "Powered by live NOAA and weather-station data",
-     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-w50.jpg",
-     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-w50.jpg"
+     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
+     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
     {
      "id": "paywall",
@@ -1738,9 +1738,9 @@
       "title": "Weekly",
       "fallbackPrice": "$9.99",
       "periodLabel": "per week",
-      "isDefault": false,
-      "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Continue"
+      "isDefault": true,
+      "note": "$9.99/week. Cancel anytime",
+      "cta": "Start for $9.99/week"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1751,7 +1751,7 @@
       "equivalent": "≈ $0.96 / week",
       "note": "3 days free, then $49.99/year",
       "cta": "Try 3 Days Free",
-      "isDefault": true
+      "isDefault": false
      }
     ],
     "cta": "Continue",
@@ -1874,9 +1874,9 @@
      "title": "Weekly",
      "fallbackPrice": "$9.99",
      "periodLabel": "per week",
-     "isDefault": false,
-     "note": "$9.99/week, starts today. Cancel anytime",
-     "cta": "Continue"
+     "isDefault": true,
+     "note": "$9.99/week. Cancel anytime",
+     "cta": "Start for $9.99/week"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
@@ -1887,7 +1887,7 @@
      "equivalent": "≈ $0.96 / week",
      "note": "3 days free, then $49.99/year",
      "cta": "Try 3 Days Free",
-     "isDefault": true
+     "isDefault": false
     }
    ],
    "cta": "Continue",
