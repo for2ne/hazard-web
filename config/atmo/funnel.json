@@ -1,5 +1,5 @@
 {
- "version": 78,
+ "version": 79,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -473,10 +473,10 @@
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
-     "cta": "Continue",
+     "cta": "I Want This",
      "footnote": "Powered by live NOAA and weather-station data",
-     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-w50.jpg",
-     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-w50.jpg"
+     "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
+     "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
     {
      "id": "paywall",
