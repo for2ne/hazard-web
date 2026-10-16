@@ -1,5 +1,5 @@
 {
- "version": 77,
+ "version": 78,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -1740,7 +1740,7 @@
       "periodLabel": "per week",
       "isDefault": true,
       "note": "$9.99/week. Cancel anytime",
-      "cta": "Start for $9.99/week"
+      "cta": "Continue"
      },
      {
       "productId": "com.hazard.atmo.pro.yearly",
@@ -1876,7 +1876,7 @@
      "periodLabel": "per week",
      "isDefault": true,
      "note": "$9.99/week. Cancel anytime",
-     "cta": "Start for $9.99/week"
+     "cta": "Continue"
     },
     {
      "productId": "com.hazard.atmo.pro.yearly",
