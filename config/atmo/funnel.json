@@ -1,5 +1,5 @@
 {
- "version": 80,
+ "version": 81,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -458,23 +458,20 @@
     {
      "id": "before-after",
      "type": "comparison",
-     "title": "How your days change",
+     "title": "With Solara",
      "beforeTitle": "Without",
      "afterTitle": "With Solara",
      "before": [
       "Blindsided by bad days",
-      "Guessing what set it off",
       "Cancelled plans, again",
       "Pushing through the pain"
      ],
      "after": [
       "A warning the evening before",
-      "Your own weather triggers",
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
      "cta": "I Want This",
-     "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
@@ -1686,23 +1683,20 @@
     {
      "id": "before-after",
      "type": "comparison",
-     "title": "How your days change",
+     "title": "With Solara",
      "beforeTitle": "Without",
      "afterTitle": "With Solara",
      "before": [
       "Blindsided by bad days",
-      "Guessing what set it off",
       "Cancelled plans, again",
       "Pushing through the pain"
      ],
      "after": [
       "A warning the evening before",
-      "Your own weather triggers",
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
      "cta": "I Want This",
-     "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
