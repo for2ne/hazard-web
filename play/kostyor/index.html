@@ -1,0 +1,1296 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0c1219">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Костёр">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>html, body { margin: 0; }</style>
+<title>Последний костёр</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rubik:wght@400;600;800&display=swap">
+<style>
+/* Layout: full-screen canvas, HUD pinned to the safe-area edges, modal cards in the centre. Single dark night look by choice. */
+:root {
+  --night: #0c1219;
+  --grass: #24361f;
+  --ember: #ff9a3c;
+  --ember-deep: #d2541e;
+  --bone: #efe6d2;
+  --moss: #8fbf5a;
+  --gold: #f5cf4b;
+  --wood: #b07a45;
+  --frost: #7fc7ff;
+  --panel: rgba(12, 16, 22, 0.82);
+  --display: "Russo One", "Arial Black", system-ui, sans-serif;
+  --body: "Rubik", system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; overflow: hidden; background: var(--night); color: var(--bone); font-family: var(--body); }
+body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+canvas { position: fixed; inset: 0; display: block; }
+
+.hud { position: fixed; left: 0; right: 0; top: 0; display: flex; gap: 10px; align-items: flex-start; justify-content: space-between;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px)); pointer-events: none; }
+.hud-left, .hud-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pill { background: var(--panel); border: 1px solid rgba(239, 230, 210, 0.12); border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 14px;
+  display: flex; gap: 6px; align-items: center; font-variant-numeric: tabular-nums; }
+.pill b { font-family: var(--display); font-weight: 400; letter-spacing: 0.02em; }
+.ico { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.ico.wood { background: var(--wood); box-shadow: inset 0 -3px 0 rgba(0,0,0,.25); }
+.ico.gold { background: var(--gold); border-radius: 50%; box-shadow: inset 0 -2px 0 rgba(0,0,0,.25); }
+.firebar { width: 120px; height: 8px; background: rgba(255,255,255,.1); border-radius: 4px; overflow: hidden; }
+.firebar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--ember-deep), var(--ember)); transition: width .15s; }
+#skip { pointer-events: auto; font: 600 14px var(--body); color: var(--night); background: var(--ember); border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+#skip:focus-visible, .btn:focus-visible, .card:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
+
+.xp { position: fixed; left: 0; right: 0; bottom: 0; padding: 0 max(12px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 8px) max(12px, env(safe-area-inset-left, 0px));
+  display: flex; gap: 10px; align-items: center; pointer-events: none; }
+.xp .bar { flex: 1; height: 6px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; }
+.xp .bar i { display: block; height: 100%; width: 0; background: var(--frost); transition: width .15s; }
+.xp span { font-family: var(--display); font-size: 13px; color: var(--frost); }
+
+.banner { position: fixed; left: 0; right: 0; top: 28%; text-align: center; font-family: var(--display); font-size: clamp(26px, 6vmin, 46px);
+  letter-spacing: 0.03em; text-shadow: 0 3px 0 rgba(0,0,0,.5); pointer-events: none; opacity: 0; transition: opacity .4s; padding: 0 16px; }
+.banner.show { opacity: 1; }
+.banner small { display: block; font-family: var(--body); font-weight: 600; font-size: 15px; letter-spacing: 0; opacity: .8; margin-top: 6px; }
+
+.modal { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(6, 9, 13, 0.72); padding: 16px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px)); overflow: auto; }
+.sheet { max-width: 560px; width: 100%; text-align: center; display: grid; gap: 14px; }
+.sheet h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 9vmin, 64px); line-height: 1; color: var(--ember); text-wrap: balance;
+  text-shadow: 0 0 28px rgba(255, 154, 60, .45); margin: 0; }
+.sheet h2 { font-family: var(--display); font-weight: 400; font-size: clamp(22px, 5vmin, 32px); margin: 0; text-wrap: balance; }
+.sheet p { margin: 0; line-height: 1.45; opacity: .9; }
+.rules { display: grid; gap: 6px; text-align: left; max-width: 420px; margin: 0 auto; font-size: 15px; line-height: 1.4; }
+.rules div { display: grid; grid-template-columns: 64px 1fr; gap: 10px; }
+.rules b { color: var(--ember); font-weight: 600; }
+.btn { font: 400 20px var(--display); color: var(--night); background: var(--ember); border: 0; border-radius: 14px; padding: 14px 34px; cursor: pointer; justify-self: center;
+  box-shadow: 0 4px 0 var(--ember-deep); }
+.btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ember-deep); }
+.muted { font-size: 13px; opacity: .65; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.card { background: #18202a; border: 1px solid rgba(239, 230, 210, .16); border-radius: 14px; padding: 14px 10px; color: var(--bone); cursor: pointer; display: grid; gap: 6px; align-content: start;
+  font: inherit; min-width: 0; }
+.card:hover { border-color: var(--ember); }
+.card .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--frost); }
+.card .n { font-family: var(--display); font-size: 17px; line-height: 1.15; }
+.card .d { font-size: 13px; opacity: .8; line-height: 1.35; }
+.card .lv { font-size: 12px; color: var(--ember); }
+.ghost { font: 600 14px var(--body); color: var(--bone); background: transparent; border: 1px solid rgba(239, 230, 210, .3); border-radius: 12px; padding: 9px 14px; cursor: pointer; justify-self: center; }
+.ghost:focus-visible, .node:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
+
+.map { position: fixed; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 34%); gap: 12px;
+  background: radial-gradient(ellipse at 30% 60%, #22331d 0%, #141d16 55%, var(--night) 100%);
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 12px) max(16px, env(safe-area-inset-left, 0px)); }
+@media (max-aspect-ratio: 1/1) { .map { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; } }
+.map-main { display: flex; flex-direction: column; gap: 10px; min-height: 0; min-width: 0; }
+.map-top { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.map-top h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 0 auto 0 0; color: var(--ember); }
+.field { position: relative; flex: 1; min-height: 180px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(239, 230, 210, .08); background: #0b0812; }
+.field canvas { position: absolute; inset: 0; }
+.node { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 1px; background: none; border: 0; color: var(--bone); font: inherit; cursor: pointer; padding: 0;
+  margin-top: 14px; }
+.node .dot { width: 52px; height: 44px; border-radius: 12px; }
+.node .nm { font-family: var(--display); font-size: 14px; text-shadow: 0 2px 0 rgba(0, 0, 0, .8), 0 0 8px rgba(0, 0, 0, .8); white-space: nowrap; }
+.node .st { font-size: 11px; font-weight: 600; white-space: nowrap; background: rgba(8, 6, 14, .7); padding: 1px 7px; border-radius: 999px; }
+.node.open .st { color: var(--ember); }
+.node.owned .st { color: var(--gold); }
+.node.raid .st { color: #ff7a66; }
+.node.locked .nm, .node.soon .nm { opacity: .55; }
+.node.locked .st, .node.soon .st { opacity: .6; }
+.node.sel .dot { outline: 2px dashed rgba(239, 230, 210, .7); outline-offset: 2px; }
+.panel { background: var(--panel); border: 1px solid rgba(239, 230, 210, .1); border-radius: 16px; padding: 16px; display: grid; gap: 10px; align-content: start; overflow: auto; min-width: 0; }
+.panel h3 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 0; }
+.panel p { margin: 0; line-height: 1.45; font-size: 14px; }
+.panel .say { font-style: italic; opacity: .85; }
+.panel .note { color: var(--gold); }
+.acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.acts .btn { font-size: 17px; padding: 11px 22px; }
+.acts .ghost { justify-self: start; }
+@media (max-width: 460px) { .cards { grid-template-columns: 1fr; } .firebar { width: 80px; } }
+@media (prefers-reduced-motion: reduce) { .banner { transition: none; } }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="hud">
+  <div class="hud-left">
+    <div class="pill" id="phase">День 1</div>
+    <div class="pill"><span class="ico wood"></span><b id="wood">0</b></div>
+    <div class="pill"><span class="ico gold"></span><b id="gold">0</b></div>
+  </div>
+  <div class="hud-right">
+    <button id="skip" type="button">Начать ночь</button>
+    <div class="pill">Костёр <div class="firebar"><i id="fire"></i></div></div>
+  </div>
+</div>
+<div class="xp"><span id="lvl">Ур. 1</span><div class="bar"><i id="xpbar"></i></div></div>
+<div class="banner" id="banner"></div>
+
+<div class="modal" id="start">
+  <div class="sheet">
+    <h1>Последний костёр</h1>
+    <p>Деревня держится, пока горит костёр. Каждую ночь зомби приходят снова, и их всё больше.</p>
+    <div class="rules">
+      <div><b>Палец</b><span>Веди пальцем по экрану, и герой бежит. Стреляет он сам.</span></div>
+      <div><b>День</b><span>Стой у дерева, и герой его рубит. Встань на круг, чтобы построить забор, башню или кузницу.</span></div>
+      <div><b>Ночь</b><span>Держи зомби подальше от костра. Если он погаснет, игра окончена.</span></div>
+    </div>
+    <button class="btn" id="play" type="button">Играть</button>
+    <p class="muted" id="best"></p>
+  </div>
+</div>
+
+<div class="modal" id="pick" hidden>
+  <div class="sheet">
+    <h2 id="pickTitle">Новый уровень</h2>
+    <div class="cards" id="cards"></div>
+  </div>
+</div>
+
+<div class="modal" id="over" hidden>
+  <div class="sheet">
+    <h1 id="overTitle">Костёр погас</h1>
+    <p id="overText"></p>
+    <button class="btn" id="again" type="button">Ещё раз</button>
+    <button class="ghost" id="toMap" type="button" hidden>На карту</button>
+  </div>
+</div>
+
+<div class="map" id="map" hidden>
+  <div class="map-main">
+    <div class="map-top">
+      <h2>Край</h2>
+      <div class="pill" id="freed">Освобождено 0 из 4</div>
+      <div class="pill">Склад <span class="ico wood"></span><b id="stWood">0</b><span class="ico gold"></span><b id="stGold">0</b></div>
+      <button class="ghost" id="siege" type="button">Осада без конца</button>
+    </div>
+    <div class="field" id="field"><canvas id="mapc" aria-hidden="true"></canvas></div>
+  </div>
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+(() => {
+const cv = document.getElementById('c'), X = cv.getContext('2d');
+const dark = document.createElement('canvas'), D = dark.getContext('2d');
+let W = 0, H = 0, DPR = 1, S = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  for (const c of [cv, dark]) { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); }
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  // Same amount of world on screen in portrait and landscape (about 450k square units), whatever the browser bars do.
+  S = Math.max(0.5, Math.sqrt(W * H / 450000));
+}
+addEventListener('resize', resize); resize();
+for (const ev of ['gesturestart', 'gesturechange', 'dblclick']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });
+
+const $ = id => document.getElementById(id);
+const rnd = (a, b) => a + Math.random() * (b - a);
+const d2 = (a, b) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+const TAU = Math.PI * 2;
+let best = 0;
+try { best = +localStorage.getItem('kostyor.best') || 0; } catch (e) {}
+
+// ---------- the land: villages you free stay yours ----------
+const VILLAGES = [
+  { id: 'mill', name: 'Мельница', x: 16, y: 68, nights: 5, d: 0, twist: 'none', needs: [],
+    tw: 'Зомби пока немного. Хорошее место, чтобы научиться.', say: 'Староста: «Продержись до рассвета, и мельница снова закрутится».' },
+  { id: 'river', name: 'Речная', x: 42, y: 28, nights: 5, d: 2, twist: 'river', needs: ['mill'],
+    tw: 'Река прикрывает север и юг. Зомби идут только по мостам, с востока и запада.', say: 'Староста: «Перекрой мосты, и деревня выстоит».' },
+  { id: 'forest', name: 'Лесная', x: 46, y: 80, nights: 6, d: 3, twist: 'fog', needs: ['mill'],
+    tw: 'Леса вдвое больше, но ночью стоит густой туман и света меньше.', say: 'Лесник: «В тумане их не видно, пока не станет поздно».' },
+  { id: 'grave', name: 'Кладбище', x: 74, y: 52, nights: 6, d: 5, twist: 'graves', needs: ['river', 'forest'],
+    tw: 'Зомби встают из могил прямо внутри деревни.', say: 'Священник: «Мёртвые здесь не спят. Береги костёр со всех сторон».' },
+  { id: 'castle', name: 'Замок', x: 88, y: 20, soon: true, needs: ['grave'],
+    tw: 'Логово того, кто ведёт орду.', say: '' },
+];
+const ROADS = [['mill', 'river'], ['mill', 'forest'], ['river', 'grave'], ['forest', 'grave'], ['grave', 'castle']];
+const V = id => VILLAGES.find(v => v.id === id);
+let SAVE = { won: {}, owned: {}, store: { wood: 0, gold: 0 }, raid: null, raids: 0 };
+try { const s = JSON.parse(localStorage.getItem('kostyor.save')); if (s) SAVE = Object.assign(SAVE, s); } catch (e) {}
+function persist() { try { localStorage.setItem('kostyor.save', JSON.stringify(SAVE)); } catch (e) {} }
+const defense = b => b.walls.reduce((a, l) => a + l * 2, 0) + b.towers.reduce((a, l) => a + l * 3, 0) + (b.forge ? 1 : 0);
+const describe = b => `заборов ${b.walls.filter(l => l).length} из 4, башен ${b.towers.filter(l => l).length} из 4${b.forge ? ', кузница' : ''}`;
+
+// ---------- ground pattern ----------
+const tile = document.createElement('canvas'); tile.width = tile.height = 256;
+{
+  const t = tile.getContext('2d');
+  t.fillStyle = '#2a3f22'; t.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 900; i++) {
+    t.fillStyle = ['#314a28', '#253820', '#36502b', '#2e4425'][i % 4];
+    const x = Math.random() * 256, y = Math.random() * 256;
+    t.fillRect(x, y, 2 + Math.random() * 3, 2 + Math.random() * 3);
+  }
+  for (let i = 0; i < 40; i++) {
+    t.strokeStyle = 'rgba(80,120,60,.5)'; t.lineWidth = 1.5;
+    const x = Math.random() * 256, y = Math.random() * 256;
+    t.beginPath(); t.moveTo(x, y); t.lineTo(x - 2, y - 6); t.moveTo(x + 2, y); t.lineTo(x + 4, y - 5); t.stroke();
+  }
+}
+const grassPat = X.createPattern(tile, 'repeat');
+
+// ---------- game state ----------
+const ZK = {
+  walker: { r: 12, hp: 20, spd: 42, dmg: 10, col: '#7da454', xp: 1, gold: 0.5 },
+  runner: { r: 10, hp: 12, spd: 84, dmg: 7, col: '#b3c26a', xp: 1, gold: 0.5 },
+  brute:  { r: 18, hp: 110, spd: 28, dmg: 25, col: '#4d7838', xp: 5, gold: 4 },
+  boss:   { r: 28, hp: 500, spd: 30, dmg: 45, col: '#7b5aa6', xp: 30, gold: 30 },
+};
+const WALL_COST = [6, 12, 20], WALL_HP = [60, 130, 220];
+const TOWER = [
+  { wood: 10, gold: 0, dmg: 8, rate: 1.0, range: 230 },
+  { wood: 15, gold: 10, dmg: 14, rate: 1.3, range: 260 },
+  { wood: 25, gold: 25, dmg: 22, rate: 1.7, range: 290 },
+];
+const FORGE_WOOD = 15;
+
+let G;
+function newGame(cfg = { mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 40 }) {
+  G = {
+    cfg, t: 0, phase: 'day', phaseT: cfg.firstDay, night: 0, darkA: 0,
+    wood: cfg.wood || 0, gold: cfg.gold || 0, graves: [], spawnEvery: 1,
+    fire: { x: 0, y: 0, hp: 300, max: 300 },
+    hero: { x: 0, y: 60, r: 13, hp: 100, max: 100, spd: 150, cd: 0, dead: 0, fx: 0, fy: 1, chop: 0 },
+    stat: { dmg: 10, rate: 1.6, range: 210, multi: 1, pierce: 0, magnet: 70, chop: 1, aura: 0 },
+    lvls: {},
+    xp: 0, lvl: 1, xpNext: 5, pending: 0,
+    zombies: [], shots: [], drops: [], fx: [], texts: [], trees: [], slots: [],
+    spawnQ: [], spawnT: 0, mainAngles: [], forgeUses: 0,
+    cam: { x: 0, y: 30 }, shake: 0, paused: true, over: false,
+  };
+  for (let i = 0; i < 4; i++) {
+    const a = i * TAU / 4 - Math.PI / 2;
+    const posts = [];
+    for (let k = -3; k <= 3; k++) posts.push({ x: Math.cos(a + k * 0.13) * 178, y: Math.sin(a + k * 0.13) * 178, r: 11, hp: 0, max: 0 });
+    G.slots.push({ kind: 'wall', name: 'Забор', x: Math.cos(a) * 140, y: Math.sin(a) * 140, lvl: 0, hold: 0, posts });
+  }
+  for (let i = 0; i < 4; i++) {
+    const a = i * TAU / 4 + Math.PI / 4;
+    G.slots.push({ kind: 'tower', name: 'Башня', x: Math.cos(a) * 112, y: Math.sin(a) * 112, lvl: 0, hold: 0, cd: 0 });
+  }
+  G.slots.push({ kind: 'forge', name: 'Кузница', x: 0, y: 66, lvl: 0, hold: 0 });
+  if (cfg.buildings) {
+    const b = cfg.buildings;
+    G.slots.filter(s => s.kind === 'wall').forEach((s, i) => {
+      s.lvl = b.walls[i] || 0;
+      if (s.lvl) for (const p of s.posts) p.max = p.hp = WALL_HP[s.lvl - 1];
+    });
+    G.slots.filter(s => s.kind === 'tower').forEach((s, i) => { s.lvl = b.towers[i] || 0; });
+    G.slots.find(s => s.kind === 'forge').lvl = b.forge || 0;
+  }
+  const treeCount = cfg.twist === 'fog' ? 80 : 46;
+  let tries = 0;
+  while (G.trees.length < treeCount && tries++ < 3000) {
+    const a = Math.random() * TAU, r = rnd(270, 820);
+    const t = { x: Math.cos(a) * r, y: Math.sin(a) * r, r: rnd(18, 26), wood: 4, shake: 0 };
+    if (cfg.twist === 'river' && Math.abs(t.y) > 280 && Math.abs(t.y) < 390) continue;
+    if (G.trees.every(o => d2(o, t) > 55 * 55)) G.trees.push(t);
+  }
+  if (cfg.twist === 'graves') for (let i = 0; i < 7; i++) {
+    const a = i * TAU / 7 + rnd(-0.3, 0.3), r = rnd(235, 400);
+    G.graves.push({ x: Math.cos(a) * r, y: Math.sin(a) * r });
+  }
+}
+const snapshot = () => ({
+  walls: G.slots.filter(s => s.kind === 'wall').map(s => s.lvl),
+  towers: G.slots.filter(s => s.kind === 'tower').map(s => s.lvl),
+  forge: G.slots.find(s => s.kind === 'forge').lvl,
+});
+
+// ---------- input ----------
+const keys = {};
+// Physical key codes, so WASD works on any keyboard layout (on a Russian layout W types «ц»).
+addEventListener('keydown', e => { keys[e.code] = true; if (e.code.startsWith('Arrow') || e.code === 'Space') e.preventDefault(); });
+addEventListener('keyup', e => { keys[e.code] = false; });
+addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+const joy = { on: false, id: null, ox: 0, oy: 0, x: 0, y: 0 };
+cv.addEventListener('pointerdown', e => {
+  if (joy.on) return;
+  joy.on = true; joy.id = e.pointerId; joy.ox = joy.x = e.clientX; joy.oy = joy.y = e.clientY;
+  cv.setPointerCapture?.(e.pointerId);
+});
+cv.addEventListener('pointermove', e => { if (joy.on && e.pointerId === joy.id) { joy.x = e.clientX; joy.y = e.clientY; } });
+const endJoy = e => { if (e.pointerId === joy.id) joy.on = false; };
+cv.addEventListener('pointerup', endJoy); cv.addEventListener('pointercancel', endJoy);
+
+function moveInput() {
+  let mx = 0, my = 0;
+  if (keys.KeyA || keys.ArrowLeft) mx -= 1;
+  if (keys.KeyD || keys.ArrowRight) mx += 1;
+  if (keys.KeyW || keys.ArrowUp) my -= 1;
+  if (keys.KeyS || keys.ArrowDown) my += 1;
+  if (joy.on) {
+    const dx = joy.x - joy.ox, dy = joy.y - joy.oy, l = Math.hypot(dx, dy);
+    const max = 46;
+    if (l > 5) { const k = Math.min(1, l / 24); mx = dx / l * k; my = dy / l * k; }
+    if (l > max) { joy.ox = joy.x - dx / l * max; joy.oy = joy.y - dy / l * max; }
+  }
+  const l = Math.hypot(mx, my);
+  if (l > 1) { mx /= l; my /= l; }
+  return [mx, my];
+}
+
+// ---------- helpers ----------
+function text(x, y, s, col, size = 13) { G.texts.push({ x, y, s, col, t: 0, size }); }
+function burst(x, y, col, n = 8, sp = 90) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * TAU, v = rnd(sp * 0.3, sp);
+    G.fx.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, max: rnd(0.3, 0.7), col, r: rnd(1.5, 3.5) });
+  }
+}
+let bannerTimer = 0;
+function banner(main, sub = '') {
+  const b = $('banner'); b.innerHTML = main + (sub ? `<small>${sub}</small>` : ''); b.classList.add('show'); bannerTimer = 2.6;
+}
+
+// ---------- upgrades ----------
+const UPS = [
+  { id: 'dmg', k: 'Оружие', n: 'Острые стрелы', d: '+30% урона', max: 6, go: () => G.stat.dmg *= 1.3 },
+  { id: 'rate', k: 'Оружие', n: 'Быстрая рука', d: '+20% скорострельности', max: 6, go: () => G.stat.rate *= 1.2 },
+  { id: 'multi', k: 'Оружие', n: 'Ещё одна стрела', d: 'Стреляет по ещё одной цели', max: 4, go: () => G.stat.multi++ },
+  { id: 'pierce', k: 'Оружие', n: 'Пробивание', d: 'Стрела проходит сквозь ещё одного зомби', max: 3, go: () => G.stat.pierce++ },
+  { id: 'aura', k: 'Новое', n: 'Огненное кольцо', d: 'Жжёт зомби вокруг героя', max: 3, go: () => G.stat.aura++ },
+  { id: 'range', k: 'Оружие', n: 'Зоркий глаз', d: '+15% дальности', max: 4, go: () => G.stat.range *= 1.15 },
+  { id: 'speed', k: 'Герой', n: 'Лёгкие ботинки', d: '+12% скорости бега', max: 4, go: () => G.hero.spd *= 1.12 },
+  { id: 'hp', k: 'Герой', n: 'Крепкое здоровье', d: '+25 к здоровью, полное лечение', max: 5, go: () => { G.hero.max += 25; G.hero.hp = G.hero.max; } },
+  { id: 'magnet', k: 'Герой', n: 'Магнит', d: 'Собирает добычу издалека', max: 3, go: () => G.stat.magnet *= 1.5 },
+  { id: 'chop', k: 'Деревня', n: 'Топор лесоруба', d: 'Рубит деревья вдвое быстрее', max: 2, go: () => G.stat.chop *= 2 },
+  { id: 'fire', k: 'Деревня', n: 'Жаркий костёр', d: '+100 к прочности костра и починка', max: 5, go: () => { G.fire.max += 100; G.fire.hp = G.fire.max; } },
+];
+// Always available once the regular upgrades run out, so a level-up or the forge never offers an empty choice.
+const EXTRA = [
+  { id: 'might', k: 'Оружие', n: 'Закалка', d: '+10% урона', max: Infinity, go: () => G.stat.dmg *= 1.1 },
+  { id: 'heal', k: 'Деревня', n: 'Починка костра', d: 'Костёр полностью восстановлен', max: Infinity, go: () => { G.fire.hp = G.fire.max; } },
+  { id: 'swift', k: 'Оружие', n: 'Тетива', d: '+8% скорострельности', max: Infinity, go: () => G.stat.rate *= 1.08 },
+];
+function offerCards(title) {
+  G.paused = true;
+  $('pickTitle').textContent = title;
+  const pool = UPS.filter(u => (G.lvls[u.id] || 0) < u.max).sort(() => Math.random() - 0.5).slice(0, 3);
+  for (const u of EXTRA) if (pool.length < 3) pool.push(u);
+  const box = $('cards'); box.innerHTML = '';
+  for (const u of pool) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'card';
+    const lv = G.lvls[u.id] || 0;
+    b.innerHTML = `<span class="k">${u.k}</span><span class="n">${u.n}</span><span class="d">${u.d}</span><span class="lv">${lv ? 'Уровень ' + lv + ' → ' + (lv + 1) : 'Новое'}</span>`;
+    b.onclick = () => {
+      u.go(); G.lvls[u.id] = lv + 1;
+      $('pick').hidden = true;
+      if (G.pending > 0) { G.pending--; offerCards('Новый уровень'); } else { G.paused = false; last = performance.now(); }
+    };
+    box.appendChild(b);
+  }
+  $('pick').hidden = false;
+}
+function gainXp(n) {
+  G.xp += n;
+  while (G.xp >= G.xpNext) { G.xp -= G.xpNext; G.lvl++; G.xpNext = Math.round(5 + G.lvl * 4.5); G.pending++; }
+}
+
+// ---------- phases ----------
+function startNight() {
+  const c = G.cfg;
+  G.phase = 'night'; G.night++; G.phaseT = 55;
+  const n = G.night + c.d, total = 10 + n * 8;
+  G.spawnQ = [];
+  for (let i = 0; i < total; i++) {
+    let k = 'walker';
+    const r = Math.random();
+    if (n >= 3 && r < 0.08 + n * 0.015) k = 'brute';
+    else if (n >= 2 && r < 0.35) k = 'runner';
+    G.spawnQ.push(k);
+  }
+  const boss = c.mode === 'siege' ? n % 5 === 0 : c.mode === 'liberate' && G.night === c.nights;
+  if (boss) G.spawnQ.splice(Math.floor(total / 2), 0, 'boss');
+  G.spawnT = 0; G.spawnEvery = 38 / G.spawnQ.length;
+  const a0 = Math.random() * TAU;
+  G.mainAngles = c.twist === 'river' ? [0, Math.PI] : n <= 1 ? [a0] : [a0, a0 + rnd(1.6, 3.2)];
+  const dirs = G.mainAngles.map(a => ['востока', 'юго-востока', 'юга', 'юго-запада', 'запада', 'северо-запада', 'севера', 'северо-востока'][Math.round(((a % TAU) + TAU) % TAU / (TAU / 8)) % 8]);
+  const where = c.twist === 'river' ? 'Идут по мостам, с востока и запада' : c.twist === 'graves' ? 'Могилы шевелятся…' : `Идут с ${dirs.join(' и с ')}`;
+  banner(isFinite(c.nights) ? `Ночь ${G.night} из ${c.nights}` : `Ночь ${G.night}`, where + (boss ? '. С ними вожак!' : ''));
+  $('skip').hidden = true;
+}
+function startDay() {
+  for (const z of G.zombies) { burst(z.x, z.y, '#ffb347', 10, 70); }
+  G.zombies = [];
+  if (G.night >= G.cfg.nights) return finishRun(true);
+  G.phase = 'day'; G.phaseT = 25;
+  for (const t of G.trees) t.wood = 4;
+  banner('Рассвет', `Пережито ночей: ${G.night}. Солнце сожгло остальных.`);
+  $('skip').hidden = false;
+  if (G.cfg.mode === 'siege' && G.night > best) { best = G.night; try { localStorage.setItem('kostyor.best', best); } catch (e) {} }
+}
+function spawnZombie(kind) {
+  const base = ZK[kind], n = G.night + G.cfg.d, tw = G.cfg.twist;
+  let x, y;
+  if (tw === 'graves' && G.graves.length && Math.random() < 0.35) {
+    const g = G.graves[Math.floor(Math.random() * G.graves.length)];
+    x = g.x + rnd(-6, 6); y = g.y + rnd(-6, 6);
+    burst(x, y, '#6b5a40', 8, 60);
+  } else {
+    const main = tw === 'river' ? 1 : 0.7, jit = tw === 'river' ? 0.35 : 0.55;
+    const a = Math.random() < main ? G.mainAngles[Math.floor(Math.random() * G.mainAngles.length)] + rnd(-jit, jit) : Math.random() * TAU;
+    x = Math.cos(a) * 800; y = Math.sin(a) * 800;
+  }
+  const hp = base.hp * (1 + 0.24 * (n - 1)) * (kind === 'boss' ? 1 + n * 0.3 : 1);
+  G.zombies.push({ kind, x, y, r: base.r, hp, max: hp, spd: base.spd * (1 + 0.02 * n) * rnd(0.9, 1.1),
+    dmg: base.dmg, col: base.col, hit: 0, block: null, wob: Math.random() * TAU, fx: 0, fy: 0 });
+}
+
+// ---------- build pads ----------
+function padAction(s) {
+  if (s.kind === 'wall') {
+    if (s.lvl > 0 && s.posts.some(p => p.hp < p.max)) {
+      const c = 2 + s.lvl * 2;
+      return { cost: { wood: c }, label: 'Починить', go: () => { for (const p of s.posts) p.hp = p.max; } };
+    }
+    if (s.lvl < 3) {
+      return { cost: { wood: WALL_COST[s.lvl] }, label: s.lvl ? 'Укрепить' : 'Забор', go: () => {
+        s.lvl++; for (const p of s.posts) { p.max = WALL_HP[s.lvl - 1]; p.hp = p.max; }
+      } };
+    }
+  } else if (s.kind === 'tower') {
+    if (s.lvl < 3) { const t = TOWER[s.lvl]; return { cost: { wood: t.wood, gold: t.gold }, label: s.lvl ? 'Улучшить' : 'Башня', go: () => s.lvl++ }; }
+  } else if (s.kind === 'forge') {
+    if (s.lvl === 0) return { cost: { wood: FORGE_WOOD }, label: 'Кузница', go: () => s.lvl = 1 };
+    const g = 8 + G.forgeUses * 8;
+    return { cost: { gold: g }, label: 'Улучшение', go: () => { G.forgeUses++; offerCards('Кузница'); } };
+  }
+  return null;
+}
+const canPay = c => (c.wood || 0) <= G.wood && (c.gold || 0) <= G.gold;
+
+// ---------- update ----------
+function update(dt) {
+  G.t += dt;
+  const h = G.hero, st = G.stat;
+
+  // phase
+  G.phaseT -= dt;
+  if (G.phase === 'day') {
+    G.fire.hp = Math.min(G.fire.max, G.fire.hp + 12 * dt);
+    if (!h.dead) h.hp = Math.min(h.max, h.hp + 10 * dt);
+    if (G.phaseT <= 0) startNight();
+  } else {
+    G.spawnT -= dt;
+    if (G.spawnQ.length && G.spawnT <= 0) { spawnZombie(G.spawnQ.shift()); G.spawnT = G.spawnEvery; }
+    if (G.phaseT <= 0) startDay();
+  }
+  G.darkA += ((G.phase === 'night' ? (G.cfg.twist === 'fog' ? 0.93 : 0.8) : 0) - G.darkA) * Math.min(1, dt * 0.8);
+
+  // hero
+  if (h.dead > 0) {
+    h.dead -= dt;
+    if (h.dead <= 0) { h.x = 0; h.y = 40; h.hp = h.max; banner('Герой вернулся'); }
+  } else {
+    const [mx, my] = moveInput();
+    h.x += mx * h.spd * dt; h.y += my * h.spd * dt;
+    if (mx || my) { h.fx = mx; h.fy = my; }
+    const R = 880, l = Math.hypot(h.x, h.y); if (l > R) { h.x *= R / l; h.y *= R / l; }
+    const fd = Math.hypot(h.x, h.y); if (fd < 34) { h.x *= 34 / (fd || 1); h.y *= 34 / (fd || 1); }
+
+    // shooting
+    h.cd -= dt;
+    if (h.cd <= 0) {
+      const targets = G.zombies.filter(z => d2(z, h) < st.range * st.range).sort((a, b) => d2(a, h) - d2(b, h)).slice(0, st.multi);
+      if (targets.length) {
+        for (const z of targets) shoot(h.x, h.y, z, st.dmg, st.pierce, '#ffe7a8');
+        h.cd = 1 / st.rate;
+      }
+    }
+    // aura
+    if (st.aura) {
+      const ar = 55 + st.aura * 15;
+      for (const z of G.zombies) if (d2(z, h) < (ar + z.r) ** 2) hurt(z, 9 * st.aura * dt, true);
+    }
+    // chopping
+    let chopping = false;
+    for (const t of G.trees) {
+      if (t.wood > 0 && d2(t, h) < (t.r + 22) ** 2) {
+        chopping = true;
+        h.chop += dt * st.chop;
+        t.shake = 0.15;
+        if (h.chop >= 0.45) { h.chop = 0; t.wood--; G.wood++; text(t.x, t.y - t.r, '+1', '#e2b07a'); burst(t.x, t.y, '#7a5230', 4, 60); }
+        break;
+      }
+    }
+    if (!chopping) h.chop = 0;
+
+    // build pads
+    for (const s of G.slots) {
+      const on = d2(s, h) < 26 * 26;
+      const act = padAction(s);
+      if (on && act && canPay(act.cost)) {
+        s.hold += dt;
+        if (s.hold >= 0.6) {
+          G.wood -= act.cost.wood || 0; G.gold -= act.cost.gold || 0;
+          if (act.cost.gold) text(s.x, s.y - 46, '−' + act.cost.gold + ' золота', '#f5cf4b', 14);
+          if (act.cost.wood) text(s.x, s.y - 60, '−' + act.cost.wood + ' дерева', '#e2b07a', 14);
+          act.go(); s.hold = -0.9;
+          burst(s.x, s.y, '#ffd28a', 14, 120);
+          text(s.x, s.y - 30, act.label + '!', '#ffd28a', 15);
+        }
+      } else if (!on) s.hold = 0;
+    }
+  }
+
+  // towers
+  for (const s of G.slots) {
+    if (s.kind !== 'tower' || !s.lvl) continue;
+    const t = TOWER[s.lvl - 1];
+    s.cd -= dt;
+    if (s.cd > 0) continue;
+    let bestZ = null, bd = t.range * t.range;
+    for (const z of G.zombies) { const dd = d2(z, s); if (dd < bd) { bd = dd; bestZ = z; } }
+    if (bestZ) { shoot(s.x, s.y - 18, bestZ, t.dmg, 0, '#cfe8ff'); s.cd = 1 / t.rate; }
+  }
+
+  // zombies
+  const posts = [];
+  for (const s of G.slots) if (s.kind === 'wall') for (const p of s.posts) if (p.hp > 0) posts.push(p);
+  for (const z of G.zombies) {
+    z.hit = Math.max(0, z.hit - dt * 6);
+    let tx = G.fire.x, ty = G.fire.y;
+    if (!h.dead && d2(z, h) < 150 * 150) { tx = h.x; ty = h.y; }
+    const dx = tx - z.x, dy = ty - z.y, l = Math.hypot(dx, dy) || 1;
+    z.fx = dx / l; z.fy = dy / l;
+    if (z.block && z.block.hp > 0) {
+      z.block.hp -= z.dmg * dt;
+      if (z.block.hp <= 0) { burst(z.block.x, z.block.y, '#8a5a32', 10, 90); G.shake = Math.max(G.shake, 4); }
+    } else {
+      z.wob += dt * 8;
+      z.x += (z.fx * z.spd + Math.cos(z.wob) * 6) * dt; z.y += (z.fy * z.spd + Math.sin(z.wob) * 6) * dt;
+    }
+    z.block = null;
+    for (const p of posts) {
+      const ddx = z.x - p.x, ddy = z.y - p.y, dd = Math.hypot(ddx, ddy), m = z.r + p.r;
+      if (dd < m) { z.x = p.x + ddx / (dd || 1) * m; z.y = p.y + ddy / (dd || 1) * m; z.block = p; }
+    }
+    // fire
+    const fd = Math.hypot(z.x, z.y), fm = z.r + 24;
+    if (fd < fm) {
+      z.x *= fm / (fd || 1); z.y *= fm / (fd || 1);
+      G.fire.hp -= z.dmg * dt;
+    }
+    // hero contact
+    if (!h.dead) {
+      const hd = Math.hypot(z.x - h.x, z.y - h.y), hm = z.r + h.r;
+      if (hd < hm) {
+        z.x = h.x + (z.x - h.x) / (hd || 1) * hm; z.y = h.y + (z.y - h.y) / (hd || 1) * hm;
+        h.hp -= z.dmg * dt;
+      }
+    }
+  }
+  // zombie separation
+  const zs = G.zombies;
+  for (let i = 0; i < zs.length; i++) for (let j = i + 1; j < zs.length; j++) {
+    const a = zs[i], b = zs[j], dx = b.x - a.x, dy = b.y - a.y, m = a.r + b.r;
+    if (Math.abs(dx) > m || Math.abs(dy) > m) continue;
+    const dd = Math.hypot(dx, dy);
+    if (dd < m && dd > 0) { const p = (m - dd) / 2, ux = dx / dd, uy = dy / dd; a.x -= ux * p; a.y -= uy * p; b.x += ux * p; b.y += uy * p; }
+  }
+
+  if (!h.dead && h.hp <= 0) {
+    h.dead = 6; h.hp = 0; burst(h.x, h.y, '#ff6b5a', 20, 140); G.shake = 8;
+    banner('Герой пал', 'Вернётся к костру через 6 секунд');
+  }
+  if (G.fire.hp <= 0) return gameOver();
+
+  // shots
+  for (const s of G.shots) {
+    s.x += s.vx * dt; s.y += s.vy * dt; s.t += dt;
+    for (const z of G.zombies) {
+      if (z.hp <= 0 || s.hitSet.has(z)) continue;
+      if (d2(s, z) < (z.r + 4) ** 2) {
+        hurt(z, s.dmg); s.hitSet.add(z);
+        if (s.pierce-- <= 0) { s.t = 99; break; }
+      }
+    }
+  }
+  G.shots = G.shots.filter(s => s.t < 0.9);
+
+  // deaths
+  for (const z of G.zombies) if (z.hp <= 0) {
+    const b = ZK[z.kind];
+    burst(z.x, z.y, z.col, z.kind === 'boss' ? 30 : 10, 110);
+    G.drops.push({ x: z.x, y: z.y, kind: 'xp', v: b.xp, t: 0 });
+    let g = b.gold >= 1 ? b.gold : (Math.random() < b.gold ? 1 : 0);
+    if (g) G.drops.push({ x: z.x + rnd(-6, 6), y: z.y + rnd(-6, 6), kind: 'gold', v: g, t: 0 });
+    if (z.kind === 'boss') { G.shake = 10; banner('Вожак повержен!'); }
+  }
+  G.zombies = G.zombies.filter(z => z.hp > 0);
+
+  // drops
+  for (const d of G.drops) {
+    d.t += dt;
+    if (h.dead) continue;
+    const dd = Math.sqrt(d2(d, h));
+    if (dd < st.magnet) { const k = Math.min(1, dt * (380 / Math.max(dd, 1)) * 0.9); d.x += (h.x - d.x) * k; d.y += (h.y - d.y) * k; }
+    if (dd < 16) {
+      d.taken = true;
+      if (d.kind === 'gold') { G.gold += d.v; text(h.x, h.y - 20, '+' + d.v, '#f5cf4b'); } else gainXp(d.v);
+    }
+  }
+  G.drops = G.drops.filter(d => !d.taken && d.t < 60);
+  if (G.pending > 0 && !G.paused) { G.pending--; offerCards('Новый уровень'); }
+
+  // fx
+  for (const f of G.fx) { f.t += dt; f.x += f.vx * dt; f.y += f.vy * dt; f.vx *= 0.92; f.vy *= 0.92; }
+  G.fx = G.fx.filter(f => f.t < f.max);
+  for (const t of G.texts) { t.t += dt; t.y -= 28 * dt; }
+  G.texts = G.texts.filter(t => t.t < 0.9);
+  for (const t of G.trees) t.shake = Math.max(0, t.shake - dt);
+  G.shake = Math.max(0, G.shake - dt * 20);
+
+  // camera
+  const tx = h.dead ? 0 : h.x, ty = h.dead ? 0 : h.y;
+  G.cam.x += (tx - G.cam.x) * Math.min(1, dt * 5); G.cam.y += (ty - G.cam.y) * Math.min(1, dt * 5);
+
+  if (bannerTimer > 0) { bannerTimer -= dt; if (bannerTimer <= 0) $('banner').classList.remove('show'); }
+}
+function shoot(x, y, z, dmg, pierce, col) {
+  const lead = Math.sqrt((z.x - x) ** 2 + (z.y - y) ** 2) / 560;
+  const tx = z.x + z.fx * z.spd * lead, ty = z.y + z.fy * z.spd * lead;
+  const l = Math.hypot(tx - x, ty - y) || 1;
+  G.shots.push({ x, y, vx: (tx - x) / l * 560, vy: (ty - y) / l * 560, dmg, pierce, col, t: 0, hitSet: new Set() });
+}
+function hurt(z, n, quiet) {
+  z.hp -= n;
+  if (!quiet) { z.hit = 1; text(z.x, z.y - z.r - 4, Math.round(n), '#fff', 11); }
+}
+function gameOver() { finishRun(false); }
+function finishRun(won) {
+  if (G.over) return;
+  G.over = true; G.paused = true;
+  const c = G.cfg, v = c.v, lines = [];
+  let title = 'Костёр погас';
+  if (c.mode === 'siege') {
+    const n = Math.max(0, G.night - 1);
+    if (n > best) { best = n; try { localStorage.setItem('kostyor.best', best); } catch (e) {} }
+    lines.push(`Ты продержался ${n} ${plural(n, 'ночь', 'ночи', 'ночей')} и дошёл до уровня ${G.lvl}. Рекорд: ${best}.`);
+  } else if (c.mode === 'liberate') {
+    if (won) {
+      const k = G.fire.hp / G.fire.max, stars = k > 0.66 ? 3 : k > 0.33 ? 2 : 1;
+      SAVE.won[v.id] = true;
+      SAVE.owned[v.id] = { b: snapshot(), stars };
+      justFreed = v.id;
+      title = `${v.name} свободна!`;
+      lines.push(`${'★'.repeat(stars)}${'☆'.repeat(3 - stars)} Костёр цел на ${Math.round(k * 100)}%. Деревня теперь твоя, и все постройки остаются на месте.`);
+    } else lines.push(`${v.name} осталась у орды. Попробуй ещё раз: запасы твоих деревень помогут.`);
+  } else {
+    if (won) { SAVE.owned[v.id].b = snapshot(); SAVE.raids++; title = 'Набег отбит!'; lines.push(`${v.name} выстояла. Новые постройки сохранены.`); }
+    else { delete SAVE.owned[v.id]; title = `${v.name} потеряна`; lines.push('Орда заняла деревню. Её можно освободить снова.'); }
+    SAVE.raid = null;
+  }
+  const own = Object.keys(SAVE.owned).length;
+  if (own && c.mode !== 'siege') {
+    SAVE.store.wood += own * 5; SAVE.store.gold += own * 3;
+    lines.push(`Твои деревни прислали на склад ${own * 5} дерева и ${own * 3} золота.`);
+  }
+  if (c.mode !== 'raid' && !SAVE.raid) {
+    const ids = Object.keys(SAVE.owned).filter(id => !(won && v && id === v.id));
+    if (ids.length && Math.random() < 0.5) {
+      const id = ids[Math.floor(Math.random() * ids.length)], t = V(id);
+      SAVE.raid = { id, power: 4 + t.d + SAVE.raids * 2 };
+      lines.push(`Тревога: орда идёт на ${t.name}!`);
+    }
+  }
+  persist();
+  $('overTitle').textContent = title;
+  $('overText').textContent = lines.join(' ');
+  $('again').textContent = c.mode === 'siege' ? 'Ещё раз' : 'На карту';
+  $('toMap').hidden = c.mode !== 'siege';
+  $('over').hidden = false;
+}
+const plural = (n, a, b, c) => (n % 10 === 1 && n % 100 !== 11) ? a : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? b : c;
+
+// ---------- draw ----------
+function circle(x, y, r, fill, stroke, lw = 2) {
+  X.beginPath(); X.arc(x, y, r, 0, TAU);
+  if (fill) { X.fillStyle = fill; X.fill(); }
+  if (stroke) { X.strokeStyle = stroke; X.lineWidth = lw; X.stroke(); }
+}
+function bar(x, y, w, v, col) {
+  X.fillStyle = 'rgba(0,0,0,.55)'; X.fillRect(x - w / 2 - 1, y - 1, w + 2, 5);
+  X.fillStyle = col; X.fillRect(x - w / 2, y, w * Math.max(0, v), 3);
+}
+function draw() {
+  const sx = (Math.random() - 0.5) * G.shake, sy = (Math.random() - 0.5) * G.shake;
+  const ox = W / 2 - G.cam.x * S + sx, oy = H / 2 - G.cam.y * S + sy;
+  X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+  const vw = W / S, vh = H / S, cx = G.cam.x, cy = G.cam.y;
+
+  X.fillStyle = grassPat; X.fillRect(cx - vw / 2 - 20, cy - vh / 2 - 20, vw + 40, vh + 40);
+  // village dirt
+  const dg = X.createRadialGradient(0, 0, 60, 0, 0, 215);
+  dg.addColorStop(0, '#5a4630'); dg.addColorStop(0.75, '#4a3b28'); dg.addColorStop(1, 'rgba(74,59,40,0)');
+  X.fillStyle = dg; X.beginPath(); X.arc(0, 0, 215, 0, TAU); X.fill();
+  // world edge
+  X.strokeStyle = 'rgba(0,0,0,.35)'; X.lineWidth = 30; X.beginPath(); X.arc(0, 0, 905, 0, TAU); X.stroke();
+  if (G.cfg.twist === 'river') for (const ry of [-335, 335]) {
+    X.fillStyle = '#24506b'; X.fillRect(cx - vw / 2 - 20, ry - 38, vw + 40, 76);
+    X.fillStyle = 'rgba(160,210,240,.18)';
+    for (let i = -8; i <= 8; i++) X.fillRect(Math.floor(cx / 90) * 90 + i * 90 + (G.t * 20) % 90, ry - 14 + ((i + 8) % 3) * 12, 30, 3);
+  }
+  for (const g of G.graves) {
+    X.fillStyle = '#3b2f22'; X.fillRect(g.x - 9, g.y - 2, 18, 22);
+    X.fillStyle = '#8d8a84'; X.strokeStyle = '#4a4844'; X.lineWidth = 1.5;
+    X.beginPath(); X.moveTo(g.x - 7, g.y + 2); X.lineTo(g.x - 7, g.y - 9); X.arc(g.x, g.y - 9, 7, Math.PI, 0); X.lineTo(g.x + 7, g.y + 2); X.closePath(); X.fill(); X.stroke();
+  }
+
+  // stumps
+  for (const t of G.trees) if (t.wood <= 0) { circle(t.x, t.y, 9, '#6b4a2b', '#3d2a17'); circle(t.x, t.y, 4, '#8a6640'); }
+
+  // pads
+  const h = G.hero;
+  for (const s of G.slots) {
+    const act = padAction(s);
+    if (!act) continue;
+    const ok = canPay(act.cost);
+    X.setLineDash([5, 5]); X.lineDashOffset = -G.t * 10;
+    circle(s.x, s.y, 22, ok ? 'rgba(255,210,138,.10)' : 'rgba(0,0,0,.18)', ok ? 'rgba(255,210,138,.8)' : 'rgba(239,230,210,.35)', 2);
+    X.setLineDash([]);
+    if (s.hold > 0) {
+      X.beginPath(); X.arc(s.x, s.y, 22, -Math.PI / 2, -Math.PI / 2 + TAU * Math.min(1, s.hold / 0.6));
+      X.strokeStyle = '#ffd28a'; X.lineWidth = 4; X.stroke();
+    }
+    if (s.kind === 'tower' && s.lvl) continue;
+    if (s.kind === 'forge' && s.lvl) continue;
+    padLabel(s.x, s.y + 36, act, ok);
+  }
+
+  // walls
+  for (const s of G.slots) if (s.kind === 'wall' && s.lvl) {
+    const col = ['#8a5a32', '#7a6a5a', '#9aa0a8'][s.lvl - 1];
+    for (let i = 0; i < s.posts.length; i++) {
+      const p = s.posts[i];
+      if (p.hp <= 0) { circle(p.x, p.y, 5, '#3d2a17'); continue; }
+      if (i < s.posts.length - 1 && s.posts[i + 1].hp > 0) {
+        X.strokeStyle = '#5a3a1e'; X.lineWidth = 6; X.beginPath(); X.moveTo(p.x, p.y); X.lineTo(s.posts[i + 1].x, s.posts[i + 1].y); X.stroke();
+      }
+    }
+    for (const p of s.posts) if (p.hp > 0) {
+      circle(p.x, p.y, p.r, col, '#2a1a0c', 2.5);
+      circle(p.x - 2, p.y - 2, p.r * 0.45, 'rgba(255,255,255,.12)');
+      if (p.hp < p.max) bar(p.x, p.y - 17, 18, p.hp / p.max, '#e0b070');
+    }
+  }
+
+  // drops
+  for (const d of G.drops) {
+    const bob = Math.sin(G.t * 5 + d.x) * 1.5;
+    if (d.kind === 'gold') circle(d.x, d.y + bob, 5, '#f5cf4b', '#8a6a10', 1.5);
+    else { X.save(); X.translate(d.x, d.y + bob); X.rotate(Math.PI / 4); X.fillStyle = '#7fc7ff'; X.fillRect(-3.5, -3.5, 7, 7); X.restore(); }
+  }
+
+  // fire
+  drawFire();
+  // forge
+  const fg = G.slots.find(s => s.kind === 'forge');
+  if (fg.lvl) {
+    X.fillStyle = '#2d2f35'; X.fillRect(fg.x - 16, fg.y - 9, 32, 18);
+    X.fillStyle = '#4a4d55'; X.fillRect(fg.x - 20, fg.y - 12, 40, 7);
+    circle(fg.x + 10, fg.y + 3, 4 + Math.sin(G.t * 9) * 0.8, '#ff8a3c');
+    const act = padAction(fg); padLabel(fg.x, fg.y + 36, act, canPay(act.cost));
+  }
+
+  // zombies
+  for (const z of G.zombies) drawZombie(z);
+  // hero
+  if (!h.dead) drawHero(h);
+  // towers
+  for (const s of G.slots) if (s.kind === 'tower' && s.lvl) drawTower(s);
+  // shots
+  X.lineCap = 'round';
+  for (const s of G.shots) {
+    const l = Math.hypot(s.vx, s.vy);
+    X.strokeStyle = s.col; X.lineWidth = 2.5;
+    X.beginPath(); X.moveTo(s.x, s.y); X.lineTo(s.x - s.vx / l * 12, s.y - s.vy / l * 12); X.stroke();
+  }
+  // trees (canopy above units)
+  for (const t of G.trees) if (t.wood > 0) drawTree(t);
+  // fx
+  for (const f of G.fx) { X.globalAlpha = 1 - f.t / f.max; circle(f.x, f.y, f.r, f.col); }
+  X.globalAlpha = 1;
+
+  // darkness + lights
+  if (G.darkA > 0.01) {
+    D.setTransform(1, 0, 0, 1, 0, 0);
+    D.globalCompositeOperation = 'source-over';
+    D.clearRect(0, 0, dark.width, dark.height);
+    D.fillStyle = `rgba(4,7,20,${G.darkA})`; D.fillRect(0, 0, dark.width, dark.height);
+    D.globalCompositeOperation = 'destination-out';
+    D.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+    const flick = Math.sin(G.t * 13) * 6 + Math.sin(G.t * 7.3) * 5;
+    const fogK = G.cfg.twist === 'fog' ? 0.72 : 1;
+    light(0, 0, (250 + flick + G.fire.hp / G.fire.max * 40) * fogK);
+    if (!h.dead) light(h.x, h.y, 140 * fogK);
+    for (const s of G.slots) if (s.kind === 'tower' && s.lvl) light(s.x, s.y, 95 * fogK);
+    if (fg.lvl) light(fg.x, fg.y, 60);
+    D.globalCompositeOperation = 'source-over';
+    X.setTransform(1, 0, 0, 1, 0, 0);
+    X.drawImage(dark, 0, 0);
+    // warm glow
+    X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+    X.globalCompositeOperation = 'lighter';
+    const gg = X.createRadialGradient(0, 0, 10, 0, 0, 200);
+    gg.addColorStop(0, `rgba(255,130,40,${0.35 * G.darkA})`); gg.addColorStop(1, 'rgba(255,130,40,0)');
+    X.fillStyle = gg; X.beginPath(); X.arc(0, 0, 200, 0, TAU); X.fill();
+    X.globalCompositeOperation = 'source-over';
+    // zombie eyes glow through the dark
+    for (const z of G.zombies) {
+      const ex = z.fx * z.r * 0.45, ey = z.fy * z.r * 0.45, px = -z.fy * z.r * 0.3, py = z.fx * z.r * 0.3;
+      circle(z.x + ex + px, z.y + ey + py, 1.8, '#ff5a3a'); circle(z.x + ex - px, z.y + ey - py, 1.8, '#ff5a3a');
+    }
+  }
+
+  // floating text
+  X.textAlign = 'center'; X.textBaseline = 'middle';
+  for (const t of G.texts) {
+    X.globalAlpha = 1 - t.t / 0.9;
+    X.font = `800 ${t.size}px Rubik, system-ui, sans-serif`;
+    X.lineWidth = 3; X.strokeStyle = 'rgba(0,0,0,.7)'; X.strokeText(t.s, t.x, t.y);
+    X.fillStyle = t.col; X.fillText(t.s, t.x, t.y);
+  }
+  X.globalAlpha = 1;
+
+  // joystick (screen space)
+  if (joy.on) {
+    X.setTransform(DPR, 0, 0, DPR, 0, 0);
+    circle(joy.ox, joy.oy, 46, 'rgba(255,255,255,.06)', 'rgba(255,255,255,.25)', 2);
+    const dx = joy.x - joy.ox, dy = joy.y - joy.oy, l = Math.hypot(dx, dy), k = l > 46 ? 46 / l : 1;
+    circle(joy.ox + dx * k, joy.oy + dy * k, 20, 'rgba(255,255,255,.3)');
+  }
+}
+function light(x, y, r) {
+  const g = D.createRadialGradient(x, y, r * 0.2, x, y, r);
+  g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  D.fillStyle = g; D.beginPath(); D.arc(x, y, r, 0, TAU); D.fill();
+}
+function padLabel(x, y, act, ok) {
+  X.textAlign = 'center'; X.textBaseline = 'middle';
+  X.font = '600 11px Rubik, system-ui, sans-serif';
+  const parts = [];
+  if (act.cost.wood) parts.push(['wood', act.cost.wood]);
+  if (act.cost.gold) parts.push(['gold', act.cost.gold]);
+  const label = act.label;
+  const lw = X.measureText(label).width;
+  let w = lw + 12; for (const [, v] of parts) w += 22 + String(v).length * 6;
+  X.fillStyle = 'rgba(10,14,20,.78)';
+  X.beginPath(); X.roundRect ? X.roundRect(x - w / 2, y - 9, w, 18, 9) : X.rect(x - w / 2, y - 9, w, 18); X.fill();
+  let cx = x - w / 2 + 6;
+  X.fillStyle = '#efe6d2'; X.textAlign = 'left'; X.fillText(label, cx, y + 0.5); cx += lw + 6;
+  for (const [k, v] of parts) {
+    const have = k === 'wood' ? G.wood : G.gold;
+    if (k === 'wood') { X.fillStyle = '#b07a45'; X.fillRect(cx, y - 4, 8, 8); } else circle(cx + 4, y, 4, '#f5cf4b');
+    X.fillStyle = have >= v ? '#efe6d2' : '#ff8b7a'; X.fillText(v, cx + 11, y + 0.5);
+    cx += 22 + String(v).length * 6;
+  }
+  X.textAlign = 'center';
+}
+function drawFire() {
+  const f = G.fire, k = f.hp / f.max;
+  // logs & stones
+  for (let i = 0; i < 8; i++) { const a = i * TAU / 8; circle(Math.cos(a) * 21, Math.sin(a) * 21, 6, '#6c6a66', '#3a3836', 1.5); }
+  X.save(); X.rotate(0.5); X.fillStyle = '#5a3a1e'; X.fillRect(-14, -4, 28, 8); X.rotate(1.2); X.fillRect(-14, -4, 28, 8); X.restore();
+  const s = 0.5 + k * 0.6;
+  for (let i = 0; i < 3; i++) {
+    const r = (15 - i * 4) * s + Math.sin(G.t * 11 + i * 2) * 1.6;
+    circle(Math.sin(G.t * 6 + i) * 1.5, -i * 2.5 + Math.cos(G.t * 8 + i) * 1.2, r, ['#d2541e', '#ff9a3c', '#ffe08a'][i]);
+  }
+  if (Math.random() < 0.3) G.fx.push({ x: rnd(-8, 8), y: rnd(-6, 2), vx: rnd(-10, 10), vy: rnd(-50, -20), t: 0, max: rnd(0.5, 1), col: '#ffb347', r: rnd(1, 2) });
+  if (k < 1) bar(0, -36, 46, k, '#ff9a3c');
+}
+function drawHero(h) {
+  circle(h.x, h.y + 3, h.r, 'rgba(0,0,0,.3)');
+  circle(h.x, h.y, h.r, '#3f7fbf', '#152a40', 2.5);
+  circle(h.x, h.y, h.r * 0.55, '#e8c9a0', '#152a40', 1.5);
+  // bow
+  const a = Math.atan2(h.fy, h.fx);
+  X.strokeStyle = '#c9a26a'; X.lineWidth = 2.5;
+  X.beginPath(); X.arc(h.x + h.fx * 6, h.y + h.fy * 6, 12, a - 1.0, a + 1.0); X.stroke();
+  if (G.stat.aura) {
+    const ar = 55 + G.stat.aura * 15;
+    X.strokeStyle = `rgba(255,140,60,${0.25 + Math.sin(G.t * 6) * 0.1})`; X.lineWidth = 3;
+    X.beginPath(); X.arc(h.x, h.y, ar, 0, TAU); X.stroke();
+  }
+  if (h.hp < h.max) bar(h.x, h.y - h.r - 9, 28, h.hp / h.max, '#6fd06f');
+}
+function drawZombie(z) {
+  circle(z.x, z.y + 3, z.r, 'rgba(0,0,0,.3)');
+  const px = -z.fy, py = z.fx;
+  // arms reaching forward
+  for (const sgn of [1, -1]) circle(z.x + z.fx * z.r * 0.9 + px * z.r * 0.6 * sgn, z.y + z.fy * z.r * 0.9 + py * z.r * 0.6 * sgn, z.r * 0.32, z.col, '#1c2a14', 1.5);
+  circle(z.x, z.y, z.r, z.hit > 0 ? '#ffffff' : z.col, '#1c2a14', 2.5);
+  circle(z.x - z.fx * z.r * 0.2, z.y - z.fy * z.r * 0.2, z.r * 0.4, 'rgba(0,0,0,.12)');
+  const ex = z.fx * z.r * 0.45, ey = z.fy * z.r * 0.45;
+  circle(z.x + ex + px * z.r * 0.3, z.y + ey + py * z.r * 0.3, 1.8, '#ff5a3a');
+  circle(z.x + ex - px * z.r * 0.3, z.y + ey - py * z.r * 0.3, 1.8, '#ff5a3a');
+  if (z.kind === 'boss') {
+    X.fillStyle = '#f5cf4b'; X.beginPath();
+    X.moveTo(z.x - 10, z.y - z.r - 2); X.lineTo(z.x - 10, z.y - z.r - 12); X.lineTo(z.x - 4, z.y - z.r - 6); X.lineTo(z.x, z.y - z.r - 14);
+    X.lineTo(z.x + 4, z.y - z.r - 6); X.lineTo(z.x + 10, z.y - z.r - 12); X.lineTo(z.x + 10, z.y - z.r - 2); X.fill();
+  }
+  if (z.hp < z.max) bar(z.x, z.y - z.r - 8, z.r * 2, z.hp / z.max, '#e0533a');
+}
+function drawTower(s) {
+  X.fillStyle = 'rgba(0,0,0,.3)'; X.fillRect(s.x - 15, s.y - 10, 32, 30);
+  X.fillStyle = '#6d6a64'; X.fillRect(s.x - 16, s.y - 14, 32, 30);
+  X.strokeStyle = '#2f2d2a'; X.lineWidth = 2.5; X.strokeRect(s.x - 16, s.y - 14, 32, 30);
+  X.fillStyle = ['#8a5a32', '#a0462e', '#3e6ea8'][s.lvl - 1];
+  X.beginPath(); X.moveTo(s.x - 20, s.y - 12); X.lineTo(s.x, s.y - 30); X.lineTo(s.x + 20, s.y - 12); X.closePath(); X.fill();
+  X.strokeStyle = '#2f2d2a'; X.stroke();
+  for (let i = 0; i < s.lvl; i++) circle(s.x - 8 + i * 8, s.y + 6, 2.5, '#ffd28a');
+  const act = padAction(s);
+  if (act) padLabel(s.x, s.y + 32, act, canPay(act.cost));
+}
+function drawTree(t) {
+  const sh = t.shake > 0 ? Math.sin(G.t * 60) * 2 : 0;
+  const near = !G.hero.dead && d2(t, G.hero) < (t.r + 10) ** 2;
+  X.globalAlpha = near ? 0.55 : 1;
+  circle(t.x + 4, t.y + 6, t.r, 'rgba(0,0,0,.28)');
+  circle(t.x + sh, t.y, t.r, '#1f4a26', '#10261a', 2.5);
+  circle(t.x + sh - t.r * 0.3, t.y - t.r * 0.3, t.r * 0.55, '#2d6334');
+  circle(t.x + sh + t.r * 0.25, t.y + t.r * 0.1, t.r * 0.4, '#265a2e');
+  X.globalAlpha = 1;
+  if (t.wood < 4) bar(t.x, t.y - t.r - 8, 22, t.wood / 4, '#b07a45');
+}
+
+// ---------- HUD ----------
+let hudCache = {};
+function setText(id, v) { if (hudCache[id] !== v) { hudCache[id] = v; $(id).textContent = v; } }
+function hud() {
+  const s = Math.max(0, Math.ceil(G.phaseT));
+  const where = G.cfg.v ? G.cfg.v.name + ' · ' : '', of = isFinite(G.cfg.nights) ? ` из ${G.cfg.nights}` : '';
+  setText('phase', G.phase === 'day' ? `${where}День ${G.night + 1} · ночь через ${s} с` : `${where}Ночь ${G.night}${of} · до рассвета ${s} с`);
+  setText('wood', String(G.wood)); setText('gold', String(G.gold));
+  setText('lvl', `Ур. ${G.lvl}`);
+  $('fire').style.width = Math.max(0, G.fire.hp / G.fire.max * 100) + '%';
+  $('xpbar').style.width = (G.xp / G.xpNext * 100) + '%';
+}
+
+// ---------- loop ----------
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (!$('map').hidden) drawMap(now / 1000);
+  else { if (!G.paused) update(dt); draw(); hud(); }
+  requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { last = performance.now(); });
+$('skip').onclick = () => { if (G.phase === 'day' && !G.paused) G.phaseT = 0; };
+function begin(cfg) {
+  newGame(cfg); hudCache = {};
+  for (const id of ['start', 'over', 'pick', 'map']) $(id).hidden = true;
+  $('skip').hidden = false;
+  G.paused = false; last = performance.now();
+  if (cfg.mode === 'liberate') banner(cfg.v.name, cfg.v.tw);
+  else if (cfg.mode === 'raid') banner(`Набег на ${cfg.v.name}`, 'Почини и укрепи деревню до темноты');
+  else banner('Осада', 'Наруби дерева и построй защиту до темноты');
+}
+function takeStore() { const s = SAVE.store; SAVE.store = { wood: 0, gold: 0 }; persist(); return s; }
+const beginSiege = () => begin({ mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 40 });
+function beginVillage(v) {
+  const s = takeStore();
+  begin({ mode: 'liberate', v, nights: v.nights, d: v.d, twist: v.twist, firstDay: 40, wood: s.wood, gold: s.gold });
+}
+function beginRaid() {
+  const v = V(SAVE.raid.id), s = takeStore();
+  begin({ mode: 'raid', v, nights: 1, d: v.d + 3 + SAVE.raids, twist: v.twist, firstDay: 20, wood: s.wood + 10, gold: s.gold, buildings: SAVE.owned[v.id].b });
+}
+function autoResolve() {
+  const r = SAVE.raid, v = V(r.id), o = SAVE.owned[r.id], def = defense(o.b);
+  let msg;
+  if (def >= r.power) { SAVE.raids++; msg = `${v.name} выстояла сама: оборона ${def} против силы набега ${r.power}.`; }
+  else if (def * 2 >= r.power) {
+    const hits = [...o.b.walls.map((l, i) => ['walls', i]), ...o.b.towers.map((l, i) => ['towers', i])]
+      .filter(([k, i]) => o.b[k][i] > 0).sort(() => Math.random() - 0.5).slice(0, 2);
+    for (const [k, i] of hits) o.b[k][i]--;
+    SAVE.raids++;
+    msg = `${v.name} отбилась, но потеряла часть укреплений.`;
+  } else { delete SAVE.owned[r.id]; msg = `${v.name} пала: оборона ${def} против силы набега ${r.power}. Её можно освободить снова.`; }
+  SAVE.raid = null; persist(); renderMap(); selectNode(v, msg);
+}
+
+const unlocked = v => !v.needs.length || v.needs.some(n => SAVE.won[n]);
+function nodeState(v) {
+  if (SAVE.raid && SAVE.raid.id === v.id) return 'raid';
+  if (SAVE.owned[v.id]) return 'owned';
+  if (!unlocked(v)) return 'locked';
+  return v.soon ? 'soon' : 'open';
+}
+// ---------- the map: the land is dark, your villages are lights ----------
+const mc = $('mapc'), M = mc.getContext('2d');
+const fogC = document.createElement('canvas'), F = fogC.getContext('2d');
+let mapW = 0, mapH = 0, mapTerrain = null, mapEyes = [], freedAnim = null, justFreed = null;
+function rng(seed) {
+  return () => {
+    seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function sizeMap() {
+  const r = $('field').getBoundingClientRect();
+  mapW = Math.max(1, r.width); mapH = Math.max(1, r.height);
+  for (const c of [mc, fogC]) { c.width = Math.round(mapW * DPR); c.height = Math.round(mapH * DPR); }
+  mc.style.width = mapW + 'px'; mc.style.height = mapH + 'px';
+  mapTerrain = buildTerrain();
+}
+addEventListener('resize', () => { if (!$('map').hidden) sizeMap(); });
+function buildTerrain() {
+  const c = document.createElement('canvas'); c.width = mc.width; c.height = mc.height;
+  const g = c.getContext('2d'); g.scale(DPR, DPR);
+  const w = mapW, h = mapH, u = Math.min(w, h), R = rng(7), P = v => [v.x / 100 * w, v.y / 100 * h];
+  g.fillStyle = '#2b3d24'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < w * h / 80; i++) { g.fillStyle = ['#314a28', '#26381f', '#37512c', '#2e4425'][i % 4]; g.fillRect(R() * w, R() * h, 2 + R() * 3, 2 + R() * 3); }
+  // farm fields around the mill
+  const [mx, my] = P(V('mill'));
+  for (let i = 0; i < 8; i++) {
+    const a = R() * TAU, d = u * (0.07 + R() * 0.06);
+    g.save(); g.translate(mx + Math.cos(a) * d, my + Math.sin(a) * d); g.rotate(R() * 0.6 - 0.3);
+    g.fillStyle = i % 2 ? '#6d6a34' : '#57602e'; g.fillRect(-u * 0.03, -u * 0.02, u * 0.06, u * 0.04);
+    g.strokeStyle = 'rgba(0,0,0,.2)'; g.lineWidth = 1;
+    for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(-u * 0.03, k * u * 0.008); g.lineTo(u * 0.03, k * u * 0.008); g.stroke(); }
+    g.restore();
+  }
+  // forest: dense around Лесная, scattered elsewhere, never on a village or the mountains
+  const near = (x, y) => VILLAGES.some(v => { const [vx, vy] = P(v); return (x - vx) ** 2 + (y - vy) ** 2 < (u * 0.075) ** 2; });
+  const [fx, fy] = P(V('forest')), trees = [];
+  for (let i = 0; i < 320; i++) {
+    let x, y;
+    if (i < 170) { const a = R() * TAU, d = Math.sqrt(R()) * u * 0.22; x = fx + Math.cos(a) * d * 1.5; y = fy + Math.sin(a) * d * 0.8; }
+    else { x = R() * w; y = R() * h; }
+    if (near(x, y) || (x > w * 0.64 && y < h * 0.34)) continue;
+    trees.push([x, y, u * (0.011 + R() * 0.009)]);
+  }
+  trees.sort((a, b) => a[1] - b[1]);
+  for (const [x, y, r] of trees) {
+    g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.arc(x + r * 0.3, y + r * 0.4, r, 0, TAU); g.fill();
+    g.fillStyle = '#1f4a26'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+    g.fillStyle = '#2d6334'; g.beginPath(); g.arc(x - r * 0.3, y - r * 0.3, r * 0.5, 0, TAU); g.fill();
+  }
+  // river, then roads over it (they read as bridges)
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  const river = [[0.30, -0.05], [0.36, 0.2], [0.33, 0.42], [0.58, 0.62], [0.6, 1.05]];
+  for (const [wd, col] of [[u * 0.05, '#1d4560'], [u * 0.032, '#2a5f80'], [u * 0.009, 'rgba(170,220,250,.25)']]) {
+    g.strokeStyle = col; g.lineWidth = wd; g.beginPath(); g.moveTo(river[0][0] * w, river[0][1] * h);
+    for (let i = 1; i < river.length - 1; i++) {
+      const [ax, ay] = river[i], [bx, by] = river[i + 1];
+      g.quadraticCurveTo(ax * w, ay * h, (ax + bx) / 2 * w, (ay + by) / 2 * h);
+    }
+    const e = river.at(-1); g.lineTo(e[0] * w, e[1] * h); g.stroke();
+  }
+  for (const [a, b] of ROADS) {
+    const [ax, ay] = P(V(a)), [bx, by] = P(V(b)), k = (R() - 0.5) * 0.4;
+    const cx = (ax + bx) / 2 - (by - ay) * k, cy = (ay + by) / 2 + (bx - ax) * k;
+    for (const [wd, col] of [[u * 0.022, '#3d3122'], [u * 0.013, '#6b5a3e']]) {
+      g.strokeStyle = col; g.lineWidth = wd; g.beginPath(); g.moveTo(ax, ay); g.quadraticCurveTo(cx, cy, bx, by); g.stroke();
+    }
+  }
+  // mountains around the castle
+  const peaks = [];
+  for (let i = 0; i < 16; i++) peaks.push([w * (0.64 + R() * 0.38), h * (-0.02 + R() * 0.34), u * (0.045 + R() * 0.05)]);
+  peaks.sort((a, b) => a[1] - b[1]);
+  for (const [x, y, s] of peaks) {
+    g.fillStyle = '#5a5e62'; g.beginPath(); g.moveTo(x - s, y + s * 0.7); g.lineTo(x, y - s * 0.8); g.lineTo(x + s, y + s * 0.7); g.closePath(); g.fill();
+    g.fillStyle = '#44474b'; g.beginPath(); g.moveTo(x, y - s * 0.8); g.lineTo(x + s, y + s * 0.7); g.lineTo(x + s * 0.15, y + s * 0.7); g.closePath(); g.fill();
+    g.fillStyle = '#d9dde0'; g.beginPath(); g.moveTo(x - s * 0.3, y - s * 0.35); g.lineTo(x, y - s * 0.8); g.lineTo(x + s * 0.3, y - s * 0.35); g.closePath(); g.fill();
+  }
+  // graves around the cemetery village
+  const [gx, gy] = P(V('grave'));
+  for (let i = 0; i < 16; i++) {
+    const a = R() * TAU, d = u * (0.055 + R() * 0.05), x = gx + Math.cos(a) * d, y = gy + Math.sin(a) * d * 0.7;
+    g.fillStyle = '#8d8a84'; g.fillRect(x - 1, y - 6, 2.5, 9); g.fillRect(x - 3.5, y - 4, 7.5, 2.2);
+  }
+  // vignette
+  const vg = g.createRadialGradient(w / 2, h / 2, u * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.55)');
+  g.fillStyle = vg; g.fillRect(0, 0, w, h);
+  mapEyes = [];
+  for (let i = 0; i < 70; i++) mapEyes.push({ x: 0.15 + Math.sqrt(R()) * 0.83, y: 0.04 + R() * 0.92, s: 0.6 + R() * 1.4, p: R() * TAU });
+  return c;
+}
+const ease = k => 1 - (1 - k) ** 3;
+function drawMap(t) {
+  if (!mapTerrain) return;
+  const w = mapW, h = mapH, u = Math.min(w, h), P = v => [v.x / 100 * w, v.y / 100 * h];
+  M.setTransform(1, 0, 0, 1, 0, 0); M.drawImage(mapTerrain, 0, 0);
+  M.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const lights = VILLAGES.map(v => {
+    const st = nodeState(v), [x, y] = P(v);
+    let r = u * 0.06, a = 0.35;
+    if (st === 'owned' || st === 'raid') {
+      r = u * 0.25; a = 1;
+      if (freedAnim && freedAnim.id === v.id) r *= ease(Math.min(1, (t - freedAnim.t0) / 2.4));
+    } else if (st === 'open') { r = u * 0.12; a = 0.6; }
+    return { x, y, r: r * (1 + Math.sin(t * 3 + x) * 0.02), a, st, v };
+  });
+  // the horde's darkness, with lights cut out of it
+  F.setTransform(1, 0, 0, 1, 0, 0); F.globalCompositeOperation = 'source-over'; F.clearRect(0, 0, fogC.width, fogC.height);
+  F.setTransform(DPR, 0, 0, DPR, 0, 0);
+  F.fillStyle = 'rgba(9,6,18,0.85)'; F.fillRect(0, 0, w, h);
+  const rg = F.createLinearGradient(w * 0.45, 0, w, 0);
+  rg.addColorStop(0, 'rgba(90,10,25,0)'); rg.addColorStop(1, 'rgba(120,14,30,0.5)');
+  F.fillStyle = rg; F.fillRect(0, 0, w, h);
+  for (let i = 0; i < 7; i++) {
+    const x = (((i * 0.23 + t * 0.008 * (1 + i % 3)) % 1.4) - 0.2) * w, y = (0.1 + (i * 0.37) % 0.85) * h, r = u * (0.2 + (i % 3) * 0.07);
+    const gg = F.createRadialGradient(x, y, 0, x, y, r);
+    gg.addColorStop(0, 'rgba(40,12,50,.4)'); gg.addColorStop(1, 'rgba(40,12,50,0)');
+    F.fillStyle = gg; F.fillRect(x - r, y - r, 2 * r, 2 * r);
+  }
+  F.globalCompositeOperation = 'destination-out';
+  for (const L of lights) if (L.r > 1) {
+    const gg = F.createRadialGradient(L.x, L.y, L.r * 0.25, L.x, L.y, L.r);
+    gg.addColorStop(0, `rgba(0,0,0,${L.a})`); gg.addColorStop(1, 'rgba(0,0,0,0)');
+    F.fillStyle = gg; F.beginPath(); F.arc(L.x, L.y, L.r, 0, TAU); F.fill();
+  }
+  F.globalCompositeOperation = 'source-over';
+  M.setTransform(1, 0, 0, 1, 0, 0); M.drawImage(fogC, 0, 0); M.setTransform(DPR, 0, 0, DPR, 0, 0);
+  M.globalCompositeOperation = 'lighter';
+  for (const L of lights) if (L.a === 1) {
+    const r = L.r * 0.6, gg = M.createRadialGradient(L.x, L.y, 0, L.x, L.y, r);
+    gg.addColorStop(0, 'rgba(255,140,50,.3)'); gg.addColorStop(1, 'rgba(255,140,50,0)');
+    M.fillStyle = gg; M.fillRect(L.x - r, L.y - r, 2 * r, 2 * r);
+  }
+  M.globalCompositeOperation = 'source-over';
+  // eyes in the dark
+  M.shadowColor = '#ff3020'; M.shadowBlur = 6;
+  for (const e of mapEyes) {
+    const x = e.x * w, y = e.y * h;
+    if (lights.some(L => L.a > 0.5 && (x - L.x) ** 2 + (y - L.y) ** 2 < (L.r * 0.85) ** 2)) continue;
+    const b = Math.sin(t * e.s + e.p);
+    if (b < -0.5) continue;
+    M.fillStyle = `rgba(255,70,50,${0.9 * Math.min(1, (b + 0.5) * 2)})`;
+    M.beginPath(); M.arc(x - 2.3, y, 1.4, 0, TAU); M.arc(x + 2.3, y, 1.4, 0, TAU); M.fill();
+  }
+  M.shadowBlur = 0;
+  M.font = `400 ${Math.round(u * 0.065)}px "Russo One", system-ui, sans-serif`; M.textAlign = 'center';
+  M.fillStyle = 'rgba(255,90,70,.6)'; M.shadowColor = 'rgba(255,40,30,.9)'; M.shadowBlur = 18;
+  M.fillText('ОРДА', w * 0.87, h * 0.86); M.shadowBlur = 0;
+  for (const L of lights) villageArt(L, t, u);
+  if (SAVE.raid) {
+    const L = lights.find(l => l.v.id === SAVE.raid.id);
+    if (L) {
+      const sx = w * 0.98, sy = Math.min(h * 0.92, L.y + h * 0.25), ex = L.x + u * 0.06, ey = L.y;
+      const cx = (sx + ex) / 2, cy = Math.min(sy, ey) - h * 0.12;
+      M.strokeStyle = 'rgba(255,70,50,.9)'; M.lineWidth = 3; M.setLineDash([9, 8]); M.lineDashOffset = -t * 30;
+      M.beginPath(); M.moveTo(sx, sy); M.quadraticCurveTo(cx, cy, ex, ey); M.stroke(); M.setLineDash([]);
+      const ang = Math.atan2(ey - cy, ex - cx);
+      M.fillStyle = 'rgba(255,70,50,.95)'; M.beginPath(); M.moveTo(ex, ey);
+      M.lineTo(ex - Math.cos(ang - 0.5) * 13, ey - Math.sin(ang - 0.5) * 13); M.lineTo(ex - Math.cos(ang + 0.5) * 13, ey - Math.sin(ang + 0.5) * 13);
+      M.closePath(); M.fill();
+    }
+  }
+}
+function villageArt(L, t, u) {
+  const { x, y, st, v } = L, s = u * 0.022;
+  if (v.id === 'castle') {
+    M.fillStyle = '#231e2a'; M.fillRect(x - s * 1.6, y - s * 2.2, s * 3.2, s * 3);
+    for (let i = -1; i <= 1; i++) M.fillRect(x + i * s * 1.1 - s * 0.4, y - s * 2.8, s * 0.8, s * 0.7);
+    M.fillStyle = `rgba(255,74,58,${0.6 + Math.sin(t * 2) * 0.3})`; M.fillRect(x - s * 0.3, y - s * 1.4, s * 0.6, s * 0.6);
+    return;
+  }
+  const lit = L.a === 1;
+  for (const [hx, hy] of [[0, -0.9], [-1.4, 0.3], [1.3, 0.5]]) {
+    const px = x + hx * s, py = y + hy * s;
+    M.fillStyle = lit ? '#a07a52' : st === 'open' ? '#57504a' : '#2a2724'; M.fillRect(px - s * 0.7, py - s * 0.3, s * 1.4, s * 0.9);
+    M.fillStyle = lit ? '#a0462e' : st === 'open' ? '#43352f' : '#1e1b19';
+    M.beginPath(); M.moveTo(px - s * 0.85, py - s * 0.25); M.lineTo(px, py - s); M.lineTo(px + s * 0.85, py - s * 0.25); M.closePath(); M.fill();
+    if (lit) { M.fillStyle = '#ffd27a'; M.fillRect(px - s * 0.15, py + s * 0.05, s * 0.3, s * 0.3); }
+  }
+  if (lit) {
+    const f = 1 + Math.sin(t * 11 + x) * 0.15;
+    M.fillStyle = '#ff9a3c'; M.beginPath(); M.arc(x, y + s * 0.5, s * 0.38 * f, 0, TAU); M.fill();
+    M.fillStyle = '#ffe08a'; M.beginPath(); M.arc(x, y + s * 0.45, s * 0.18 * f, 0, TAU); M.fill();
+    for (let i = 0; i < 3; i++) {
+      const k = (t * 0.4 + i / 3) % 1;
+      M.fillStyle = `rgba(210,210,220,${0.28 * (1 - k)})`;
+      M.beginPath(); M.arc(x + Math.sin(k * 4 + i) * s * 0.4, y - k * s * 3.2, s * (0.25 + k * 0.5), 0, TAU); M.fill();
+    }
+  }
+  if (st === 'open' || st === 'raid') {
+    const k = (t * (st === 'raid' ? 1.4 : 0.8)) % 1;
+    M.strokeStyle = st === 'raid' ? `rgba(255,60,40,${1 - k})` : `rgba(255,154,60,${1 - k})`; M.lineWidth = st === 'raid' ? 3 : 2;
+    M.beginPath(); M.arc(x, y, s * (1.9 + k * 1.8), 0, TAU); M.stroke();
+  }
+}
+
+function showMap() {
+  if (G) G.paused = true;
+  for (const id of ['start', 'over', 'pick']) $(id).hidden = true;
+  $('map').hidden = false;
+  renderMap();
+  sizeMap();
+  if (justFreed) {
+    const v = V(justFreed);
+    freedAnim = { id: justFreed, t0: performance.now() / 1000 }; justFreed = null;
+    selectNode(v, 'Костёр снова горит. Тьма отступила, деревня твоя.');
+  } else selectNode(null);
+}
+function renderMap() {
+  const f = $('field');
+  f.querySelectorAll('.node').forEach(n => n.remove());
+  $('freed').textContent = `Освобождено ${VILLAGES.filter(v => SAVE.owned[v.id]).length} из ${VILLAGES.filter(v => !v.soon).length}`;
+  for (const v of VILLAGES) {
+    const st = nodeState(v), o = SAVE.owned[v.id], b = document.createElement('button');
+    b.type = 'button'; b.className = 'node ' + st; b.dataset.id = v.id;
+    b.style.left = v.x + '%'; b.style.top = v.y + '%';
+    const label = { raid: 'Набег!', owned: 'Твоя ' + '★'.repeat(o ? o.stars : 0), locked: 'Закрыто', soon: 'Скоро', open: `${v.nights} ночей` }[st];
+    b.innerHTML = `<span class="dot"></span><span class="nm">${v.name}</span><span class="st">${label}</span>`;
+    b.onclick = () => selectNode(v);
+    f.appendChild(b);
+  }
+  $('stWood').textContent = SAVE.store.wood; $('stGold').textContent = SAVE.store.gold;
+}
+function selectNode(v, note = '') {
+  const raidV = SAVE.raid && V(SAVE.raid.id);
+  if (!v) v = raidV || null;
+  let h;
+  if (!v) h = '<h3>Край у орды</h3><p>Освобождай деревни одну за другой. Освобождённая деревня остаётся твоей со всеми заборами и башнями и присылает запасы на склад.</p><p class="muted">Нажми на светящуюся деревню.</p>';
+  else {
+    const st = nodeState(v), o = SAVE.owned[v.id];
+    h = `<h3>${v.name}</h3>` + (note ? `<p class="note">${note}</p>` : '');
+    if (st === 'raid') {
+      const def = defense(o.b), pw = SAVE.raid.power;
+      const guess = def >= pw ? 'Укрепления, скорее всего, выдержат.' : def * 2 >= pw ? 'Выстоят, но с потерями.' : 'Без тебя деревня, скорее всего, падёт.';
+      h += `<p>Орда идёт на деревню. Сила набега <b>${pw}</b>, твоя оборона <b>${def}</b>. ${guess}</p>
+        <div class="acts"><button class="btn" id="actDefend" type="button">Защитить самому</button><button class="ghost" id="actAuto" type="button">Положиться на оборону</button></div>
+        <p class="muted">Защищать самому: одна ночь в этой деревне, ты можешь достроить укрепления. Проиграешь, и деревня потеряна.</p>`;
+    } else if (st === 'owned') h += `<p>Твоя деревня. Оборона <b>${defense(o.b)}</b>: ${describe(o.b)}.</p><p class="muted">Присылает 5 дерева и 3 золота после каждого забега. Чем крепче оборона, тем легче она переживёт набег без тебя.</p>`;
+    else if (st === 'open') h += (v.say ? `<p class="say">${v.say}</p>` : '') + `<p>${v.tw}</p><p class="muted">${v.nights} ночей, в последнюю придёт вожак.</p>` +
+      (raidV ? `<p class="note">Сначала разберись с набегом на ${raidV.name}.</p>` : '<div class="acts"><button class="btn" id="actGo" type="button">Освободить</button></div>');
+    else if (st === 'locked') h += `<p>${v.tw}</p><p class="muted">Откроется, когда освободишь: ${v.needs.map(n => V(n).name).join(' или ')}.</p>`;
+    else h += `<p>${v.tw}</p><p class="muted">Эта глава ещё пишется.</p>`;
+  }
+  if (SAVE.store.wood || SAVE.store.gold) h += `<p class="muted">Всё со склада уйдёт с тобой в следующий забег.</p>`;
+  $('panel').innerHTML = h;
+  if ($('actGo')) $('actGo').onclick = () => beginVillage(v);
+  if ($('actDefend')) $('actDefend').onclick = beginRaid;
+  if ($('actAuto')) $('actAuto').onclick = autoResolve;
+  document.querySelectorAll('.node').forEach(n => n.classList.toggle('sel', !!v && n.dataset.id === v.id));
+}
+$('play').onclick = showMap;
+$('again').onclick = () => (G.cfg.mode === 'siege' ? beginSiege() : showMap());
+$('toMap').onclick = showMap;
+$('siege').onclick = beginSiege;
+$('best').textContent = best ? `Рекорд: ${best} ${plural(best, 'ночь', 'ночи', 'ночей')}` : 'Сколько ночей ты продержишься?';
+newGame();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
