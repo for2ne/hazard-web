@@ -279,7 +279,11 @@ const tile = document.createElement('canvas'); tile.width = tile.height = 256;
     t.beginPath(); t.moveTo(x, y); t.lineTo(x - 2, y - 6); t.moveTo(x + 2, y); t.lineTo(x + 4, y - 5); t.stroke();
   }
 }
-const grassPat = X.createPattern(tile, 'repeat');
+// Painted grass (art/ground.jpg) once it loads; the generated tile above is the fallback.
+let grassPat = X.createPattern(tile, 'repeat');
+const groundImg = new Image();
+groundImg.onload = () => { grassPat = X.createPattern(groundImg, 'repeat'); grassPat.setTransform?.(new DOMMatrix().scale(0.6)); };
+groundImg.src = 'art/ground.jpg';
 
 // ---------- game state ----------
 const ZK = {

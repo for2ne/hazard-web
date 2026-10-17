@@ -78,6 +78,7 @@ const TAU = Math.PI * 2, rnd = (a, b) => a + Math.random() * (b - a);
 
 // ---------- packs: art/sprites/<pack>/<role>.png, cut by art/slice.py ----------
 const PACKS = [
+  { id: 'top', name: 'Сверху', about: 'строго сверху, как в игре: спрайты поворачиваются', top: true },
   { id: 'toy', name: 'Игрушечный', about: 'Brawl Stars: яркий, игрушечный' },
   { id: 'neon', name: 'Неон', about: 'Brawl Stars с неоновой ночью, запечённой в картинки' },
   { id: 'classic', name: 'Рисованный', about: 'Kingdom Rush: рисованный, с контуром' },
@@ -88,17 +89,20 @@ const ROLES = {
   brute: ['Громила', 86], boss: ['Вожак', 112], arrow: ['Стрела', 26], fire: ['Костёр', 84], fireLow: ['Костёр слабый', 50],
   fence: ['Частокол', 56], fence2: ['Частокол с железом', 56], tower1: ['Вышка', 110], tower2: ['Башня', 118], tree: ['Дерево', 120], forge: ['Кузница', 74],
 };
+// Strict top-down pack: sizes are diameters in world units, sprites face up and are rotated to where they move.
+const TOP = { hero: 46, heroShoot: 46, walker: 40, walker2: 40, runner: 34, brute: 62, boss: 82, arrow: 30, fire: 74, fireLow: 60,
+  fence: 74, fence2: 74, tower1: 72, tower2: 76, tree: 96, pine: 96, oak: 104, forge: 62 };
 const img = {}, custom = {};
 function load(pack) {
   if (img[pack]) return;
   img[pack] = {};
-  for (const r in ROLES) { const i = new Image(); i.src = `art/sprites/${pack}/${r}.png`; img[pack][r] = i; }
+  for (const r of new Set([...Object.keys(ROLES), 'pine', 'oak'])) { const i = new Image(); i.src = `art/sprites/${pack}/${r}.png`; img[pack][r] = i; }
 }
 const ground = new Image(); ground.src = 'art/ground.jpg';
 let groundPat = null;
 ground.onload = () => { groundPat = X.createPattern(ground, 'repeat'); };
 
-let pack = 'toy', night = false, scale = 1, darkA = 0;
+let pack = 'top', night = false, scale = 1, darkA = 0;
 try { const s = JSON.parse(localStorage.getItem('lab.view') || '{}'); if (s.pack) pack = s.pack; if (s.night) night = true; } catch (e) {}
 function remember() { try { localStorage.setItem('lab.view', JSON.stringify({ pack, night })); } catch (e) {} }
 load(pack);
@@ -205,7 +209,81 @@ function glow(x, y, r, rgb, a) {
   g.addColorStop(0, `rgba(${rgb},${a})`); g.addColorStop(1, `rgba(${rgb},0)`);
   X.fillStyle = g; X.fillRect(x - r, y - r, 2 * r, 2 * r);
 }
+function drawRot(role, x, y, ang, k = 1, flash = 0) {
+  const i = sprite(role);
+  if (!i || !i.complete || !i.naturalWidth) return;
+  const d = (TOP[role] || 50) * scale * k, w = d * Math.min(1, i.naturalWidth / i.naturalHeight), h = d * Math.min(1, i.naturalHeight / i.naturalWidth);
+  X.save(); X.translate(x, y); X.rotate(ang);
+  X.globalAlpha = 0.28; X.fillStyle = '#000'; X.beginPath(); X.ellipse(4, 6, w * 0.42, h * 0.42, 0, 0, TAU); X.fill(); X.globalAlpha = 1;
+  X.drawImage(i, -w / 2, -h / 2, w, h);
+  if (flash > 0) { X.globalCompositeOperation = 'lighter'; X.globalAlpha = flash * 0.6; X.drawImage(i, -w / 2, -h / 2, w, h); }
+  X.restore();
+}
+// The real game's layout: fire in the middle, four palisade arcs at radius 178, towers on the diagonals, forge below the fire.
+// Palisade posts are drawn, not sprites: seen from above a stake is just the cut end of a log.
+function stakes(a0, lvl) {
+  const pts = [];
+  for (let k = -3; k <= 3; k++) pts.push([Math.cos(a0 + k * 0.13) * 178, Math.sin(a0 + k * 0.13) * 178]);
+  X.lineCap = 'round';
+  X.strokeStyle = 'rgba(0,0,0,.3)'; X.lineWidth = 9 * scale;
+  X.beginPath(); pts.forEach(([x, y], i) => (i ? X.lineTo(x + 4, y + 6) : X.moveTo(x + 4, y + 6))); X.stroke();
+  X.strokeStyle = '#4a2f18'; X.lineWidth = 6 * scale;
+  X.beginPath(); pts.forEach(([x, y], i) => (i ? X.lineTo(x, y) : X.moveTo(x, y))); X.stroke();
+  const r = 11 * scale;
+  for (const [x, y] of pts) {
+    X.fillStyle = 'rgba(0,0,0,.3)'; X.beginPath(); X.arc(x + 4, y + 6, r, 0, TAU); X.fill();
+    X.fillStyle = '#7a4a26'; X.strokeStyle = '#2a1a0c'; X.lineWidth = 2.5;
+    X.beginPath(); X.arc(x, y, r, 0, TAU); X.fill(); X.stroke();
+    X.fillStyle = '#d9a86a'; X.beginPath(); X.arc(x - 1, y - 1, r * 0.66, 0, TAU); X.fill();
+    X.strokeStyle = 'rgba(122,74,38,.7)'; X.lineWidth = 1.2; X.beginPath(); X.arc(x - 1, y - 1, r * 0.38, 0, TAU); X.stroke();
+    if (lvl > 1) { X.strokeStyle = '#8d949c'; X.lineWidth = 3; X.beginPath(); X.arc(x, y, r + 1, 0, TAU); X.stroke(); }
+  }
+}
+const topTowers = [0, 1, 2, 3].map(i => { const a = i * TAU / 4 + Math.PI / 4; return { role: i % 2 ? 'tower2' : 'tower1', x: Math.cos(a) * 112, y: Math.sin(a) * 112 }; });
+const topTrees = [];
+for (let i = 0; i < 30; i++) { const a = rnd(0, TAU), r = rnd(280, 700); topTrees.push({ role: i % 3 ? 'pine' : 'oak', x: Math.cos(a) * r, y: Math.sin(a) * r, ang: rnd(0, TAU), k: rnd(0.8, 1.2) }); }
+function drawTop() {
+  const ox = W / 2, oy = H / 2;
+  X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+  const vw = W / S, vh = H / S;
+  X.fillStyle = groundPat || '#3d6b2a'; X.fillRect(-vw / 2 - 10, -vh / 2 - 10, vw + 20, vh + 20);
+  const dg = X.createRadialGradient(0, 0, 60, 0, 0, 215);
+  dg.addColorStop(0, 'rgba(120,88,52,.9)'); dg.addColorStop(0.75, 'rgba(110,80,48,.75)'); dg.addColorStop(1, 'rgba(110,80,48,0)');
+  X.fillStyle = dg; X.beginPath(); X.arc(0, 0, 215, 0, TAU); X.fill();
+  drawRot('fire', 0, 0, 0, 1 + Math.sin(t * 9) * 0.03);
+  for (let i = 0; i < 4; i++) stakes(i * TAU / 4 - Math.PI / 2, 1 + (i % 2));
+  drawRot('forge', 0, 66, 0);
+  for (const z of zombies) {
+    const role = z.kind === 'walker' ? ((t * 3 + z.ph) % 1 < 0.5 ? 'walker' : 'walker2') : z.kind;
+    drawRot(role, z.x, z.y, Math.atan2(-z.y, -z.x) - Math.PI / 2, 1, z.hit);
+  }
+  const tgt = zombies.reduce((b, z) => (!b || (z.x - hero.x) ** 2 + (z.y - hero.y) ** 2 < (b.x - hero.x) ** 2 + (b.y - hero.y) ** 2 ? z : b), null);
+  drawRot(hero.shoot > 0.45 ? 'heroShoot' : 'hero', hero.x, hero.y, tgt ? Math.atan2(tgt.y - hero.y, tgt.x - hero.x) - Math.PI / 2 : 0);
+  for (const a of arrows) drawRot('arrow', a.x, a.y + 30, Math.atan2(a.vy, a.vx) + Math.PI / 2);
+  for (const p of topTowers) drawRot(p.role, p.x, p.y, 0);
+  for (const p of topTrees) drawRot(p.role, p.x, p.y, p.ang, p.k);
+  nightPass(ox, oy, topTowers);
+}
+function nightPass(ox, oy, towers) {
+  if (darkA <= 0.01) return;
+  D.setTransform(1, 0, 0, 1, 0, 0); D.globalCompositeOperation = 'source-over';
+  D.clearRect(0, 0, dark.width, dark.height);
+  D.fillStyle = `rgba(6,8,26,${darkA})`; D.fillRect(0, 0, dark.width, dark.height);
+  D.globalCompositeOperation = 'destination-out';
+  D.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+  light(0, 0, 270 + Math.sin(t * 13) * 8); light(hero.x, hero.y, 150);
+  for (const p of towers) light(p.x, p.y, 105);
+  D.globalCompositeOperation = 'source-over';
+  X.setTransform(1, 0, 0, 1, 0, 0); X.drawImage(dark, 0, 0);
+  X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+  X.globalCompositeOperation = 'lighter';
+  glow(0, 0, 230, '255,130,40', 0.32 * darkA);
+  for (const p of towers) glow(p.x, p.y, 55, '255,190,110', 0.25 * darkA);
+  for (const a of arrows) glow(a.x, a.y + 30, 26, '130,200,255', 0.6 * darkA);
+  X.globalCompositeOperation = 'source-over';
+}
 function draw() {
+  if (PACKS.find(p => p.id === pack).top) return drawTop();
   const ox = W / 2, oy = H / 2 + 20 * S;
   X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
   const vw = W / S, vh = H / S;
