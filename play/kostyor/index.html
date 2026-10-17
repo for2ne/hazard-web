@@ -909,17 +909,17 @@ function waveArrows(ox, oy) {
   X.textAlign = 'center'; X.textBaseline = 'middle';
   const pulse = 0.65 + Math.sin(G.t * 5) * 0.3, m = 40, cx = W / 2, cy = H / 2;
   for (const a of G.mainAngles) {
-    let sx = ox + Math.cos(a) * 420 * S, sy = oy + Math.sin(a) * 420 * S;
+    let sx = ox + Math.cos(a) * 290 * S, sy = oy + Math.sin(a) * 290 * S;
     const dx = sx - cx, dy = sy - cy;
     const k = Math.min(1, (W / 2 - m) / Math.max(Math.abs(dx), 1e-6), (H / 2 - m) / Math.max(Math.abs(dy), 1e-6));
     sx = cx + dx * k; sy = cy + dy * k;
     X.save(); X.translate(sx, sy); X.rotate(a);
     X.fillStyle = `rgba(255,80,60,${pulse})`;
-    X.beginPath(); X.moveTo(16, 0); X.lineTo(-9, -13); X.lineTo(-3, 0); X.lineTo(-9, 13); X.closePath(); X.fill();
+    for (const off of [0, -22]) { X.beginPath(); X.moveTo(26 + off, 0); X.lineTo(4 + off, -20); X.lineTo(10 + off, 0); X.lineTo(4 + off, 20); X.closePath(); X.fill(); }
     X.restore();
-    X.font = '600 11px Rubik, system-ui, sans-serif';
+    X.font = '800 14px Rubik, system-ui, sans-serif';
     X.lineWidth = 3; X.strokeStyle = 'rgba(0,0,0,.7)';
-    const label = G.phase === 'day' ? 'ночью отсюда' : 'идут', lx = sx - Math.cos(a) * 30, ly = sy - Math.sin(a) * 26;
+    const label = G.phase === 'day' ? 'ночью отсюда' : 'идут', lx = sx - Math.cos(a) * 44, ly = sy - Math.sin(a) * 34;
     X.strokeText(label, lx, ly); X.fillStyle = `rgba(255,150,130,${pulse})`; X.fillText(label, lx, ly);
   }
 }
