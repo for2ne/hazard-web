@@ -89,6 +89,13 @@ canvas { position: fixed; inset: 0; display: block; }
 .card .n { font-family: var(--display); font-size: 17px; line-height: 1.15; }
 .card .d { font-size: 13px; opacity: .8; line-height: 1.35; }
 .card .lv { font-size: 12px; color: var(--ember); }
+.hint { position: absolute; z-index: 2; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); }
+.panel .x { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(239, 230, 210, .1); color: var(--bone); font: 600 18px var(--body); cursor: pointer; }
+.panel h3 { padding-right: 34px; }
+.menu-list { display: grid; gap: 10px; justify-items: center; }
+.menu-list .btn, .menu-list .ghost { min-width: 240px; }
+.danger { border-color: rgba(255, 110, 90, .5); color: #ffb1a3; }
+#menuBtn { pointer-events: auto; font: 600 14px var(--body); color: var(--bone); background: var(--panel); border: 1px solid rgba(239, 230, 210, .2); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
 .ghost { font: 600 14px var(--body); color: var(--bone); background: transparent; border: 1px solid rgba(239, 230, 210, .3); border-radius: 12px; padding: 9px 14px; cursor: pointer; justify-self: center; }
 .ghost:focus-visible, .node:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 
@@ -137,6 +144,7 @@ canvas { position: fixed; inset: 0; display: block; }
     <div class="pill"><span class="ico gold"></span><b id="gold">0</b></div>
   </div>
   <div class="hud-right">
+    <button id="menuBtn" type="button" aria-label="Меню">Меню</button>
     <button id="skip" type="button">Начать ночь</button>
     <div class="pill">Костёр <div class="firebar"><i id="fire"></i></div></div>
   </div>
@@ -165,6 +173,29 @@ canvas { position: fixed; inset: 0; display: block; }
   </div>
 </div>
 
+<div class="modal" id="pause" hidden>
+  <div class="sheet">
+    <h2>Пауза</h2>
+    <div class="menu-list">
+      <button class="btn" id="resume" type="button">Продолжить</button>
+      <button class="ghost" id="pauseSettings" type="button">Настройки</button>
+      <button class="ghost danger" id="surrender" type="button">Сдаться</button>
+    </div>
+    <p class="muted" id="surrenderNote"></p>
+  </div>
+</div>
+
+<div class="modal" id="settings" hidden>
+  <div class="sheet">
+    <h2>Настройки</h2>
+    <div class="menu-list">
+      <button class="ghost danger" id="reset" type="button">Сбросить весь прогресс</button>
+      <button class="btn" id="settingsClose" type="button">Готово</button>
+    </div>
+    <p class="muted">Звук и выбор управления появятся позже.</p>
+  </div>
+</div>
+
 <div class="modal" id="over" hidden>
   <div class="sheet">
     <h1 id="overTitle">Костёр погас</h1>
@@ -181,8 +212,10 @@ canvas { position: fixed; inset: 0; display: block; }
     <div class="pill" id="freed">Освобождено 0 из 4</div>
     <div class="pill">Склад <span class="ico wood"></span><b id="stWood">0</b><span class="ico gold"></span><b id="stGold">0</b></div>
     <button class="ghost" id="siege" type="button">Осада без конца</button>
+    <button class="ghost" id="mapSettings" type="button">Настройки</button>
   </div>
-  <div class="panel" id="panel"></div>
+  <div class="panel" id="panel" hidden></div>
+  <div class="pill hint" id="hint">Нажми на светящуюся деревню</div>
 </div>
 </div>
 
@@ -1125,8 +1158,16 @@ function mapLayout(focus) {
   const s = Math.max(mapW / iw, mapH / ih), dw = iw * s, dh = ih * s;
   if (focus) { mapPan.x = mapW / 2 - focus.x / 100 * dw; mapPan.y = mapH / 2 - focus.y / 100 * dh; }
   if (mapPan.x === null) { mapPan.x = (mapW - dw) / 2; mapPan.y = (mapH - dh) / 2; }
-  mapPan.x = Math.min(0, Math.max(mapW - dw, mapPan.x)); mapPan.y = Math.min(0, Math.max(mapH - dh, mapPan.y));
+  mapPan.x = Math.min(0, Math.max(mapW - dw - panelBox.w, mapPan.x)); mapPan.y = Math.min(0, Math.max(mapH - dh - panelBox.h, mapPan.y));
   mapView = { ox: mapPan.x, oy: mapPan.y, dw, dh };
+}
+// Space the floating panel takes on the right (landscape) or at the bottom (portrait), so the map can scroll out from under it.
+let panelBox = { w: 0, h: 0 };
+function measurePanel() {
+  const p = $('panel');
+  if (p.hidden) { panelBox = { w: 0, h: 0 }; return; }
+  const r = p.getBoundingClientRect(), portrait = mapH > mapW;
+  panelBox = portrait ? { w: 0, h: mapH - r.top + 12 } : { w: mapW - r.left + 12, h: 0 };
 }
 const mapPt = (x, y) => [mapView.ox + x / 100 * mapView.dw, mapView.oy + y / 100 * mapView.dh];
 // Drag to pan where the map is bigger than the screen (portrait phones).
@@ -1277,8 +1318,12 @@ function selectNode(v, note = '') {
   const raidV = SAVE.raid && V(SAVE.raid.id);
   if (!v) v = raidV || null;
   let h;
-  if (!v) h = '<h3>Край у орды</h3><p>Освобождай деревни одну за другой. Освобождённая деревня остаётся твоей со всеми заборами и башнями и присылает запасы на склад.</p><p class="muted">Нажми на светящуюся деревню.</p>';
-  else {
+  if (!v) {
+    $('panel').hidden = true; $('hint').hidden = false; measurePanel();
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('sel'));
+    return;
+  }
+  {
     const st = nodeState(v), o = SAVE.owned[v.id];
     h = `<h3>${v.name}</h3>` + (note ? `<p class="note">${note}</p>` : '');
     if (st === 'raid') {
@@ -1299,13 +1344,49 @@ function selectNode(v, note = '') {
     else h += `<p>${v.tw}</p><p class="muted">Эта глава ещё пишется.</p>`;
   }
   if (SAVE.store.wood || SAVE.store.gold) h += `<p class="muted">Всё со склада уйдёт с тобой в следующий забег.</p>`;
-  $('panel').innerHTML = h;
+  $('panel').innerHTML = '<button class="x" id="panelClose" type="button" aria-label="Закрыть">×</button>' + h;
+  $('panel').hidden = false; $('hint').hidden = true;
+  $('panelClose').onclick = () => selectNode(null);
+  measurePanel();
+  const [vx, vy] = mapPt(v.x, v.y);
+  if (panelBox.w && vx > mapW - panelBox.w - 60) mapPan.x -= vx - (mapW - panelBox.w - 60) + 40;
+  if (panelBox.h && vy > mapH - panelBox.h - 50) mapPan.y -= vy - (mapH - panelBox.h - 50) + 40;
   if ($('actGo')) $('actGo').onclick = () => beginVillage(v);
   if ($('actDefend')) $('actDefend').onclick = () => beginRaid();
   if ($('actLift')) $('actLift').onclick = () => beginRaid(v.id);
   if ($('actAuto')) $('actAuto').onclick = autoResolve;
   document.querySelectorAll('.node').forEach(n => n.classList.toggle('sel', !!v && n.dataset.id === v.id));
 }
+function openPause() {
+  if (!G || G.over || !$('map').hidden || !$('pick').hidden) return;
+  G.paused = true;
+  const m = G.cfg.mode;
+  $('surrender').textContent = m === 'siege' ? 'Закончить осаду' : 'Сдаться';
+  $('surrenderNote').textContent = m === 'liberate' ? 'Сдашься, и деревня останется у орды. Запасы, взятые со склада, пропадут.'
+    : m === 'raid' ? 'Сдашься, и деревня окажется в осаде, но останется твоей.' : 'Результат засчитается как обычно.';
+  $('pause').hidden = false;
+}
+function closePause() { $('pause').hidden = true; if (G && !G.over) { G.paused = false; last = performance.now(); } }
+$('menuBtn').onclick = openPause;
+$('resume').onclick = closePause;
+$('surrender').onclick = () => { $('pause').hidden = true; G.paused = false; finishRun(false); };
+addEventListener('keydown', e => { if (e.code === 'Escape') ($('pause').hidden ? openPause() : closePause()); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && $('map').hidden && $('start').hidden) openPause(); });
+let settingsFrom = null;
+function openSettings(from) { settingsFrom = from; $(from).hidden = true; $('reset').textContent = 'Сбросить весь прогресс'; $('settings').hidden = false; }
+$('pauseSettings').onclick = () => openSettings('pause');
+$('mapSettings').onclick = () => { settingsFrom = 'map'; $('reset').textContent = 'Сбросить весь прогресс'; $('settings').hidden = false; };
+$('settingsClose').onclick = () => { $('settings').hidden = true; if (settingsFrom === 'pause') $('pause').hidden = false; };
+$('reset').onclick = () => {
+  const b = $('reset');
+  if (b.dataset.armed !== '1') { b.dataset.armed = '1'; b.textContent = 'Точно? Нажми ещё раз'; return; }
+  b.dataset.armed = '';
+  SAVE = { won: {}, owned: {}, store: { wood: 0, gold: 0 }, raid: null, raids: 0 }; best = 0;
+  try { localStorage.removeItem('kostyor.save'); localStorage.removeItem('kostyor.best'); } catch (e) {}
+  b.textContent = 'Прогресс сброшен';
+  $('pause').hidden = true; $('settings').hidden = true;
+  showMap();
+};
 $('play').onclick = showMap;
 $('again').onclick = () => (G.cfg.mode === 'siege' ? beginSiege() : showMap());
 $('toMap').onclick = showMap;
