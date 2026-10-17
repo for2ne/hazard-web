@@ -1,0 +1,267 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex">
+<title>Лаборатория спрайтов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rubik:wght@400;600&display=swap">
+<style>
+/* Layout: the live scene fills the screen; one control bar floats at the top, the role swapper at the bottom. Dark look by choice. */
+:root {
+  --night: #0c1219;
+  --panel: rgba(12, 16, 22, 0.86);
+  --bone: #efe6d2;
+  --ember: #ff9a3c;
+  --ember-deep: #d2541e;
+  --frost: #7fc7ff;
+  --display: "Russo One", "Arial Black", system-ui, sans-serif;
+  --body: "Rubik", system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; margin: 0; overflow: hidden; background: var(--night); color: var(--bone); font-family: var(--body); }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+canvas { position: fixed; inset: 0; display: block; touch-action: none; }
+.bar { position: fixed; left: 0; right: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; pointer-events: none;
+  padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
+.bar > * { pointer-events: auto; }
+.top { top: 0; padding-top: calc(env(safe-area-inset-top, 0px) + 10px); }
+.bottom { bottom: 0; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); }
+h1 { font: 400 20px var(--display); color: var(--ember); margin: 0 6px 0 0; text-shadow: 0 2px 0 rgba(0, 0, 0, .7); pointer-events: none; }
+.group { display: flex; gap: 4px; background: var(--panel); border: 1px solid rgba(239, 230, 210, .14); border-radius: 999px; padding: 4px; }
+.group button { font: 600 13px var(--body); color: var(--bone); background: transparent; border: 0; border-radius: 999px; padding: 7px 12px; cursor: pointer; }
+.group button[aria-pressed="true"] { background: var(--ember); color: var(--night); }
+.group button:focus-visible, select:focus-visible, label.file:focus-within { outline: 2px solid var(--bone); outline-offset: 2px; }
+.ctl { display: flex; gap: 8px; align-items: center; background: var(--panel); border: 1px solid rgba(239, 230, 210, .14); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+.ctl input[type="range"] { width: 110px; accent-color: var(--ember); }
+select { font: 600 13px var(--body); color: var(--bone); background: #18202a; border: 1px solid rgba(239, 230, 210, .2); border-radius: 8px; padding: 4px 6px; }
+label.file { cursor: pointer; color: var(--frost); }
+label.file input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.note { font-size: 12px; opacity: .7; background: var(--panel); border-radius: 999px; padding: 6px 12px; }
+</style>
+</head><body>
+
+<canvas id="c"></canvas>
+
+<div class="bar top">
+  <h1>Лаборатория спрайтов</h1>
+  <div class="group" id="packs" role="group" aria-label="Набор спрайтов"></div>
+  <div class="group" role="group" aria-label="Время суток">
+    <button type="button" id="day" aria-pressed="true">День</button>
+    <button type="button" id="night" aria-pressed="false">Ночь</button>
+  </div>
+  <label class="ctl" for="scale">Размер <input id="scale" type="range" min="0.6" max="1.8" step="0.05" value="1"></label>
+  <label class="ctl" for="crowd">Зомби <input id="crowd" type="range" min="2" max="40" step="1" value="12"></label>
+</div>
+
+<div class="bar bottom">
+  <div class="ctl">
+    <label for="role">Заменить</label>
+    <select id="role"></select>
+    <label class="file">своей картинкой (PNG с прозрачным фоном)<input id="file" type="file" accept="image/png,image/webp"></label>
+  </div>
+  <div class="note" id="info">Набор: игрушечный</div>
+</div>
+
+<script>
+(() => {
+const cv = document.getElementById('c'), X = cv.getContext('2d');
+const dark = document.createElement('canvas'), D = dark.getContext('2d');
+const $ = id => document.getElementById(id);
+let W = 0, H = 0, DPR = 1, S = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+  for (const c of [cv, dark]) { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); }
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  S = Math.max(0.5, Math.sqrt(W * H / 450000));
+}
+addEventListener('resize', resize); resize();
+const TAU = Math.PI * 2, rnd = (a, b) => a + Math.random() * (b - a);
+
+// ---------- packs: art/sprites/<pack>/<role>.png, cut by art/slice.py ----------
+const PACKS = [
+  { id: 'toy', name: 'Игрушечный', about: 'Brawl Stars: яркий, игрушечный' },
+  { id: 'neon', name: 'Неон', about: 'Brawl Stars с неоновой ночью, запечённой в картинки' },
+  { id: 'classic', name: 'Рисованный', about: 'Kingdom Rush: рисованный, с контуром' },
+  { id: 'real', name: 'Реализм', about: 'Survival: реалистичный, приглушённый' },
+];
+const ROLES = {
+  hero: ['Герой', 64], heroShoot: ['Герой стреляет', 64], walker: ['Ходок', 58], walker2: ['Ходок, шаг', 58], runner: ['Бегун', 54],
+  brute: ['Громила', 86], boss: ['Вожак', 112], arrow: ['Стрела', 26], fire: ['Костёр', 66], fireLow: ['Костёр слабый', 50],
+  fence: ['Частокол', 56], fence2: ['Частокол с железом', 56], tower1: ['Вышка', 110], tower2: ['Башня', 118], tree: ['Дерево', 120], forge: ['Кузница', 74],
+};
+const img = {}, custom = {};
+function load(pack) {
+  if (img[pack]) return;
+  img[pack] = {};
+  for (const r in ROLES) { const i = new Image(); i.src = `art/sprites/${pack}/${r}.png`; img[pack][r] = i; }
+}
+const ground = new Image(); ground.src = 'art/ground.jpg';
+let groundPat = null;
+ground.onload = () => { groundPat = X.createPattern(ground, 'repeat'); };
+
+let pack = 'toy', night = false, scale = 1, darkA = 0;
+try { const s = JSON.parse(localStorage.getItem('lab.view') || '{}'); if (s.pack) pack = s.pack; if (s.night) night = true; } catch (e) {}
+function remember() { try { localStorage.setItem('lab.view', JSON.stringify({ pack, night })); } catch (e) {} }
+load(pack);
+
+const packBox = $('packs');
+for (const p of PACKS) {
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = p.name; b.dataset.id = p.id;
+  b.onclick = () => { pack = p.id; load(pack); syncUi(); remember(); };
+  packBox.appendChild(b);
+}
+for (const r in ROLES) { const o = document.createElement('option'); o.value = r; o.textContent = ROLES[r][0]; $('role').appendChild(o); }
+function syncUi() {
+  for (const b of packBox.children) b.setAttribute('aria-pressed', String(b.dataset.id === pack));
+  $('day').setAttribute('aria-pressed', String(!night)); $('night').setAttribute('aria-pressed', String(night));
+  const p = PACKS.find(p => p.id === pack), n = Object.keys(custom).length;
+  $('info').textContent = `Набор: ${p.about}` + (n ? ` · своих картинок: ${n}` : '');
+}
+$('day').onclick = () => { night = false; syncUi(); remember(); };
+$('night').onclick = () => { night = true; syncUi(); remember(); };
+$('scale').oninput = e => { scale = +e.target.value; };
+$('crowd').oninput = e => { setCrowd(+e.target.value); };
+$('file').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const i = new Image(); i.src = URL.createObjectURL(f); custom[$('role').value] = i; e.target.value = ''; syncUi();
+};
+syncUi();
+const sprite = r => custom[r] || (img[pack] && img[pack][r]);
+
+// ---------- the scene: a village around the fire, a hero circling it, zombies walking in ----------
+const props = [];
+for (let i = 0; i < 12; i++) {
+  const a = i / 12 * TAU, gap = i % 3 === 1;
+  if (!gap) props.push({ role: i % 2 ? 'fence2' : 'fence', x: Math.cos(a) * 175, y: Math.sin(a) * 175 * 0.8 });
+}
+props.push({ role: 'tower1', x: -95, y: -80 }, { role: 'tower2', x: 105, y: -78 }, { role: 'tower2', x: -110, y: 90 }, { role: 'tower1', x: 110, y: 95 });
+props.push({ role: 'forge', x: 0, y: 70 });
+for (let i = 0; i < 26; i++) {
+  const a = rnd(0, TAU), r = rnd(290, 620);
+  props.push({ role: 'tree', x: Math.cos(a) * r * 1.3, y: Math.sin(a) * r * 0.85, k: rnd(0.8, 1.2) });
+}
+const fire = { role: 'fire', x: 0, y: 0 };
+const hero = { x: 0, y: 0, a: 0, face: 1, shoot: 0 };
+let zombies = [], arrows = [], t = 0;
+const KINDS = ['walker', 'walker', 'walker', 'runner', 'runner', 'brute', 'boss'];
+function spawn(z) {
+  const a = rnd(0, TAU);
+  z.kind = z.kind || KINDS[Math.floor(Math.random() * KINDS.length)];
+  z.x = Math.cos(a) * 700; z.y = Math.sin(a) * 520; z.spd = z.kind === 'runner' ? 70 : z.kind === 'brute' ? 26 : z.kind === 'boss' ? 22 : 38;
+  z.ph = rnd(0, 1); z.hit = 0;
+  return z;
+}
+function setCrowd(n) {
+  while (zombies.length < n) zombies.push(spawn({ kind: zombies.length === 0 ? 'boss' : null }));
+  zombies.length = n;
+}
+setCrowd(12);
+
+function update(dt) {
+  t += dt;
+  darkA += ((night ? 0.8 : 0) - darkA) * Math.min(1, dt * 2.5);
+  hero.a += dt * 0.55;
+  const hx = Math.cos(hero.a) * 120, hy = Math.sin(hero.a) * 95;
+  hero.face = hx < hero.x ? -1 : 1; hero.x = hx; hero.y = hy;
+  hero.shoot -= dt;
+  if (hero.shoot <= 0 && zombies.length) {
+    let best = null, bd = 1e9;
+    for (const z of zombies) { const d = (z.x - hero.x) ** 2 + (z.y - hero.y) ** 2; if (d < bd) { bd = d; best = z; } }
+    if (best && bd < 420 * 420) {
+      const l = Math.sqrt(bd) || 1;
+      arrows.push({ x: hero.x, y: hero.y - 30, vx: (best.x - hero.x) / l * 520, vy: (best.y - 30 - hero.y) / l * 520, t: 0, z: best });
+      hero.face = best.x < hero.x ? -1 : 1;
+    }
+    hero.shoot = 0.7;
+  }
+  for (const z of zombies) {
+    const dx = -z.x, dy = -z.y, l = Math.hypot(dx, dy) || 1;
+    if (l < 120) { spawn(z); continue; }
+    z.x += dx / l * z.spd * dt; z.y += dy / l * z.spd * dt;
+    z.face = dx < 0 ? -1 : 1; z.hit = Math.max(0, z.hit - dt * 5);
+  }
+  for (const a of arrows) {
+    a.x += a.vx * dt; a.y += a.vy * dt; a.t += dt;
+    if (a.z && (a.x - a.z.x) ** 2 + (a.y - 30 - a.z.y) ** 2 < 30 * 30) { a.z.hit = 1; a.t = 9; }
+  }
+  arrows = arrows.filter(a => a.t < 1);
+}
+
+function drawSprite(role, x, y, face = 1, k = 1, flash = 0) {
+  const i = sprite(role);
+  if (!i || !i.complete || !i.naturalWidth) return;
+  const h = ROLES[role][1] * scale * k, w = h * i.naturalWidth / i.naturalHeight;
+  X.save(); X.translate(x, y); if (face < 0) X.scale(-1, 1);
+  X.drawImage(i, -w / 2, -h, w, h);
+  if (flash > 0) { X.globalCompositeOperation = 'lighter'; X.globalAlpha = flash * 0.6; X.drawImage(i, -w / 2, -h, w, h); }
+  X.restore();
+}
+function light(x, y, r) {
+  const g = D.createRadialGradient(x, y, r * 0.15, x, y, r);
+  g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  D.fillStyle = g; D.beginPath(); D.arc(x, y, r, 0, TAU); D.fill();
+}
+function glow(x, y, r, rgb, a) {
+  const g = X.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, `rgba(${rgb},${a})`); g.addColorStop(1, `rgba(${rgb},0)`);
+  X.fillStyle = g; X.fillRect(x - r, y - r, 2 * r, 2 * r);
+}
+function draw() {
+  const ox = W / 2, oy = H / 2 + 20 * S;
+  X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+  const vw = W / S, vh = H / S;
+  X.fillStyle = groundPat || '#3d6b2a'; X.fillRect(-vw / 2 - 10, -vh / 2 - 30, vw + 20, vh + 40);
+  const dg = X.createRadialGradient(0, 0, 40, 0, 0, 230);
+  dg.addColorStop(0, 'rgba(120,88,52,.85)'); dg.addColorStop(0.7, 'rgba(110,80,48,.6)'); dg.addColorStop(1, 'rgba(110,80,48,0)');
+  X.fillStyle = dg; X.beginPath(); X.ellipse(0, 0, 260, 210, 0, 0, TAU); X.fill();
+  // everything stands on its feet: draw from back to front
+  const list = [...props.map(p => ({ ...p, f: 1 })), fire];
+  list.push({ role: hero.shoot > 0.45 ? 'heroShoot' : 'hero', x: hero.x, y: hero.y, f: hero.face });
+  for (const z of zombies) {
+    const role = z.kind === 'walker' ? ((t * 3 + z.ph) % 1 < 0.5 ? 'walker' : 'walker2') : z.kind;
+    const bob = Math.abs(Math.sin((t * 3 + z.ph) * Math.PI)) * 3;
+    list.push({ role, x: z.x, y: z.y - bob, f: z.face, flash: z.hit, foot: z.y });
+  }
+  list.sort((a, b) => (a.foot ?? a.y) - (b.foot ?? b.y));
+  for (const o of list) {
+    if (o.role === 'fire') {
+      const k = 1 + Math.sin(t * 9) * 0.04;
+      drawSprite('fire', o.x, o.y + 20, 1, k);
+    } else drawSprite(o.role, o.x, o.y, o.f, o.k || 1, o.flash || 0);
+  }
+  for (const a of arrows) {
+    const ang = Math.atan2(a.vy, a.vx), i = sprite('arrow');
+    X.save(); X.translate(a.x, a.y); X.rotate(ang + Math.PI / 4);
+    if (i && i.complete && i.naturalWidth) { const s = ROLES.arrow[1] * scale * 1.4; X.drawImage(i, -s / 2, -s / 2, s, s); }
+    X.restore();
+  }
+  // night: darkness with light around the fire, the hero and the towers, plus a warm bloom
+  if (darkA > 0.01) {
+    D.setTransform(1, 0, 0, 1, 0, 0); D.globalCompositeOperation = 'source-over';
+    D.clearRect(0, 0, dark.width, dark.height);
+    D.fillStyle = `rgba(6,8,26,${darkA})`; D.fillRect(0, 0, dark.width, dark.height);
+    D.globalCompositeOperation = 'destination-out';
+    D.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+    light(0, 0, 270 + Math.sin(t * 13) * 8); light(hero.x, hero.y - 20, 150);
+    for (const p of props) if (p.role.startsWith('tower')) light(p.x, p.y - 60, 110);
+    D.globalCompositeOperation = 'source-over';
+    X.setTransform(1, 0, 0, 1, 0, 0); X.drawImage(dark, 0, 0);
+    X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+    X.globalCompositeOperation = 'lighter';
+    glow(0, -10, 230, '255,130,40', 0.32 * darkA);
+    for (const p of props) if (p.role.startsWith('tower')) glow(p.x, p.y - 70, 60, '255,190,110', 0.25 * darkA);
+    for (const a of arrows) glow(a.x, a.y, 26, '130,200,255', 0.6 * darkA);
+    for (const z of zombies) glow(z.x, z.y - ROLES[z.kind === 'walker' ? 'walker' : z.kind][1] * scale * 0.78, 9, '255,60,90', 0.9 * darkA);
+    X.globalCompositeOperation = 'source-over';
+  }
+}
+
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  update(dt); draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
