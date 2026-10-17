@@ -85,7 +85,7 @@ const PACKS = [
 ];
 const ROLES = {
   hero: ['Герой', 64], heroShoot: ['Герой стреляет', 64], walker: ['Ходок', 58], walker2: ['Ходок, шаг', 58], runner: ['Бегун', 54],
-  brute: ['Громила', 86], boss: ['Вожак', 112], arrow: ['Стрела', 26], fire: ['Костёр', 66], fireLow: ['Костёр слабый', 50],
+  brute: ['Громила', 86], boss: ['Вожак', 112], arrow: ['Стрела', 26], fire: ['Костёр', 84], fireLow: ['Костёр слабый', 50],
   fence: ['Частокол', 56], fence2: ['Частокол с железом', 56], tower1: ['Вышка', 110], tower2: ['Башня', 118], tree: ['Дерево', 120], forge: ['Кузница', 74],
 };
 const img = {}, custom = {};
@@ -134,7 +134,7 @@ for (let i = 0; i < 12; i++) {
   if (!gap) props.push({ role: i % 2 ? 'fence2' : 'fence', x: Math.cos(a) * 175, y: Math.sin(a) * 175 * 0.8 });
 }
 props.push({ role: 'tower1', x: -95, y: -80 }, { role: 'tower2', x: 105, y: -78 }, { role: 'tower2', x: -110, y: 90 }, { role: 'tower1', x: 110, y: 95 });
-props.push({ role: 'forge', x: 0, y: 70 });
+props.push({ role: 'forge', x: 8, y: 118 });
 for (let i = 0; i < 26; i++) {
   const a = rnd(0, TAU), r = rnd(290, 620);
   props.push({ role: 'tree', x: Math.cos(a) * r * 1.3, y: Math.sin(a) * r * 0.85, k: rnd(0.8, 1.2) });
@@ -142,7 +142,7 @@ for (let i = 0; i < 26; i++) {
 const fire = { role: 'fire', x: 0, y: 0 };
 const hero = { x: 0, y: 0, a: 0, face: 1, shoot: 0 };
 let zombies = [], arrows = [], t = 0;
-const KINDS = ['walker', 'walker', 'walker', 'runner', 'runner', 'brute', 'boss'];
+const KINDS = ['walker', 'walker', 'walker', 'runner', 'runner', 'brute'];
 function spawn(z) {
   const a = rnd(0, TAU);
   z.kind = z.kind || KINDS[Math.floor(Math.random() * KINDS.length)];
