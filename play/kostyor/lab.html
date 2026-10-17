@@ -103,8 +103,8 @@ let groundPat = null;
 ground.onload = () => { groundPat = X.createPattern(ground, 'repeat'); };
 
 let pack = 'top', night = false, scale = 1, darkA = 0;
-try { const s = JSON.parse(localStorage.getItem('lab.view') || '{}'); if (s.pack) pack = s.pack; if (s.night) night = true; } catch (e) {}
-function remember() { try { localStorage.setItem('lab.view', JSON.stringify({ pack, night })); } catch (e) {} }
+try { const s = JSON.parse(localStorage.getItem('lab.view2') || '{}'); if (s.pack) pack = s.pack; if (s.night) night = true; } catch (e) {}
+function remember() { try { localStorage.setItem('lab.view2', JSON.stringify({ pack, night })); } catch (e) {} }
 load(pack);
 
 const packBox = $('packs');
