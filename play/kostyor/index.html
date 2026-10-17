@@ -75,6 +75,12 @@ canvas { position: fixed; inset: 0; display: block; }
   box-shadow: 0 4px 0 var(--ember-deep); }
 .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ember-deep); }
 .muted { font-size: 13px; opacity: .65; }
+.cover { place-items: end center; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+  background: linear-gradient(180deg, rgba(6, 9, 13, .05) 0%, rgba(6, 9, 13, .25) 40%, rgba(6, 9, 13, .9) 78%, rgba(6, 9, 13, .97) 100%), url(art/keyart.jpg) center / cover no-repeat, var(--night); }
+.cover .sheet { gap: 12px; }
+.cover h1 { font-size: clamp(38px, 10vmin, 76px); text-shadow: 0 3px 0 rgba(0, 0, 0, .7), 0 0 34px rgba(255, 154, 60, .55); }
+.cover .rules { background: rgba(10, 14, 20, .72); border: 1px solid rgba(239, 230, 210, .1); border-radius: 14px; padding: 12px 14px; }
+@media (max-height: 520px) { .cover .sheet > p:first-of-type { display: none; } }
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .card { background: #18202a; border: 1px solid rgba(239, 230, 210, .16); border-radius: 14px; padding: 14px 10px; color: var(--bone); cursor: pointer; display: grid; gap: 6px; align-content: start;
   font: inherit; min-width: 0; }
@@ -86,15 +92,14 @@ canvas { position: fixed; inset: 0; display: block; }
 .ghost { font: 600 14px var(--body); color: var(--bone); background: transparent; border: 1px solid rgba(239, 230, 210, .3); border-radius: 12px; padding: 9px 14px; cursor: pointer; justify-self: center; }
 .ghost:focus-visible, .node:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 
-.map { position: fixed; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 34%); gap: 12px;
-  background: radial-gradient(ellipse at 30% 60%, #22331d 0%, #141d16 55%, var(--night) 100%);
-  padding: calc(env(safe-area-inset-top, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 12px) max(16px, env(safe-area-inset-left, 0px)); }
-@media (max-aspect-ratio: 1/1) { .map { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; } }
-.map-main { display: flex; flex-direction: column; gap: 10px; min-height: 0; min-width: 0; }
-.map-top { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.map-top h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 0 auto 0 0; color: var(--ember); }
-.field { position: relative; flex: 1; min-height: 180px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(239, 230, 210, .08); background: #0b0812; }
+.map { position: fixed; inset: 0; background: #0b0812; overflow: hidden; }
+.field { position: absolute; inset: 0; touch-action: none; cursor: grab; }
 .field canvas { position: absolute; inset: 0; }
+.map-top { position: absolute; z-index: 2; left: 0; right: 0; top: 0; display: flex; gap: 8px 10px; align-items: center; flex-wrap: wrap; pointer-events: none;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); }
+.map-top > * { pointer-events: auto; }
+.map-top h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0 auto 0 0; color: var(--ember); text-shadow: 0 2px 0 rgba(0,0,0,.7), 0 0 14px rgba(0,0,0,.8); pointer-events: none; }
+.map-top .ghost { background: var(--panel); }
 .node { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 1px; background: none; border: 0; color: var(--bone); font: inherit; cursor: pointer; padding: 0;
   margin-top: 14px; }
 .node .dot { width: 52px; height: 44px; border-radius: 12px; }
@@ -106,7 +111,10 @@ canvas { position: fixed; inset: 0; display: block; }
 .node.locked .nm, .node.soon .nm { opacity: .55; }
 .node.locked .st, .node.soon .st { opacity: .6; }
 .node.sel .dot { outline: 2px dashed rgba(239, 230, 210, .7); outline-offset: 2px; }
-.panel { background: var(--panel); border: 1px solid rgba(239, 230, 210, .1); border-radius: 16px; padding: 16px; display: grid; gap: 10px; align-content: start; overflow: auto; min-width: 0; }
+.panel { position: absolute; z-index: 2; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); width: min(340px, 40vw);
+  max-height: calc(100% - 90px); background: rgba(12, 16, 22, .86); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border: 1px solid rgba(239, 230, 210, .14); border-radius: 16px; padding: 16px; display: grid; gap: 10px; align-content: start; overflow: auto; min-width: 0; }
+@media (max-aspect-ratio: 1/1) { .panel { left: max(16px, env(safe-area-inset-left, 0px)); width: auto; max-height: 42%; } }
 .panel h3 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 0; }
 .panel p { margin: 0; line-height: 1.45; font-size: 14px; }
 .panel .say { font-style: italic; opacity: .85; }
@@ -136,7 +144,7 @@ canvas { position: fixed; inset: 0; display: block; }
 <div class="xp"><span id="lvl">Ур. 1</span><div class="bar"><i id="xpbar"></i></div></div>
 <div class="banner" id="banner"></div>
 
-<div class="modal" id="start">
+<div class="modal cover" id="start">
   <div class="sheet">
     <h1>Последний костёр</h1>
     <p>Деревня держится, пока горит костёр. Каждую ночь зомби приходят снова, и их всё больше.</p>
@@ -167,16 +175,15 @@ canvas { position: fixed; inset: 0; display: block; }
 </div>
 
 <div class="map" id="map" hidden>
-  <div class="map-main">
-    <div class="map-top">
-      <h2>Край</h2>
-      <div class="pill" id="freed">Освобождено 0 из 4</div>
-      <div class="pill">Склад <span class="ico wood"></span><b id="stWood">0</b><span class="ico gold"></span><b id="stGold">0</b></div>
-      <button class="ghost" id="siege" type="button">Осада без конца</button>
-    </div>
-    <div class="field" id="field"><canvas id="mapc" aria-hidden="true"></canvas></div>
+  <div class="field" id="field"><canvas id="mapc" aria-hidden="true"></canvas></div>
+  <div class="map-top">
+    <h2>Край</h2>
+    <div class="pill" id="freed">Освобождено 0 из 4</div>
+    <div class="pill">Склад <span class="ico wood"></span><b id="stWood">0</b><span class="ico gold"></span><b id="stGold">0</b></div>
+    <button class="ghost" id="siege" type="button">Осада без конца</button>
   </div>
   <div class="panel" id="panel"></div>
+</div>
 </div>
 
 <script>
@@ -204,15 +211,15 @@ try { best = +localStorage.getItem('kostyor.best') || 0; } catch (e) {}
 
 // ---------- the land: villages you free stay yours ----------
 const VILLAGES = [
-  { id: 'mill', name: 'Мельница', x: 16, y: 68, nights: 3, d: 0, twist: 'none', needs: [], nightLen: 40, dayLen: 12, firstDay: 20,
+  { id: 'mill', name: 'Мельница', x: 17.5, y: 46, nights: 3, d: 0, twist: 'none', needs: [], nightLen: 40, dayLen: 12, firstDay: 20,
     tw: 'Зомби пока немного. Хорошее место, чтобы научиться.', say: 'Староста: «Продержись до рассвета, и мельница снова закрутится».' },
-  { id: 'river', name: 'Речная', x: 42, y: 28, nights: 5, d: 2, twist: 'river', needs: ['mill'],
+  { id: 'river', name: 'Речная', x: 28, y: 18, nights: 5, d: 2, twist: 'river', needs: ['mill'],
     tw: 'Река прикрывает север и юг. Зомби идут только по мостам, с востока и запада.', say: 'Староста: «Перекрой мосты, и деревня выстоит».' },
-  { id: 'forest', name: 'Лесная', x: 46, y: 80, nights: 6, d: 3, twist: 'fog', needs: ['mill'],
+  { id: 'forest', name: 'Лесная', x: 54, y: 80, nights: 6, d: 3, twist: 'fog', needs: ['mill'],
     tw: 'Леса вдвое больше, но ночью стоит густой туман и света меньше.', say: 'Лесник: «В тумане их не видно, пока не станет поздно».' },
-  { id: 'grave', name: 'Кладбище', x: 74, y: 52, nights: 6, d: 5, twist: 'graves', needs: ['river', 'forest'],
+  { id: 'grave', name: 'Кладбище', x: 70, y: 48, nights: 6, d: 5, twist: 'graves', needs: ['river', 'forest'],
     tw: 'Зомби встают из могил прямо внутри деревни.', say: 'Священник: «Мёртвые здесь не спят. Береги костёр со всех сторон».' },
-  { id: 'castle', name: 'Замок', x: 88, y: 20, soon: true, needs: ['grave'],
+  { id: 'castle', name: 'Замок', x: 89.5, y: 15, soon: true, needs: ['grave'],
     tw: 'Логово того, кто ведёт орду.', say: '' },
 ];
 const ROADS = [['mill', 'river'], ['mill', 'forest'], ['river', 'grave'], ['forest', 'grave'], ['grave', 'castle']];
@@ -1088,7 +1095,7 @@ function nodeState(v) {
 // ---------- the map: the land is dark, your villages are lights ----------
 const mc = $('mapc'), M = mc.getContext('2d');
 const fogC = document.createElement('canvas'), F = fogC.getContext('2d');
-let mapW = 0, mapH = 0, mapTerrain = null, mapEyes = [], freedAnim = null, justFreed = null;
+let mapW = 0, mapH = 0, mapEyes = [], freedAnim = null, justFreed = null;
 function rng(seed) {
   return () => {
     seed = seed + 0x6D2B79F5 | 0;
@@ -1097,93 +1104,52 @@ function rng(seed) {
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
 }
+// The land is a painted map (art/map.jpg) drawn to cover the screen; villages sit at fixed spots on it.
+const mapImg = new Image(); mapImg.src = 'art/map.jpg';
+const mapPan = { x: null, y: null };
+let mapView = { ox: 0, oy: 0, dw: 1, dh: 1 };
 function sizeMap() {
   const r = $('field').getBoundingClientRect();
   mapW = Math.max(1, r.width); mapH = Math.max(1, r.height);
   for (const c of [mc, fogC]) { c.width = Math.round(mapW * DPR); c.height = Math.round(mapH * DPR); }
   mc.style.width = mapW + 'px'; mc.style.height = mapH + 'px';
-  mapTerrain = buildTerrain();
+  mapPan.x = mapPan.y = null;
+  if (!mapEyes.length) {
+    const R = rng(7);
+    for (let i = 0; i < 70; i++) mapEyes.push({ x: 0.4 + Math.sqrt(R()) * 0.58, y: 0.05 + R() * 0.9, s: 0.6 + R() * 1.4, p: R() * TAU });
+  }
 }
 addEventListener('resize', () => { if (!$('map').hidden) sizeMap(); });
-function buildTerrain() {
-  const c = document.createElement('canvas'); c.width = mc.width; c.height = mc.height;
-  const g = c.getContext('2d'); g.scale(DPR, DPR);
-  const w = mapW, h = mapH, u = Math.min(w, h), R = rng(7), P = v => [v.x / 100 * w, v.y / 100 * h];
-  g.fillStyle = '#2b3d24'; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < w * h / 80; i++) { g.fillStyle = ['#314a28', '#26381f', '#37512c', '#2e4425'][i % 4]; g.fillRect(R() * w, R() * h, 2 + R() * 3, 2 + R() * 3); }
-  // farm fields around the mill
-  const [mx, my] = P(V('mill'));
-  for (let i = 0; i < 8; i++) {
-    const a = R() * TAU, d = u * (0.07 + R() * 0.06);
-    g.save(); g.translate(mx + Math.cos(a) * d, my + Math.sin(a) * d); g.rotate(R() * 0.6 - 0.3);
-    g.fillStyle = i % 2 ? '#6d6a34' : '#57602e'; g.fillRect(-u * 0.03, -u * 0.02, u * 0.06, u * 0.04);
-    g.strokeStyle = 'rgba(0,0,0,.2)'; g.lineWidth = 1;
-    for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(-u * 0.03, k * u * 0.008); g.lineTo(u * 0.03, k * u * 0.008); g.stroke(); }
-    g.restore();
-  }
-  // forest: dense around Лесная, scattered elsewhere, never on a village or the mountains
-  const near = (x, y) => VILLAGES.some(v => { const [vx, vy] = P(v); return (x - vx) ** 2 + (y - vy) ** 2 < (u * 0.075) ** 2; });
-  const [fx, fy] = P(V('forest')), trees = [];
-  for (let i = 0; i < 320; i++) {
-    let x, y;
-    if (i < 170) { const a = R() * TAU, d = Math.sqrt(R()) * u * 0.22; x = fx + Math.cos(a) * d * 1.5; y = fy + Math.sin(a) * d * 0.8; }
-    else { x = R() * w; y = R() * h; }
-    if (near(x, y) || (x > w * 0.64 && y < h * 0.34)) continue;
-    trees.push([x, y, u * (0.011 + R() * 0.009)]);
-  }
-  trees.sort((a, b) => a[1] - b[1]);
-  for (const [x, y, r] of trees) {
-    g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.arc(x + r * 0.3, y + r * 0.4, r, 0, TAU); g.fill();
-    g.fillStyle = '#1f4a26'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
-    g.fillStyle = '#2d6334'; g.beginPath(); g.arc(x - r * 0.3, y - r * 0.3, r * 0.5, 0, TAU); g.fill();
-  }
-  // river, then roads over it (they read as bridges)
-  g.lineCap = 'round'; g.lineJoin = 'round';
-  const river = [[0.30, -0.05], [0.36, 0.2], [0.33, 0.42], [0.58, 0.62], [0.6, 1.05]];
-  for (const [wd, col] of [[u * 0.05, '#1d4560'], [u * 0.032, '#2a5f80'], [u * 0.009, 'rgba(170,220,250,.25)']]) {
-    g.strokeStyle = col; g.lineWidth = wd; g.beginPath(); g.moveTo(river[0][0] * w, river[0][1] * h);
-    for (let i = 1; i < river.length - 1; i++) {
-      const [ax, ay] = river[i], [bx, by] = river[i + 1];
-      g.quadraticCurveTo(ax * w, ay * h, (ax + bx) / 2 * w, (ay + by) / 2 * h);
-    }
-    const e = river.at(-1); g.lineTo(e[0] * w, e[1] * h); g.stroke();
-  }
-  for (const [a, b] of ROADS) {
-    const [ax, ay] = P(V(a)), [bx, by] = P(V(b)), k = (R() - 0.5) * 0.4;
-    const cx = (ax + bx) / 2 - (by - ay) * k, cy = (ay + by) / 2 + (bx - ax) * k;
-    for (const [wd, col] of [[u * 0.022, '#3d3122'], [u * 0.013, '#6b5a3e']]) {
-      g.strokeStyle = col; g.lineWidth = wd; g.beginPath(); g.moveTo(ax, ay); g.quadraticCurveTo(cx, cy, bx, by); g.stroke();
-    }
-  }
-  // mountains around the castle
-  const peaks = [];
-  for (let i = 0; i < 16; i++) peaks.push([w * (0.64 + R() * 0.38), h * (-0.02 + R() * 0.34), u * (0.045 + R() * 0.05)]);
-  peaks.sort((a, b) => a[1] - b[1]);
-  for (const [x, y, s] of peaks) {
-    g.fillStyle = '#5a5e62'; g.beginPath(); g.moveTo(x - s, y + s * 0.7); g.lineTo(x, y - s * 0.8); g.lineTo(x + s, y + s * 0.7); g.closePath(); g.fill();
-    g.fillStyle = '#44474b'; g.beginPath(); g.moveTo(x, y - s * 0.8); g.lineTo(x + s, y + s * 0.7); g.lineTo(x + s * 0.15, y + s * 0.7); g.closePath(); g.fill();
-    g.fillStyle = '#d9dde0'; g.beginPath(); g.moveTo(x - s * 0.3, y - s * 0.35); g.lineTo(x, y - s * 0.8); g.lineTo(x + s * 0.3, y - s * 0.35); g.closePath(); g.fill();
-  }
-  // graves around the cemetery village
-  const [gx, gy] = P(V('grave'));
-  for (let i = 0; i < 16; i++) {
-    const a = R() * TAU, d = u * (0.055 + R() * 0.05), x = gx + Math.cos(a) * d, y = gy + Math.sin(a) * d * 0.7;
-    g.fillStyle = '#8d8a84'; g.fillRect(x - 1, y - 6, 2.5, 9); g.fillRect(x - 3.5, y - 4, 7.5, 2.2);
-  }
-  // vignette
-  const vg = g.createRadialGradient(w / 2, h / 2, u * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75);
-  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.55)');
-  g.fillStyle = vg; g.fillRect(0, 0, w, h);
-  mapEyes = [];
-  for (let i = 0; i < 70; i++) mapEyes.push({ x: 0.15 + Math.sqrt(R()) * 0.83, y: 0.04 + R() * 0.92, s: 0.6 + R() * 1.4, p: R() * TAU });
-  return c;
+function mapLayout(focus) {
+  const iw = mapImg.naturalWidth || 2400, ih = mapImg.naturalHeight || 1340;
+  const s = Math.max(mapW / iw, mapH / ih), dw = iw * s, dh = ih * s;
+  if (focus) { mapPan.x = mapW / 2 - focus.x / 100 * dw; mapPan.y = mapH / 2 - focus.y / 100 * dh; }
+  if (mapPan.x === null) { mapPan.x = (mapW - dw) / 2; mapPan.y = (mapH - dh) / 2; }
+  mapPan.x = Math.min(0, Math.max(mapW - dw, mapPan.x)); mapPan.y = Math.min(0, Math.max(mapH - dh, mapPan.y));
+  mapView = { ox: mapPan.x, oy: mapPan.y, dw, dh };
 }
+const mapPt = (x, y) => [mapView.ox + x / 100 * mapView.dw, mapView.oy + y / 100 * mapView.dh];
+// Drag to pan where the map is bigger than the screen (portrait phones).
+let mapDrag = null;
+$('field').addEventListener('pointerdown', e => { mapDrag = { x: e.clientX, y: e.clientY, px: mapPan.x, py: mapPan.y, moved: false }; });
+addEventListener('pointermove', e => {
+  if (!mapDrag) return;
+  const dx = e.clientX - mapDrag.x, dy = e.clientY - mapDrag.y;
+  if (Math.abs(dx) + Math.abs(dy) > 6) mapDrag.moved = true;
+  mapPan.x = mapDrag.px + dx; mapPan.y = mapDrag.py + dy;
+});
+addEventListener('pointerup', () => setTimeout(() => { mapDrag = null; }, 0));
 const ease = k => 1 - (1 - k) ** 3;
 function drawMap(t) {
-  if (!mapTerrain) return;
-  const w = mapW, h = mapH, u = Math.min(w, h), P = v => [v.x / 100 * w, v.y / 100 * h];
-  M.setTransform(1, 0, 0, 1, 0, 0); M.drawImage(mapTerrain, 0, 0);
+  mapLayout();
+  const w = mapW, h = mapH, u = mapView.dh, P = v => mapPt(v.x, v.y);
+  M.setTransform(1, 0, 0, 1, 0, 0); M.fillStyle = '#0b0812'; M.fillRect(0, 0, mc.width, mc.height);
   M.setTransform(DPR, 0, 0, DPR, 0, 0);
+  if (mapImg.complete && mapImg.naturalWidth) M.drawImage(mapImg, mapView.ox, mapView.oy, mapView.dw, mapView.dh);
+  for (const el of $('field').querySelectorAll('.node')) {
+    const [x, y] = P(V(el.dataset.id));
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+  }
   const lights = VILLAGES.map(v => {
     const st = nodeState(v), [x, y] = P(v);
     let r = u * 0.06, a = 0.35;
@@ -1197,7 +1163,7 @@ function drawMap(t) {
   // the horde's darkness, with lights cut out of it
   F.setTransform(1, 0, 0, 1, 0, 0); F.globalCompositeOperation = 'source-over'; F.clearRect(0, 0, fogC.width, fogC.height);
   F.setTransform(DPR, 0, 0, DPR, 0, 0);
-  F.fillStyle = 'rgba(9,6,18,0.85)'; F.fillRect(0, 0, w, h);
+  F.fillStyle = 'rgba(9,6,18,0.8)'; F.fillRect(0, 0, w, h);
   const rg = F.createLinearGradient(w * 0.45, 0, w, 0);
   rg.addColorStop(0, 'rgba(90,10,25,0)'); rg.addColorStop(1, 'rgba(120,14,30,0.5)');
   F.fillStyle = rg; F.fillRect(0, 0, w, h);
@@ -1225,7 +1191,7 @@ function drawMap(t) {
   // eyes in the dark
   M.shadowColor = '#ff3020'; M.shadowBlur = 6;
   for (const e of mapEyes) {
-    const x = e.x * w, y = e.y * h;
+    const [x, y] = mapPt(e.x * 100, e.y * 100);
     if (lights.some(L => L.a > 0.5 && (x - L.x) ** 2 + (y - L.y) ** 2 < (L.r * 0.85) ** 2)) continue;
     const b = Math.sin(t * e.s + e.p);
     if (b < -0.5) continue;
@@ -1233,15 +1199,16 @@ function drawMap(t) {
     M.beginPath(); M.arc(x - 2.3, y, 1.4, 0, TAU); M.arc(x + 2.3, y, 1.4, 0, TAU); M.fill();
   }
   M.shadowBlur = 0;
+  const [hx, hy] = mapPt(84, 74);
   M.font = `400 ${Math.round(u * 0.065)}px "Russo One", system-ui, sans-serif`; M.textAlign = 'center';
-  M.fillStyle = 'rgba(255,90,70,.6)'; M.shadowColor = 'rgba(255,40,30,.9)'; M.shadowBlur = 18;
-  M.fillText('ОРДА', w * 0.87, h * 0.86); M.shadowBlur = 0;
+  M.fillStyle = 'rgba(255,90,70,.65)'; M.shadowColor = 'rgba(255,40,30,.9)'; M.shadowBlur = 18;
+  M.fillText('ОРДА', hx, hy); M.shadowBlur = 0;
   for (const L of lights) villageArt(L, t, u);
   if (SAVE.raid) {
     const L = lights.find(l => l.v.id === SAVE.raid.id);
     if (L) {
-      const sx = w * 0.98, sy = Math.min(h * 0.92, L.y + h * 0.25), ex = L.x + u * 0.06, ey = L.y;
-      const cx = (sx + ex) / 2, cy = Math.min(sy, ey) - h * 0.12;
+      const [sx, sy0] = mapPt(99, 90), sy = Math.min(sy0, L.y + u * 0.25), ex = L.x + u * 0.06, ey = L.y;
+      const cx = (sx + ex) / 2, cy = Math.min(sy, ey) - u * 0.12;
       M.strokeStyle = 'rgba(255,70,50,.9)'; M.lineWidth = 3; M.setLineDash([9, 8]); M.lineDashOffset = -t * 30;
       M.beginPath(); M.moveTo(sx, sy); M.quadraticCurveTo(cx, cy, ex, ey); M.stroke(); M.setLineDash([]);
       const ang = Math.atan2(ey - cy, ex - cx);
@@ -1252,35 +1219,29 @@ function drawMap(t) {
   }
 }
 function villageArt(L, t, u) {
-  const { x, y, st, v } = L, s = u * 0.022;
+  const { x, y, st, v } = L, s = u * 0.02;
   if (v.id === 'castle') {
-    M.fillStyle = '#231e2a'; M.fillRect(x - s * 1.6, y - s * 2.2, s * 3.2, s * 3);
-    for (let i = -1; i <= 1; i++) M.fillRect(x + i * s * 1.1 - s * 0.4, y - s * 2.8, s * 0.8, s * 0.7);
-    M.fillStyle = `rgba(255,74,58,${0.6 + Math.sin(t * 2) * 0.3})`; M.fillRect(x - s * 0.3, y - s * 1.4, s * 0.6, s * 0.6);
+    M.globalCompositeOperation = 'lighter';
+    const gg = M.createRadialGradient(x, y, 0, x, y, s * 4);
+    gg.addColorStop(0, `rgba(255,40,30,${0.35 + Math.sin(t * 2) * 0.15})`); gg.addColorStop(1, 'rgba(255,40,30,0)');
+    M.fillStyle = gg; M.fillRect(x - s * 4, y - s * 4, s * 8, s * 8);
+    M.globalCompositeOperation = 'source-over';
     return;
   }
-  const lit = L.a === 1;
-  for (const [hx, hy] of [[0, -0.9], [-1.4, 0.3], [1.3, 0.5]]) {
-    const px = x + hx * s, py = y + hy * s;
-    M.fillStyle = lit ? '#a07a52' : st === 'open' ? '#57504a' : '#2a2724'; M.fillRect(px - s * 0.7, py - s * 0.3, s * 1.4, s * 0.9);
-    M.fillStyle = lit ? '#a0462e' : st === 'open' ? '#43352f' : '#1e1b19';
-    M.beginPath(); M.moveTo(px - s * 0.85, py - s * 0.25); M.lineTo(px, py - s); M.lineTo(px + s * 0.85, py - s * 0.25); M.closePath(); M.fill();
-    if (lit) { M.fillStyle = '#ffd27a'; M.fillRect(px - s * 0.15, py + s * 0.05, s * 0.3, s * 0.3); }
-  }
-  if (lit) {
+  if (L.a === 1) {
     const f = 1 + Math.sin(t * 11 + x) * 0.15;
-    M.fillStyle = '#ff9a3c'; M.beginPath(); M.arc(x, y + s * 0.5, s * 0.38 * f, 0, TAU); M.fill();
-    M.fillStyle = '#ffe08a'; M.beginPath(); M.arc(x, y + s * 0.45, s * 0.18 * f, 0, TAU); M.fill();
-    for (let i = 0; i < 3; i++) {
-      const k = (t * 0.4 + i / 3) % 1;
-      M.fillStyle = `rgba(210,210,220,${0.28 * (1 - k)})`;
-      M.beginPath(); M.arc(x + Math.sin(k * 4 + i) * s * 0.4, y - k * s * 3.2, s * (0.25 + k * 0.5), 0, TAU); M.fill();
+    M.fillStyle = '#ff9a3c'; M.beginPath(); M.arc(x, y + s, s * 0.55 * f, 0, TAU); M.fill();
+    M.fillStyle = '#ffe08a'; M.beginPath(); M.arc(x, y + s * 0.95, s * 0.27 * f, 0, TAU); M.fill();
+    for (let i = 0; i < 4; i++) {
+      const k = (t * 0.35 + i / 4) % 1;
+      M.fillStyle = `rgba(215,215,225,${0.3 * (1 - k)})`;
+      M.beginPath(); M.arc(x + Math.sin(k * 4 + i) * s * 0.6, y + s - k * s * 4, s * (0.3 + k * 0.7), 0, TAU); M.fill();
     }
   }
   if (st === 'open' || st === 'raid' || st === 'siege') {
     const red = st !== 'open', k = (t * (st === 'raid' ? 1.4 : 0.8)) % 1;
-    M.strokeStyle = red ? `rgba(255,60,40,${1 - k})` : `rgba(255,154,60,${1 - k})`; M.lineWidth = st === 'raid' ? 3 : 2;
-    M.beginPath(); M.arc(x, y, s * (1.9 + k * 1.8), 0, TAU); M.stroke();
+    M.strokeStyle = red ? `rgba(255,60,40,${1 - k})` : `rgba(255,154,60,${1 - k})`; M.lineWidth = st === 'raid' ? 3 : 2.5;
+    M.beginPath(); M.arc(x, y, s * (2.2 + k * 2), 0, TAU); M.stroke();
   }
 }
 
@@ -1290,6 +1251,8 @@ function showMap() {
   $('map').hidden = false;
   renderMap();
   sizeMap();
+  const focus = (SAVE.raid && V(SAVE.raid.id)) || (justFreed && V(justFreed)) || VILLAGES.find(v => nodeState(v) === 'open') || V('mill');
+  mapLayout(focus);
   if (justFreed) {
     const v = V(justFreed);
     freedAnim = { id: justFreed, t0: performance.now() / 1000 }; justFreed = null;
@@ -1303,10 +1266,9 @@ function renderMap() {
   for (const v of VILLAGES) {
     const st = nodeState(v), o = SAVE.owned[v.id], b = document.createElement('button');
     b.type = 'button'; b.className = 'node ' + st; b.dataset.id = v.id;
-    b.style.left = v.x + '%'; b.style.top = v.y + '%';
     const label = { raid: 'Набег!', siege: 'В осаде', owned: 'Твоя ' + '★'.repeat(o ? o.stars : 0), locked: 'Закрыто', soon: 'Скоро', open: `${v.nights} ночей` }[st];
     b.innerHTML = `<span class="dot"></span><span class="nm">${v.name}</span><span class="st">${label}</span>`;
-    b.onclick = () => selectNode(v);
+    b.onclick = () => { if (!(mapDrag && mapDrag.moved)) selectNode(v); };
     f.appendChild(b);
   }
   $('stWood').textContent = SAVE.store.wood; $('stGold').textContent = SAVE.store.gold;
