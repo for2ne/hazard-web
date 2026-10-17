@@ -37,7 +37,7 @@ html, body { height: 100%; overflow: hidden; background: var(--night); color: va
 body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 canvas { position: fixed; inset: 0; display: block; }
 
-.hud { position: fixed; left: 0; right: 0; top: 0; display: flex; gap: 10px; align-items: flex-start; justify-content: space-between;
+.hud { position: fixed; left: 0; right: 0; top: 0; display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: flex-start; justify-content: space-between;
   padding: calc(env(safe-area-inset-top, 0px) + 10px) max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px)); pointer-events: none; }
 .hud-left, .hud-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .pill { background: var(--panel); border: 1px solid rgba(239, 230, 210, 0.12); border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 14px;
@@ -102,7 +102,7 @@ canvas { position: fixed; inset: 0; display: block; }
 .node .st { font-size: 11px; font-weight: 600; white-space: nowrap; background: rgba(8, 6, 14, .7); padding: 1px 7px; border-radius: 999px; }
 .node.open .st { color: var(--ember); }
 .node.owned .st { color: var(--gold); }
-.node.raid .st { color: #ff7a66; }
+.node.raid .st, .node.siege .st { color: #ff7a66; }
 .node.locked .nm, .node.soon .nm { opacity: .55; }
 .node.locked .st, .node.soon .st { opacity: .6; }
 .node.sel .dot { outline: 2px dashed rgba(239, 230, 210, .7); outline-offset: 2px; }
@@ -204,7 +204,7 @@ try { best = +localStorage.getItem('kostyor.best') || 0; } catch (e) {}
 
 // ---------- the land: villages you free stay yours ----------
 const VILLAGES = [
-  { id: 'mill', name: 'Мельница', x: 16, y: 68, nights: 5, d: 0, twist: 'none', needs: [],
+  { id: 'mill', name: 'Мельница', x: 16, y: 68, nights: 3, d: 0, twist: 'none', needs: [], nightLen: 40, dayLen: 12, firstDay: 20,
     tw: 'Зомби пока немного. Хорошее место, чтобы научиться.', say: 'Староста: «Продержись до рассвета, и мельница снова закрутится».' },
   { id: 'river', name: 'Речная', x: 42, y: 28, nights: 5, d: 2, twist: 'river', needs: ['mill'],
     tw: 'Река прикрывает север и юг. Зомби идут только по мостам, с востока и запада.', say: 'Староста: «Перекрой мосты, и деревня выстоит».' },
@@ -257,7 +257,8 @@ const TOWER = [
 const FORGE_WOOD = 15;
 
 let G;
-function newGame(cfg = { mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 40 }) {
+const SIEGE = { mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 35, dayLen: 22, nightLen: 55 };
+function newGame(cfg = SIEGE) {
   G = {
     cfg, t: 0, phase: 'day', phaseT: cfg.firstDay, night: 0, darkA: 0,
     wood: cfg.wood || 0, gold: cfg.gold || 0, graves: [], spawnEvery: 1,
@@ -302,6 +303,15 @@ function newGame(cfg = { mode: 'siege', nights: Infinity, d: 0, twist: 'none', f
     const a = i * TAU / 7 + rnd(-0.3, 0.3), r = rnd(235, 400);
     G.graves.push({ x: Math.cos(a) * r, y: Math.sin(a) * r });
   }
+  planWave();
+}
+const DIRS = ['востока', 'юго-востока', 'юга', 'юго-запада', 'запада', 'северо-запада', 'севера', 'северо-востока'];
+const dirName = a => DIRS[Math.round(((a % TAU) + TAU) % TAU / (TAU / 8)) % 8];
+// The next night's sides are chosen at dawn, so the day is spent building against a known threat.
+function planWave() {
+  const c = G.cfg, n = G.night + 1 + c.d, a0 = Math.random() * TAU;
+  G.mainAngles = c.twist === 'river' ? [0, Math.PI] : n <= 1 ? [a0] : [a0, a0 + rnd(1.6, 3.2)];
+  G.waveText = c.twist === 'river' ? 'по мостам, с востока и запада' : `с ${G.mainAngles.map(dirName).join(' и с ')}`;
 }
 const snapshot = () => ({
   walls: G.slots.filter(s => s.kind === 'wall').map(s => s.lvl),
@@ -402,23 +412,23 @@ function gainXp(n) {
 // ---------- phases ----------
 function startNight() {
   const c = G.cfg;
-  G.phase = 'night'; G.night++; G.phaseT = 55;
-  const n = G.night + c.d, total = 10 + n * 8;
+  G.phase = 'night'; G.night++; G.phaseT = c.nightLen;
+  const n = G.night + c.d;
+  // Wave budget in walker-equivalents (18, 22, 26, 31, 37…). A brute costs 4, so heavier nights are not also bigger.
+  let budget = Math.round(18 * 1.2 ** (n - 1));
   G.spawnQ = [];
-  for (let i = 0; i < total; i++) {
-    let k = 'walker';
+  while (budget > 0) {
     const r = Math.random();
-    if (n >= 3 && r < 0.08 + n * 0.015) k = 'brute';
+    let k = 'walker';
+    if (n >= 3 && budget >= 4 && r < 0.06 + n * 0.012) k = 'brute';
     else if (n >= 2 && r < 0.35) k = 'runner';
-    G.spawnQ.push(k);
+    G.spawnQ.push(k); budget -= k === 'brute' ? 4 : 1;
   }
   const boss = c.mode === 'siege' ? n % 5 === 0 : c.mode === 'liberate' && G.night === c.nights;
-  if (boss) G.spawnQ.splice(Math.floor(total / 2), 0, 'boss');
-  G.spawnT = 0; G.spawnEvery = 38 / G.spawnQ.length;
-  const a0 = Math.random() * TAU;
-  G.mainAngles = c.twist === 'river' ? [0, Math.PI] : n <= 1 ? [a0] : [a0, a0 + rnd(1.6, 3.2)];
-  const dirs = G.mainAngles.map(a => ['востока', 'юго-востока', 'юга', 'юго-запада', 'запада', 'северо-запада', 'севера', 'северо-востока'][Math.round(((a % TAU) + TAU) % TAU / (TAU / 8)) % 8]);
-  const where = c.twist === 'river' ? 'Идут по мостам, с востока и запада' : c.twist === 'graves' ? 'Могилы шевелятся…' : `Идут с ${dirs.join(' и с ')}`;
+  G.needBoss = boss && c.mode === 'liberate'; G.bossWarned = false;
+  if (boss) G.spawnQ.splice(Math.floor(G.spawnQ.length / 2), 0, 'boss');
+  G.spawnT = 0; G.spawnEvery = c.nightLen * 0.7 / G.spawnQ.length;
+  const where = c.twist === 'graves' ? `Идут ${G.waveText}, и могилы шевелятся` : `Идут ${G.waveText}`;
   banner(isFinite(c.nights) ? `Ночь ${G.night} из ${c.nights}` : `Ночь ${G.night}`, where + (boss ? '. С ними вожак!' : ''));
   $('skip').hidden = true;
 }
@@ -426,9 +436,10 @@ function startDay() {
   for (const z of G.zombies) { burst(z.x, z.y, '#ffb347', 10, 70); }
   G.zombies = [];
   if (G.night >= G.cfg.nights) return finishRun(true);
-  G.phase = 'day'; G.phaseT = 25;
+  G.phase = 'day'; G.phaseT = G.cfg.dayLen;
   for (const t of G.trees) t.wood = 4;
-  banner('Рассвет', `Пережито ночей: ${G.night}. Солнце сожгло остальных.`);
+  planWave();
+  banner('Рассвет', `Пережито ночей: ${G.night}. Следующей ночью пойдут ${G.waveText}.`);
   $('skip').hidden = false;
   if (G.cfg.mode === 'siege' && G.night > best) { best = G.night; try { localStorage.setItem('kostyor.best', best); } catch (e) {} }
 }
@@ -440,11 +451,12 @@ function spawnZombie(kind) {
     x = g.x + rnd(-6, 6); y = g.y + rnd(-6, 6);
     burst(x, y, '#6b5a40', 8, 60);
   } else {
-    const main = tw === 'river' ? 1 : 0.7, jit = tw === 'river' ? 0.35 : 0.55;
+    const main = tw === 'river' ? 1 : 0.85, jit = tw === 'river' ? 0.35 : 0.5;
     const a = Math.random() < main ? G.mainAngles[Math.floor(Math.random() * G.mainAngles.length)] + rnd(-jit, jit) : Math.random() * TAU;
     x = Math.cos(a) * 800; y = Math.sin(a) * 800;
   }
-  const hp = base.hp * (1 + 0.24 * (n - 1)) * (kind === 'boss' ? 1 + n * 0.3 : 1);
+  // Waves grow mostly in numbers; health grows slowly, the boss a bit faster (about 20 s to kill with a mid build).
+  const hp = base.hp * (kind === 'boss' ? 1 + 0.24 * (n - 1) : 1 + 0.1 * (n - 1));
   G.zombies.push({ kind, x, y, r: base.r, hp, max: hp, spd: base.spd * (1 + 0.02 * n) * rnd(0.9, 1.1),
     dmg: base.dmg, col: base.col, hit: 0, block: null, wob: Math.random() * TAU, fx: 0, fy: 0 });
 }
@@ -486,7 +498,13 @@ function update(dt) {
   } else {
     G.spawnT -= dt;
     if (G.spawnQ.length && G.spawnT <= 0) { spawnZombie(G.spawnQ.shift()); G.spawnT = G.spawnEvery; }
-    if (G.phaseT <= 0) startDay();
+    if (G.phaseT <= 0) {
+      // The village is only freed once its boss is dead: no waiting out the night.
+      if (G.needBoss && (G.spawnQ.includes('boss') || G.zombies.some(z => z.kind === 'boss'))) {
+        G.phaseT = 0;
+        if (!G.bossWarned) { G.bossWarned = true; banner('Вожак ещё жив', 'Рассвет не наступит, пока он ходит'); }
+      } else startDay();
+    }
   }
   G.darkA += ((G.phase === 'night' ? (G.cfg.twist === 'fog' ? 0.93 : 0.8) : 0) - G.darkA) * Math.min(1, dt * 0.8);
 
@@ -690,17 +708,26 @@ function finishRun(won) {
       lines.push(`${'★'.repeat(stars)}${'☆'.repeat(3 - stars)} Костёр цел на ${Math.round(k * 100)}%. Деревня теперь твоя, и все постройки остаются на месте.`);
     } else lines.push(`${v.name} осталась у орды. Попробуй ещё раз: запасы твоих деревень помогут.`);
   } else {
-    if (won) { SAVE.owned[v.id].b = snapshot(); SAVE.raids++; title = 'Набег отбит!'; lines.push(`${v.name} выстояла. Новые постройки сохранены.`); }
-    else { delete SAVE.owned[v.id]; title = `${v.name} потеряна`; lines.push('Орда заняла деревню. Её можно освободить снова.'); }
-    SAVE.raid = null;
+    const o = SAVE.owned[v.id];
+    if (won) {
+      o.b = snapshot(); o.sieged = false; SAVE.raids++;
+      title = c.lift ? 'Осада снята!' : 'Набег отбит!';
+      lines.push(c.lift ? `${v.name} снова свободна и присылает запасы.` : `${v.name} выстояла. Новые постройки сохранены.`);
+    } else {
+      // A lost defence never takes the village away: it stays yours, under siege, with no income until you lift it.
+      o.sieged = true; o.siegePower = c.power;
+      title = `${v.name} в осаде`;
+      lines.push('Деревня держится и остаётся твоей, но не присылает запасы, пока ты не снимешь осаду.');
+    }
+    if (!c.lift) SAVE.raid = null;
   }
-  const own = Object.keys(SAVE.owned).length;
+  const own = Object.values(SAVE.owned).filter(o => !o.sieged).length;
   if (own && c.mode !== 'siege') {
     SAVE.store.wood += own * 5; SAVE.store.gold += own * 3;
     lines.push(`Твои деревни прислали на склад ${own * 5} дерева и ${own * 3} золота.`);
   }
   if (c.mode !== 'raid' && !SAVE.raid) {
-    const ids = Object.keys(SAVE.owned).filter(id => !(won && v && id === v.id));
+    const ids = Object.keys(SAVE.owned).filter(id => !SAVE.owned[id].sieged && !(won && v && id === v.id));
     if (ids.length && Math.random() < 0.5) {
       const id = ids[Math.floor(Math.random() * ids.length)], t = V(id);
       SAVE.raid = { id, power: 4 + t.d + SAVE.raids * 2 };
@@ -866,12 +893,34 @@ function draw() {
   }
   X.globalAlpha = 1;
 
+  if (G.phase === 'day' || G.phaseT > G.cfg.nightLen - 8) waveArrows(ox, oy);
+
   // joystick (screen space)
   if (joy.on) {
     X.setTransform(DPR, 0, 0, DPR, 0, 0);
     circle(joy.ox, joy.oy, 46, 'rgba(255,255,255,.06)', 'rgba(255,255,255,.25)', 2);
     const dx = joy.x - joy.ox, dy = joy.y - joy.oy, l = Math.hypot(dx, dy), k = l > 46 ? 46 / l : 1;
     circle(joy.ox + dx * k, joy.oy + dy * k, 20, 'rgba(255,255,255,.3)');
+  }
+}
+// Red chevrons on the screen edge pointing to where tonight's horde comes from.
+function waveArrows(ox, oy) {
+  X.setTransform(DPR, 0, 0, DPR, 0, 0);
+  X.textAlign = 'center'; X.textBaseline = 'middle';
+  const pulse = 0.65 + Math.sin(G.t * 5) * 0.3, m = 40, cx = W / 2, cy = H / 2;
+  for (const a of G.mainAngles) {
+    let sx = ox + Math.cos(a) * 420 * S, sy = oy + Math.sin(a) * 420 * S;
+    const dx = sx - cx, dy = sy - cy;
+    const k = Math.min(1, (W / 2 - m) / Math.max(Math.abs(dx), 1e-6), (H / 2 - m) / Math.max(Math.abs(dy), 1e-6));
+    sx = cx + dx * k; sy = cy + dy * k;
+    X.save(); X.translate(sx, sy); X.rotate(a);
+    X.fillStyle = `rgba(255,80,60,${pulse})`;
+    X.beginPath(); X.moveTo(16, 0); X.lineTo(-9, -13); X.lineTo(-3, 0); X.lineTo(-9, 13); X.closePath(); X.fill();
+    X.restore();
+    X.font = '600 11px Rubik, system-ui, sans-serif';
+    X.lineWidth = 3; X.strokeStyle = 'rgba(0,0,0,.7)';
+    const label = G.phase === 'day' ? 'ночью отсюда' : 'идут', lx = sx - Math.cos(a) * 30, ly = sy - Math.sin(a) * 26;
+    X.strokeText(label, lx, ly); X.fillStyle = `rgba(255,150,130,${pulse})`; X.fillText(label, lx, ly);
   }
 }
 function light(x, y, r) {
@@ -974,7 +1023,8 @@ function setText(id, v) { if (hudCache[id] !== v) { hudCache[id] = v; $(id).text
 function hud() {
   const s = Math.max(0, Math.ceil(G.phaseT));
   const where = G.cfg.v ? G.cfg.v.name + ' · ' : '', of = isFinite(G.cfg.nights) ? ` из ${G.cfg.nights}` : '';
-  setText('phase', G.phase === 'day' ? `${where}День ${G.night + 1} · ночь через ${s} с` : `${where}Ночь ${G.night}${of} · до рассвета ${s} с`);
+  const night = G.needBoss && G.phaseT <= 0 ? 'убей вожака!' : `до рассвета ${s} с`;
+  setText('phase', G.phase === 'day' ? `${where}День ${G.night + 1} · ночь через ${s} с` : `${where}Ночь ${G.night}${of} · ${night}`);
   setText('wood', String(G.wood)); setText('gold', String(G.gold));
   setText('lvl', `Ур. ${G.lvl}`);
   $('fire').style.width = Math.max(0, G.fire.hp / G.fire.max * 100) + '%';
@@ -997,37 +1047,41 @@ function begin(cfg) {
   $('skip').hidden = false;
   G.paused = false; last = performance.now();
   if (cfg.mode === 'liberate') banner(cfg.v.name, cfg.v.tw);
-  else if (cfg.mode === 'raid') banner(`Набег на ${cfg.v.name}`, 'Почини и укрепи деревню до темноты');
+  else if (cfg.mode === 'raid') banner(cfg.lift ? `Сними осаду: ${cfg.v.name}` : `Набег на ${cfg.v.name}`, 'Почини и укрепи деревню до темноты');
   else banner('Осада', 'Наруби дерева и построй защиту до темноты');
 }
 function takeStore() { const s = SAVE.store; SAVE.store = { wood: 0, gold: 0 }; persist(); return s; }
-const beginSiege = () => begin({ mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 40 });
+const beginSiege = () => begin(SIEGE);
 function beginVillage(v) {
   const s = takeStore();
-  begin({ mode: 'liberate', v, nights: v.nights, d: v.d, twist: v.twist, firstDay: 40, wood: s.wood, gold: s.gold });
+  begin({ mode: 'liberate', v, nights: v.nights, d: v.d, twist: v.twist, firstDay: v.firstDay || 30, dayLen: v.dayLen || 18, nightLen: v.nightLen || 50,
+    wood: s.wood, gold: s.gold });
 }
-function beginRaid() {
-  const v = V(SAVE.raid.id), s = takeStore();
-  begin({ mode: 'raid', v, nights: 1, d: v.d + 3 + SAVE.raids, twist: v.twist, firstDay: 20, wood: s.wood + 10, gold: s.gold, buildings: SAVE.owned[v.id].b });
+// One night in your own village: either the incoming raid, or (liftId) lifting a siege.
+function beginRaid(liftId) {
+  const id = liftId || SAVE.raid.id, v = V(id), o = SAVE.owned[id], s = takeStore();
+  const power = liftId ? o.siegePower || 6 : SAVE.raid.power;
+  begin({ mode: 'raid', lift: !!liftId, power, v, nights: 1, d: v.d + 3 + SAVE.raids, twist: v.twist, firstDay: 20, dayLen: 18, nightLen: 50,
+    wood: s.wood + 10, gold: s.gold, buildings: o.b });
 }
 function autoResolve() {
   const r = SAVE.raid, v = V(r.id), o = SAVE.owned[r.id], def = defense(o.b);
   let msg;
   if (def >= r.power) { SAVE.raids++; msg = `${v.name} выстояла сама: оборона ${def} против силы набега ${r.power}.`; }
-  else if (def * 2 >= r.power) {
+  else {
     const hits = [...o.b.walls.map((l, i) => ['walls', i]), ...o.b.towers.map((l, i) => ['towers', i])]
       .filter(([k, i]) => o.b[k][i] > 0).sort(() => Math.random() - 0.5).slice(0, 2);
     for (const [k, i] of hits) o.b[k][i]--;
-    SAVE.raids++;
-    msg = `${v.name} отбилась, но потеряла часть укреплений.`;
-  } else { delete SAVE.owned[r.id]; msg = `${v.name} пала: оборона ${def} против силы набега ${r.power}. Её можно освободить снова.`; }
+    if (def * 2 >= r.power) { SAVE.raids++; msg = `${v.name} отбилась, но потеряла часть укреплений.`; }
+    else { o.sieged = true; o.siegePower = r.power; msg = `${v.name} в осаде: оборона ${def} против силы набега ${r.power}. Деревня твоя, но запасы не шлёт, пока не снимешь осаду.`; }
+  }
   SAVE.raid = null; persist(); renderMap(); selectNode(v, msg);
 }
 
 const unlocked = v => !v.needs.length || v.needs.some(n => SAVE.won[n]);
 function nodeState(v) {
   if (SAVE.raid && SAVE.raid.id === v.id) return 'raid';
-  if (SAVE.owned[v.id]) return 'owned';
+  if (SAVE.owned[v.id]) return SAVE.owned[v.id].sieged ? 'siege' : 'owned';
   if (!unlocked(v)) return 'locked';
   return v.soon ? 'soon' : 'open';
 }
@@ -1136,7 +1190,8 @@ function drawMap(t) {
     if (st === 'owned' || st === 'raid') {
       r = u * 0.25; a = 1;
       if (freedAnim && freedAnim.id === v.id) r *= ease(Math.min(1, (t - freedAnim.t0) / 2.4));
-    } else if (st === 'open') { r = u * 0.12; a = 0.6; }
+    } else if (st === 'siege') { r = u * 0.15; a = 0.75; }
+    else if (st === 'open') { r = u * 0.12; a = 0.6; }
     return { x, y, r: r * (1 + Math.sin(t * 3 + x) * 0.02), a, st, v };
   });
   // the horde's darkness, with lights cut out of it
@@ -1222,9 +1277,9 @@ function villageArt(L, t, u) {
       M.beginPath(); M.arc(x + Math.sin(k * 4 + i) * s * 0.4, y - k * s * 3.2, s * (0.25 + k * 0.5), 0, TAU); M.fill();
     }
   }
-  if (st === 'open' || st === 'raid') {
-    const k = (t * (st === 'raid' ? 1.4 : 0.8)) % 1;
-    M.strokeStyle = st === 'raid' ? `rgba(255,60,40,${1 - k})` : `rgba(255,154,60,${1 - k})`; M.lineWidth = st === 'raid' ? 3 : 2;
+  if (st === 'open' || st === 'raid' || st === 'siege') {
+    const red = st !== 'open', k = (t * (st === 'raid' ? 1.4 : 0.8)) % 1;
+    M.strokeStyle = red ? `rgba(255,60,40,${1 - k})` : `rgba(255,154,60,${1 - k})`; M.lineWidth = st === 'raid' ? 3 : 2;
     M.beginPath(); M.arc(x, y, s * (1.9 + k * 1.8), 0, TAU); M.stroke();
   }
 }
@@ -1249,7 +1304,7 @@ function renderMap() {
     const st = nodeState(v), o = SAVE.owned[v.id], b = document.createElement('button');
     b.type = 'button'; b.className = 'node ' + st; b.dataset.id = v.id;
     b.style.left = v.x + '%'; b.style.top = v.y + '%';
-    const label = { raid: 'Набег!', owned: 'Твоя ' + '★'.repeat(o ? o.stars : 0), locked: 'Закрыто', soon: 'Скоро', open: `${v.nights} ночей` }[st];
+    const label = { raid: 'Набег!', siege: 'В осаде', owned: 'Твоя ' + '★'.repeat(o ? o.stars : 0), locked: 'Закрыто', soon: 'Скоро', open: `${v.nights} ночей` }[st];
     b.innerHTML = `<span class="dot"></span><span class="nm">${v.name}</span><span class="st">${label}</span>`;
     b.onclick = () => selectNode(v);
     f.appendChild(b);
@@ -1266,20 +1321,26 @@ function selectNode(v, note = '') {
     h = `<h3>${v.name}</h3>` + (note ? `<p class="note">${note}</p>` : '');
     if (st === 'raid') {
       const def = defense(o.b), pw = SAVE.raid.power;
-      const guess = def >= pw ? 'Укрепления, скорее всего, выдержат.' : def * 2 >= pw ? 'Выстоят, но с потерями.' : 'Без тебя деревня, скорее всего, падёт.';
+      const guess = def >= pw ? 'Укрепления, скорее всего, выдержат.' : def * 2 >= pw ? 'Выстоят, но с потерями.' : 'Без тебя деревня, скорее всего, окажется в осаде.';
       h += `<p>Орда идёт на деревню. Сила набега <b>${pw}</b>, твоя оборона <b>${def}</b>. ${guess}</p>
         <div class="acts"><button class="btn" id="actDefend" type="button">Защитить самому</button><button class="ghost" id="actAuto" type="button">Положиться на оборону</button></div>
-        <p class="muted">Защищать самому: одна ночь в этой деревне, ты можешь достроить укрепления. Проиграешь, и деревня потеряна.</p>`;
+        <p class="muted">Защищать самому: одна ночь в этой деревне, можно достроить укрепления. Проиграешь, и деревня окажется в осаде, но останется твоей. Набег подождёт, пока ты освобождаешь другие деревни.</p>`;
+    } else if (st === 'siege') {
+      h += `<p>Деревня в осаде: держится, но не присылает запасы. Оборона <b>${defense(o.b)}</b>, сила осады <b>${o.siegePower}</b>.</p>
+        <div class="acts"><button class="btn" id="actLift" type="button">Снять осаду</button></div>
+        <p class="muted">Одна ночь в этой деревне. Проиграешь, и деревня просто останется в осаде.</p>`;
     } else if (st === 'owned') h += `<p>Твоя деревня. Оборона <b>${defense(o.b)}</b>: ${describe(o.b)}.</p><p class="muted">Присылает 5 дерева и 3 золота после каждого забега. Чем крепче оборона, тем легче она переживёт набег без тебя.</p>`;
     else if (st === 'open') h += (v.say ? `<p class="say">${v.say}</p>` : '') + `<p>${v.tw}</p><p class="muted">${v.nights} ночей, в последнюю придёт вожак.</p>` +
-      (raidV ? `<p class="note">Сначала разберись с набегом на ${raidV.name}.</p>` : '<div class="acts"><button class="btn" id="actGo" type="button">Освободить</button></div>');
+      '<div class="acts"><button class="btn" id="actGo" type="button">Освободить</button></div>' +
+      (raidV ? `<p class="muted">Набег на ${raidV.name} подождёт, пока ты в походе.</p>` : '');
     else if (st === 'locked') h += `<p>${v.tw}</p><p class="muted">Откроется, когда освободишь: ${v.needs.map(n => V(n).name).join(' или ')}.</p>`;
     else h += `<p>${v.tw}</p><p class="muted">Эта глава ещё пишется.</p>`;
   }
   if (SAVE.store.wood || SAVE.store.gold) h += `<p class="muted">Всё со склада уйдёт с тобой в следующий забег.</p>`;
   $('panel').innerHTML = h;
   if ($('actGo')) $('actGo').onclick = () => beginVillage(v);
-  if ($('actDefend')) $('actDefend').onclick = beginRaid;
+  if ($('actDefend')) $('actDefend').onclick = () => beginRaid();
+  if ($('actLift')) $('actLift').onclick = () => beginRaid(v.id);
   if ($('actAuto')) $('actAuto').onclick = autoResolve;
   document.querySelectorAll('.node').forEach(n => n.classList.toggle('sel', !!v && n.dataset.id === v.id));
 }
