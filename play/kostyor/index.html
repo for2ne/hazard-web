@@ -422,6 +422,9 @@ const TOWER_HP = [300, 600, 1000], TOWER_R = 20;   // a tower is an obstacle zom
 const towerInvested = lvl => TOWER.slice(0, lvl).reduce((a, t) => ({ wood: a.wood + t.wood, gold: a.gold + t.gold }), { wood: 0, gold: 0 });
 
 // Parts of the frame that can be switched off for the bench() measurement.
+// Experiment: pitch-dark nights in the fog village (Лесная). Outside the light of the fire, the hero and the towers it is
+// black, only zombie eyes glow. on: false brings back the old fog night (0.93 dark, lights at 72%); git tag kostyor-before-dark-night.
+const PITCH = { on: true, dark: 0.99, light: 0.9 };
 const PERF = { ground: true, fire: true, units: true, trees: true, fx: true, dark: true, text: true };
 let G;
 const SIEGE = { mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 35, dayLen: 22, nightLen: 55 };
@@ -711,7 +714,7 @@ function update(dt) {
       } else startDay();
     }
   }
-  G.darkA += ((G.phase === 'night' ? (G.cfg.twist === 'fog' ? 0.93 : 0.8) : 0) - G.darkA) * Math.min(1, dt * 0.8);
+  G.darkA += ((G.phase === 'night' ? (G.cfg.twist === 'fog' ? (PITCH.on ? PITCH.dark : 0.93) : 0.8) : 0) - G.darkA) * Math.min(1, dt * 0.8);
 
   // hero
   if (h.dead > 0) {
@@ -1201,7 +1204,7 @@ function draw() {
     const dk = DPR * DARK_RES;
     D.setTransform(dk * S, 0, 0, dk * S, dk * ox, dk * oy);
     const flick = Math.sin(G.t * 13) * 6 + Math.sin(G.t * 7.3) * 5;
-    const fogK = G.cfg.twist === 'fog' ? 0.72 : 1;
+    const fogK = G.cfg.twist === 'fog' ? (PITCH.on ? PITCH.light : 0.72) : 1;
     light(0, 0, (250 + flick + G.fire.hp / G.fire.max * 40) * fogK);
     if (!h.dead) light(h.x, h.y, 140 * fogK);
     for (const s of G.slots) if (s.kind === 'tower' && s.lvl && s.hp > 0) light(s.x, s.y, 95 * fogK);
@@ -1219,7 +1222,13 @@ function draw() {
     // zombie eyes glow through the dark
     for (const z of G.zombies) {
       if (offView(z.x, z.y, 60)) continue;
-      for (const [ex, ey] of eyesOf(z)) circle(ex, ey, z.kind === 'brute' || z.kind === 'boss' ? 2.2 : 1.8, '#ff5a3a');
+      const er = z.kind === 'brute' || z.kind === 'boss' ? 2.2 : 1.8;
+      if (G.darkA > 0.9) {   // pitch dark: the eyes carry a red glow, so pairs of them hang in the black
+        X.globalCompositeOperation = 'lighter';
+        for (const [ex, ey] of eyesOf(z)) { X.globalAlpha = 0.35; circle(ex, ey, er * 3.2, '#ff3a1a'); }
+        X.globalAlpha = 1; X.globalCompositeOperation = 'source-over';
+      }
+      for (const [ex, ey] of eyesOf(z)) circle(ex, ey, er, '#ff5a3a');
     }
   }
   if (lootAfterDark) drawLoot();
@@ -1987,10 +1996,12 @@ function autoResolve() {
 }
 
 const unlocked = v => !v.needs.length || v.needs.some(n => SAVE.won[n]);
+// Playtest: every village is open and freed ones can be replayed. false = the campaign order (each one opens the next).
+const OPEN_ALL = true;
 function nodeState(v) {
   if (SAVE.raid && SAVE.raid.id === v.id) return 'raid';
   if (SAVE.owned[v.id]) return SAVE.owned[v.id].sieged ? 'siege' : 'owned';
-  if (!unlocked(v)) return 'locked';
+  if (!unlocked(v) && !(OPEN_ALL && !v.soon)) return 'locked';
   return v.soon ? 'soon' : 'open';
 }
 // ---------- the map: the land is dark, your villages are lights ----------
@@ -2213,7 +2224,8 @@ function selectNode(v) {
       h += `<div class="stat"><span>${ic('shield')}${defense(o.b)}</span><span class="vs">vs</span><span>${ic('horde')}${o.siegePower}</span></div>
         <div class="acts"><button class="btn go" id="actLift" type="button"><span class="ico swords"></span>В бой!</button></div>`;
     } else if (st === 'owned') h += `<div class="stat">${stars}<span>${ic('shield')}${defense(o.b)}</span></div>
-        <div class="stat"><span>${ic('wood')}+5</span><span>${ic('gold')}+3</span></div>`;
+        <div class="stat"><span>${ic('wood')}+5</span><span>${ic('gold')}+3</span></div>` +
+        (OPEN_ALL ? '<div class="acts"><button class="btn go" id="actGo" type="button"><span class="ico swords"></span>В бой!</button></div>' : '');
     else if (st === 'open') h += `<p>${v.tw}</p><div class="stat"><span>${ic('moon')}${v.nights}</span><span>${ic('crown')}</span></div>` +
       '<div class="acts"><button class="btn go" id="actGo" type="button"><span class="ico swords"></span>В бой!</button></div>';
     else if (st === 'locked') h += `<div class="stat"><span>${ic('lock')}</span><span>${v.needs.map(n => V(n).name).join(' / ')}</span></div>`;
@@ -2302,6 +2314,9 @@ window.bench = async () => {
   out.again = await measure(); out.dpr = DPR; out.screen = `${W}x${H}`; out.zombies = G.zombies.length;
   window.benchResult = out; return out;
 };
+// test shortcut: #v=<village id> (mill, river, forest, grave) skips the menu and starts that village straight away
+const jump = /^#v=(\w+)/.exec(location.hash);
+if (jump && V(jump[1]) && !V(jump[1]).soon) { $('start').hidden = true; beginVillage(V(jump[1])); }
 // screenshots and checks from outside: open with #qa
 if (location.hash === '#qa') window.QA = { showMap, selectNode, beginVillage, V, SAVE, get G() { return G; }, get map() { return { mapPan, panelBox, mapView, mapW, mapH }; } };
 })();
