@@ -427,13 +427,14 @@ const TOWER = [
 const FORGE_WOOD = 15;
 // Torches: cheap light on the approaches, out past the walls. A zombie that walks into one knocks it out (it does not
 // hunt them); standing on its pad relights it, day or night. Pads per village: angle in degrees, distance from the fire.
-const TORCH = { wood: 3, relight: 1, hp: 25, r: 7, light: 115 };
+// Zombies fear fire: inside a torch's light they walk at TORCH.fear of their speed, so a torch is also a trap on the way in.
+const TORCH = { wood: 3, relight: 1, hp: 25, r: 9, light: 115, fear: 0.65, size: 30 };
 const TORCH_PADS = {
-  mill: [[45, 245], [135, 245], [225, 245], [315, 245]],
-  river: [[-18, 250], [18, 250], [162, 250], [198, 250]],
-  forest: [[30, 235], [90, 250], [150, 235], [210, 235], [270, 250], [330, 235]],
-  grave: [[0, 250], [60, 230], [120, 230], [180, 250], [240, 230], [300, 230]],
-  siege: [[30, 245], [90, 255], [150, 245], [210, 245], [270, 255], [330, 245]],
+  mill: [[45, 330], [135, 330], [225, 330], [315, 330]],
+  river: [[-12, 345], [12, 345], [168, 345], [192, 345]],
+  forest: [[30, 330], [90, 350], [150, 330], [210, 330], [270, 350], [330, 330]],
+  grave: [[0, 345], [60, 330], [120, 330], [180, 345], [240, 330], [300, 330]],
+  siege: [[30, 335], [90, 350], [150, 335], [210, 335], [270, 350], [330, 335]],
 };
 const TOWER_HP = [300, 600, 1000], TOWER_R = 20;   // a tower is an obstacle zombies can break (Astra's numbers)
 const towerInvested = lvl => TOWER.slice(0, lvl).reduce((a, t) => ({ wood: a.wood + t.wood, gold: a.gold + t.gold }), { wood: 0, gold: 0 });
@@ -519,6 +520,7 @@ function newGame(cfg = SIEGE) {
     const a = Math.random() * TAU, r = rnd(270, 820);
     const t = { x: Math.cos(a) * r, y: Math.sin(a) * r, r: rnd(18, 26), wood: 4, shake: 0 };
     if (cfg.twist === 'river' && Math.abs(t.y) > 280 && Math.abs(t.y) < 390) continue;
+    if (G.slots.some(o => o.kind === 'torch' && d2(o, t) < 60 * 60)) continue;   // keep torch pads clear
     if (G.trees.every(o => d2(o, t) > 55 * 55)) G.trees.push(t);
   }
   if (cfg.twist === 'graves') for (let i = 0; i < 7; i++) {
@@ -865,7 +867,8 @@ function update(dt) {
   // zombies
   const posts = [];
   for (const s of G.slots) if (s.kind === 'wall') for (const p of s.posts) if (p.hp > 0) posts.push(p);
-  for (const s of G.slots) if (s.kind === 'torch' && s.lvl && s.hp > 0) posts.push(s);   // a lit torch in the way gets knocked out
+  const torchesLit = G.slots.filter(s => s.kind === 'torch' && s.lvl && s.hp > 0);
+  for (const s of torchesLit) posts.push(s);   // a lit torch in the way gets knocked out
   const towers = G.slots.filter(s => s.kind === 'tower' && s.lvl && s.hp > 0);
   for (const t of towers) t.attackers = 0;
   if (G.hunter && (G.hunter.hp <= 0 || !G.hunter.target || G.hunter.target.hp <= 0)) { if (G.hunter) G.hunter.target = null; G.hunter = null; }
@@ -898,7 +901,8 @@ function update(dt) {
       }
     } else {
       z.wob += dt * z.spd * 0.16;
-      z.x += z.fx * z.spd * dt; z.y += z.fy * z.spd * dt;
+      const fear = torchesLit.some(t => (z.x - t.x) ** 2 + (z.y - t.y) ** 2 < (TORCH.light * 0.8) ** 2) ? TORCH.fear : 1;
+      z.x += z.fx * z.spd * fear * dt; z.y += z.fy * z.spd * fear * dt;
     }
     z.block = null;
     for (const p of posts) {
@@ -1348,17 +1352,19 @@ function light(x, y, r) {
   D.fillStyle = g; D.beginPath(); D.arc(x, y, r, 0, TAU); D.fill();
 }
 // What standing on a pad gives you, as a picture: the building (or its next level) with a green arrow for upgrades.
+// the brazier sprite (art/sprites/top/torch, torchOut) with a flickering warm glow; shapes until the sprites load
 function drawTorch(x, y, lit, seed, k = 1) {
-  circle(x + 1.5, y + 2.5, 6 * k, 'rgba(0,0,0,.3)');
-  circle(x, y, 5.5 * k, '#5a3a1e', '#2a1a0c', 1.5);
-  if (!lit) { circle(x, y, 3.2 * k, '#2b2622'); circle(x - 1, y - 1, 1.2 * k, '#6a6058'); return; }
-  const f = 1 + Math.sin(G.t * 13 + seed) * 0.12 + Math.sin(G.t * 7.7 + seed * 2) * 0.08;
-  X.save(); X.globalCompositeOperation = 'lighter';
-  const g = X.createRadialGradient(x, y, 0, x, y, 22 * k * f);
-  g.addColorStop(0, 'rgba(255,170,60,.55)'); g.addColorStop(1, 'rgba(255,120,30,0)');
-  X.fillStyle = g; X.beginPath(); X.arc(x, y, 22 * k * f, 0, TAU); X.fill();
-  X.restore();
-  circle(x, y, 6.5 * k * f, '#ff7a1e'); circle(x - 0.5, y - 0.5, 4.4 * k * f, '#ffb43a'); circle(x - 1, y - 1, 2.2 * k * f, '#fff1b0');
+  const f = 1 + Math.sin(G.t * 13 + seed) * 0.06 + Math.sin(G.t * 7.7 + seed * 2) * 0.04;
+  if (lit) {
+    X.save(); X.globalCompositeOperation = 'lighter';
+    const g = X.createRadialGradient(x, y, 0, x, y, 26 * k * f);
+    g.addColorStop(0, 'rgba(255,170,60,.5)'); g.addColorStop(1, 'rgba(255,120,30,0)');
+    X.fillStyle = g; X.beginPath(); X.arc(x, y, 26 * k * f, 0, TAU); X.fill();
+    X.restore();
+  }
+  if (spr(lit ? 'torch' : 'torchOut', x, y, TORCH.size * k * (lit ? f : 1), 0, 0, X.globalAlpha)) return;
+  circle(x, y, 7 * k, '#3a3d42', '#1a1c20', 1.5);
+  if (lit) { circle(x, y, 5 * k * f, '#ff7a1e'); circle(x - 0.5, y - 0.5, 3 * k * f, '#ffd25a'); } else circle(x, y, 4 * k, '#2b2622');
 }
 function padIcon(s, act, ok) {
   const x = s.px, y = s.py, a = ok ? 0.95 : 0.5;
@@ -1428,7 +1434,7 @@ for (const k of ['walker', 'runner', 'brute', 'boss']) for (const f of ['Wind', 
 // attack frames sized and placed so their shirt sits on the standing sprite's shirt (fractions of the sprite's longer side)
 const ZATTACK = {"walker": {"Wind": {"size": 1.1084, "ox": 0.0006, "oy": -0.1904}, "Hit": {"size": 1.1801, "ox": 0.0091, "oy": 0.0493}}, "runner": {"Wind": {"size": 0.8831, "ox": -0.0633, "oy": 0.0532}, "Hit": {"size": 0.9028, "ox": 0.0783, "oy": 0.041}}, "brute": {"Wind": {"size": 1.0257, "ox": -0.007, "oy": -0.3538}, "Hit": {"size": 1.0627, "ox": -0.0142, "oy": 0.1709}}, "boss": {"Wind": {"size": 1.1911, "ox": 0.0078, "oy": -0.0223}, "Hit": {"size": 1.0087, "ox": 0.0016, "oy": 0.1047}}};
 for (const k of ['walker', 'runner', 'brute', 'boss']) for (const i of ['0', '1', '2', '3', 'Fall1', 'Fall2']) { const im = new Image(); im.src = `art/sprites/corpse/${k}${i}.png`; SPR['dead_' + k + i] = im; }
-for (const r of ['hero', 'heroShoot', 'heroAxe2', 'heroAxe4', 'walker', 'runner', 'brute', 'boss', 'arrow', 'fireLow', 'tower1', 'tower2', 'forge', 'tree', 'pine', 'oak', 'stump', 'grave', 'gold', 'crystal']) {
+for (const r of ['hero', 'heroShoot', 'heroAxe2', 'heroAxe4', 'walker', 'runner', 'brute', 'boss', 'arrow', 'fireLow', 'tower1', 'tower2', 'forge', 'tree', 'pine', 'oak', 'stump', 'grave', 'gold', 'crystal', 'torch', 'torchOut']) {
   const i = new Image(); i.src = `art/sprites/top/${r}.png`; SPR[r] = i;
 }
 // Sprites are pre-scaled once to the size they take on screen (big source PNGs are slow to shrink every frame).
