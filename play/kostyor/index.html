@@ -767,6 +767,19 @@ function update(dt) {
     if (mx || my) { h.fx = mx; h.fy = my; }
     const R = 880, l = Math.hypot(h.x, h.y); if (l > R) { h.x *= R / l; h.y *= R / l; }
     const fd = Math.hypot(h.x, h.y); if (fd < 34) { h.x *= 34 / (fd || 1); h.y *= 34 / (fd || 1); }
+    // standing wall stakes and towers stop the hero the same way they stop zombies (it slides along them);
+    // the gaps between wall sections, where the towers stand, stay open
+    for (const sl of G.slots) {
+      if (sl.kind === 'wall') {
+        for (const p of sl.posts) if (p.hp > 0) {
+          const ddx = h.x - p.x, ddy = h.y - p.y, dd = Math.hypot(ddx, ddy), m = h.r + p.r;
+          if (dd < m) { h.x = p.x + ddx / (dd || 1) * m; h.y = p.y + ddy / (dd || 1) * m; }
+        }
+      } else if (sl.kind === 'tower' && sl.lvl && sl.hp > 0) {
+        const ddx = h.x - sl.x, ddy = h.y - sl.y, dd = Math.hypot(ddx, ddy), m = h.r + TOWER_R;
+        if (dd < m) { h.x = sl.x + ddx / (dd || 1) * m; h.y = sl.y + ddy / (dd || 1) * m; }
+      }
+    }
 
     // shooting
     h.cd -= dt;
