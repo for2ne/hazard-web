@@ -1,0 +1,51 @@
+{
+ "canvas": 1024,
+ "heroSize": 0.7803,
+ "tipL": [
+  -0.3252,
+  0.1426
+ ],
+ "tipR": [
+  0.3252,
+  0.1279
+ ],
+ "grip": [
+  0.0,
+  0.2251
+ ],
+ "nock": [
+  -0.0039,
+  0.0977
+ ],
+ "arrowTip": [
+  0.0186,
+  0.3711
+ ],
+ "layers": [
+  {
+   "file": "quiver.png",
+   "role": "quiver",
+   "z": 1
+  },
+  {
+   "file": "hooded_character_body.png",
+   "role": "body",
+   "z": 2
+  },
+  {
+   "file": "bow.png",
+   "role": "bow",
+   "z": 3
+  },
+  {
+   "file": "arrow.png",
+   "role": "arrow",
+   "z": 4
+  },
+  {
+   "file": "nock_hand.png",
+   "role": "hand",
+   "z": 5
+  }
+ ]
+}

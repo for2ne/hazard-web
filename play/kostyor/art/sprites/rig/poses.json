@@ -1,0 +1,37 @@
+{
+ "half": {
+  "file": "pose-half.png",
+  "hand": [
+   -0.0059,
+   0.043
+  ]
+ },
+ "full": {
+  "file": "pose-full.png",
+  "hand": [
+   -0.0098,
+   -0.0117
+  ]
+ },
+ "loose": {
+  "file": "pose-loose.png",
+  "hand": [
+   -0.0332,
+   -0.0352
+  ]
+ },
+ "reach": {
+  "file": "pose-reach.png",
+  "hand": [
+   -0.1855,
+   -0.207
+  ]
+ },
+ "rest": {
+  "file": "pose-rest.png",
+  "hand": [
+   -0.0039,
+   0.0977
+  ]
+ }
+}

@@ -42,6 +42,12 @@ canvas { position: fixed; inset: 0; display: block; }
 .hud-left, .hud-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .pill { background: var(--panel); border: 1px solid rgba(239, 230, 210, 0.12); border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 14px;
   display: flex; gap: 6px; align-items: center; font-variant-numeric: tabular-nums; }
+.hic { width: 18px; height: 18px; display: block; flex: none; }
+.hic.fire { color: var(--ember); }
+#phaseIcon { color: var(--gold); }
+#phaseIcon.night { color: var(--frost); }
+#skip { display: flex; align-items: center; gap: 0; }
+#menuBtn { display: flex; align-items: center; }
 .pill b { font-family: var(--display); font-weight: 400; letter-spacing: 0.02em; }
 .ico { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 .ico.wood { background: var(--wood); box-shadow: inset 0 -3px 0 rgba(0,0,0,.25); }
@@ -62,7 +68,7 @@ canvas { position: fixed; inset: 0; display: block; }
 .banner.show { opacity: 1; }
 .banner small { display: block; font-family: var(--body); font-weight: 600; font-size: 15px; letter-spacing: 0; opacity: .8; margin-top: 6px; }
 
-.modal { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(6, 9, 13, 0.72); padding: 16px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px)); overflow: auto; }
+.modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; background: rgba(6, 9, 13, 0.72); padding: 16px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px)); overflow: auto; }
 .sheet { max-width: 560px; width: 100%; text-align: center; display: grid; gap: 14px; }
 .sheet h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 9vmin, 64px); line-height: 1; color: var(--ember); text-wrap: balance;
   text-shadow: 0 0 28px rgba(255, 154, 60, .45); margin: 0; }
@@ -139,14 +145,14 @@ canvas { position: fixed; inset: 0; display: block; }
 
 <div class="hud">
   <div class="hud-left">
-    <div class="pill" id="phase">День 1</div>
+    <div class="pill"><svg class="hic" id="phaseIcon" viewBox="0 0 24 24" aria-hidden="true"></svg><b id="phase">35</b></div>
     <div class="pill"><span class="ico wood"></span><b id="wood">0</b></div>
     <div class="pill"><span class="ico gold"></span><b id="gold">0</b></div>
   </div>
   <div class="hud-right">
-    <button id="menuBtn" type="button" aria-label="Меню">Меню</button>
-    <button id="skip" type="button">Начать ночь</button>
-    <div class="pill">Костёр <div class="firebar"><i id="fire"></i></div></div>
+    <button id="menuBtn" type="button" aria-label="Меню"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+    <button id="skip" type="button" aria-label="Начать ночь сейчас"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3a8 8 0 1 0 6 13 7 7 0 0 1-6-13z" fill="currentColor"/></svg><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6l7 6-7 6zM12 6l7 6-7 6z" fill="currentColor"/></svg></button>
+    <div class="pill" aria-label="Костёр"><svg class="hic fire" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3-1-5 1-8z" fill="currentColor"/></svg><div class="firebar"><i id="fire"></i></div></div>
   </div>
 </div>
 <div class="xp"><span id="lvl">Ур. 1</span><div class="bar"><i id="xpbar"></i></div></div>
@@ -189,10 +195,12 @@ canvas { position: fixed; inset: 0; display: block; }
   <div class="sheet">
     <h2>Настройки</h2>
     <div class="menu-list">
+      <button class="ghost" id="sfxToggle" type="button">Звук: вкл</button>
+      <button class="ghost" id="musicToggle" type="button">Музыка: вкл</button>
       <button class="ghost danger" id="reset" type="button">Сбросить весь прогресс</button>
       <button class="btn" id="settingsClose" type="button">Готово</button>
     </div>
-    <p class="muted">Звук и выбор управления появятся позже.</p>
+    <p class="muted">Выбор управления появится позже.</p>
   </div>
 </div>
 
@@ -224,10 +232,14 @@ canvas { position: fixed; inset: 0; display: block; }
 const cv = document.getElementById('c'), X = cv.getContext('2d');
 const dark = document.createElement('canvas'), D = dark.getContext('2d');
 let W = 0, H = 0, DPR = 1, S = 1;
+// Render scale: up to 1.5x the CSS pixels, dropped to 1x automatically when the frame rate cannot keep up.
+let maxDPR = 2;   // native on Retina; steps down only when the frame rate really suffers (see frame())
+const DARK_RES = 0.25;   // the night layer is soft gradients only, so it is drawn at a quarter of the resolution and stretched
 function resize() {
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  DPR = Math.min(window.devicePixelRatio || 1, maxDPR);
   W = innerWidth; H = innerHeight;
-  for (const c of [cv, dark]) { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); }
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  dark.width = Math.max(1, Math.round(W * DPR * DARK_RES)); dark.height = Math.max(1, Math.round(H * DPR * DARK_RES));
   cv.style.width = W + 'px'; cv.style.height = H + 'px';
   // Same amount of world on screen in portrait and landscape (about 450k square units), whatever the browser bars do.
   S = Math.max(0.5, Math.sqrt(W * H / 450000));
@@ -259,6 +271,65 @@ const ROADS = [['mill', 'river'], ['mill', 'forest'], ['river', 'grave'], ['fore
 const V = id => VILLAGES.find(v => v.id === id);
 let SAVE = { won: {}, owned: {}, store: { wood: 0, gold: 0 }, raid: null, raids: 0 };
 try { const s = JSON.parse(localStorage.getItem('kostyor.save')); if (s) SAVE = Object.assign(SAVE, s); } catch (e) {}
+// ---------- sound ----------
+// Web Audio: every effect has a few takes (art/audio/<name><n>.mp3) and a random small pitch shift, so repeats never sound
+// the same; each sound has a cap on simultaneous voices and a minimum gap, so 200 zombies do not turn into noise; sounds
+// far from the camera are quieter. Two music loops (day, night) crossfade. Starts on the first touch or key (browser rule).
+const SOUNDS = {"bow": 3, "hit": 3, "die": 3, "fall": 2, "pop": 2, "chop": 3, "coin": 3, "coins": 1, "gem": 2, "build": 2, "upgrade": 1, "wall": 2, "claw": 2, "hurt": 2, "herodie": 1, "fire": 1, "night": 1, "dawn": 1, "boss": 1, "bossdie": 1, "combo": 1, "card": 1, "click": 1, "groan": 3};
+const SND = { ctx: null, buf: {}, voices: {}, last: {}, sfx: null, music: null, tracks: {}, cur: null, want: 'menu',
+  on: { sfx: true, music: true } };
+try { Object.assign(SND.on, JSON.parse(localStorage.getItem('kostyor.audio') || '{}')); } catch (e) {}
+function sndUnlock() {
+  if (SND.ctx) { if (SND.ctx.state === 'suspended') SND.ctx.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+  const ctx = SND.ctx = new AC();
+  SND.master = ctx.createGain(); SND.master.connect(ctx.destination);
+  SND.sfx = ctx.createGain(); SND.sfx.gain.value = SND.on.sfx ? 0.8 : 0; SND.sfx.connect(SND.master);
+  SND.music = ctx.createGain(); SND.music.gain.value = SND.on.music ? 0.38 : 0; SND.music.connect(SND.master);
+  const load = (key, url) => fetch(url).then(r => r.arrayBuffer()).then(b => ctx.decodeAudioData(b)).then(d => { SND.buf[key] = d; }).catch(() => {});
+  for (const [n, k] of Object.entries(SOUNDS)) for (let i = 1; i <= k; i++) load(n + i, `art/audio/${n}${i}.mp3`);
+  Promise.all(['menu', 'day', 'night'].map(m => load('music_' + m, `art/audio/music_${m}.mp3`))).then(() => music(SND.want, 1.5));
+}
+addEventListener('pointerdown', sndUnlock); addEventListener('keydown', sndUnlock);
+// play an effect: at (x, y) in the world (quieter far from the camera), with a voice cap and a minimum gap per sound
+function sfx(name, o = {}) {
+  const ctx = SND.ctx; if (!ctx || !SND.on.sfx) return;
+  const k = SOUNDS[name]; if (!k) return;
+  const now = ctx.currentTime, max = o.max ?? 3, gap = o.gap ?? 0.03;
+  if ((SND.voices[name] || 0) >= max || now - (SND.last[name] || -9) < gap) return;
+  let vol = o.vol ?? 1;
+  if (o.x != null && G) { const dd = Math.hypot(o.x - G.cam.x, o.y - G.cam.y); vol *= Math.max(0, 1 - dd / 900); if (vol < 0.03) return; }
+  const buf = SND.buf[name + (1 + Math.floor(Math.random() * k))]; if (!buf) return;
+  const src = ctx.createBufferSource(), g = ctx.createGain();
+  src.buffer = buf; src.playbackRate.value = (1 + (o.pitch || 0)) * (1 + (Math.random() - 0.5) * (o.vary ?? 0.14));
+  g.gain.value = vol; src.connect(g); g.connect(SND.sfx);
+  SND.voices[name] = (SND.voices[name] || 0) + 1; SND.last[name] = now;
+  src.onended = () => { SND.voices[name]--; };
+  src.start();
+}
+// switch the music loop to 'day' or 'night' with a crossfade
+function music(which, fade = 2.5) {
+  SND.want = which;
+  const ctx = SND.ctx; if (!ctx) return;
+  const buf = SND.buf['music_' + which]; if (!buf || SND.cur === which) return;
+  const now = ctx.currentTime;
+  for (const [name, t] of Object.entries(SND.tracks)) { t.g.gain.cancelScheduledValues(now); t.g.gain.setValueAtTime(t.g.gain.value, now); t.g.gain.linearRampToValueAtTime(0, now + fade); t.src.stop(now + fade + 0.1); delete SND.tracks[name]; }
+  const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = buf; src.loop = true;
+  g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(1, now + fade); src.connect(g); g.connect(SND.music); src.start();
+  SND.tracks[which] = { src, g }; SND.cur = which;
+}
+function sndToggle(kind) {
+  SND.on[kind] = !SND.on[kind];
+  try { localStorage.setItem('kostyor.audio', JSON.stringify(SND.on)); } catch (e) {}
+  const node = kind === 'sfx' ? SND.sfx : SND.music;
+  if (node) node.gain.value = SND.on[kind] ? (kind === 'sfx' ? 0.8 : 0.38) : 0;
+  sndLabels();
+}
+function sndLabels() {
+  $('sfxToggle').textContent = 'Звук: ' + (SND.on.sfx ? 'вкл' : 'выкл');
+  $('musicToggle').textContent = 'Музыка: ' + (SND.on.music ? 'вкл' : 'выкл');
+}
+
 function persist() { try { localStorage.setItem('kostyor.save', JSON.stringify(SAVE)); } catch (e) {} }
 const defense = b => b.walls.reduce((a, l) => a + l * 2, 0) + b.towers.reduce((a, l) => a + l * 3, 0) + (b.forge ? 1 : 0);
 const describe = b => `заборов ${b.walls.filter(l => l).length} из 4, башен ${b.towers.filter(l => l).length} из 4${b.forge ? ', кузница' : ''}`;
@@ -299,10 +370,15 @@ const TOWER = [
   { wood: 25, gold: 25, dmg: 22, rate: 1.7, range: 290 },
 ];
 const FORGE_WOOD = 15;
+const TOWER_HP = [300, 600, 1000], TOWER_R = 20;   // a tower is an obstacle zombies can break (Astra's numbers)
+const towerInvested = lvl => TOWER.slice(0, lvl).reduce((a, t) => ({ wood: a.wood + t.wood, gold: a.gold + t.gold }), { wood: 0, gold: 0 });
 
+// Parts of the frame that can be switched off for the bench() measurement.
+const PERF = { ground: true, fire: true, units: true, trees: true, fx: true, dark: true, text: true };
 let G;
 const SIEGE = { mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 35, dayLen: 22, nightLen: 55 };
 function newGame(cfg = SIEGE) {
+  music('day');
   G = {
     cfg, t: 0, phase: 'day', phaseT: cfg.firstDay, night: 0, darkA: 0,
     wood: cfg.wood || 0, gold: cfg.gold || 0, graves: [], spawnEvery: 1,
@@ -311,7 +387,7 @@ function newGame(cfg = SIEGE) {
     stat: { dmg: 10, rate: 1.6, range: 210, multi: 1, pierce: 0, magnet: 70, chop: 1, aura: 0 },
     lvls: {},
     xp: 0, lvl: 1, xpNext: 5, pending: 0,
-    zombies: [], shots: [], drops: [], fx: [], texts: [], trees: [], slots: [],
+    zombies: [], shots: [], drops: [], fx: [], texts: [], trees: [], slots: [], corpses: [], slashes: [], stains: [], rolls: [], combo: { n: 0, t: -9 }, slowT: 0, flash: 0,
     spawnQ: [], spawnT: 0, mainAngles: [], forgeUses: 0,
     cam: { x: 0, y: 30 }, shake: 0, paused: true, over: false,
   };
@@ -319,20 +395,20 @@ function newGame(cfg = SIEGE) {
     const a = i * TAU / 4 - Math.PI / 2;
     const posts = [];
     for (let k = -3; k <= 3; k++) posts.push({ x: Math.cos(a + k * 0.13) * 178, y: Math.sin(a + k * 0.13) * 178, r: 11, hp: 0, max: 0 });
-    G.slots.push({ kind: 'wall', name: 'Забор', x: Math.cos(a) * 140, y: Math.sin(a) * 140, lvl: 0, hold: 0, posts });
+    G.slots.push({ kind: 'wall', name: 'Забор', x: Math.cos(a) * 140, y: Math.sin(a) * 140, px: Math.cos(a) * 140, py: Math.sin(a) * 140, lvl: 0, hold: 0, posts });
   }
   for (let i = 0; i < 4; i++) {
     const a = i * TAU / 4 + Math.PI / 4;
-    G.slots.push({ kind: 'tower', name: 'Башня', x: Math.cos(a) * 112, y: Math.sin(a) * 112, lvl: 0, hold: 0, cd: 0 });
+    G.slots.push({ kind: 'tower', name: 'Башня', x: Math.cos(a) * 116, y: Math.sin(a) * 116, px: Math.cos(a) * 74, py: Math.sin(a) * 74, lvl: 0, hold: 0, cd: 0 });
   }
-  G.slots.push({ kind: 'forge', name: 'Кузница', x: 0, y: 66, lvl: 0, hold: 0 });
+  G.slots.push({ kind: 'forge', name: 'Кузница', x: 0, y: 100, px: 0, py: 60, lvl: 0, hold: 0 });
   if (cfg.buildings) {
     const b = cfg.buildings;
     G.slots.filter(s => s.kind === 'wall').forEach((s, i) => {
       s.lvl = b.walls[i] || 0;
       if (s.lvl) for (const p of s.posts) p.max = p.hp = WALL_HP[s.lvl - 1];
     });
-    G.slots.filter(s => s.kind === 'tower').forEach((s, i) => { s.lvl = b.towers[i] || 0; });
+    G.slots.filter(s => s.kind === 'tower').forEach((s, i) => { s.lvl = b.towers[i] || 0; if (s.lvl) s.hp = s.max = TOWER_HP[s.lvl - 1]; });
     G.slots.find(s => s.kind === 'forge').lvl = b.forge || 0;
   }
   const treeCount = cfg.twist === 'fog' ? 80 : 46;
@@ -397,8 +473,19 @@ function moveInput() {
 }
 
 // ---------- helpers ----------
-function text(x, y, s, col, size = 13) { G.texts.push({ x, y, s, col, t: 0, size }); }
+function text(x, y, s, col, size = 13) { if (G.texts.length < 60) G.texts.push({ x, y, s, col, t: 0, size }); }
+// zombie goo: dark drops thrown along the blow, each leaving a stain on the ground
+const GOO = ['#3f4f22', '#556b2a', '#5a2a1c', '#2d3a18'];
+function splatter(x, y, dx, dy, n, big) {
+  n = Math.min(n, 400 - G.fx.length);
+  const base = Math.atan2(dy, dx);
+  for (let i = 0; i < n; i++) {
+    const a = base + rnd(-0.6, 0.6), v = rnd(50, big ? 160 : 120);
+    G.fx.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, max: rnd(0.18, 0.32), col: GOO[i % GOO.length], r: rnd(1.4, big ? 3.2 : 2.6), stain: Math.random() < 0.45 });
+  }
+}
 function burst(x, y, col, n = 8, sp = 90) {
+  n = Math.min(n, 400 - G.fx.length);
   for (let i = 0; i < n; i++) {
     const a = Math.random() * TAU, v = rnd(sp * 0.3, sp);
     G.fx.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, max: rnd(0.3, 0.7), col, r: rnd(1.5, 3.5) });
@@ -440,7 +527,7 @@ function offerCards(title) {
     const lv = G.lvls[u.id] || 0;
     b.innerHTML = `<span class="k">${u.k}</span><span class="n">${u.n}</span><span class="d">${u.d}</span><span class="lv">${lv ? 'Уровень ' + lv + ' → ' + (lv + 1) : 'Новое'}</span>`;
     b.onclick = () => {
-      u.go(); G.lvls[u.id] = lv + 1;
+      u.go(); G.lvls[u.id] = lv + 1; sfx('card', { vol: 0.7, max: 1 });
       $('pick').hidden = true;
       if (G.pending > 0) { G.pending--; offerCards('Новый уровень'); } else { G.paused = false; last = performance.now(); }
     };
@@ -456,6 +543,13 @@ function gainXp(n) {
 // ---------- phases ----------
 function startNight() {
   const c = G.cfg;
+  sfx('night', { vol: 0.9, max: 1 }); music('night');
+  if (G.corpses.length || DECAL.used) {
+    for (const b of G.corpses) bakeCorpse(b);
+    for (const r of G.rolls) bakeRoll(r);
+    G.corpses = []; G.rolls = [];
+  }
+
   G.phase = 'night'; G.night++; G.phaseT = c.nightLen;
   const n = G.night + c.d;
   // Wave budget in walker-equivalents (18, 22, 26, 31, 37…). A brute costs 4, so heavier nights are not also bigger.
@@ -477,8 +571,12 @@ function startNight() {
   $('skip').hidden = true;
 }
 function startDay() {
+  sfx('dawn', { vol: 0.8, max: 1 }); music('day');
   for (const z of G.zombies) { burst(z.x, z.y, '#ffb347', 10, 70); }
   G.zombies = [];
+  // the morning sun burns the bodies one by one over the first ~8 s of the day; the stains fade with them
+  // bodies are never cleared: the field remembers every night (old ones are baked into the ground, see bakeCorpse)
+  for (const st2 of G.stains) st2.life = Math.min(st2.life, 1.5 + Math.random());
   if (G.night >= G.cfg.nights) return finishRun(true);
   G.phase = 'day'; G.phaseT = G.cfg.dayLen;
   for (const t of G.trees) t.wood = 4;
@@ -501,6 +599,7 @@ function spawnZombie(kind) {
   }
   // Waves grow mostly in numbers; health grows slowly, the boss a bit faster (about 20 s to kill with a mid build).
   const hp = base.hp * (kind === 'boss' ? 1 + 0.24 * (n - 1) : 1 + 0.1 * (n - 1));
+  if (kind === 'boss') sfx('boss', { vol: 1, max: 1 });
   G.zombies.push({ kind, x, y, r: base.r, hp, max: hp, spd: base.spd * (1 + 0.02 * n) * rnd(0.9, 1.1),
     dmg: base.dmg, col: base.col, hit: 0, block: null, wob: Math.random() * TAU, fx: 0, fy: 0 });
 }
@@ -510,19 +609,24 @@ function padAction(s) {
   if (s.kind === 'wall') {
     if (s.lvl > 0 && s.posts.some(p => p.hp < p.max)) {
       const c = 2 + s.lvl * 2;
-      return { cost: { wood: c }, label: 'Починить', go: () => { for (const p of s.posts) p.hp = p.max; } };
+      return { kind: 'repair', cost: { wood: c }, label: 'Починить', go: () => { for (const p of s.posts) p.hp = p.max; } };
     }
     if (s.lvl < 3) {
-      return { cost: { wood: WALL_COST[s.lvl] }, label: s.lvl ? 'Укрепить' : 'Забор', go: () => {
+      return { kind: s.lvl ? 'upgrade' : 'build', cost: { wood: WALL_COST[s.lvl] }, label: s.lvl ? 'Укрепить' : 'Забор', go: () => {
         s.lvl++; for (const p of s.posts) { p.max = WALL_HP[s.lvl - 1]; p.hp = p.max; }
       } };
     }
   } else if (s.kind === 'tower') {
-    if (s.lvl < 3) { const t = TOWER[s.lvl]; return { cost: { wood: t.wood, gold: t.gold }, label: s.lvl ? 'Улучшить' : 'Башня', go: () => s.lvl++ }; }
+    if (s.lvl && s.hp <= 0) {
+      const inv = towerInvested(s.lvl), c = { wood: Math.ceil(inv.wood / 2), gold: Math.ceil(inv.gold / 2) };
+      return { kind: 'repair', cost: c, label: 'Восстановить', go: () => { s.hp = s.max; } };
+    }
+    if (s.lvl && s.hp < s.max) return { kind: 'repair', cost: { wood: 2 + s.lvl * 3 }, label: 'Починить', go: () => { s.hp = s.max; } };
+    if (s.lvl < 3) { const t = TOWER[s.lvl]; return { kind: s.lvl ? 'upgrade' : 'build', cost: { wood: t.wood, gold: t.gold }, label: s.lvl ? 'Улучшить' : 'Башня', go: () => { s.lvl++; s.hp = s.max = TOWER_HP[s.lvl - 1]; } }; }
   } else if (s.kind === 'forge') {
-    if (s.lvl === 0) return { cost: { wood: FORGE_WOOD }, label: 'Кузница', go: () => s.lvl = 1 };
+    if (s.lvl === 0) return { kind: 'build', cost: { wood: FORGE_WOOD }, label: 'Кузница', go: () => s.lvl = 1 };
     const g = 8 + G.forgeUses * 8;
-    return { cost: { gold: g }, label: 'Улучшение', go: () => { G.forgeUses++; offerCards('Кузница'); } };
+    return { kind: 'card', cost: { gold: g }, label: 'Улучшение', go: () => { G.forgeUses++; offerCards('Кузница'); } };
   }
   return null;
 }
@@ -555,10 +659,12 @@ function update(dt) {
   // hero
   if (h.dead > 0) {
     h.dead -= dt;
-    if (h.dead <= 0) { h.x = 0; h.y = 40; h.hp = h.max; banner('Герой вернулся'); }
+    if (h.dead <= 0) { h.dead = 0; h.x = 0; h.y = 40; h.hp = h.max; banner('Герой вернулся'); }   // exactly 0, or `!h.dead` checks treat it as still dead
   } else {
+    h.shootT = Math.max(0, (h.shootT || 0) - dt); h.combatT = Math.max(0, (h.combatT || 0) - dt);
     const [mx, my] = moveInput();
     h.x += mx * h.spd * dt; h.y += my * h.spd * dt;
+    h.moving = !!(mx || my); if (h.moving) h.walk = (h.walk || 0) + dt * 11;
     if (mx || my) { h.fx = mx; h.fy = my; }
     const R = 880, l = Math.hypot(h.x, h.y); if (l > R) { h.x *= R / l; h.y *= R / l; }
     const fd = Math.hypot(h.x, h.y); if (fd < 34) { h.x *= 34 / (fd || 1); h.y *= 34 / (fd || 1); }
@@ -569,22 +675,30 @@ function update(dt) {
       const targets = G.zombies.filter(z => d2(z, h) < st.range * st.range).sort((a, b) => d2(a, h) - d2(b, h)).slice(0, st.multi);
       if (targets.length) {
         for (const z of targets) shoot(h.x, h.y, z, st.dmg, st.pierce, '#ffe7a8');
-        h.cd = 1 / st.rate;
+        sfx('bow', { max: 2, gap: 0.05, vol: 0.7 });
+        h.cd = 1 / st.rate; h.shotAt = G.t;
+        h.aim = Math.atan2(targets[0].y - h.y, targets[0].x - h.x); h.shootT = 0.35;
+        h.combatT = 1 / st.rate + 0.3;   // stays turned to the fight between shots, so it does not flick back and forth
       }
     }
     // aura
     if (st.aura) {
       const ar = 55 + st.aura * 15;
-      for (const z of G.zombies) if (d2(z, h) < (ar + z.r) ** 2) hurt(z, 9 * st.aura * dt, true);
+      for (const z of G.zombies) if (d2(z, h) < (ar + z.r) ** 2) { hurt(z, 9 * st.aura * dt, true); const l = Math.sqrt(d2(z, h)) || 1; z.hitDx = (z.x - h.x) / l; z.hitDy = (z.y - h.y) / l; }
     }
     // chopping
     let chopping = false;
-    for (const t of G.trees) {
+    const busy = G.zombies.some(z => d2(z, h) < st.range * st.range);
+    h.chopTree = null;
+    if (!busy) for (const t of G.trees) {
       if (t.wood > 0 && d2(t, h) < (t.r + 22) ** 2) {
-        chopping = true;
+        chopping = true; h.chopTree = t;
         h.chop += dt * st.chop;
-        t.shake = 0.15;
-        if (h.chop >= 0.45) { h.chop = 0; t.wood--; G.wood++; text(t.x, t.y - t.r, '+1', '#e2b07a'); burst(t.x, t.y, '#7a5230', 4, 60); }
+        if (h.chop >= 0.45) {
+          h.chop = 0; t.wood--; G.wood++; sfx('chop', { vol: 0.75, max: 2 }); t.shake = 0.3; t.hitDir = Math.atan2(t.y - h.y, t.x - h.x); G.shake = Math.max(G.shake, 1.6);
+          const hx = t.x + (h.x - t.x) / Math.sqrt(d2(t, h)) * t.r * 0.6, hy = t.y + (h.y - t.y) / Math.sqrt(d2(t, h)) * t.r * 0.6;
+          text(t.x, t.y - t.r, '+1', '#e2b07a'); burst(hx, hy, '#c48a4a', 6, 110); burst(hx, hy, '#f0d2a0', 4, 80);
+        }
         break;
       }
     }
@@ -592,17 +706,14 @@ function update(dt) {
 
     // build pads
     for (const s of G.slots) {
-      const on = d2(s, h) < 26 * 26;
+      const on = (s.px - h.x) ** 2 + (s.py - h.y) ** 2 < 26 * 26;
       const act = padAction(s);
       if (on && act && canPay(act.cost)) {
         s.hold += dt;
         if (s.hold >= 0.6) {
           G.wood -= act.cost.wood || 0; G.gold -= act.cost.gold || 0;
-          if (act.cost.gold) text(s.x, s.y - 46, '−' + act.cost.gold + ' золота', '#f5cf4b', 14);
-          if (act.cost.wood) text(s.x, s.y - 60, '−' + act.cost.wood + ' дерева', '#e2b07a', 14);
-          act.go(); s.hold = -0.9;
-          burst(s.x, s.y, '#ffd28a', 14, 120);
-          text(s.x, s.y - 30, act.label + '!', '#ffd28a', 15);
+          act.go(); s.hold = -0.9; sfx(act.kind === 'upgrade' ? 'upgrade' : 'build', { vol: 0.8, max: 1 });
+          burst(s.x, s.y, '#ffd28a', 18, 130);
         }
       } else if (!on) s.hold = 0;
     }
@@ -610,7 +721,7 @@ function update(dt) {
 
   // towers
   for (const s of G.slots) {
-    if (s.kind !== 'tower' || !s.lvl) continue;
+    if (s.kind !== 'tower' || !s.lvl || s.hp <= 0) continue;
     const t = TOWER[s.lvl - 1];
     s.cd -= dt;
     if (s.cd > 0) continue;
@@ -622,38 +733,85 @@ function update(dt) {
   // zombies
   const posts = [];
   for (const s of G.slots) if (s.kind === 'wall') for (const p of s.posts) if (p.hp > 0) posts.push(p);
+  const towers = G.slots.filter(s => s.kind === 'tower' && s.lvl && s.hp > 0);
+  for (const t of towers) t.attackers = 0;
+  if (G.hunter && (G.hunter.hp <= 0 || !G.hunter.target || G.hunter.target.hp <= 0)) { if (G.hunter) G.hunter.target = null; G.hunter = null; }
+  if (!G.hunter) {
+    const b = G.zombies.find(z => z.kind === 'brute' && towers.some(t => d2(t, z) < 300 * 300));
+    if (b) { b.target = towers.reduce((a, t) => (d2(t, b) < d2(a, b) ? t : a)); G.hunter = b; }
+  }
+  for (const z of G.zombies) {
+    if (z.kind === 'boss' && !z.bossDone && !z.target && Math.hypot(z.x, z.y) < 330 && towers.length) {
+      z.target = towers.reduce((a, t) => (d2(t, z) < d2(a, z) ? t : a)); z.markT = 3; z.target.marked = 3;
+    }
+    if (z.target && z.target.hp <= 0) { if (z.kind === 'boss') z.bossDone = true; z.target = null; }
+  }
   for (const z of G.zombies) {
     z.hit = Math.max(0, z.hit - dt * 6);
+    z.attacking = false;
     let tx = G.fire.x, ty = G.fire.y;
-    if (!h.dead && d2(z, h) < 150 * 150) { tx = h.x; ty = h.y; }
+    if (z.target && z.target.hp > 0 && !(z.markT > 0)) { tx = z.target.x; ty = z.target.y; }
+    else if (!h.dead && d2(z, h) < 150 * 150) { tx = h.x; ty = h.y; }
+    if (z.markT > 0) z.markT -= dt;
     const dx = tx - z.x, dy = ty - z.y, l = Math.hypot(dx, dy) || 1;
     z.fx = dx / l; z.fy = dy / l;
     if (z.block && z.block.hp > 0) {
-      z.block.hp -= z.dmg * dt;
-      if (z.block.hp <= 0) { burst(z.block.x, z.block.y, '#8a5a32', 10, 90); G.shake = Math.max(G.shake, 4); }
+      const isTower = z.block.kind === 'tower';
+      z.block.hp -= z.dmg * dt; z.attacking = isTower ? 'stone' : 'wood';
+      if (isTower) { z.block.attackers++; z.block.underAttack = 0.4; }
+      if (z.block.hp <= 0) {
+        burst(z.block.x, z.block.y, isTower ? '#8d9298' : '#8a5a32', isTower ? 26 : 10, isTower ? 130 : 90); G.shake = Math.max(G.shake, isTower ? 8 : 4);
+        if (isTower) { z.block.hp = 0; if (z.kind === 'boss') z.bossDone = true; }
+      }
     } else {
-      z.wob += dt * 8;
-      z.x += (z.fx * z.spd + Math.cos(z.wob) * 6) * dt; z.y += (z.fy * z.spd + Math.sin(z.wob) * 6) * dt;
+      z.wob += dt * z.spd * 0.16;
+      z.x += z.fx * z.spd * dt; z.y += z.fy * z.spd * dt;
     }
     z.block = null;
     for (const p of posts) {
       const ddx = z.x - p.x, ddy = z.y - p.y, dd = Math.hypot(ddx, ddy), m = z.r + p.r;
       if (dd < m) { z.x = p.x + ddx / (dd || 1) * m; z.y = p.y + ddy / (dd || 1) * m; z.block = p; }
     }
+    // towers block the way; one only takes blows from two zombies at once (the rest slide around it), and from its hunter
+    for (const t of towers) {
+      const ddx = z.x - t.x, ddy = z.y - t.y, dd = Math.hypot(ddx, ddy), m = z.r + TOWER_R;
+      if (dd < m) {
+        z.x = t.x + ddx / (dd || 1) * m; z.y = t.y + ddy / (dd || 1) * m;
+        if (!z.block && (t.attackers < 2 || z.target === t)) z.block = t;
+        else if (!z.block) { const px = -ddy / (dd || 1), py = ddx / (dd || 1), sgn = (px * z.fx + py * z.fy) >= 0 ? 1 : -1; z.x += px * sgn * z.spd * dt; z.y += py * sgn * z.spd * dt; }
+      }
+    }
     // fire
     const fd = Math.hypot(z.x, z.y), fm = z.r + 24;
     if (fd < fm) {
       z.x *= fm / (fd || 1); z.y *= fm / (fd || 1);
-      G.fire.hp -= z.dmg * dt;
+      G.fire.hp -= z.dmg * dt; z.attacking = 'fire';
     }
     // hero contact
     if (!h.dead) {
       const hd = Math.hypot(z.x - h.x, z.y - h.y), hm = z.r + h.r;
       if (hd < hm) {
-        z.x = h.x + (z.x - h.x) / (hd || 1) * hm; z.y = h.y + (z.y - h.y) / (hd || 1) * hm;
-        h.hp -= z.dmg * dt;
+        // zombies stand their ground: the hero is the one pushed back, so it cannot shove them around or through walls
+        h.x = z.x + (h.x - z.x) / (hd || 1) * hm; h.y = z.y + (h.y - z.y) / (hd || 1) * hm;
+        h.hp -= z.dmg * dt; z.attacking = 'hero'; sfx('hurt', { max: 1, gap: 0.7, vol: 0.6 });
       }
     }
+    // a zombie pressed against a post loses and regains contact every few frames: the attack only ends after a quarter
+    // second without a blow, so the swing (and its frames) never flicker
+    if (z.attacking) { z.calm = 0; z.lastAtk = z.attacking; } else z.calm = (z.calm || 0) + dt;
+    const fighting = z.attacking || z.calm < 0.25 && z.atkT > 0;
+    z.fighting = fighting;
+    if (fighting) {
+      const was = Math.sin((z.atkT || 0) * 7);
+      z.atkT = (z.atkT || 0) + dt;
+      if (was < 0.95 && Math.sin(z.atkT * 7) >= 0.95) {
+        z.blowN = (z.blowN || 0) + 1;   // alternates the swinging arm
+        { const what = z.attacking || z.lastAtk; sfx(what === 'hero' ? 'claw' : what === 'fire' ? 'fire' : 'wall', { x: z.x, y: z.y, max: 2, gap: 0.08, vol: 0.5 }); }
+        if (G.slashes.length < 60) G.slashes.push({ x: z.x + z.fx * (z.r + 8), y: z.y + z.fy * (z.r + 8), a: Math.atan2(z.fy, z.fx), side: z.blowN % 2 ? 1 : -1, t: 0, big: z.kind === 'brute' || z.kind === 'boss' });
+        const col = { wood: '#a0703e', stone: '#9aa0a6', fire: '#ffb347', hero: '#ff6b5a' }[z.attacking || z.lastAtk];
+        burst(z.x + z.fx * (z.r + 6), z.y + z.fy * (z.r + 6), col, 5, 70);
+      }
+    } else z.atkT = 0;
   }
   // zombie separation
   const zs = G.zombies;
@@ -665,7 +823,7 @@ function update(dt) {
   }
 
   if (!h.dead && h.hp <= 0) {
-    h.dead = 6; h.hp = 0; burst(h.x, h.y, '#ff6b5a', 20, 140); G.shake = 8;
+    h.dead = 6; h.hp = 0; burst(h.x, h.y, '#ff6b5a', 20, 140); G.shake = 8; sfx('herodie', { vol: 0.9, max: 1 });
     banner('Герой пал', 'Вернётся к костру через 6 секунд');
   }
   if (G.fire.hp <= 0) return gameOver();
@@ -676,8 +834,17 @@ function update(dt) {
     for (const z of G.zombies) {
       if (z.hp <= 0 || s.hitSet.has(z)) continue;
       if (d2(s, z) < (z.r + 4) ** 2) {
-        hurt(z, s.dmg); s.hitSet.add(z);
-        if (s.pierce-- <= 0) { s.t = 99; break; }
+        hurt(z, s.dmg); s.hitSet.add(z); sfx('hit', { x: s.x, y: s.y, max: 4, gap: 0.02, vol: 0.55 });
+        { const l = Math.hypot(s.vx, s.vy) || 1; z.hitDx = s.vx / l; z.hitDy = s.vy / l; z.kick = 1;
+          splatter(s.x, s.y, z.hitDx, z.hitDy, z.kind === 'brute' || z.kind === 'boss' ? 7 : 5, z.kind === 'boss'); }
+        if (s.pierce-- <= 0) {
+          s.t = 99;
+          // the arrow stays stuck in the zombie, at the side it hit, at the angle it flew (kept in the zombie's own frame)
+          const za = z.drawAng ?? 0, sa = Math.atan2(s.vy, s.vx), hx = s.x - z.x, hy = s.y - z.y, c = Math.cos(-za), sn = Math.sin(-za);
+          (z.stuck ||= []).push({ x: (hx * c - hy * sn) * 0.6, y: (hx * sn + hy * c) * 0.6, a: sa - za });
+          if (z.stuck.length > 4) z.stuck.shift();
+          break;
+        }
       }
     }
   }
@@ -685,11 +852,38 @@ function update(dt) {
 
   // deaths
   for (const z of G.zombies) if (z.hp <= 0) {
+    // the body stays where it fell: knocked back a little, turned, flattened; bodies pile up through the night
+    const dx = z.hitDx ?? -z.fx, dy = z.hitDy ?? -z.fy, push = z.kind === 'boss' ? 6 : z.kind === 'brute' ? 9 : 14;
+    splatter(z.x, z.y, dx, dy, z.kind === 'boss' ? 18 : 10, z.kind !== 'walker' && z.kind !== 'runner');
+    // the lying sprites have the head at the top: turn it so the head points along the blow
+    const fall = Math.atan2(dy, dx) + Math.PI / 2 + (Math.random() - 0.5) * 0.6;
+    // now and then the head flies off: from a walker or runner more often, never from the boss (he loses the crown instead)
+    const pop = z.kind !== 'boss' && Math.random() < (z.kind === 'brute' ? 0.08 : 0.16);
+    G.corpses.push({ x: z.x + dx * push, y: z.y + dy * push, fromX: z.x, fromY: z.y, kind: z.kind, pose: pop ? 0 : 1 + Math.floor(Math.random() * 3),
+      a: fall, fromA: z.drawAng ?? fall, stuck: z.stuck, t: 0, flip: Math.random() < 0.5, dust: false });
+    sfx('die', { x: z.x, y: z.y, max: 3, gap: 0.05, vol: 0.6, pitch: z.kind === 'runner' ? 0.15 : z.kind === 'brute' ? -0.2 : 0 });
+    sfx('fall', { x: z.x, y: z.y, max: 3, gap: 0.04, vol: z.kind === 'brute' ? 0.9 : 0.5 });
+    if (pop) { roll('head', z.kind, z.x, z.y, dx, dy, 170); splatter(z.x, z.y, dx, dy, 8, true); sfx('pop', { x: z.x, y: z.y, max: 2, vol: 0.8 }); }
+    if (z.kind === 'brute' || z.kind === 'boss') sfx('coins', { x: z.x, y: z.y, max: 2, vol: 0.6 });
+    if (z.kind === 'boss') { roll('crown', z.kind, z.x, z.y, dx, dy, 150); G.slowT = 0.45; G.flash = 1; burst(z.x, z.y, '#f2ead6', 40, 220); sfx('bossdie', { vol: 1, max: 1 }); }
+    // kills in quick succession build a combo
+    if (G.t - G.combo.t < 1.1) G.combo.n++; else G.combo.n = 1;
+    G.combo.t = G.t;
+    if (G.combo.n >= 3) {
+      const n = G.combo.n, col = n >= 15 ? '#ff4a3a' : n >= 8 ? '#ff8a2a' : '#ffd25a';
+      text(G.hero.x, G.hero.y - 34, '×' + n + (n >= 8 ? '!' : ''), col, Math.min(30, 14 + n * 0.8));
+      sfx('combo', { max: 1, gap: 0.05, vol: 0.45, pitch: Math.min(0.9, (n - 3) * 0.06), vary: 0 });
+    }
+    if (G.corpses.length > 300) bakeCorpse(G.corpses.shift());
     const b = ZK[z.kind];
     burst(z.x, z.y, z.col, z.kind === 'boss' ? 30 : 10, 110);
     G.drops.push({ x: z.x, y: z.y, kind: 'xp', v: b.xp, t: 0 });
     let g = b.gold >= 1 ? b.gold : (Math.random() < b.gold ? 1 : 0);
-    if (g) G.drops.push({ x: z.x + rnd(-6, 6), y: z.y + rnd(-6, 6), kind: 'gold', v: g, t: 0 });
+    const n = Math.min(g, 8);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * TAU, v = rnd(30, 70 + n * 10);
+      G.drops.push({ x: z.x, y: z.y, kind: 'gold', v: Math.floor(g / n) + (i < g % n ? 1 : 0), t: 0, vx: Math.cos(a) * v, vy: Math.sin(a) * v, z: 2, vz: rnd(120, 200 + n * 8) });
+    }
     if (z.kind === 'boss') { G.shake = 10; banner('Вожак повержен!'); }
   }
   G.zombies = G.zombies.filter(z => z.hp > 0);
@@ -697,23 +891,64 @@ function update(dt) {
   // drops
   for (const d of G.drops) {
     d.t += dt;
+    if (d.vz != null) {
+      // in the air: gravity, a couple of bounces, then it rolls to a stop
+      d.z += d.vz * dt; d.vz -= 700 * dt; d.x += d.vx * dt; d.y += d.vy * dt;
+      if (d.z <= 0) { d.z = 0; d.vz = Math.abs(d.vz) > 60 ? -d.vz * 0.38 : 0; d.vx *= 0.55; d.vy *= 0.55; }
+      if (d.vz === 0 && d.z === 0) { d.vx *= 0.8; d.vy *= 0.8; if (Math.abs(d.vx) + Math.abs(d.vy) < 2) { d.vx = d.vy = 0; d.vz = null; } }
+      if (d.z > 0) continue;   // not caught mid-air
+    }
     if (h.dead) continue;
     const dd = Math.sqrt(d2(d, h));
     if (dd < st.magnet) { const k = Math.min(1, dt * (380 / Math.max(dd, 1)) * 0.9); d.x += (h.x - d.x) * k; d.y += (h.y - d.y) * k; }
     if (dd < 16) {
       d.taken = true;
-      if (d.kind === 'gold') { G.gold += d.v; text(h.x, h.y - 20, '+' + d.v, '#f5cf4b'); } else gainXp(d.v);
+      if (d.kind === 'gold') { G.gold += d.v; text(h.x, h.y - 20, '+' + d.v, '#f5cf4b'); sfx('coin', { max: 3, gap: 0.04, vol: 0.5, pitch: rnd(-0.05, 0.15) }); }
+      else { gainXp(d.v); sfx('gem', { max: 2, gap: 0.05, vol: 0.4 }); }
     }
   }
   G.drops = G.drops.filter(d => !d.taken && d.t < 60);
   if (G.pending > 0 && !G.paused) { G.pending--; offerCards('Новый уровень'); }
 
   // fx
-  for (const f of G.fx) { f.t += dt; f.x += f.vx * dt; f.y += f.vy * dt; f.vx *= 0.92; f.vy *= 0.92; }
+  updateRolls(dt);
+  G.flash = Math.max(0, G.flash - dt * 3);
+  for (const sl of G.slashes) sl.t += dt;
+  G.slashes = G.slashes.filter(sl => sl.t < 0.18);
+  for (const c of G.corpses) if (c.t < 0.4) {
+    c.t += dt;
+    if (!c.dust && c.t >= 0.2) { c.dust = true; burst(c.x, c.y, '#b8a47a', c.kind === 'boss' ? 26 : 7, c.kind === 'boss' ? 140 : 45); }
+  }
+  for (const c of G.corpses) if (c.burn != null) {
+    c.burn -= dt;
+    if (c.burn < 0) { c.gone = true; burst(c.x, c.y, '#ffb347', 6, 60); burst(c.x, c.y, '#5a5a5a', 4, 40); }
+  }
+  if (G.corpses.some(c => c.gone)) G.corpses = G.corpses.filter(c => !c.gone);
+  for (const f of G.fx) {
+    f.t += dt; f.x += f.vx * dt; f.y += f.vy * dt; f.vx *= 0.92; f.vy *= 0.92;
+    if (f.stain && f.t >= f.max) { G.stains.push({ x: f.x, y: f.y, r: f.r * rnd(0.9, 1.5), col: f.col, a: Math.random() * TAU, fade: 1, life: rnd(6, 9) }); if (G.stains.length > 400) G.stains.shift(); }
+  }
   G.fx = G.fx.filter(f => f.t < f.max);
+  // last night's bodies and stains sink into the ground once the next night has begun
+  for (const c of G.corpses) if (c.sink != null) { c.sink -= dt; if (c.sink <= 0) c.gone = true; }
+  // burning in the sun: smoke and embers rise, the body chars and fades away in about 2.5 s
+  for (const c of G.corpses) if (c.burnAt != null) {
+    c.burnAt -= dt;
+    if (c.burnAt > 0) continue;
+    c.burnT += dt;
+    const k = c.burnT / 1.25, n = c.kind === 'boss' ? 3 : 1;
+    for (let i = 0; i < n; i++) {
+      if (Math.random() < 0.9 * (1 - k * 0.5)) G.fx.push({ x: c.x + rnd(-9, 9), y: c.y + rnd(-9, 9), vx: rnd(-8, 8), vy: rnd(-45, -25), t: 0, max: rnd(0.4, 0.8), col: Math.random() < 0.55 ? '#ffb347' : '#ff6a2a', r: rnd(1.2, 2.4) });
+    }
+    if (k >= 1) c.gone = true;
+  }
+  // a stain soaks into the ground: it lives a few seconds, then thins out over the last two
+  for (const st2 of G.stains) { st2.life -= dt; st2.fade = Math.max(0, Math.min(1, st2.life / 2)); }
+  if (G.stains.some(x => x.life <= 0)) G.stains = G.stains.filter(x => x.life > 0);
   for (const t of G.texts) { t.t += dt; t.y -= 28 * dt; }
   G.texts = G.texts.filter(t => t.t < 0.9);
   for (const t of G.trees) t.shake = Math.max(0, t.shake - dt);
+  for (const s of G.slots) if (s.kind === 'tower') { s.underAttack = Math.max(0, (s.underAttack || 0) - dt); s.marked = Math.max(0, (s.marked || 0) - dt); }
   G.shake = Math.max(0, G.shake - dt * 20);
 
   // camera
@@ -802,59 +1037,60 @@ function draw() {
   const ox = W / 2 - G.cam.x * S + sx, oy = H / 2 - G.cam.y * S + sy;
   X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
   const vw = W / S, vh = H / S, cx = G.cam.x, cy = G.cam.y;
+  view = { x0: cx - vw / 2 - 40, y0: cy - vh / 2 - 40, x1: cx + vw / 2 + 40, y1: cy + vh / 2 + 40 };
 
-  X.fillStyle = grassPat; X.fillRect(cx - vw / 2 - 20, cy - vh / 2 - 20, vw + 40, vh + 40);
-  // village dirt
-  const dg = X.createRadialGradient(0, 0, 60, 0, 0, 215);
-  dg.addColorStop(0, '#5a4630'); dg.addColorStop(0.75, '#4a3b28'); dg.addColorStop(1, 'rgba(74,59,40,0)');
-  X.fillStyle = dg; X.beginPath(); X.arc(0, 0, 215, 0, TAU); X.fill();
-  // world edge
-  X.strokeStyle = 'rgba(0,0,0,.35)'; X.lineWidth = 30; X.beginPath(); X.arc(0, 0, 905, 0, TAU); X.stroke();
-  if (G.cfg.twist === 'river') for (const ry of [-335, 335]) {
-    X.fillStyle = '#24506b'; X.fillRect(cx - vw / 2 - 20, ry - 38, vw + 40, 76);
-    X.fillStyle = 'rgba(160,210,240,.18)';
-    for (let i = -8; i <= 8; i++) X.fillRect(Math.floor(cx / 90) * 90 + i * 90 + (G.t * 20) % 90, ry - 14 + ((i + 8) % 3) * 12, 30, 3);
-  }
-  for (const g of G.graves) {
-    X.fillStyle = '#3b2f22'; X.fillRect(g.x - 9, g.y - 2, 18, 22);
-    X.fillStyle = '#8d8a84'; X.strokeStyle = '#4a4844'; X.lineWidth = 1.5;
-    X.beginPath(); X.moveTo(g.x - 7, g.y + 2); X.lineTo(g.x - 7, g.y - 9); X.arc(g.x, g.y - 9, 7, Math.PI, 0); X.lineTo(g.x + 7, g.y + 2); X.closePath(); X.fill(); X.stroke();
-  }
+  X.fillStyle = '#2d4a22'; X.fillRect(cx - vw / 2 - 20, cy - vh / 2 - 20, vw + 40, vh + 40);
+  if (PERF.ground) { const gl = groundLayer(); X.drawImage(gl, -GROUND_R, -GROUND_R, 2 * GROUND_R, 2 * GROUND_R); }
 
   // stumps
-  for (const t of G.trees) if (t.wood <= 0) { circle(t.x, t.y, 9, '#6b4a2b', '#3d2a17'); circle(t.x, t.y, 4, '#8a6640'); }
+  for (const t of G.trees) if (t.wood <= 0 && !spr('stump', t.x, t.y, 26, t.rot || 0)) { circle(t.x, t.y, 9, '#6b4a2b', '#3d2a17'); circle(t.x, t.y, 4, '#8a6640'); }
 
-  // pads
-  const h = G.hero;
+  // pads (their cost pills are drawn after buildings and trees, so nothing covers them)
+  // the fallen: old bodies in the ground layer, stains, then fresh bodies, under the build pads, buildings and loot
+  if (PERF.units) {
+    drawDecal();
+    for (const st2 of G.stains) {
+      if (offView(st2.x, st2.y, 8)) continue;
+      X.globalAlpha = 0.32 * st2.fade; X.fillStyle = st2.col;
+      X.beginPath(); X.ellipse(st2.x, st2.y, st2.r, st2.r * 0.7, st2.a, 0, TAU); X.fill();
+    }
+    X.globalAlpha = 1;
+    for (const c of G.corpses) drawCorpse(c);
+    for (const r of G.rolls) drawRoll(r);
+  }
+  const h = G.hero, padLater = [];
   for (const s of G.slots) {
     const act = padAction(s);
     if (!act) continue;
     const ok = canPay(act.cost);
     X.setLineDash([5, 5]); X.lineDashOffset = -G.t * 10;
-    circle(s.x, s.y, 22, ok ? 'rgba(255,210,138,.10)' : 'rgba(0,0,0,.18)', ok ? 'rgba(255,210,138,.8)' : 'rgba(239,230,210,.35)', 2);
+    circle(s.px, s.py, 22, ok ? 'rgba(255,210,138,.18)' : 'rgba(0,0,0,.32)', ok ? 'rgba(255,210,138,.8)' : 'rgba(239,230,210,.35)', 2);
     X.setLineDash([]);
     if (s.hold > 0) {
-      X.beginPath(); X.arc(s.x, s.y, 22, -Math.PI / 2, -Math.PI / 2 + TAU * Math.min(1, s.hold / 0.6));
+      X.beginPath(); X.arc(s.px, s.py, 22, -Math.PI / 2, -Math.PI / 2 + TAU * Math.min(1, s.hold / 0.6));
       X.strokeStyle = '#ffd28a'; X.lineWidth = 4; X.stroke();
     }
-    if (s.kind === 'tower' && s.lvl) continue;
-    if (s.kind === 'forge' && s.lvl) continue;
-    padLabel(s.x, s.y + 36, act, ok);
+    padIcon(s, act, ok);
+    padLater.push([s.px, s.py + 30, act, ok]);
   }
 
   // walls
   for (const s of G.slots) if (s.kind === 'wall' && s.lvl) {
-    const col = ['#8a5a32', '#7a6a5a', '#9aa0a8'][s.lvl - 1];
-    for (let i = 0; i < s.posts.length; i++) {
-      const p = s.posts[i];
-      if (p.hp <= 0) { circle(p.x, p.y, 5, '#3d2a17'); continue; }
-      if (i < s.posts.length - 1 && s.posts[i + 1].hp > 0) {
-        X.strokeStyle = '#5a3a1e'; X.lineWidth = 6; X.beginPath(); X.moveTo(p.x, p.y); X.lineTo(s.posts[i + 1].x, s.posts[i + 1].y); X.stroke();
-      }
+    const ps = s.posts, stone = s.lvl === 3;
+    X.lineCap = 'round';
+    for (let i = 0; i < ps.length - 1; i++) if (ps[i].hp > 0 && ps[i + 1].hp > 0) {
+      X.strokeStyle = 'rgba(0,0,0,.3)'; X.lineWidth = 9; X.beginPath(); X.moveTo(ps[i].x + 4, ps[i].y + 6); X.lineTo(ps[i + 1].x + 4, ps[i + 1].y + 6); X.stroke();
+      X.strokeStyle = stone ? '#5d6166' : '#4a2f18'; X.lineWidth = 6; X.beginPath(); X.moveTo(ps[i].x, ps[i].y); X.lineTo(ps[i + 1].x, ps[i + 1].y); X.stroke();
     }
-    for (const p of s.posts) if (p.hp > 0) {
-      circle(p.x, p.y, p.r, col, '#2a1a0c', 2.5);
-      circle(p.x - 2, p.y - 2, p.r * 0.45, 'rgba(255,255,255,.12)');
+    for (const p of ps) {
+      if (p.hp <= 0) { circle(p.x, p.y, 6, '#3d2a17'); circle(p.x, p.y, 3, '#6b4a2b'); continue; }
+      circle(p.x + 4, p.y + 6, p.r, 'rgba(0,0,0,.3)');
+      if (stone) { circle(p.x, p.y, p.r + 1, '#8d9298', '#3a3d42', 2.5); circle(p.x - 1, p.y - 1, p.r * 0.62, '#b8bdc2'); }
+      else {
+        circle(p.x, p.y, p.r, '#7a4a26', '#2a1a0c', 2.5); circle(p.x - 1, p.y - 1, p.r * 0.66, '#d9a86a');
+        X.strokeStyle = 'rgba(122,74,38,.7)'; X.lineWidth = 1.2; X.beginPath(); X.arc(p.x - 1, p.y - 1, p.r * 0.38, 0, TAU); X.stroke();
+        if (s.lvl === 2) { X.strokeStyle = '#8d949c'; X.lineWidth = 3; X.beginPath(); X.arc(p.x, p.y, p.r + 1, 0, TAU); X.stroke(); }
+      }
       if (p.hp < p.max) bar(p.x, p.y - 17, 18, p.hp / p.max, '#e0b070');
     }
   }
@@ -862,23 +1098,28 @@ function draw() {
   // drops
   for (const d of G.drops) {
     const bob = Math.sin(G.t * 5 + d.x) * 1.5;
+    if (d.kind === 'gold') { coin(d.x, d.y + bob - (d.z || 0), d.t); continue; }
+    if (spr('crystal', d.x, d.y + bob, 14, Math.sin(G.t * 2 + d.x) * 0.3)) continue;
     if (d.kind === 'gold') circle(d.x, d.y + bob, 5, '#f5cf4b', '#8a6a10', 1.5);
     else { X.save(); X.translate(d.x, d.y + bob); X.rotate(Math.PI / 4); X.fillStyle = '#7fc7ff'; X.fillRect(-3.5, -3.5, 7, 7); X.restore(); }
   }
 
   // fire
-  drawFire();
+  if (PERF.fire) drawFire();
   // forge
   const fg = G.slots.find(s => s.kind === 'forge');
   if (fg.lvl) {
-    X.fillStyle = '#2d2f35'; X.fillRect(fg.x - 16, fg.y - 9, 32, 18);
-    X.fillStyle = '#4a4d55'; X.fillRect(fg.x - 20, fg.y - 12, 40, 7);
-    circle(fg.x + 10, fg.y + 3, 4 + Math.sin(G.t * 9) * 0.8, '#ff8a3c');
-    const act = padAction(fg); padLabel(fg.x, fg.y + 36, act, canPay(act.cost));
+    shadow(fg.x, fg.y, 22);
+    if (!spr('forge', fg.x, fg.y, 54)) { X.fillStyle = '#2d2f35'; X.fillRect(fg.x - 16, fg.y - 9, 32, 18); }
+    circle(fg.x + 4, fg.y + 22, 3 + Math.sin(G.t * 9) * 0.8, '#ff8a3c');
+
   }
 
+  // trees the hero stands under are drawn below it, so it stays visible while chopping; the rest cover the units
+  const underHero = t => !h.dead && d2(t, h) < (t.r * 1.6 + 16) ** 2;
+  if (PERF.trees) for (const t of G.trees) if (t.wood > 0 && underHero(t)) drawTree(t);
   // zombies
-  for (const z of G.zombies) drawZombie(z);
+  if (PERF.units) { for (const z of G.zombies) drawZombie(z); drawSlashes(); }
   // hero
   if (!h.dead) drawHero(h);
   // towers
@@ -886,54 +1127,56 @@ function draw() {
   // shots
   X.lineCap = 'round';
   for (const s of G.shots) {
+    if (spr('arrow', s.x, s.y, 24, Math.atan2(s.vy, s.vx) + Math.PI / 2)) continue;
     const l = Math.hypot(s.vx, s.vy);
     X.strokeStyle = s.col; X.lineWidth = 2.5;
     X.beginPath(); X.moveTo(s.x, s.y); X.lineTo(s.x - s.vx / l * 12, s.y - s.vy / l * 12); X.stroke();
   }
   // trees (canopy above units)
-  for (const t of G.trees) if (t.wood > 0) drawTree(t);
+  if (PERF.trees) for (const t of G.trees) if (t.wood > 0 && !underHero(t) && !offView(t.x, t.y, t.r * 2)) drawTree(t);
+  for (const [x, y, act, ok] of padLater) padLabel(x, y, act, ok);
   // fx
-  for (const f of G.fx) { X.globalAlpha = 1 - f.t / f.max; circle(f.x, f.y, f.r, f.col); }
+  if (PERF.fx) for (const f of G.fx) { X.globalAlpha = 1 - f.t / f.max; circle(f.x, f.y, f.r, f.col); }
   X.globalAlpha = 1;
 
   // darkness + lights
-  if (G.darkA > 0.01) {
+  if (G.darkA > 0.01 && PERF.dark) {
     D.setTransform(1, 0, 0, 1, 0, 0);
     D.globalCompositeOperation = 'source-over';
     D.clearRect(0, 0, dark.width, dark.height);
     D.fillStyle = `rgba(4,7,20,${G.darkA})`; D.fillRect(0, 0, dark.width, dark.height);
     D.globalCompositeOperation = 'destination-out';
-    D.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+    const dk = DPR * DARK_RES;
+    D.setTransform(dk * S, 0, 0, dk * S, dk * ox, dk * oy);
     const flick = Math.sin(G.t * 13) * 6 + Math.sin(G.t * 7.3) * 5;
     const fogK = G.cfg.twist === 'fog' ? 0.72 : 1;
     light(0, 0, (250 + flick + G.fire.hp / G.fire.max * 40) * fogK);
     if (!h.dead) light(h.x, h.y, 140 * fogK);
-    for (const s of G.slots) if (s.kind === 'tower' && s.lvl) light(s.x, s.y, 95 * fogK);
+    for (const s of G.slots) if (s.kind === 'tower' && s.lvl && s.hp > 0) light(s.x, s.y, 95 * fogK);
     if (fg.lvl) light(fg.x, fg.y, 60);
     D.globalCompositeOperation = 'source-over';
     X.setTransform(1, 0, 0, 1, 0, 0);
-    X.drawImage(dark, 0, 0);
+    X.drawImage(dark, 0, 0, cv.width, cv.height);
     // warm glow
     X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
     X.globalCompositeOperation = 'lighter';
     const gg = X.createRadialGradient(0, 0, 10, 0, 0, 200);
-    gg.addColorStop(0, `rgba(255,130,40,${0.35 * G.darkA})`); gg.addColorStop(1, 'rgba(255,130,40,0)');
+    gg.addColorStop(0, `rgba(255,130,40,${0.2 * G.darkA})`); gg.addColorStop(1, 'rgba(255,130,40,0)');
     X.fillStyle = gg; X.beginPath(); X.arc(0, 0, 200, 0, TAU); X.fill();
     X.globalCompositeOperation = 'source-over';
     // zombie eyes glow through the dark
     for (const z of G.zombies) {
-      const ex = z.fx * z.r * 0.45, ey = z.fy * z.r * 0.45, px = -z.fy * z.r * 0.3, py = z.fx * z.r * 0.3;
-      circle(z.x + ex + px, z.y + ey + py, 1.8, '#ff5a3a'); circle(z.x + ex - px, z.y + ey - py, 1.8, '#ff5a3a');
+      if (offView(z.x, z.y, 60)) continue;
+      for (const [ex, ey] of eyesOf(z)) circle(ex, ey, z.kind === 'brute' || z.kind === 'boss' ? 2.2 : 1.8, '#ff5a3a');
     }
   }
 
   // floating text
   X.textAlign = 'center'; X.textBaseline = 'middle';
-  for (const t of G.texts) {
-    X.globalAlpha = 1 - t.t / 0.9;
-    X.font = `800 ${t.size}px Rubik, system-ui, sans-serif`;
-    X.lineWidth = 3; X.strokeStyle = 'rgba(0,0,0,.7)'; X.strokeText(t.s, t.x, t.y);
-    X.fillStyle = t.col; X.fillText(t.s, t.x, t.y);
+  if (PERF.text) for (const t of G.texts) {
+    if (offView(t.x, t.y, 40)) continue;
+    const c = textImg(String(t.s), t.size, t.col);
+    X.globalAlpha = 1 - t.t / 0.9; X.drawImage(c, t.x - c.w / 2, t.y - c.h / 2, c.w, c.h);
   }
   X.globalAlpha = 1;
 
@@ -961,10 +1204,7 @@ function waveArrows(ox, oy) {
     X.fillStyle = `rgba(255,80,60,${pulse})`;
     for (const off of [0, -22]) { X.beginPath(); X.moveTo(26 + off, 0); X.lineTo(4 + off, -20); X.lineTo(10 + off, 0); X.lineTo(4 + off, 20); X.closePath(); X.fill(); }
     X.restore();
-    X.font = '800 14px Rubik, system-ui, sans-serif';
-    X.lineWidth = 3; X.strokeStyle = 'rgba(0,0,0,.7)';
-    const label = G.phase === 'day' ? 'ночью отсюда' : 'идут', lx = sx - Math.cos(a) * 44, ly = sy - Math.sin(a) * 34;
-    X.strokeText(label, lx, ly); X.fillStyle = `rgba(255,150,130,${pulse})`; X.fillText(label, lx, ly);
+
   }
 }
 function light(x, y, r) {
@@ -972,19 +1212,52 @@ function light(x, y, r) {
   g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
   D.fillStyle = g; D.beginPath(); D.arc(x, y, r, 0, TAU); D.fill();
 }
+// What standing on a pad gives you, as a picture: the building (or its next level) with a green arrow for upgrades.
+function padIcon(s, act, ok) {
+  const x = s.px, y = s.py, a = ok ? 0.95 : 0.5;
+  X.globalAlpha = a;
+  if (act.kind === 'repair') {
+    X.strokeStyle = '#7ee08a'; X.lineWidth = 4; X.lineCap = 'round';
+    X.beginPath(); X.moveTo(x - 7, y); X.lineTo(x + 7, y); X.moveTo(x, y - 7); X.lineTo(x, y + 7); X.stroke();
+  } else if (s.kind === 'wall') {
+    const lv = Math.min(3, s.lvl + 1), col = lv === 3 ? '#8d9298' : '#7a4a26', top = lv === 3 ? '#b8bdc2' : '#d9a86a';
+    for (const dx of [-9, 0, 9]) { circle(x + dx, y, 6, col, '#2a1a0c', 1.5); circle(x + dx - 0.5, y - 0.5, 3.8, top); if (lv === 2) { X.strokeStyle = '#8d949c'; X.lineWidth = 1.6; X.beginPath(); X.arc(x + dx, y, 6.5, 0, TAU); X.stroke(); } }
+  } else if (s.kind === 'tower') spr(s.lvl === 0 ? 'tower1' : 'tower2', x, y, s.lvl === 2 ? 34 : 30, 0, 0, a);
+  else if (s.kind === 'forge') spr(s.lvl === 0 ? 'forge' : 'crystal', x, y, s.lvl === 0 ? 30 : 22, 0, 0, a);
+  X.globalAlpha = 1;
+  if (act.kind === 'upgrade' && ok) {   // only when the upgrade is affordable right now
+    const bx = x + 15, by = y - 15;
+    circle(bx, by, 7, '#2f9e44', '#123d1c', 1.5);
+    X.fillStyle = '#fff'; X.beginPath(); X.moveTo(bx, by - 4); X.lineTo(bx + 4, by + 1); X.lineTo(bx + 1.5, by + 1); X.lineTo(bx + 1.5, by + 4); X.lineTo(bx - 1.5, by + 4); X.lineTo(bx - 1.5, by + 1); X.lineTo(bx - 4, by + 1); X.closePath(); X.fill();
+  }
+}
+const labelCache = new Map();
 function padLabel(x, y, act, ok) {
+  if (offView(x, y, 80)) return;
+  const k = S * DPR, key = `${act.label}|${act.cost.wood || 0}|${act.cost.gold || 0}|${(act.cost.wood || 0) <= G.wood}|${(act.cost.gold || 0) <= G.gold}|${k.toFixed(2)}`;
+  let c = labelCache.get(key);
+  if (!c) {
+    if (labelCache.size > 200) labelCache.clear();
+    c = document.createElement('canvas'); c.w = 160; c.h = 22; c.width = Math.ceil(160 * k); c.height = Math.ceil(22 * k);
+    const g = c.getContext('2d'); g.scale(k, k);
+    padLabelDraw(g, 80, 11, act);
+    labelCache.set(key, c);
+  }
+  X.drawImage(c, x - 60, y - 8.25, 120, 16.5);   // drawn at 3/4 size: prices sit lighter on the field
+}
+function padLabelDraw(X, x, y, act) {
+  const circle = (cx, cy, r, f) => { X.beginPath(); X.arc(cx, cy, r, 0, TAU); X.fillStyle = f; X.fill(); };
   X.textAlign = 'center'; X.textBaseline = 'middle';
   X.font = '600 11px Rubik, system-ui, sans-serif';
   const parts = [];
   if (act.cost.wood) parts.push(['wood', act.cost.wood]);
   if (act.cost.gold) parts.push(['gold', act.cost.gold]);
-  const label = act.label;
-  const lw = X.measureText(label).width;
-  let w = lw + 12; for (const [, v] of parts) w += 22 + String(v).length * 6;
+  const lw = -6;
+  let w = 6; for (const [, v] of parts) w += 22 + String(v).length * 6;
   X.fillStyle = 'rgba(10,14,20,.78)';
   X.beginPath(); X.roundRect ? X.roundRect(x - w / 2, y - 9, w, 18, 9) : X.rect(x - w / 2, y - 9, w, 18); X.fill();
   let cx = x - w / 2 + 6;
-  X.fillStyle = '#efe6d2'; X.textAlign = 'left'; X.fillText(label, cx, y + 0.5); cx += lw + 6;
+  X.textAlign = 'left'; cx += lw + 6;
   for (const [k, v] of parts) {
     const have = k === 'wood' ? G.wood : G.gold;
     if (k === 'wood') { X.fillStyle = '#b07a45'; X.fillRect(cx, y - 4, 8, 8); } else circle(cx + 4, y, 4, '#f5cf4b');
@@ -993,27 +1266,306 @@ function padLabel(x, y, act, ok) {
   }
   X.textAlign = 'center';
 }
-function drawFire() {
-  const f = G.fire, k = f.hp / f.max;
-  // logs & stones
-  for (let i = 0; i < 8; i++) { const a = i * TAU / 8; circle(Math.cos(a) * 21, Math.sin(a) * 21, 6, '#6c6a66', '#3a3836', 1.5); }
-  X.save(); X.rotate(0.5); X.fillStyle = '#5a3a1e'; X.fillRect(-14, -4, 28, 8); X.rotate(1.2); X.fillRect(-14, -4, 28, 8); X.restore();
-  const s = 0.5 + k * 0.6;
-  for (let i = 0; i < 3; i++) {
-    const r = (15 - i * 4) * s + Math.sin(G.t * 11 + i * 2) * 1.6;
-    circle(Math.sin(G.t * 6 + i) * 1.5, -i * 2.5 + Math.cos(G.t * 8 + i) * 1.2, r, ['#d2541e', '#ff9a3c', '#ffe08a'][i]);
-  }
-  if (Math.random() < 0.3) G.fx.push({ x: rnd(-8, 8), y: rnd(-6, 2), vx: rnd(-10, 10), vy: rnd(-50, -20), t: 0, max: rnd(0.5, 1), col: '#ffb347', r: rnd(1, 2) });
-  if (k < 1) bar(0, -36, 46, k, '#ff9a3c');
+// ---------- sprites (art/sprites/top, cut by art/slice.py); every draw falls back to shapes until they load ----------
+const SPR = {};
+for (const k of ['walker', 'runner', 'brute', 'boss']) for (const f of ['Wind', 'Hit']) { const im = new Image(); im.src = `art/sprites/top/${k}${f}.png`; SPR[k + f] = im; }
+// attack frames sized and placed so their shirt sits on the standing sprite's shirt (fractions of the sprite's longer side)
+const ZATTACK = {"walker": {"Wind": {"size": 1.1084, "ox": 0.0006, "oy": -0.1904}, "Hit": {"size": 1.1801, "ox": 0.0091, "oy": 0.0493}}, "runner": {"Wind": {"size": 0.8831, "ox": -0.0633, "oy": 0.0532}, "Hit": {"size": 0.9028, "ox": 0.0783, "oy": 0.041}}, "brute": {"Wind": {"size": 1.0257, "ox": -0.007, "oy": -0.3538}, "Hit": {"size": 1.0627, "ox": -0.0142, "oy": 0.1709}}, "boss": {"Wind": {"size": 1.1911, "ox": 0.0078, "oy": -0.0223}, "Hit": {"size": 1.0087, "ox": 0.0016, "oy": 0.1047}}};
+for (const k of ['walker', 'runner', 'brute', 'boss']) for (const i of ['0', '1', '2', '3', 'Fall1', 'Fall2']) { const im = new Image(); im.src = `art/sprites/corpse/${k}${i}.png`; SPR['dead_' + k + i] = im; }
+for (const r of ['hero', 'heroShoot', 'heroAxe2', 'heroAxe4', 'walker', 'runner', 'brute', 'boss', 'arrow', 'fireLow', 'tower1', 'tower2', 'forge', 'tree', 'pine', 'oak', 'stump', 'grave', 'gold', 'crystal']) {
+  const i = new Image(); i.src = `art/sprites/top/${r}.png`; SPR[r] = i;
 }
+// Sprites are pre-scaled once to the size they take on screen (big source PNGs are slow to shrink every frame).
+const sprCache = new Map();
+function sprSrc(i, name, w, h) {
+  const q = v => Math.max(8, Math.round(v * S * DPR / 8) * 8), px = q(w), py = q(h), key = `${name}|${px}x${py}`;
+  let c = sprCache.get(key);
+  if (!c) {
+    if (sprCache.size > 300) sprCache.clear();
+    c = document.createElement('canvas'); c.width = px; c.height = py;
+    const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(i, 0, 0, px, py);
+    sprCache.set(key, c);
+  }
+  return c;
+}
+let view = { x0: -1e9, y0: -1e9, x1: 1e9, y1: 1e9 };
+const offView = (x, y, r) => x + r < view.x0 || x - r > view.x1 || y + r < view.y0 || y - r > view.y1;
+// Draws a sprite centred on (x, y), its longer side d world units, scaled by k; false if it is not loaded yet.
+function spr(name, x, y, d, ang = 0, flash = 0, alpha = 1, k = 1) {
+  const i = SPR[name];
+  if (!i || !i.complete || !i.naturalWidth) return false;
+  if (offView(x, y, d)) return true;
+  const ar = i.naturalWidth / i.naturalHeight, w = ar >= 1 ? d : d * ar, hh = ar >= 1 ? d / ar : d, src = sprSrc(i, name, w, hh);
+  X.save(); X.translate(x, y); if (ang) X.rotate(ang); if (k !== 1) X.scale(k, k); X.globalAlpha = alpha;
+  X.drawImage(src, -w / 2, -hh / 2, w, hh);
+  if (flash > 0) { X.globalCompositeOperation = 'lighter'; X.globalAlpha = flash * 0.7; X.drawImage(src, -w / 2, -hh / 2, w, hh); }
+  X.restore();
+  return true;
+}
+// Upright sprite standing with its feet at (x, y), h world units tall, mirrored when flip is set.
+function sprFeet(name, x, y, h, flip = false, tilt = 0, flash = 0, k = 1) {
+  const i = SPR[name];
+  if (!i || !i.complete || !i.naturalWidth) return false;
+  if (offView(x, y - h / 2, h)) return true;
+  const w = h * i.naturalWidth / i.naturalHeight, src = sprSrc(i, name, w, h);
+  X.save(); X.translate(x, y); if (tilt) X.rotate(tilt); X.scale(flip ? -k : k, k);
+  X.drawImage(src, -w / 2, -h, w, h);
+  if (flash > 0) { X.globalCompositeOperation = 'lighter'; X.globalAlpha = flash * 0.7; X.drawImage(src, -w / 2, -h, w, h); }
+  X.restore();
+  return true;
+}
+function shadow(x, y, r) { if (offView(x, y, r + 8)) return; X.fillStyle = 'rgba(0,0,0,.28)'; X.beginPath(); X.ellipse(x + 3, y + 5, r, r * 0.85, 0, 0, TAU); X.fill(); }
+// The village square: art/dirt.jpg tiled into a disc whose edge fades into the grass.
+let villageGround = null;
+const dirtImg = new Image();
+dirtImg.onload = () => {
+  const c = document.createElement('canvas'); c.width = c.height = 920;
+  const g = c.getContext('2d'), pat = g.createPattern(dirtImg, 'repeat');
+  pat.setTransform?.(new DOMMatrix().scale(0.32));
+  g.fillStyle = pat; g.fillRect(0, 0, 920, 920);
+  g.fillStyle = 'rgba(52,34,16,.42)'; g.fillRect(0, 0, 920, 920);   // calmer, so build pads and units read on top
+  g.globalCompositeOperation = 'destination-in';
+  const m = g.createRadialGradient(460, 460, 240, 460, 460, 460);
+  m.addColorStop(0, 'rgba(0,0,0,1)'); m.addColorStop(0.6, 'rgba(0,0,0,.8)'); m.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = m; g.fillRect(0, 0, 920, 920);
+  villageGround = c;
+};
+dirtImg.src = 'art/dirt.jpg';
+// Everything on the ground that never moves is painted once into one big image per game (and screen scale).
+const GROUND_R = 940;
+function groundLayer() {
+  const k = Math.min(S * DPR, 4096 / (2 * GROUND_R)), key = `${k.toFixed(3)}|${!!villageGround}|${groundImg.complete}|${!!(SPR.grave && SPR.grave.complete)}`;
+  if (G.ground && G.groundKey === key) return G.ground;
+  const c = G.ground || document.createElement('canvas');
+  c.width = c.height = Math.ceil(2 * GROUND_R * k);
+  const g = c.getContext('2d');
+  g.setTransform(k, 0, 0, k, GROUND_R * k, GROUND_R * k);
+  g.fillStyle = grassPat; g.fillRect(-GROUND_R, -GROUND_R, 2 * GROUND_R, 2 * GROUND_R);
+  if (villageGround) g.drawImage(villageGround, -230, -230, 460, 460);
+  g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = 30; g.beginPath(); g.arc(0, 0, 905, 0, TAU); g.stroke();
+  if (G.cfg.twist === 'river') for (const ry of [-335, 335]) {
+    g.fillStyle = '#24506b'; g.fillRect(-GROUND_R, ry - 38, 2 * GROUND_R, 76);
+    g.fillStyle = 'rgba(160,210,240,.18)';
+    for (let i = -11; i <= 11; i++) g.fillRect(i * 85 + (i % 2) * 30, ry - 14 + ((i + 11) % 3) * 12, 30, 3);
+  }
+  for (const gr of G.graves) {
+    const i = SPR.grave;
+    if (i && i.complete && i.naturalWidth) { g.save(); g.translate(gr.x, gr.y); g.rotate(Math.PI / 2); const w = 38, h = 38 * i.naturalHeight / i.naturalWidth; g.drawImage(i, -w / 2, -h / 2, w, h); g.restore(); }
+  }
+  G.ground = c; G.groundKey = key;
+  return c;
+}
+// Text drawn once into a small image and reused (outlined canvas text is slow to draw every frame).
+const textCache = new Map();
+function textImg(str, size, col) {
+  const k = S * DPR, key = `${str}|${size}|${col}|${k.toFixed(2)}`;
+  let c = textCache.get(key);
+  if (c) return c;
+  if (textCache.size > 400) textCache.clear();
+  c = document.createElement('canvas');
+  const g = c.getContext('2d'), font = `800 ${size}px Rubik, system-ui, sans-serif`;
+  g.font = font; const w = Math.ceil(g.measureText(str).width) + 8, h = size + 8;
+  c.width = Math.ceil(w * k); c.height = Math.ceil(h * k); c.w = w; c.h = h;
+  g.scale(k, k); g.font = font; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,.7)'; g.strokeText(str, w / 2, h / 2); g.fillStyle = col; g.fillText(str, w / 2, h / 2);
+  textCache.set(key, c);
+  return c;
+}
+function coin(x, y, t) {
+  const squash = 0.75 + Math.abs(Math.sin(t * 3 + x)) * 0.25;   // a slow spin
+  X.fillStyle = 'rgba(0,0,0,.25)'; X.beginPath(); X.ellipse(x + 1.5, y + 3, 6, 4, 0, 0, TAU); X.fill();
+  X.save(); X.translate(x, y); X.scale(squash, 1);
+  X.fillStyle = '#f2b81f'; X.strokeStyle = '#7a5208'; X.lineWidth = 1.6;
+  X.beginPath(); X.arc(0, 0, 6.5, 0, TAU); X.fill(); X.stroke();
+  X.fillStyle = '#ffd95a'; X.beginPath(); X.arc(0, 0, 4.3, 0, TAU); X.fill();
+  X.strokeStyle = 'rgba(255,255,255,.8)'; X.lineWidth = 1.4; X.beginPath(); X.arc(-1, -1, 3, Math.PI * 1.05, Math.PI * 1.55); X.stroke();
+  X.restore();
+}
+const lerpAng = (a, b, k) => a + ((((b - a + Math.PI) % TAU) + TAU) % TAU - Math.PI) * k;
+// Characters were painted facing down, so a heading of `a` means rotating them by a - 90°.
+const FACE = -Math.PI / 2;
+
+function flameTongue(x, y, w, h, sway, col) {
+  X.fillStyle = col; X.beginPath();
+  X.moveTo(x - w, y);
+  X.bezierCurveTo(x - w, y - h * 0.45, x + sway - w * 0.3, y - h * 0.7, x + sway, y - h);
+  X.bezierCurveTo(x + sway + w * 0.3, y - h * 0.7, x + w, y - h * 0.45, x + w, y);
+  X.arc(x, y, w, 0, Math.PI); X.closePath(); X.fill();
+}
+// The fire: stones and logs from the sprite, live flames drawn on top that shrink as the fire takes damage.
+function drawFire() {
+  const f = G.fire, k = Math.max(0, f.hp / f.max), t = G.t, s = 0.45 + k * 0.65;
+  // warm light on the ground first, so the stones keep their colour
+  X.globalCompositeOperation = 'lighter';
+  const gr = 70 * s + Math.sin(t * 13) * 4, g = X.createRadialGradient(0, 0, 10, 0, 0, gr);
+  g.addColorStop(0, 'rgba(255,150,50,.35)'); g.addColorStop(1, 'rgba(255,90,20,0)');
+  X.fillStyle = g; X.fillRect(-gr, -gr, gr * 2, gr * 2);
+  X.globalCompositeOperation = 'source-over';
+  if (!spr('fireLow', 0, 2, 66)) for (let i = 0; i < 8; i++) { const a = i * TAU / 8; circle(Math.cos(a) * 21, Math.sin(a) * 21, 6, '#6c6a66', '#3a3836', 1.5); }
+  const tongues = [[-8, 0.8, 0], [8, 0.85, 1.7], [0, 1.15, 3.1], [-3, 0.7, 4.4], [5, 0.65, 5.3]];
+  for (const [col, wk, hk] of [['#d2401e', 1.1, 1], ['#ff8a2a', 0.75, 0.8], ['#ffd25a', 0.48, 0.56], ['#fff3c0', 0.24, 0.32]]) {
+    for (const [dx, hm, ph] of tongues) {
+      const fl = Math.sin(t * 9 + ph * 2.1) * 0.18 + Math.sin(t * 15.3 + ph) * 0.1;
+      flameTongue(dx * s, 7, 7 * s * wk, 30 * s * hm * hk * (1 + fl), Math.sin(t * 6 + ph) * 4 * s, col);
+    }
+  }
+  X.globalCompositeOperation = 'lighter';
+  const core = X.createRadialGradient(0, -4, 1, 0, -4, 18 * s);
+  core.addColorStop(0, 'rgba(255,220,120,.45)'); core.addColorStop(1, 'rgba(255,140,40,0)');
+  X.fillStyle = core; X.fillRect(-20 * s, -24 * s, 40 * s, 40 * s);
+  X.globalCompositeOperation = 'source-over';
+  if (Math.random() < 0.4 * s) G.fx.push({ x: rnd(-8, 8), y: rnd(-16, 0), vx: rnd(-14, 14), vy: rnd(-75, -35), t: 0, max: rnd(0.5, 1.1), col: Math.random() < 0.5 ? '#ffd27a' : '#ff9a3c', r: rnd(1, 2.2) });
+  if (k < 1) bar(0, -48, 46, k, '#ff9a3c');
+}
+// Chop frames (art/sprites/top/heroAxe*): drawn CHOP_D wide around the hood, which sits HOOD from the hero's centre.
+const CHOP_D = 110, HOOD = [0.36, -16.05];   // frames are anchored on the top of the hood
+// ---------- the archer rig (from ember/web/hero-lab.html, "Rig 2") ----------
+// The hero sprite split into layers (body, the hand that draws the string, the bow arm, bow, arrow, quiver) plus four painted
+// body poses. Code draws the string, bends the bow, moves the hands, turns the body; the shot is timed by the game's real shooting.
+const ARCHER = { pull: 8, bowBend: 0.35, bowKick: 3, recoil: 2.5, twist: 0.12, armTuck: 0.14, armReach: 0.08, stringW: 0.8,
+  draw: 0.32, release: 0.06, recover: 0.4, size: 48 };
+const RIGIMG = {}; let RIG = null, RPOSES = null, RIG_MASK = null;
+(async () => {
+  try {
+    const get = u => fetch(u).then(r => r.json());
+    const [rig, poses] = await Promise.all([get('art/sprites/rig/rig.json'), get('art/sprites/rig/poses.json')]);
+    const files = [...rig.layers.map(l => l.file), 'bow_arm.png', 'hooded_character_body-nobow.png',
+      ...Object.values(poses).flatMap(p => [p.file, p.file.replace('.png', '-nobow.png')])];
+    await Promise.all(files.map(f => new Promise(res => { const i = new Image(); i.onload = () => { RIGIMG[f] = i; res(); }; i.onerror = res; i.src = 'art/sprites/rig/' + f; })));
+    RIG = rig; RPOSES = poses;
+  } catch (e) { RIG = null; }   // no rig: the two-frame hero is drawn instead
+})();
+// where the shot is now: draw before the next shot, release and recover after the last one; squeezed when the fire rate is high
+function archerPhase(h) {
+  const A = ARCHER, interval = 1 / G.stat.rate, fit = Math.min(1, interval * 0.95 / (A.draw + A.release + A.recover));
+  const d = A.draw * fit, r = A.release * fit, rc = A.recover * fit, since = h.shotAt == null ? 99 : G.t - h.shotAt;
+  // reaching back to the quiver only reads at a calm pace; fast shooting goes straight back to the string
+  const reach = interval > 0.6;
+  if (since < r) return { name: 'release', k: since / r, pull: -0.25 * Math.sin(since / r * Math.PI), reach };
+  if (since < r + rc) return { name: 'recover', k: (since - r) / rc, pull: 0, reach };
+  if (h.combatT > 0 && h.cd < d) { const k = 1 - Math.max(0, h.cd) / d; return { name: k > 0.96 ? 'hold' : 'draw', k, pull: 1 - (1 - k) * (1 - k) }; }
+  return { name: 'rest', k: 0, pull: 0 };
+}
+function rigCovers(u, v) {
+  if (!RIG_MASK) { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+    g.drawImage(RIGIMG['hooded_character_body.png'], 0, 0, 128, 128); RIG_MASK = g.getImageData(0, 0, 128, 128).data; }
+  const x = Math.round((u + 0.5) * 127), y = Math.round((v + 0.5) * 127);
+  return x >= 0 && y >= 0 && x < 128 && y < 128 && RIG_MASK[(y * 128 + x) * 4 + 3] > 120;
+}
+// draws the rigged archer at (bx, by) turned by rot (the sprite's own rotation); false if the rig is not loaded
+function drawArcherRig(h, bx, by, rot) {
+  if (!RIG) return false;
+  const A = ARCHER, ph = archerPhase(h), C = A.size / RIG.heroSize, f = A.size / 48;
+  const pull = Math.max(0, ph.pull), bend = pull * A.bowBend, ease = t => t * t * (3 - 2 * t);
+  const at = p => ({ x: p[0] * C, y: p[1] * C });
+  const L = file => { const i = RIGIMG[file]; if (i) X.drawImage(sprSrc(i, 'rig:' + file, C, C), -C / 2, -C / 2, C, C); };
+  const kickBody = ph.name === 'release' ? Math.sin(ph.k * Math.PI) * A.recoil * f : 0;
+  X.save(); X.translate(bx - Math.cos(rot + Math.PI / 2) * kickBody, by - Math.sin(rot + Math.PI / 2) * kickBody); X.rotate(rot);
+  // the body turns the drawing shoulder back and leans while drawing, jolts on the release, turns to the quiver, breathes
+  let twist = 0, lean = 0;
+  if (ph.name === 'draw' || ph.name === 'hold') { twist = ph.pull * A.twist; lean = ph.pull * 1.6; }
+  else if (ph.name === 'release') { twist = A.twist * (1 - ph.k) - Math.sin(ph.k * Math.PI) * A.twist * 0.6; lean = 1.6 * (1 - ph.k); }
+  else if (ph.name === 'recover') twist = -A.twist * 1.1 * Math.sin(ease(Math.min(1, ph.k / 0.75)) * Math.PI);
+  X.translate(0, -lean * f); X.rotate(twist); const br = 1 + Math.sin(G.t * 2.3) * 0.012; X.scale(br, br);
+  const n0 = at(RIG.nock), tip0 = at(RIG.arrowTip), axx = tip0.x - n0.x, ayy = tip0.y - n0.y, al = Math.hypot(axx, ayy) || 1;
+  const ux = axx / al, uy = ayy / al, full = { x: n0.x - ux * A.pull * f, y: n0.y - uy * A.pull * f };
+  const Q = at([-0.11, -0.2]), side = at([-0.1, 0.02]);
+  const bez = (a, c, b, t) => ({ x: (1 - t) * (1 - t) * a.x + 2 * (1 - t) * t * c.x + t * t * b.x, y: (1 - t) * (1 - t) * a.y + 2 * (1 - t) * t * c.y + t * t * b.y });
+  let hand, arrowAt = null, arrowAng = 0, onString = true;
+  if (ph.name === 'release') { hand = { x: full.x - uy * 3 * ph.k, y: full.y + ux * 3 * ph.k - 2 * ph.k }; onString = false; }
+  else if (ph.name === 'recover' && !ph.reach) {
+    const from = { x: full.x - uy * 3, y: full.y + ux * 3 - 2 }, t = ease(ph.k);
+    hand = { x: from.x + (n0.x - from.x) * t, y: from.y + (n0.y - from.y) * t }; onString = ph.k > 0.35;
+  } else if (ph.name === 'recover') {
+    onString = false;
+    const k = ph.k, from = { x: full.x - uy * 3, y: full.y + ux * 3 - 2 };
+    if (k < 0.4) hand = bez(from, side, Q, ease(k / 0.4));
+    else if (k < 0.5) hand = { x: Q.x, y: Q.y - Math.sin((k - 0.4) / 0.1 * Math.PI) * 4 };
+    else if (k < 0.92) { const t = ease((k - 0.5) / 0.42); hand = bez(Q, side, n0, t); arrowAt = hand; arrowAng = (1 - t) * 2.5; }
+    else { hand = n0; onString = true; }
+  } else { const back = ph.pull * A.pull * f; hand = { x: n0.x - ux * back, y: n0.y - uy * back }; }
+  // painted body poses: which one now, and where its fist is (the string hooks to it)
+  let pose = null;
+  if (RPOSES) {
+    // every calm moment shows a pose with the whole drawing arm; the loose hand layer is only used under the hood on the way to the quiver
+    const R = RPOSES.rest ? 'rest' : null;
+    if (ph.name === 'draw') pose = ph.pull < 0.3 ? R : ph.pull < 0.75 ? 'half' : 'full';
+    else if (ph.name === 'hold') pose = 'full';
+    else if (ph.name === 'release') pose = 'loose';
+    else if (ph.name === 'recover') pose = !ph.reach ? (ph.k < 0.25 ? 'loose' : ph.k < 0.6 ? 'half' : R)
+      : ph.k < 0.12 ? 'loose' : ph.k < 0.55 ? 'reach' : ph.k < 0.88 ? 'half' : R;
+    else pose = R;
+  }
+  if (pose) {
+    const p2 = at(RPOSES[pose].hand); hand = { x: p2.x + ux * 0.02 * C, y: p2.y + uy * 0.02 * C };
+    if (ph.name === 'recover') {
+      if (pose === 'half' && ph.reach) { arrowAt = hand; arrowAng = 0.9 * (1 - ease(Math.max(0, Math.min(1, (ph.k - 0.55) / 0.33)))); } else arrowAt = null;
+      onString = pose === 'rest' || (!ph.reach && pose === 'half');
+    }
+  }
+  const hidden = !pose && rigCovers(hand.x / C, hand.y / C);
+  // the stance: the bow held in close before the shot, the bow arm straightening as the string comes back, punched out on the shot
+  const kick = ph.name === 'release' ? Math.sin(ph.k * Math.PI) * A.bowKick * f : 0, tuck = 1 - A.armTuck, reach = 1 + A.armReach;
+  let ext = tuck;
+  if (ph.name === 'draw') ext = tuck + (reach - tuck) * ph.pull; else if (ph.name === 'hold') ext = reach;
+  else if (ph.name === 'release') ext = reach + 0.04 * Math.sin(ph.k * Math.PI); else if (ph.name === 'recover') ext = reach + (tuck - reach) * ease(ph.k);
+  const elbow = at([0.177, -0.0273]), bowTurn = ph.name === 'release' ? -Math.sin(ph.k * Math.PI) * 0.05 : 0;
+  const g0 = at(RIG.grip), g = { x: elbow.x + (g0.x - elbow.x) * ext, y: elbow.y + (g0.y - elbow.y) * ext - kick * 0.3 };
+  const sx = 1 - bend * 0.12, sy = 1 + bend * 0.6;
+  const bendPt = p => { const lx = (p.x - g0.x) * sx, ly = (p.y - g0.y) * sy, c = Math.cos(bowTurn), si = Math.sin(bowTurn); return { x: g.x + lx * c - ly * si, y: g.y + lx * si + ly * c }; };
+  const tl = bendPt(at(RIG.tipL)), tr = bendPt(at(RIG.tipR));
+  const nock = onString && (ph.name === 'draw' || ph.name === 'hold') ? hand : null;
+  const arrowFile = RIG.layers.find(l => l.role === 'arrow').file, handFile = RIG.layers.find(l => l.role === 'hand').file;
+  const drawArrowAt = (pos, ang) => { X.save(); X.translate(pos.x, pos.y); X.rotate(ang); X.translate(-n0.x, -n0.y); L(arrowFile); X.restore(); };
+  const handAndArrow = () => { if (arrowAt) drawArrowAt(arrowAt, arrowAng); X.save(); X.translate(hand.x - n0.x, hand.y - n0.y); L(handFile); X.restore(); };
+  for (const l of RIG.layers) {
+    if (l.role === 'body') { if (hidden) handAndArrow(); L(pose ? RPOSES[pose].file.replace('.png', '-nobow.png') : 'hooded_character_body-nobow.png'); }
+    else if (l.role === 'bow') {
+      const ang = Math.atan2(g0.y - elbow.y, g0.x - elbow.x);
+      X.save(); X.translate(elbow.x, elbow.y); X.rotate(ang); X.scale(ext, 1); X.rotate(-ang); X.translate(-elbow.x, -elbow.y); L('bow_arm.png'); X.restore();
+      X.save(); X.translate(g.x, g.y); X.rotate(bowTurn); X.scale(sx, sy); X.translate(-g0.x, -g0.y); L(l.file); X.restore();
+      X.strokeStyle = '#4a3a26'; X.lineWidth = A.stringW * f * 1.3; X.lineCap = 'round';
+      const mid = nock || { x: (tl.x + tr.x) / 2, y: (tl.y + tr.y) / 2 - (ph.name === 'release' ? ph.pull * A.pull * f * 0.4 : 0) };
+      X.beginPath(); X.moveTo(tl.x, tl.y); X.lineTo(mid.x, mid.y); X.lineTo(tr.x, tr.y); X.stroke();
+    } else if (l.role === 'arrow') { if (onString) drawArrowAt(hand, 0); }
+    else if (l.role === 'hand') { if (pose) { if (arrowAt) drawArrowAt(arrowAt, arrowAng); } else if (!hidden) handAndArrow(); }
+    else L(l.file);
+  }
+  X.restore();
+  return true;
+}
+
 function drawHero(h) {
-  circle(h.x, h.y + 3, h.r, 'rgba(0,0,0,.3)');
-  circle(h.x, h.y, h.r, '#3f7fbf', '#152a40', 2.5);
-  circle(h.x, h.y, h.r * 0.55, '#e8c9a0', '#152a40', 1.5);
-  // bow
-  const a = Math.atan2(h.fy, h.fx);
-  X.strokeStyle = '#c9a26a'; X.lineWidth = 2.5;
-  X.beginPath(); X.arc(h.x + h.fx * 6, h.y + h.fy * 6, 12, a - 1.0, a + 1.0); X.stroke();
+  // faces the target while shooting, otherwise where it runs; turns smoothly
+  // runs facing where it goes (shooting on the move, like Survivor.io); standing still it faces its target or the tree
+  const tree = h.chopTree;
+  // while fighting it faces its target, even on the run; otherwise it faces where it runs, or the tree it chops;
+  // standing still it keeps facing where it last looked
+  if (h.combatT > 0) h.look = h.aim;
+  else if (h.moving) h.look = Math.atan2(h.fy, h.fx);
+  else if (tree) h.look = Math.atan2(tree.y - h.y, tree.x - h.x);
+  const look = h.look ?? Math.atan2(h.fy, h.fx);
+  h.ang = lerpAng(h.ang ?? look + FACE, look + FACE, 0.25);
+  const step = h.moving ? Math.sin(h.walk) : 0;
+  let frameDone = false;
+  shadow(h.x, h.y, 15);
+  const hx = h.x, hy = h.y;
+  if (tree) {
+    // chop cycle (0.45 s): the strike lands right when the log is counted, then the axe goes back to the same side for the next swing
+    // (wind-up <-> strike only, so the axe never jumps across the body); the body leans into the swing just before the hit.
+    // Frames are cut so the hood sits at their centre; HOOD is where the hood is in the normal sprite.
+    // two frames from one AI sprite sheet with an identical head, bow and quiver: 4 = axe in the trunk (the hit), 2 = axe drawn back.
+    // (Frame 3, the full wind-up, twists the whole upper body and made the head and bow jump, so it is not used.)
+    const k = h.chop / 0.45, frame = k < 0.16 ? 4 : 2;
+    const ang = h.ang, ca = Math.cos(ang), sa = Math.sin(ang), wx = HOOD[0] * ca - HOOD[1] * sa, wy = HOOD[0] * sa + HOOD[1] * ca;
+    // the head stays put: no body offset; only the arms and the axe move between frames
+    if (spr('heroAxe' + frame, hx + wx, hy + wy, CHOP_D, ang)) frameDone = true;
+  }
+  if (!frameDone && drawArcherRig(h, hx, hy, h.ang + step * 0.1)) frameDone = true;
+  if (!frameDone && !spr(h.shootT > 0.15 ? 'heroShoot' : 'hero', hx, hy, 48, h.ang + step * 0.1, 0, 1, 1 + Math.abs(step) * 0.04)) {
+    circle(h.x, h.y, h.r, '#3f7fbf', '#152a40', 2.5);
+    circle(h.x, h.y, h.r * 0.55, '#e8c9a0', '#152a40', 1.5);
+  }
   if (G.stat.aura) {
     const ar = 55 + G.stat.aura * 15;
     X.strokeStyle = `rgba(255,140,60,${0.25 + Math.sin(G.t * 6) * 0.1})`; X.lineWidth = 3;
@@ -1021,44 +1573,234 @@ function drawHero(h) {
   }
   if (h.hp < h.max) bar(h.x, h.y - h.r - 9, 28, h.hp / h.max, '#6fd06f');
 }
-function drawZombie(z) {
-  circle(z.x, z.y + 3, z.r, 'rgba(0,0,0,.3)');
-  const px = -z.fy, py = z.fx;
-  // arms reaching forward
-  for (const sgn of [1, -1]) circle(z.x + z.fx * z.r * 0.9 + px * z.r * 0.6 * sgn, z.y + z.fy * z.r * 0.9 + py * z.r * 0.6 * sgn, z.r * 0.32, z.col, '#1c2a14', 1.5);
-  circle(z.x, z.y, z.r, z.hit > 0 ? '#ffffff' : z.col, '#1c2a14', 2.5);
-  circle(z.x - z.fx * z.r * 0.2, z.y - z.fy * z.r * 0.2, z.r * 0.4, 'rgba(0,0,0,.12)');
-  const ex = z.fx * z.r * 0.45, ey = z.fy * z.r * 0.45;
-  circle(z.x + ex + px * z.r * 0.3, z.y + ey + py * z.r * 0.3, 1.8, '#ff5a3a');
-  circle(z.x + ex - px * z.r * 0.3, z.y + ey - py * z.r * 0.3, 1.8, '#ff5a3a');
-  if (z.kind === 'boss') {
-    X.fillStyle = '#f5cf4b'; X.beginPath();
-    X.moveTo(z.x - 10, z.y - z.r - 2); X.lineTo(z.x - 10, z.y - z.r - 12); X.lineTo(z.x - 4, z.y - z.r - 6); X.lineTo(z.x, z.y - z.r - 14);
-    X.lineTo(z.x + 4, z.y - z.r - 6); X.lineTo(z.x + 10, z.y - z.r - 12); X.lineTo(z.x + 10, z.y - z.r - 2); X.fill();
+const ZSIZE = { walker: 42, runner: 36, brute: 64, boss: 96 };
+// where the eyes are in each zombie sprite (fractions of the image, the sprite looks down)
+const EYES = { walker: [[0.42, 0.40], [0.58, 0.40]], runner: [[0.30, 0.41], [0.53, 0.37]], brute: [[0.44, 0.39], [0.57, 0.39]], boss: [[0.44, 0.53], [0.57, 0.53]] };
+function eyesOf(z) {
+  const i = SPR[z.kind], e = EYES[z.kind];
+  if (!i || !i.naturalWidth || !e || z.drawAng == null) return [];
+  const d = ZSIZE[z.kind], ar = i.naturalWidth / i.naturalHeight, w = ar >= 1 ? d : d * ar, h = ar >= 1 ? d / ar : d;
+  const c = Math.cos(z.drawAng), s = Math.sin(z.drawAng);
+  return e.map(([u, v]) => { const lx = (u - 0.5) * w, ly = (v - 0.5) * h; return [z.drawX + lx * c - ly * s, z.drawY + lx * s + ly * c]; });
+}
+// arrows stuck in a body: only the back half shows (shaft and feathers), the cut end buried where it went in
+let arrowTail = null;
+function tailImg() {
+  if (arrowTail) return arrowTail;
+  const i = SPR.arrow; if (!i || !i.complete || !i.naturalWidth) return null;
+  // the arrow sprite points up: keep its lower 58% (the feathered end)
+  const c = document.createElement('canvas'), top = Math.round(i.naturalHeight * 0.42);
+  c.width = i.naturalWidth; c.height = i.naturalHeight - top;
+  c.getContext('2d').drawImage(i, 0, top, i.naturalWidth, c.height, 0, 0, i.naturalWidth, c.height);
+  c.complete = true; c.naturalWidth = c.width; c.naturalHeight = c.height;
+  return arrowTail = c;
+}
+function stuckArrows(list, x, y, ang) {
+  const img = tailImg(); if (!img) return;
+  const len = 13, w = len * img.width / img.height, src = sprSrc(img, 'arrowTail', w, len);
+  for (const a of list) {
+    const c = Math.cos(ang), s = Math.sin(ang), px = x + a.x * c - a.y * s, py = y + a.x * s + a.y * c, fa = a.a + ang;
+    X.fillStyle = 'rgba(40,20,15,.55)'; X.beginPath(); X.arc(px, py, 2.2, 0, TAU); X.fill();
+    X.save(); X.translate(px - Math.cos(fa) * len / 2, py - Math.sin(fa) * len / 2); X.rotate(fa + Math.PI / 2);
+    X.drawImage(src, -w / 2, -len / 2, w, len); X.restore();
   }
+}
+// bodies: one of three lying poses per kind (art/sprites/corpse), turned any way, with a dark stain under them
+// heads and the boss's crown: cut once from the standing sprite, thrown along the blow, bouncing and rolling to a stop
+const rollArt = {};
+function rollImg(what, kind) {
+  const key = what + kind; if (rollArt[key]) return rollArt[key];
+  const i = SPR[kind]; if (!i || !i.complete || !i.naturalWidth) return null;
+  const w = i.naturalWidth, h = i.naturalHeight, c = document.createElement('canvas'), g = c.getContext('2d');
+  if (what === 'crown') {
+    const sx = w * 0.32, sy = h * 0.06, sw = w * 0.36, sh = h * 0.26;
+    c.width = sw; c.height = sh; g.drawImage(i, sx, sy, sw, sh, 0, 0, sw, sh);
+  } else {
+    const e = EYES[kind], cx = (e[0][0] + e[1][0]) / 2 * w, cy = ((e[0][1] + e[1][1]) / 2 - 0.05) * h, r = w * (kind === 'runner' ? 0.3 : 0.2);
+    c.width = c.height = Math.round(r * 2);
+    g.beginPath(); g.arc(r, r, r, 0, TAU); g.clip(); g.drawImage(i, cx - r, cy - r, r * 2, r * 2, 0, 0, r * 2, r * 2);
+  }
+  c.complete = true; c.naturalWidth = c.width; c.naturalHeight = c.height;
+  return rollArt[key] = c;
+}
+function roll(what, kind, x, y, dx, dy, speed) {
+  const a = Math.atan2(dy, dx) + rnd(-0.5, 0.5), v = speed * rnd(0.7, 1.1);
+  G.rolls.push({ what, kind, x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, z: 6, vz: rnd(150, 230), rot: Math.random() * TAU, spin: rnd(-14, 14), t: 0 });
+  if (G.rolls.length > 120) { const r = G.rolls.shift(); bakeRoll(r); }
+}
+function updateRolls(dt) {
+  for (const r of G.rolls) {
+    r.t += dt;
+    if (r.done) continue;
+    r.z += r.vz * dt; r.vz -= 650 * dt; r.x += r.vx * dt; r.y += r.vy * dt; r.rot += r.spin * dt;
+    if (r.z <= 0) {
+      r.z = 0;
+      if (Math.abs(r.vz) > 70) { r.vz = -r.vz * 0.35; r.vx *= 0.6; r.vy *= 0.6; r.spin *= 0.7; }
+      else { r.vz = 0; r.vx *= 0.9; r.vy *= 0.9; r.spin = Math.hypot(r.vx, r.vy) * 0.12 * Math.sign(r.spin || 1); if (Math.hypot(r.vx, r.vy) < 3) r.done = true; }
+    }
+  }
+}
+function drawRoll(r) {
+  const img = rollImg(r.what, r.kind); if (!img || offView(r.x, r.y, 30)) return;
+  const d = r.what === 'crown' ? 26 : ZSIZE[r.kind] * (r.kind === 'runner' ? 0.5 : 0.42);
+  X.globalAlpha = 0.25; X.fillStyle = '#000'; X.beginPath(); X.ellipse(r.x + 2, r.y + 3, d * 0.45, d * 0.32, 0, 0, TAU); X.fill(); X.globalAlpha = 1;
+  const ar = img.width / img.height, w = ar >= 1 ? d : d * ar, h = ar >= 1 ? d / ar : d, src = sprSrc(img, 'roll:' + r.what + r.kind, w, h);
+  X.save(); X.translate(r.x, r.y - r.z); X.rotate(r.rot); X.drawImage(src, -w / 2, -h / 2, w, h); X.restore();
+}
+function bakeRoll(r) {
+  const img = rollImg(r.what, r.kind); if (!img) return;
+  const d = r.what === 'crown' ? 26 : ZSIZE[r.kind] * (r.kind === 'runner' ? 0.5 : 0.42), ar = img.width / img.height, w = ar >= 1 ? d : d * ar, h = ar >= 1 ? d / ar : d;
+  decalPaint(r.x - d, r.y - d, r.x + d, r.y + d, g => { g.save(); g.translate(r.x, r.y); g.rotate(r.rot); g.drawImage(img, -w / 2, -h / 2, w, h); g.restore(); });
+}
+
+// old bodies are painted once into a ground layer, kept as tiles at screen resolution (made only where bodies lie),
+// so they stay as sharp as fresh ones and cost nothing afterwards
+const DECAL = { tiles: new Map(), game: null, res: 2, used: false };
+const TILE = 256;
+// tiles at up to 2x keep memory at ~1 MB per tile
+function decalReset() { if (DECAL.game !== G) { DECAL.tiles.clear(); DECAL.game = G; DECAL.used = false; DECAL.res = Math.min(2, Math.max(1, S * DPR)); } }
+function decalTile(ix, iy) {
+  const key = ix + ',' + iy;
+  let t = DECAL.tiles.get(key);
+  if (!t) { t = document.createElement('canvas'); t.width = t.height = Math.ceil(TILE * DECAL.res); t.g = t.getContext('2d'); t.g.imageSmoothingQuality = 'high'; DECAL.tiles.set(key, t); }
+  return t;
+}
+// paints with fn(ctx) in world coordinates onto every tile the box (x0..x1, y0..y1) touches
+function decalPaint(x0, y0, x1, y1, fn) {
+  decalReset();
+  for (let iy = Math.floor(y0 / TILE); iy <= Math.floor(y1 / TILE); iy++)
+    for (let ix = Math.floor(x0 / TILE); ix <= Math.floor(x1 / TILE); ix++) {
+      const t = decalTile(ix, iy), g = t.g;
+      g.save(); g.setTransform(DECAL.res, 0, 0, DECAL.res, -ix * TILE * DECAL.res, -iy * TILE * DECAL.res); fn(g); g.restore();
+    }
+  DECAL.used = true;
+}
+function decalDarken() {
+  decalReset();
+  for (const t of DECAL.tiles.values()) { const g = t.g; g.save(); g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(18,22,14,.22)'; g.fillRect(0, 0, t.width, t.height); g.restore(); }
+}
+const deadArt = {};
+// two looks only: tonight's bodies (muted) and older ones (a bit more faded, never darker than this)
+function deadImg(name, old) {
+  const key = name + (old ? ':old' : '');
+  if (deadArt[key]) return deadArt[key];
+  const i = SPR[name]; if (!i || !i.complete || !i.naturalWidth) return null;
+  const c = document.createElement('canvas'); c.width = i.naturalWidth; c.height = i.naturalHeight;
+  const g = c.getContext('2d'); g.filter = old ? 'saturate(0.45) brightness(0.74)' : 'saturate(0.58) brightness(0.84)'; g.drawImage(i, 0, 0);
+  c.complete = true; c.naturalWidth = c.width; c.naturalHeight = c.height;
+  return deadArt[key] = c;
+}
+function bakeCorpse(c) {
+  const img = deadImg('dead_' + c.kind + c.pose, true) || SPR['dead_' + c.kind + c.pose]; if (!img || !img.naturalWidth) return;
+  const d = ZSIZE[c.kind] * 1.15, ar = img.naturalWidth / img.naturalHeight, w = ar >= 1 ? d : d * ar, h = ar >= 1 ? d / ar : d, tail = tailImg();
+  decalPaint(c.x - d, c.y - d, c.x + d, c.y + d, g => {
+    g.globalAlpha = 0.18; g.fillStyle = '#1f2614'; g.beginPath(); g.ellipse(c.x, c.y, d * 0.4, d * 0.3, c.a, 0, TAU); g.fill();
+    g.globalAlpha = 1; g.save(); g.translate(c.x, c.y); g.rotate(c.a); if (c.flip) g.scale(-1, 1); g.drawImage(img, -w / 2, -h / 2, w, h); g.restore();
+    if (c.stuck && tail) for (const s2 of c.stuck) {
+      const co = Math.cos(c.a), si = Math.sin(c.a), px = c.x + s2.x * co - s2.y * si, py = c.y + s2.x * si + s2.y * co, fa = s2.a + c.a, len = 13, tw = len * tail.width / tail.height;
+      g.save(); g.translate(px - Math.cos(fa) * len / 2, py - Math.sin(fa) * len / 2); g.rotate(fa + Math.PI / 2); g.drawImage(tail, -tw / 2, -len / 2, tw, len); g.restore();
+    }
+  });
+}
+function drawDecal() {
+  if (!DECAL.used || DECAL.game !== G) return;
+  for (let iy = Math.floor(view.y0 / TILE); iy <= Math.floor(view.y1 / TILE); iy++)
+    for (let ix = Math.floor(view.x0 / TILE); ix <= Math.floor(view.x1 / TILE); ix++) {
+      const t = DECAL.tiles.get(ix + ',' + iy); if (t) X.drawImage(t, ix * TILE, iy * TILE, TILE, TILE);
+    }
+}
+function drawCorpse(c) {
+  // the fall: two painted frames (hit and thrown back, then nearly down) before the lying pose
+  const frame = c.t < 0.09 ? 'Fall1' : c.t < 0.18 ? 'Fall2' : c.pose, fimg = SPR['dead_' + c.kind + frame];
+  const name = 'dead_' + c.kind + (fimg && fimg.naturalWidth ? frame : c.pose), img = deadImg(name) || SPR[name], d = ZSIZE[c.kind] * 1.15;
+  if (!img || !img.complete || !img.naturalWidth || offView(c.x, c.y, d)) return;
+  const burn = c.burnAt != null && c.burnAt <= 0 ? Math.min(1, c.burnT / 1.25) : 0;
+  const fade = (c.sink != null ? Math.max(0, Math.min(1, c.sink / 1.5)) : 1) * (1 - burn * burn);
+  const k = Math.min(1, c.t / 0.2), e = 1 - (1 - k) * (1 - k);
+  const x = c.fromX + (c.x - c.fromX) * e, y = c.fromY + (c.y - c.fromY) * e;
+  const a = c.fromA + ((((c.a - c.fromA + Math.PI) % TAU) + TAU) % TAU - Math.PI) * e;
+  const land = c.t < 0.34 && k >= 1 ? 1 + Math.sin((c.t - 0.2) / 0.14 * Math.PI) * 0.06 : 1;   // a small bounce as it hits the ground
+  X.globalAlpha = 0.18 * fade * k; X.fillStyle = '#1f2614';
+  X.beginPath(); X.ellipse(c.x, c.y, d * 0.4, d * 0.3, c.a, 0, TAU); X.fill();
+  const ar = img.naturalWidth / img.naturalHeight, w = ar >= 1 ? d : d * ar, h = ar >= 1 ? d / ar : d, src = sprSrc(img, 'muted:' + name, w, h);
+  X.save(); X.translate(x, y); X.rotate(a); if (c.flip) X.scale(-1, 1); X.scale(land, 2 - land); X.globalAlpha = fade;
+  X.drawImage(src, -w / 2, -h / 2, w, h); X.restore(); X.globalAlpha = 1;
+  if (c.stuck && burn < 0.6) stuckArrows(c.stuck, x, y, a);
+  if (burn > 0) {
+    const g = Math.sin(burn * Math.PI), r = d * 0.55;
+    X.save(); X.globalCompositeOperation = 'lighter';
+    const gr = X.createRadialGradient(x, y, 0, x, y, r);
+    gr.addColorStop(0, `rgba(255,170,60,${0.45 * g})`); gr.addColorStop(1, 'rgba(255,120,30,0)');
+    X.fillStyle = gr; X.fillRect(x - r, y - r, r * 2, r * 2); X.restore();
+  }
+
+}
+// claw marks where a blow lands: three short strokes that flash and fade
+function drawSlashes() {
+  X.lineCap = 'round';
+  for (const sl of G.slashes) {
+    const k = sl.t / 0.18, a = sl.a + sl.side * 0.6, len = sl.big ? 16 : 11;
+    X.strokeStyle = `rgba(255,235,220,${0.85 * (1 - k)})`; X.lineWidth = sl.big ? 2.6 : 2;
+    for (let i = -1; i <= 1; i++) {
+      const ox = Math.cos(a + Math.PI / 2) * i * 4, oy = Math.sin(a + Math.PI / 2) * i * 4, e = len * (0.4 + k * 0.6);
+      X.beginPath(); X.moveTo(sl.x + ox - Math.cos(a) * e / 2, sl.y + oy - Math.sin(a) * e / 2); X.lineTo(sl.x + ox + Math.cos(a) * e / 2, sl.y + oy + Math.sin(a) * e / 2); X.stroke();
+    }
+  }
+}
+function drawZombie(z) {
+  // a shambling sway from side to side instead of swapping frames; heavy ones sway less; a lunge forward on every blow
+  const want = Math.atan2(z.fy, z.fx) + FACE;
+  z.ang = lerpAng(z.ang ?? want, want, 0.15);
+  const step = Math.sin(z.wob), heavy = z.kind === 'brute' || z.kind === 'boss';
+  const blow = z.fighting ? Math.max(0, Math.sin(z.atkT * 7)) : 0;
+  const lunge = blow ** 2 * (heavy ? 8 : 7);
+  const kick = z.kick > 0 ? z.kick * z.kick * 4 : 0;
+  if (z.kick > 0) z.kick = Math.max(0, z.kick - 0.12);
+  const zx = z.x + z.fx * lunge + (z.hitDx || 0) * kick, zy = z.y + z.fy * lunge + (z.hitDy || 0) * kick;
+  // each blow is a swipe: the body twists toward the striking arm, a different arm every blow
+  const frames = z.fighting && ZATTACK[z.kind] && SPR[z.kind + 'Hit'] && SPR[z.kind + 'Hit'].naturalWidth;
+  const swipe = z.fighting ? (z.blowN % 2 ? 1 : -1) * Math.sin(z.atkT * 7) * (frames ? 0.07 : heavy ? 0.22 : 0.32) : 0;
+  const ang = z.ang + (z.fighting ? swipe : step * (heavy ? 0.07 : 0.13));
+  z.drawAng = ang; z.drawX = zx; z.drawY = zy;
+  shadow(zx, zy, z.r + 2);
+  if (frames) {
+    // the blow lands at the peak of the swing: strike frame around it, wind-up the rest of the time
+    const f = ZATTACK[z.kind][Math.sin(z.atkT * 7) > 0.45 ? 'Hit' : 'Wind'], d = ZSIZE[z.kind], c = Math.cos(ang), sn = Math.sin(ang);
+    const fx = zx + (f.ox * c - f.oy * sn) * d, fy = zy + (f.ox * sn + f.oy * c) * d;
+    spr(z.kind + (Math.sin(z.atkT * 7) > 0.45 ? 'Hit' : 'Wind'), fx, fy, f.size * d, ang, z.hit, 1, 1 + lunge * 0.01);
+  } else if (!spr(z.kind, zx, zy, ZSIZE[z.kind], ang, z.hit, 1, 1 + Math.abs(step) * 0.03 + lunge * 0.014)) {
+    circle(z.x, z.y, z.r, z.hit > 0 ? '#ffffff' : z.col, '#1c2a14', 2.5);
+  }
+  if (z.stuck) stuckArrows(z.stuck, zx, zy, ang);
   if (z.hp < z.max) bar(z.x, z.y - z.r - 8, z.r * 2, z.hp / z.max, '#e0533a');
 }
 function drawTower(s) {
-  X.fillStyle = 'rgba(0,0,0,.3)'; X.fillRect(s.x - 15, s.y - 10, 32, 30);
-  X.fillStyle = '#6d6a64'; X.fillRect(s.x - 16, s.y - 14, 32, 30);
-  X.strokeStyle = '#2f2d2a'; X.lineWidth = 2.5; X.strokeRect(s.x - 16, s.y - 14, 32, 30);
-  X.fillStyle = ['#8a5a32', '#a0462e', '#3e6ea8'][s.lvl - 1];
-  X.beginPath(); X.moveTo(s.x - 20, s.y - 12); X.lineTo(s.x, s.y - 30); X.lineTo(s.x + 20, s.y - 12); X.closePath(); X.fill();
-  X.strokeStyle = '#2f2d2a'; X.stroke();
-  for (let i = 0; i < s.lvl; i++) circle(s.x - 8 + i * 8, s.y + 6, 2.5, '#ffd28a');
-  const act = padAction(s);
-  if (act) padLabel(s.x, s.y + 32, act, canPay(act.cost));
+  const d = [62, 70, 80][s.lvl - 1];
+  if (s.hp <= 0) {
+    // rubble: stones and a broken beam where the tower stood
+    for (let i = 0; i < 9; i++) { const a = i * 2.39, r = 6 + (i % 3) * 7; circle(s.x + Math.cos(a) * r, s.y + Math.sin(a) * r, 5 + (i % 2) * 2, '#7d8287', '#3a3d42', 1.5); }
+    X.strokeStyle = '#5a3a1e'; X.lineWidth = 5; X.lineCap = 'round'; X.beginPath(); X.moveTo(s.x - 14, s.y + 8); X.lineTo(s.x + 12, s.y - 6); X.stroke();
+    return;
+  }
+  if (s.marked > 0) {
+    const k = (G.t * 3) % 1;
+    X.strokeStyle = `rgba(255,50,40,${0.9 - k * 0.6})`; X.lineWidth = 4; X.beginPath(); X.arc(s.x, s.y, d * 0.55 + k * 14, 0, TAU); X.stroke();
+  }
+  shadow(s.x, s.y, d * 0.42);
+  if (!spr(s.lvl === 1 ? 'tower1' : 'tower2', s.x, s.y, d, 0, s.underAttack > 0 ? 0.35 + Math.sin(G.t * 20) * 0.25 : 0)) {
+    X.fillStyle = '#6d6a64'; X.fillRect(s.x - 16, s.y - 14, 32, 30);
+  }
+  if (s.hp < s.max) bar(s.x, s.y - d * 0.5 - 8, 34, s.hp / s.max, '#e0b070');
+  for (let i = 0; i < s.lvl; i++) circle(s.x - 8 + i * 8, s.y + d * 0.5 + 2, 2.8, '#ffd28a', '#5a3a12', 1);
+
 }
 function drawTree(t) {
-  const sh = t.shake > 0 ? Math.sin(G.t * 60) * 2 : 0;
-  const near = !G.hero.dead && d2(t, G.hero) < (t.r + 10) ** 2;
-  X.globalAlpha = near ? 0.55 : 1;
-  circle(t.x + 4, t.y + 6, t.r, 'rgba(0,0,0,.28)');
-  circle(t.x + sh, t.y, t.r, '#1f4a26', '#10261a', 2.5);
-  circle(t.x + sh - t.r * 0.3, t.y - t.r * 0.3, t.r * 0.55, '#2d6334');
-  circle(t.x + sh + t.r * 0.25, t.y + t.r * 0.1, t.r * 0.4, '#265a2e');
-  X.globalAlpha = 1;
-  if (t.wood < 4) bar(t.x, t.y - t.r - 8, 22, t.wood / 4, '#b07a45');
+  const amp = t.shake > 0 ? (t.shake / 0.3) ** 2 * 6 * Math.cos((0.3 - t.shake) * 28) : 0;   // knocked away, then swings back
+  const sh = amp * Math.cos(t.hitDir || 0), shy = amp * Math.sin(t.hitDir || 0);
+  t.spr ??= ['pine', 'oak', 'tree'][Math.abs(Math.round(t.x * 7 + t.y * 13)) % 3];
+  t.rot ??= Math.abs(t.x * 0.37 + t.y * 0.11) % TAU;
+  shadow(t.x + 4, t.y + 4, t.r * 1.25);
+  if (!spr(t.spr, t.x + sh, t.y + shy, t.r * 3.2, t.rot)) circle(t.x + sh, t.y + shy, t.r, '#1f4a26', '#10261a', 2.5);
 }
 
 // ---------- HUD ----------
@@ -1066,21 +1808,43 @@ let hudCache = {};
 function setText(id, v) { if (hudCache[id] !== v) { hudCache[id] = v; $(id).textContent = v; } }
 function hud() {
   const s = Math.max(0, Math.ceil(G.phaseT));
-  const where = G.cfg.v ? G.cfg.v.name + ' · ' : '', of = isFinite(G.cfg.nights) ? ` из ${G.cfg.nights}` : '';
-  const night = G.needBoss && G.phaseT <= 0 ? 'убей вожака!' : `до рассвета ${s} с`;
-  setText('phase', G.phase === 'day' ? `${where}День ${G.night + 1} · ночь через ${s} с` : `${where}Ночь ${G.night}${of} · ${night}`);
+  // sun with seconds to nightfall; moon with night number (of total) and seconds to dawn
+  const of = isFinite(G.cfg.nights) ? `/${G.cfg.nights}` : '';
+  if (hudCache.phaseKind !== G.phase) {
+    hudCache.phaseKind = G.phase;
+    $('phaseIcon').classList.toggle('night', G.phase === 'night');
+    $('phaseIcon').innerHTML = G.phase === 'day'
+      ? '<circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+      : '<path d="M15 3a8 8 0 1 0 6 13 7 7 0 0 1-6-13z" fill="currentColor"/>';
+  }
+  setText('phase', G.phase === 'day' ? `${s}` : G.needBoss && G.phaseT <= 0 ? `${G.night}${of} · ☠` : `${G.night}${of} · ${s}`);
   setText('wood', String(G.wood)); setText('gold', String(G.gold));
-  setText('lvl', `Ур. ${G.lvl}`);
+  setText('lvl', `${G.lvl}`);
   $('fire').style.width = Math.max(0, G.fire.hp / G.fire.max * 100) + '%';
   $('xpbar').style.width = (G.xp / G.xpNext * 100) + '%';
 }
 
 // ---------- loop ----------
 let last = performance.now();
+const fpsOn = location.hash === '#fps', fpsEl = fpsOn ? document.body.appendChild(Object.assign(document.createElement('div'), { className: 'pill' })) : null;
+if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', left: '12px', bottom: '28px', zIndex: 9, pointerEvents: 'none' });
+let fpsN = 0, fpsT = 0, slowT = 0, slowN = 0;
 function frame(now) {
-  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  const raw = (now - last) / 1000, dt = Math.min(0.05, raw); last = now;
+  if (fpsEl) { fpsN++; fpsT += Math.min(1, raw); if (fpsT >= 0.5) { fpsEl.textContent = `${Math.round(fpsN / fpsT)} FPS · ${G.zombies.length} зомби`; fpsN = 0; fpsT = 0; } }
   if (!$('map').hidden) drawMap(now / 1000);
-  else { if (!G.paused) update(dt); draw(); hud(); }
+  else if (!$('start').hidden) { /* the key art covers everything */ }
+  else {
+    if (!G.paused) { if (G.slowT > 0) { G.slowT -= dt; dt *= 0.3; } update(dt); } draw();
+    // the boss falls: a white flash over everything
+    if (G.flash > 0) { X.setTransform(1, 0, 0, 1, 0, 0); X.globalAlpha = 0.55 * G.flash; X.fillStyle = '#fff6e0'; X.fillRect(0, 0, cv.width, cv.height); X.globalAlpha = 1; }
+    hud();
+    // under ~45 FPS for three seconds of play: one step down in render scale (2x -> 1.5x -> 1x)
+    if (!G.paused && maxDPR > 1) {
+      slowT += Math.min(1, raw); slowN++;
+      if (slowT > 3) { if (slowN / slowT < 45) { maxDPR = maxDPR > 1.5 ? 1.5 : 1; resize(); sprCache.clear(); } slowT = 0; slowN = 0; }
+    }
+  }
   requestAnimationFrame(frame);
 }
 document.addEventListener('visibilitychange', () => { last = performance.now(); });
@@ -1291,6 +2055,7 @@ function villageArt(L, t, u) {
 }
 
 function showMap() {
+  music('menu');
   if (G) G.paused = true;
   for (const id of ['start', 'over', 'pick']) $(id).hidden = true;
   $('map').hidden = false;
@@ -1380,6 +2145,12 @@ let settingsFrom = null;
 function openSettings(from) { settingsFrom = from; $(from).hidden = true; $('reset').textContent = 'Сбросить весь прогресс'; $('settings').hidden = false; }
 $('pauseSettings').onclick = () => openSettings('pause');
 $('mapSettings').onclick = () => { settingsFrom = 'map'; $('reset').textContent = 'Сбросить весь прогресс'; $('settings').hidden = false; };
+$('sfxToggle').onclick = () => sndToggle('sfx');
+$('musicToggle').onclick = () => sndToggle('music');
+sndLabels();
+// every button clicks; zombies groan now and then in the dark
+document.addEventListener('click', e => { if (e.target.closest('button')) sfx('click', { vol: 0.35, max: 1 }); });
+setInterval(() => { if (G && G.phase === 'night' && !G.paused && G.zombies.length && Math.random() < 0.6) { const z = G.zombies[Math.floor(Math.random() * G.zombies.length)]; sfx('groan', { x: z.x, y: z.y, max: 2, vol: 0.45 }); } }, 2200);
 $('settingsClose').onclick = () => { $('settings').hidden = true; if (settingsFrom === 'pause') $('pause').hidden = false; };
 $('reset').onclick = () => {
   const b = $('reset');
@@ -1398,6 +2169,31 @@ $('siege').onclick = beginSiege;
 $('best').textContent = best ? `Рекорд: ${best} ${plural(best, 'ночь', 'ночи', 'ночей')}` : 'Сколько ночей ты продержишься?';
 newGame();
 requestAnimationFrame(frame);
+
+// bench(): a heavy night fight (60 zombies, towers, night) measured with real frames of the normal game loop,
+// once with everything on and once with each part of the frame switched off. Result in window.benchResult.
+window.dbg = () => G;   // for checks from the browser console
+window.step = (n = 60) => { for (let i = 0; i < n; i++) update(1 / 60); return G; };   // fast-forward n frames from the console
+window.bench = async () => {
+  const heavy = () => {
+    newGame(SIEGE); hudCache = {}; for (const id of ['start', 'over', 'pick', 'map']) $(id).hidden = true;
+    G.paused = false; G.night = 9; startNight(); G.darkA = 0.8;
+    for (let i = 0; i < 60; i++) { spawnZombie(i % 7 === 0 ? 'brute' : 'walker'); const z = G.zombies.at(-1), a = i / 60 * TAU; z.x = Math.cos(a) * 300; z.y = Math.sin(a) * 240; z.spd = 0; }
+    for (const sl of G.slots) if (sl.kind === 'tower') { sl.lvl = 2; sl.hp = sl.max = TOWER_HP[1]; }
+    G.hero.hp = G.hero.max = 1e9; G.fire.hp = G.fire.max = 1e9; G.xpNext = 1e12;
+  };
+  const measure = () => new Promise(res => {
+    let n = 0, t0 = 0;
+    const tick = now => { if (!t0) t0 = now; n++; if (now - t0 < 2000) requestAnimationFrame(tick); else res(Math.round(n * 1000 / (now - t0))); };
+    requestAnimationFrame(tick);
+  });
+  const out = {};
+  heavy(); await measure(); out.all = await measure();
+  for (const k of Object.keys(PERF)) { PERF[k] = false; out['no-' + k] = await measure(); PERF[k] = true; }
+  for (const k of Object.keys(PERF)) PERF[k] = false; out.nothing = await measure(); for (const k of Object.keys(PERF)) PERF[k] = true;
+  out.again = await measure(); out.dpr = DPR; out.screen = `${W}x${H}`; out.zombies = G.zombies.length;
+  window.benchResult = out; return out;
+};
 })();
 </script>
 </body>
