@@ -270,9 +270,12 @@ let W = 0, H = 0, DPR = 1, S = 1;
 // Render scale: up to 1.5x the CSS pixels, dropped to 1x automatically when the frame rate cannot keep up.
 let maxDPR = 2;   // native on Retina; steps down only when the frame rate really suffers (see frame())
 const DARK_RES = 0.25;   // the night layer is soft gradients only, so it is drawn at a quarter of the resolution and stretched
+const vhProbe = document.body.appendChild(Object.assign(document.createElement('div'), { ariaHidden: 'true' }));
+vhProbe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100vh;height:100lvh;pointer-events:none;visibility:hidden';
 function resize() {
   DPR = Math.min(window.devicePixelRatio || 1, maxDPR);
-  W = innerWidth; H = innerHeight;
+  // innerHeight can stop short of the home indicator in an iOS home-screen app; a 100lvh probe reaches the real bottom edge
+  W = innerWidth; H = Math.max(innerHeight, vhProbe.offsetHeight || 0);
   cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
   dark.width = Math.max(1, Math.round(W * DPR * DARK_RES)); dark.height = Math.max(1, Math.round(H * DPR * DARK_RES));
   cv.style.width = W + 'px'; cv.style.height = H + 'px';
@@ -1139,15 +1142,9 @@ function draw() {
     }
   }
 
-  // drops
-  for (const d of G.drops) {
-    const bob = Math.sin(G.t * 5 + d.x) * 1.5;
-    if (d.kind === 'gold') { coin(d.x, d.y + bob - (d.z || 0), d.t); continue; }
-    if (d.kind === 'xp' && soul(d)) continue;
-    if (spr('crystal', d.x, d.y + bob, 14, Math.sin(G.t * 2 + d.x) * 0.3)) continue;
-    if (d.kind === 'gold') circle(d.x, d.y + bob, 5, '#f5cf4b', '#8a6a10', 1.5);
-    else { X.save(); X.translate(d.x, d.y + bob); X.rotate(Math.PI / 4); X.fillStyle = '#7fc7ff'; X.fillRect(-3.5, -3.5, 7, 7); X.restore(); }
-  }
+  // drops: at night they are drawn after the darkness (see below), so coins and souls stay readable in the dark
+  const lootAfterDark = G.darkA > 0.01 && PERF.dark;
+  if (!lootAfterDark) drawLoot();
 
   // fire
   if (PERF.fire) drawFire();
@@ -1215,6 +1212,7 @@ function draw() {
       for (const [ex, ey] of eyesOf(z)) circle(ex, ey, z.kind === 'brute' || z.kind === 'boss' ? 2.2 : 1.8, '#ff5a3a');
     }
   }
+  if (lootAfterDark) drawLoot();
 
   // floating text
   X.textAlign = 'center'; X.textBaseline = 'middle';
@@ -1268,7 +1266,10 @@ function padIcon(s, act, ok) {
     const lv = Math.min(3, s.lvl + 1), col = lv === 3 ? '#8d9298' : '#7a4a26', top = lv === 3 ? '#b8bdc2' : '#d9a86a';
     for (const dx of [-9, 0, 9]) { circle(x + dx, y, 6, col, '#2a1a0c', 1.5); circle(x + dx - 0.5, y - 0.5, 3.8, top); if (lv === 2) { X.strokeStyle = '#8d949c'; X.lineWidth = 1.6; X.beginPath(); X.arc(x + dx, y, 6.5, 0, TAU); X.stroke(); } }
   } else if (s.kind === 'tower') spr(s.lvl === 0 ? 'tower1' : 'tower2', x, y, s.lvl === 2 ? 34 : 30, 0, 0, a);
-  else if (s.kind === 'forge') spr(s.lvl === 0 ? 'forge' : 'crystal', x, y, s.lvl === 0 ? 30 : 22, 0, 0, a);
+  else if (s.kind === 'forge') {   // a built forge sells upgrade cards: hammer and anvil on its pad
+    if (s.lvl === 0) spr('forge', x, y, 30, 0, 0, a);
+    else if (anvilImg.complete && anvilImg.naturalWidth) X.drawImage(anvilImg, x - 13, y - 13, 26, 26);
+  }
   X.globalAlpha = 1;
   if (act.kind === 'upgrade' && ok) {   // only when the upgrade is affordable right now
     const bx = x + 15, by = y - 15;
@@ -1428,7 +1429,17 @@ function coin(x, y, t) {
   if (coinImg.complete && coinImg.naturalWidth) X.drawImage(coinImg, -7.5, -7.5, 15, 15); else coinFace(X);
   X.restore();
 }
+function drawLoot() {
+  for (const d of G.drops) {
+    if (offView(d.x, d.y, 30)) continue;
+    const bob = Math.sin(G.t * 5 + d.x) * 1.5;
+    if (d.kind === 'gold') { coin(d.x, d.y + bob - (d.z || 0), d.t); continue; }
+    if (d.kind === 'xp' && soul(d)) continue;
+    X.save(); X.translate(d.x, d.y + bob); X.rotate(Math.PI / 4); X.fillStyle = '#7fc7ff'; X.fillRect(-3.5, -3.5, 7, 7); X.restore();
+  }
+}
 // experience is a soul: a cold blue wisp rises out of the body, hovers flickering and streaks to the hero, leaving a short trail
+const anvilImg = new Image(); anvilImg.src = 'art/sprites/ui/anvil.png';
 const soulImg = new Image(); soulImg.src = 'art/sprites/ui/soul.png';
 function soul(d) {
   if (!soulImg.complete || !soulImg.naturalWidth) return false;

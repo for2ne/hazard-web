@@ -116,7 +116,7 @@ h1 { font: 400 22px var(--display); margin: 0 0 4px; color: var(--ember); }
     <span class="node"><span class="dot" style="background:#e5484d;box-shadow:0 0 12px #e5484d"></span>Мельница<span class="st"><span class="ico" data-s="swords"></span></span></span>
   </div>
   <div class="xpbar"><span class="ico" data-s="soul"><b>3</b></span><div class="bar"><i></i></div></div>
-  <div class="row drops"><span class="ico" data-s="soul"></span><span class="ico" data-s="soul"></span><span class="ico" data-s="gold"></span><span class="ico" data-s="soul"></span></div>
+  <div class="row drops"><span class="ico" data-s="soul"></span><span class="ico" data-s="soul"></span><span class="ico" data-s="gold"></span><span class="ico" data-s="soul"></span><span class="ico" data-s="anvil" style="width:26px;height:26px"></span></div>
   <div class="card">
     <h3>Мельница</h3>
     <div class="vs"><span class="ico" data-s="shield"></span>14 <span style="opacity:.5">vs</span> <span class="ico" data-s="swords"></span>20</div>
@@ -128,7 +128,7 @@ h1 { font: 400 22px var(--display); margin: 0 0 4px; color: var(--ember); }
 (() => {
 const SLOTS = {
   wood: 'дерево', gold: 'золото', sun: 'день', moon: 'ночь', fire: 'костёр', shield: 'оборона', swords: 'набег',
-  soul: 'опыт', crown: 'вожак', lock: 'закрыто', gear: 'настройки', sound: 'звук', music: 'музыка', horde: 'осада без конца',
+  soul: 'опыт', anvil: 'кузница', crown: 'вожак', lock: 'закрыто', gear: 'настройки', sound: 'звук', music: 'музыка', horde: 'осада без конца',
 };
 const $ = id => document.getElementById(id);
 let pick = {};
@@ -165,7 +165,7 @@ function apply() {
 
 fetch('art/sprites/ui/var/index.json').then(r => r.json()).then(idx => {
   idx.gold = ['code', ...(idx.gold || [])];
-  const IN_GAME = { wood: 'b', gold: '1', moon: 'a', soul: 'a' };   // what the game uses now (art/sprites/ui/<slot>.png)
+  const IN_GAME = { wood: 'b', gold: '1', moon: 'a', soul: 'a', anvil: 'b' };   // what the game uses now (art/sprites/ui/<slot>.png)
   idx.soul = [...(idx.soul || []), 'crystal'];
   for (const [slot, label] of Object.entries(SLOTS)) {
     const vs = idx[slot] || []; if (!vs.length) continue;
