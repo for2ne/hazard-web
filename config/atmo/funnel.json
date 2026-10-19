@@ -1,5 +1,5 @@
 {
- "version": 87,
+ "version": 88,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -471,7 +471,7 @@
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
-     "cta": "I Want This",
+     "cta": "Continue",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
@@ -842,7 +842,7 @@
       "A warning the evening before",
       "Plan around the heavy days"
      ],
-     "cta": "I Want This",
+     "cta": "Continue",
      "footnote": "Powered by live NOAA and weather-station data",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
@@ -1770,7 +1770,7 @@
       "Plans made around heavy days",
       "A 7-day pain outlook"
      ],
-     "cta": "I Want This",
+     "cta": "Continue",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
