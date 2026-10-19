@@ -1,5 +1,5 @@
 {
- "version": 82,
+ "version": 83,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -487,50 +487,77 @@
      "A warning the evening before a pressure drop, storm or cold snap",
      "Your pain risk for today, tomorrow and the week ahead",
      "See which weather comes before your bad days",
-     "A one-tap evening log — Solara learns your pattern"
+     "A one-tap evening log, and a report for your doctor"
     ],
     "plans": [
-     {
-      "productId": "com.hazard.atmo.pro.weekly",
-      "title": "Weekly",
-      "fallbackPrice": "$9.99",
-      "periodLabel": "per week",
-      "isDefault": false,
-      "note": "$9.99/week, starts today. Cancel anytime",
-      "cta": "Continue"
-     },
      {
       "productId": "com.hazard.atmo.pro.yearly",
       "title": "Yearly",
       "fallbackPrice": "$49.99",
       "periodLabel": "per year",
-      "badge": "SAVE 90%",
-      "equivalent": "≈ $0.96 / week",
       "note": "3 days free, then $49.99/year",
       "cta": "Try 3 Days Free",
       "isDefault": true
-     },
-     {
-      "productId": "com.hazard.atmo.pro.lifetime",
-      "title": "Lifetime",
-      "fallbackPrice": "$129.99",
-      "periodLabel": "one time",
-      "isDefault": false,
-      "note": "Pay once, yours forever",
-      "cta": "Continue"
      }
     ],
-    "cta": "Continue",
+    "cta": "Try 3 Days Free",
     "closeDelaySeconds": 0,
     "skippable": false,
-    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Lifetime: one payment. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then $49.99/year. We'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtGolden",
-    "showTrialTimeline": true
+    "showTrialTimeline": true,
+    "screenStyle": {
+     "accent": "#EC5F78",
+     "cta": [
+      "#FF9AAE",
+      "#EC5F78"
+     ]
+    },
+    "blocks": [
+     {
+      "type": "badge",
+      "text": "SOLARA PLUS"
+     },
+     {
+      "type": "title",
+      "text": "Your {topic|pain} forecast is ready{withName|}"
+     },
+     {
+      "type": "text",
+      "text": "Know the bad days the weather brings — the evening before."
+     },
+     {
+      "type": "forecast"
+     },
+     {
+      "type": "bullets",
+      "items": [
+       {
+        "icon": "bell.badge",
+        "text": "A warning the evening before a pressure drop or storm"
+       },
+       {
+        "icon": "calendar",
+        "text": "Your {topic|pain} risk for the week ahead"
+       },
+       {
+        "icon": "doc.text",
+        "text": "A report for your doctor"
+       }
+      ]
+     },
+     {
+      "type": "timeline"
+     },
+     {
+      "type": "plans"
+     }
+    ]
    },
    "webWeight": 1
   },
@@ -1712,50 +1739,77 @@
      "A warning the evening before a pressure drop, storm or cold snap",
      "Your pain risk for today, tomorrow and the week ahead",
      "See which weather comes before your bad days",
-     "A one-tap evening log — Solara learns your pattern"
+     "A one-tap evening log, and a report for your doctor"
     ],
     "plans": [
-     {
-      "productId": "com.hazard.atmo.pro.weekly",
-      "title": "Weekly",
-      "fallbackPrice": "$9.99",
-      "periodLabel": "per week",
-      "isDefault": true,
-      "note": "$9.99/week. Cancel anytime",
-      "cta": "Continue"
-     },
      {
       "productId": "com.hazard.atmo.pro.yearly",
       "title": "Yearly",
       "fallbackPrice": "$49.99",
       "periodLabel": "per year",
-      "badge": "SAVE 90%",
-      "equivalent": "≈ $0.96 / week",
       "note": "3 days free, then $49.99/year",
       "cta": "Try 3 Days Free",
-      "isDefault": false
-     },
-     {
-      "productId": "com.hazard.atmo.pro.lifetime",
-      "title": "Lifetime",
-      "fallbackPrice": "$129.99",
-      "periodLabel": "one time",
-      "isDefault": false,
-      "note": "Pay once, yours forever",
-      "cta": "Continue"
+      "isDefault": true
      }
     ],
-    "cta": "Continue",
+    "cta": "Try 3 Days Free",
     "closeDelaySeconds": 0,
     "skippable": false,
-    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Lifetime: one payment. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then $49.99/year. We'll remind you a day before. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtGolden",
-    "showTrialTimeline": true
+    "showTrialTimeline": true,
+    "screenStyle": {
+     "accent": "#EC5F78",
+     "cta": [
+      "#FF9AAE",
+      "#EC5F78"
+     ]
+    },
+    "blocks": [
+     {
+      "type": "badge",
+      "text": "SOLARA PLUS"
+     },
+     {
+      "type": "title",
+      "text": "Your {topic|pain} forecast is ready{withName|}"
+     },
+     {
+      "type": "text",
+      "text": "Know the bad days the weather brings — the evening before."
+     },
+     {
+      "type": "forecast"
+     },
+     {
+      "type": "bullets",
+      "items": [
+       {
+        "icon": "bell.badge",
+        "text": "A warning the evening before a pressure drop or storm"
+       },
+       {
+        "icon": "calendar",
+        "text": "Your {topic|pain} risk for the week ahead"
+       },
+       {
+        "icon": "doc.text",
+        "text": "A report for your doctor"
+       }
+      ]
+     },
+     {
+      "type": "timeline"
+     },
+     {
+      "type": "plans"
+     }
+    ]
    },
    "webWeight": 0,
    "_doc": "Full 20-step onboarding for paid cohorts (direct-to-store ads, ASA). Same steps as control; paywall placement paid_default overrides close delay (6 s) and tapToBuy. Added 24.09.2026 after the web quiz was dropped."
@@ -1840,46 +1894,73 @@
    ],
    "plans": [
     {
-     "productId": "com.hazard.atmo.pro.weekly",
-     "title": "Weekly",
-     "fallbackPrice": "$9.99",
-     "periodLabel": "per week",
-     "isDefault": true,
-     "note": "$9.99/week. Cancel anytime",
-     "cta": "Continue"
-    },
-    {
      "productId": "com.hazard.atmo.pro.yearly",
      "title": "Yearly",
      "fallbackPrice": "$49.99",
      "periodLabel": "per year",
-     "badge": "SAVE 90%",
-     "equivalent": "≈ $0.96 / week",
      "note": "3 days free, then $49.99/year",
      "cta": "Try 3 Days Free",
-     "isDefault": false
-    },
-    {
-     "productId": "com.hazard.atmo.pro.lifetime",
-     "title": "Lifetime",
-     "fallbackPrice": "$129.99",
-     "periodLabel": "one time",
-     "isDefault": false,
-     "note": "Pay once, yours forever",
-     "cta": "Continue"
+     "isDefault": true
     }
    ],
-   "cta": "Continue",
+   "cta": "Try 3 Days Free",
    "closeDelaySeconds": 0,
    "skippable": false,
-   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Lifetime: one payment. Cancel anytime in the App Store.",
+   "trustLine": "3 days free, then $49.99/year. We'll remind you a day before. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
    "brandBadge": "PLUS",
    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
    "heroImageName": "SkyArtGolden",
-   "showTrialTimeline": true
+   "showTrialTimeline": true,
+   "screenStyle": {
+    "accent": "#EC5F78",
+    "cta": [
+     "#FF9AAE",
+     "#EC5F78"
+    ]
+   },
+   "blocks": [
+    {
+     "type": "badge",
+     "text": "SOLARA PLUS"
+    },
+    {
+     "type": "title",
+     "text": "Your {topic|pain} forecast is ready{withName|}"
+    },
+    {
+     "type": "text",
+     "text": "Know the bad days the weather brings — the evening before."
+    },
+    {
+     "type": "forecast"
+    },
+    {
+     "type": "bullets",
+     "items": [
+      {
+       "icon": "bell.badge",
+       "text": "A warning the evening before a pressure drop or storm"
+      },
+      {
+       "icon": "calendar",
+       "text": "Your {topic|pain} risk for the week ahead"
+      },
+      {
+       "icon": "doc.text",
+       "text": "A report for your doctor"
+      }
+     ]
+    },
+    {
+     "type": "timeline"
+    },
+    {
+     "type": "plans"
+    }
+   ]
   },
   "preview_end": {
    "title": "Your pain forecast is ready",
