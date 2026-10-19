@@ -474,7 +474,7 @@ function newGame(cfg = SIEGE) {
     stat: { dmg: 10, rate: 1.6, range: 210, multi: 1, pierce: 0, magnet: 70, chop: 1, aura: 0 },
     lvls: {},
     xp: 0, lvl: 1, xpNext: 5, pending: 0,
-    zombies: [], shots: [], drops: [], fx: [], texts: [], trees: [], slots: [], corpses: [], slashes: [], stains: [], rolls: [], combo: { n: 0, t: -9 }, slowT: 0, flash: 0,
+    zombies: [], shots: [], drops: [], fx: [], texts: [], trees: [], slots: [], corpses: [], slashes: [], stains: [], rolls: [], slowT: 0, flash: 0,
     spawnQ: [], spawnT: 0, mainAngles: [], forgeUses: 0,
     cam: { x: 0, y: 30 }, shake: 0, paused: true, over: false,
   };
@@ -979,14 +979,6 @@ function update(dt) {
     if (pop) { roll('head', z.kind, z.x, z.y, dx, dy, 170); splatter(z.x, z.y, dx, dy, 8, true); sfx('pop', { x: z.x, y: z.y, max: 2, vol: 0.8 }); }
     if (z.kind === 'brute' || z.kind === 'boss') sfx('coins', { x: z.x, y: z.y, max: 2, vol: 0.6 });
     if (z.kind === 'boss') { roll('crown', z.kind, z.x, z.y, dx, dy, 150); G.slowT = 0.45; G.flash = 1; burst(z.x, z.y, '#f2ead6', 40, 220); sfx('bossdie', { vol: 1, max: 1 }); }
-    // kills in quick succession build a combo
-    if (G.t - G.combo.t < 1.1) G.combo.n++; else G.combo.n = 1;
-    G.combo.t = G.t;
-    if (G.combo.n >= 3) {
-      const n = G.combo.n, col = n >= 15 ? '#ff4a3a' : n >= 8 ? '#ff8a2a' : '#ffd25a';
-      text(G.hero.x, G.hero.y - 34, '×' + n + (n >= 8 ? '!' : ''), col, Math.min(30, 14 + n * 0.8));
-      sfx('combo', { max: 1, gap: 0.05, vol: 0.45, pitch: Math.min(0.9, (n - 3) * 0.06), vary: 0 });
-    }
     if (G.corpses.length > 300) bakeCorpse(G.corpses.shift());
     const b = ZK[z.kind];
     burst(z.x, z.y, z.col, z.kind === 'boss' ? 30 : 10, 110);
