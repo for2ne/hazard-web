@@ -44,24 +44,57 @@ canvas { position: fixed; inset: 0; display: block; }
   display: flex; gap: 6px; align-items: center; font-variant-numeric: tabular-nums; }
 .hic { width: 18px; height: 18px; display: block; flex: none; }
 .hic.fire { color: var(--ember); }
-#phaseIcon { color: var(--gold); }
-#phaseIcon.night { color: var(--frost); }
-#skip { display: flex; align-items: center; gap: 0; }
 #menuBtn { display: flex; align-items: center; }
 .pill b { font-family: var(--display); font-weight: 400; letter-spacing: 0.02em; }
-.ico { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-.ico.wood { background: var(--wood); box-shadow: inset 0 -3px 0 rgba(0,0,0,.25); }
-.ico.gold { background: var(--gold); border-radius: 50%; box-shadow: inset 0 -2px 0 rgba(0,0,0,.25); }
+.ico { width: 20px; height: 20px; display: inline-block; flex: none; background: center / contain no-repeat; }
+.ico.wood { background-image: url(art/sprites/ui/wood.png); }
+.ico.gold { background-image: url(art/sprites/ui/gold.png); }
+.ico.sun { background-image: url(art/sprites/ui/sun.png); }
+.ico.moon { background-image: url(art/sprites/ui/moon.png); }
+.ico.fire { background-image: url(art/sprites/ui/fire.png); }
+.ico.shield { background-image: url(art/sprites/ui/shield.png); }
+.ico.swords { background-image: url(art/sprites/ui/swords.png); }
+.ico.crown { background-image: url(art/sprites/ui/crown.png); }
+.ico.lock { background-image: url(art/sprites/ui/lock.png); }
+.ico.gear { background-image: url(art/sprites/ui/gear.png); }
+.ico.sound { background-image: url(art/sprites/ui/sound.png); }
+.ico.music { background-image: url(art/sprites/ui/music.png); }
+.ico.horde { background-image: url(art/sprites/ui/horde.png); }
+.ico.big { width: 28px; height: 28px; }
+.ico-btn { width: 44px; height: 44px; border-radius: 50%; padding: 0; display: grid; place-items: center; cursor: pointer;
+  background: var(--panel); border: 1px solid rgba(239, 230, 210, .3); color: var(--bone); font: 800 16px var(--display); }
+.ico-btn .ico { width: 26px; height: 26px; }
+.ico-btn.off .ico { opacity: .3; filter: grayscale(1); }
+.ico-btn.wide { width: auto; padding: 0 14px 0 10px; border-radius: 999px; display: flex; gap: 4px; align-items: center; }
+.ico-btn:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
+.stat { display: flex; gap: 12px; align-items: center; font-family: var(--display); font-size: 20px; flex-wrap: wrap; }
+.stat > span { display: flex; gap: 5px; align-items: center; }
+.stat .vs { opacity: .45; font-size: 14px; }
+.stars { color: var(--gold); letter-spacing: 2px; }
+.btn.go { font-size: 18px; padding: 9px 22px 9px 16px; display: inline-flex; gap: 8px; align-items: center; font-family: var(--display); font-weight: 400; }
+.btn.go .ico { width: 26px; height: 26px; }
+#skip .ico { width: 26px; height: 26px; }
 .firebar { width: 120px; height: 8px; background: rgba(255,255,255,.1); border-radius: 4px; overflow: hidden; }
 .firebar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--ember-deep), var(--ember)); transition: width .15s; }
-#skip { pointer-events: auto; font: 600 14px var(--body); color: var(--night); background: var(--ember); border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+/* call the night early: just the moon in an ember ring that glows softly, so it reads as a button without any arrows */
+#skip { pointer-events: auto; width: 42px; height: 42px; padding: 0; display: grid; place-items: center; cursor: pointer;
+  background: var(--panel); border: 2px solid var(--ember); border-radius: 50%; animation: skipGlow 2.4s ease-in-out infinite; }
+@keyframes skipGlow { 50% { box-shadow: 0 0 14px rgba(255, 154, 60, .55); } }
+@media (prefers-reduced-motion: reduce) { #skip { animation: none; } }
 #skip:focus-visible, .btn:focus-visible, .card:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 
-.xp { position: fixed; left: 0; right: 0; bottom: 0; padding: 0 max(12px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 8px) max(12px, env(safe-area-inset-left, 0px));
-  display: flex; gap: 10px; align-items: center; pointer-events: none; }
-.xp .bar { flex: 1; height: 6px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; }
-.xp .bar i { display: block; height: 100%; width: 0; background: var(--frost); transition: width .15s; }
-.xp span { font-family: var(--display); font-size: 13px; color: var(--frost); }
+/* experience: a dark panel like the other HUD pills, a level badge and a thick frost bar that flashes on every crystal */
+.xp { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+  width: min(560px, calc(100% - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  display: flex; gap: 8px; align-items: center; pointer-events: none;
+  background: var(--panel); border: 1px solid rgba(239, 230, 210, 0.12); border-radius: 999px; padding: 4px 10px 4px 4px; }
+.xp span { flex: none; width: 30px; height: 33px; margin: -6px 0 -4px; display: grid; place-items: center; padding-top: 4px;
+  background: url(art/sprites/ui/soul.png) center / contain no-repeat;   /* the same soul that rises from zombies */
+  font-family: var(--display); font-size: 14px; color: #fff;
+  text-shadow: 0 0 2px #0e3a5e, 0 1px 0 #0e3a5e, 1px 0 0 #0e3a5e, -1px 0 0 #0e3a5e, 0 -1px 0 #0e3a5e; }
+.xp .bar { flex: 1; height: 12px; background: rgba(0, 0, 0, .45); border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.6); }
+.xp .bar i { display: block; height: 100%; width: 0; border-radius: 6px; transition: width .15s;
+  background: linear-gradient(180deg, #c8ecff 0%, #7fc7ff 45%, #3d8fd6 100%); box-shadow: 0 0 8px rgba(127, 199, 255, .6); }
 
 .banner { position: fixed; left: 0; right: 0; top: 28%; text-align: center; font-family: var(--display); font-size: clamp(26px, 6vmin, 46px);
   letter-spacing: 0.03em; text-shadow: 0 3px 0 rgba(0,0,0,.5); pointer-events: none; opacity: 0; transition: opacity .4s; padding: 0 16px; }
@@ -111,6 +144,7 @@ canvas { position: fixed; inset: 0; display: block; }
 .map-top { position: absolute; z-index: 2; left: 0; right: 0; top: 0; display: flex; gap: 8px 10px; align-items: center; flex-wrap: wrap; pointer-events: none;
   padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); }
 .map-top > * { pointer-events: auto; }
+.map-top .grow { flex: 1; }
 .map-top h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0 auto 0 0; color: var(--ember); text-shadow: 0 2px 0 rgba(0,0,0,.7), 0 0 14px rgba(0,0,0,.8); pointer-events: none; }
 .map-top .ghost { background: var(--panel); }
 .node { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 1px; background: none; border: 0; color: var(--bone); font: inherit; cursor: pointer; padding: 0;
@@ -118,6 +152,8 @@ canvas { position: fixed; inset: 0; display: block; }
 .node .dot { width: 52px; height: 44px; border-radius: 12px; }
 .node .nm { font-family: var(--display); font-size: 14px; text-shadow: 0 2px 0 rgba(0, 0, 0, .8), 0 0 8px rgba(0, 0, 0, .8); white-space: nowrap; }
 .node .st { font-size: 11px; font-weight: 600; white-space: nowrap; background: rgba(8, 6, 14, .7); padding: 1px 7px; border-radius: 999px; }
+.node .st { display: flex; gap: 2px; align-items: center; }
+.node .st .ico { width: 16px; height: 16px; }
 .node.open .st { color: var(--ember); }
 .node.owned .st { color: var(--gold); }
 .node.raid .st, .node.siege .st { color: #ff7a66; }
@@ -145,17 +181,17 @@ canvas { position: fixed; inset: 0; display: block; }
 
 <div class="hud">
   <div class="hud-left">
-    <div class="pill"><svg class="hic" id="phaseIcon" viewBox="0 0 24 24" aria-hidden="true"></svg><b id="phase">35</b></div>
+    <div class="pill"><span class="ico sun" id="phaseIcon" aria-hidden="true"></span><b id="phase">35</b></div>
     <div class="pill"><span class="ico wood"></span><b id="wood">0</b></div>
     <div class="pill"><span class="ico gold"></span><b id="gold">0</b></div>
   </div>
   <div class="hud-right">
     <button id="menuBtn" type="button" aria-label="Меню"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
-    <button id="skip" type="button" aria-label="Начать ночь сейчас"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3a8 8 0 1 0 6 13 7 7 0 0 1-6-13z" fill="currentColor"/></svg><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6l7 6-7 6zM12 6l7 6-7 6z" fill="currentColor"/></svg></button>
-    <div class="pill" aria-label="Костёр"><svg class="hic fire" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3-1-5 1-8z" fill="currentColor"/></svg><div class="firebar"><i id="fire"></i></div></div>
+    <button id="skip" type="button" aria-label="Начать ночь сейчас"><span class="ico moon" aria-hidden="true"></span></button>
+    <div class="pill" aria-label="Костёр"><span class="ico fire" aria-hidden="true"></span><div class="firebar"><i id="fire"></i></div></div>
   </div>
 </div>
-<div class="xp"><span id="lvl">Ур. 1</span><div class="bar"><i id="xpbar"></i></div></div>
+<div class="xp" aria-label="Опыт"><span id="lvl">1</span><div class="bar"><i id="xpbar"></i></div></div>
 <div class="banner" id="banner"></div>
 
 <div class="modal cover" id="start">
@@ -195,12 +231,11 @@ canvas { position: fixed; inset: 0; display: block; }
   <div class="sheet">
     <h2>Настройки</h2>
     <div class="menu-list">
-      <button class="ghost" id="sfxToggle" type="button">Звук: вкл</button>
-      <button class="ghost" id="musicToggle" type="button">Музыка: вкл</button>
+      <div class="acts" style="justify-content:center"><button class="ico-btn" id="sfxToggle" type="button" aria-label="Звук"><span class="ico sound"></span></button>
+      <button class="ico-btn" id="musicToggle" type="button" aria-label="Музыка"><span class="ico music"></span></button></div>
       <button class="ghost danger" id="reset" type="button">Сбросить весь прогресс</button>
       <button class="btn" id="settingsClose" type="button">Готово</button>
     </div>
-    <p class="muted">Выбор управления появится позже.</p>
   </div>
 </div>
 
@@ -216,14 +251,14 @@ canvas { position: fixed; inset: 0; display: block; }
 <div class="map" id="map" hidden>
   <div class="field" id="field"><canvas id="mapc" aria-hidden="true"></canvas></div>
   <div class="map-top">
-    <h2>Край</h2>
-    <div class="pill" id="freed">Освобождено 0 из 4</div>
-    <div class="pill">Склад <span class="ico wood"></span><b id="stWood">0</b><span class="ico gold"></span><b id="stGold">0</b></div>
-    <button class="ghost" id="siege" type="button">Осада без конца</button>
-    <button class="ghost" id="mapSettings" type="button">Настройки</button>
+    <div class="pill" aria-label="Освобождено деревень"><span class="ico fire"></span><b id="freed">0/4</b></div>
+    <div class="pill" aria-label="Дерево на складе"><span class="ico wood"></span><b id="stWood">0</b></div>
+    <div class="pill" aria-label="Золото на складе"><span class="ico gold"></span><b id="stGold">0</b></div>
+    <span class="grow"></span>
+    <button class="ico-btn wide" id="siege" type="button" aria-label="Осада без конца"><span class="ico horde"></span>∞</button>
+    <button class="ico-btn" id="mapSettings" type="button" aria-label="Настройки"><span class="ico gear"></span></button>
   </div>
   <div class="panel" id="panel" hidden></div>
-  <div class="pill hint" id="hint">Нажми на светящуюся деревню</div>
 </div>
 </div>
 
@@ -326,8 +361,8 @@ function sndToggle(kind) {
   sndLabels();
 }
 function sndLabels() {
-  $('sfxToggle').textContent = 'Звук: ' + (SND.on.sfx ? 'вкл' : 'выкл');
-  $('musicToggle').textContent = 'Музыка: ' + (SND.on.music ? 'вкл' : 'выкл');
+  $('sfxToggle').classList.toggle('off', !SND.on.sfx); $('sfxToggle').setAttribute('aria-pressed', String(SND.on.sfx));
+  $('musicToggle').classList.toggle('off', !SND.on.music); $('musicToggle').setAttribute('aria-pressed', String(SND.on.music));
 }
 
 function persist() { try { localStorage.setItem('kostyor.save', JSON.stringify(SAVE)); } catch (e) {} }
@@ -537,7 +572,16 @@ function offerCards(title) {
 }
 function gainXp(n) {
   G.xp += n;
+  const lvl = G.lvl;
   while (G.xp >= G.xpNext) { G.xp -= G.xpNext; G.lvl++; G.xpNext = Math.round(5 + G.lvl * 4.5); G.pending++; }
+  // the bar brightens on each crystal (at most every 0.12 s, crystals come in showers); the badge pops on a new level
+  const now = performance.now();
+  if (now - (gainXp.at || 0) > 120 && $('xpbar').animate) {
+    gainXp.at = now;
+    $('xpbar').animate([{ filter: 'brightness(1.9)' }, { filter: 'brightness(1)' }], { duration: 260, easing: 'ease-out' });
+  }
+  if (G.lvl > lvl && $('lvl').animate)
+    $('lvl').animate([{ transform: 'scale(1.6)', filter: 'brightness(1.6) drop-shadow(0 0 8px #bfe6ff)' }, { transform: 'scale(1)', filter: 'none' }], { duration: 450, easing: 'ease-out' });
 }
 
 // ---------- phases ----------
@@ -1099,6 +1143,7 @@ function draw() {
   for (const d of G.drops) {
     const bob = Math.sin(G.t * 5 + d.x) * 1.5;
     if (d.kind === 'gold') { coin(d.x, d.y + bob - (d.z || 0), d.t); continue; }
+    if (d.kind === 'xp' && soul(d)) continue;
     if (spr('crystal', d.x, d.y + bob, 14, Math.sin(G.t * 2 + d.x) * 0.3)) continue;
     if (d.kind === 'gold') circle(d.x, d.y + bob, 5, '#f5cf4b', '#8a6a10', 1.5);
     else { X.save(); X.translate(d.x, d.y + bob); X.rotate(Math.PI / 4); X.fillStyle = '#7fc7ff'; X.fillRect(-3.5, -3.5, 7, 7); X.restore(); }
@@ -1232,6 +1277,9 @@ function padIcon(s, act, ok) {
   }
 }
 const labelCache = new Map();
+// painted resource icons for the price labels (art/sprites/ui); labels drawn before they load are redrawn once they do
+const UI = {};
+for (const k of ['wood', 'gold']) { const im = new Image(); im.onload = () => labelCache.clear(); im.src = `art/sprites/ui/${k}.png`; UI[k] = im; }
 function padLabel(x, y, act, ok) {
   if (offView(x, y, 80)) return;
   const k = S * DPR, key = `${act.label}|${act.cost.wood || 0}|${act.cost.gold || 0}|${(act.cost.wood || 0) <= G.wood}|${(act.cost.gold || 0) <= G.gold}|${k.toFixed(2)}`;
@@ -1260,7 +1308,9 @@ function padLabelDraw(X, x, y, act) {
   X.textAlign = 'left'; cx += lw + 6;
   for (const [k, v] of parts) {
     const have = k === 'wood' ? G.wood : G.gold;
-    if (k === 'wood') { X.fillStyle = '#b07a45'; X.fillRect(cx, y - 4, 8, 8); } else circle(cx + 4, y, 4, '#f5cf4b');
+    const ic = UI[k];
+    if (ic.complete && ic.naturalWidth) X.drawImage(ic, cx - 2, y - 6, 12, 12);
+    else if (k === 'wood') { X.fillStyle = '#b07a45'; X.fillRect(cx, y - 4, 8, 8); } else circle(cx + 4, y, 4, '#f5cf4b');
     X.fillStyle = have >= v ? '#efe6d2' : '#ff8b7a'; X.fillText(v, cx + 11, y + 0.5);
     cx += 22 + String(v).length * 6;
   }
@@ -1375,11 +1425,36 @@ function coin(x, y, t) {
   const squash = 0.75 + Math.abs(Math.sin(t * 3 + x)) * 0.25;   // a slow spin
   X.fillStyle = 'rgba(0,0,0,.25)'; X.beginPath(); X.ellipse(x + 1.5, y + 3, 6, 4, 0, 0, TAU); X.fill();
   X.save(); X.translate(x, y); X.scale(squash, 1);
-  X.fillStyle = '#f2b81f'; X.strokeStyle = '#7a5208'; X.lineWidth = 1.6;
-  X.beginPath(); X.arc(0, 0, 6.5, 0, TAU); X.fill(); X.stroke();
-  X.fillStyle = '#ffd95a'; X.beginPath(); X.arc(0, 0, 4.3, 0, TAU); X.fill();
-  X.strokeStyle = 'rgba(255,255,255,.8)'; X.lineWidth = 1.4; X.beginPath(); X.arc(-1, -1, 3, Math.PI * 1.05, Math.PI * 1.55); X.stroke();
+  if (coinImg.complete && coinImg.naturalWidth) X.drawImage(coinImg, -7.5, -7.5, 15, 15); else coinFace(X);
   X.restore();
+}
+// experience is a soul: a cold blue wisp rises out of the body, hovers flickering and streaks to the hero, leaving a short trail
+const soulImg = new Image(); soulImg.src = 'art/sprites/ui/soul.png';
+function soul(d) {
+  if (!soulImg.complete || !soulImg.naturalWidth) return false;
+  const rise = Math.min(1, d.t / 0.45), hover = 9 * (1 - (1 - rise) * (1 - rise)) + Math.sin(G.t * 3 + d.x) * 2;
+  const x = d.x + Math.sin(G.t * 2.3 + d.y) * 1.5, y = d.y - hover;
+  const fl = 1 + Math.sin(G.t * 11 + d.x * 3) * 0.07;
+  const vx = x - (d.lx ?? x), vy = y - (d.ly ?? y); d.lx = x; d.ly = y;
+  X.save(); X.globalCompositeOperation = 'lighter';
+  const sp = Math.hypot(vx, vy);
+  if (sp > 0.6) for (let i = 1; i <= 3; i++) {   // trail while it flies
+    X.globalAlpha = 0.28 / i; X.drawImage(soulImg, x - vx * i * 1.6 - 6, y - vy * i * 1.6 - 7, 12, 14);
+  }
+  const glow = X.createRadialGradient(x, y - 2, 0, x, y - 2, 13);
+  glow.addColorStop(0, 'rgba(127,214,255,.45)'); glow.addColorStop(1, 'rgba(127,214,255,0)');
+  X.fillStyle = glow; X.beginPath(); X.arc(x, y - 2, 13, 0, TAU); X.fill();
+  X.restore();
+  X.drawImage(soulImg, x - 7 / fl, y - 9 * fl, 14 / fl, 16 * fl);
+  return true;
+}
+// the dropped coin is the same painted coin as the UI icon (art/sprites/ui/gold.png); coinFace is the fallback until it loads
+const coinImg = new Image(); coinImg.src = 'art/sprites/ui/gold.png';
+function coinFace(g) {
+  g.fillStyle = '#f2b81f'; g.strokeStyle = '#7a5208'; g.lineWidth = 1.6;
+  g.beginPath(); g.arc(0, 0, 6.5, 0, TAU); g.fill(); g.stroke();
+  g.fillStyle = '#ffd95a'; g.beginPath(); g.arc(0, 0, 4.3, 0, TAU); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = 1.4; g.beginPath(); g.arc(-1, -1, 3, Math.PI * 1.05, Math.PI * 1.55); g.stroke();
 }
 const lerpAng = (a, b, k) => a + ((((b - a + Math.PI) % TAU) + TAU) % TAU - Math.PI) * k;
 // Characters were painted facing down, so a heading of `a` means rotating them by a - 90°.
@@ -1812,10 +1887,7 @@ function hud() {
   const of = isFinite(G.cfg.nights) ? `/${G.cfg.nights}` : '';
   if (hudCache.phaseKind !== G.phase) {
     hudCache.phaseKind = G.phase;
-    $('phaseIcon').classList.toggle('night', G.phase === 'night');
-    $('phaseIcon').innerHTML = G.phase === 'day'
-      ? '<circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
-      : '<path d="M15 3a8 8 0 1 0 6 13 7 7 0 0 1-6-13z" fill="currentColor"/>';
+    $('phaseIcon').className = 'ico ' + (G.phase === 'day' ? 'sun' : 'moon');
   }
   setText('phase', G.phase === 'day' ? `${s}` : G.needBoss && G.phaseT <= 0 ? `${G.night}${of} · ☠` : `${G.night}${of} · ${s}`);
   setText('wood', String(G.wood)); setText('gold', String(G.gold));
@@ -2066,55 +2138,56 @@ function showMap() {
   if (justFreed) {
     const v = V(justFreed);
     freedAnim = { id: justFreed, t0: performance.now() / 1000 }; justFreed = null;
-    selectNode(v, 'Костёр снова горит. Тьма отступила, деревня твоя.');
+    selectNode(v);
   } else selectNode(null);
 }
 function renderMap() {
   const f = $('field');
   f.querySelectorAll('.node').forEach(n => n.remove());
-  $('freed').textContent = `Освобождено ${VILLAGES.filter(v => SAVE.owned[v.id]).length} из ${VILLAGES.filter(v => !v.soon).length}`;
+  $('freed').textContent = `${VILLAGES.filter(v => SAVE.owned[v.id]).length}/${VILLAGES.filter(v => !v.soon).length}`;
   for (const v of VILLAGES) {
     const st = nodeState(v), o = SAVE.owned[v.id], b = document.createElement('button');
     b.type = 'button'; b.className = 'node ' + st; b.dataset.id = v.id;
-    const label = { raid: 'Набег!', siege: 'В осаде', owned: 'Твоя ' + '★'.repeat(o ? o.stars : 0), locked: 'Закрыто', soon: 'Скоро', open: `${v.nights} ночей` }[st];
+    const ic = c => `<span class="ico ${c}"></span>`;
+    const label = { raid: ic('swords'), siege: ic('horde'), owned: '★'.repeat(o ? o.stars : 0) || ic('fire'), locked: ic('lock'), soon: ic('crown'),
+      open: `${ic('moon')}${v.nights}` }[st];
     b.innerHTML = `<span class="dot"></span><span class="nm">${v.name}</span><span class="st">${label}</span>`;
     b.onclick = () => { if (!(mapDrag && mapDrag.moved)) selectNode(v); };
     f.appendChild(b);
   }
   $('stWood').textContent = SAVE.store.wood; $('stGold').textContent = SAVE.store.gold;
 }
-function selectNode(v, note = '') {
+function selectNode(v) {
   const raidV = SAVE.raid && V(SAVE.raid.id);
   if (!v) v = raidV || null;
   let h;
   if (!v) {
-    $('panel').hidden = true; $('hint').hidden = false; measurePanel();
+    $('panel').hidden = true; measurePanel();
     document.querySelectorAll('.node').forEach(n => n.classList.remove('sel'));
     return;
   }
   {
     const st = nodeState(v), o = SAVE.owned[v.id];
-    h = `<h3>${v.name}</h3>` + (note ? `<p class="note">${note}</p>` : '');
+    // icons instead of sentences: shield = your defence, swords = raid strength, moon = nights, crown = the boss on the last night
+    const ic = c => `<span class="ico big ${c}"></span>`;
+    const stars = o ? `<span class="stars">${'★'.repeat(o.stars || 0)}${'☆'.repeat(3 - (o.stars || 0))}</span>` : '';
+    h = `<h3>${v.name}</h3>`;
     if (st === 'raid') {
-      const def = defense(o.b), pw = SAVE.raid.power;
-      const guess = def >= pw ? 'Укрепления, скорее всего, выдержат.' : def * 2 >= pw ? 'Выстоят, но с потерями.' : 'Без тебя деревня, скорее всего, окажется в осаде.';
-      h += `<p>Орда идёт на деревню. Сила набега <b>${pw}</b>, твоя оборона <b>${def}</b>. ${guess}</p>
-        <div class="acts"><button class="btn" id="actDefend" type="button">Защитить самому</button><button class="ghost" id="actAuto" type="button">Положиться на оборону</button></div>
-        <p class="muted">Защищать самому: одна ночь в этой деревне, можно достроить укрепления. Проиграешь, и деревня окажется в осаде, но останется твоей. Набег подождёт, пока ты освобождаешь другие деревни.</p>`;
+      h += `<div class="stat"><span>${ic('shield')}${defense(o.b)}</span><span class="vs">vs</span><span>${ic('swords')}${SAVE.raid.power}</span></div>
+        <div class="acts"><button class="btn go" id="actDefend" type="button"><span class="ico swords"></span>В бой!</button>
+        <button class="ico-btn wide" id="actAuto" type="button" aria-label="Положиться на оборону"><span class="ico shield"></span>»</button></div>`;
     } else if (st === 'siege') {
-      h += `<p>Деревня в осаде: держится, но не присылает запасы. Оборона <b>${defense(o.b)}</b>, сила осады <b>${o.siegePower}</b>.</p>
-        <div class="acts"><button class="btn" id="actLift" type="button">Снять осаду</button></div>
-        <p class="muted">Одна ночь в этой деревне. Проиграешь, и деревня просто останется в осаде.</p>`;
-    } else if (st === 'owned') h += `<p>Твоя деревня. Оборона <b>${defense(o.b)}</b>: ${describe(o.b)}.</p><p class="muted">Присылает 5 дерева и 3 золота после каждого забега. Чем крепче оборона, тем легче она переживёт набег без тебя.</p>`;
-    else if (st === 'open') h += (v.say ? `<p class="say">${v.say}</p>` : '') + `<p>${v.tw}</p><p class="muted">${v.nights} ночей, в последнюю придёт вожак.</p>` +
-      '<div class="acts"><button class="btn" id="actGo" type="button">Освободить</button></div>' +
-      (raidV ? `<p class="muted">Набег на ${raidV.name} подождёт, пока ты в походе.</p>` : '');
-    else if (st === 'locked') h += `<p>${v.tw}</p><p class="muted">Откроется, когда освободишь: ${v.needs.map(n => V(n).name).join(' или ')}.</p>`;
-    else h += `<p>${v.tw}</p><p class="muted">Эта глава ещё пишется.</p>`;
+      h += `<div class="stat"><span>${ic('shield')}${defense(o.b)}</span><span class="vs">vs</span><span>${ic('horde')}${o.siegePower}</span></div>
+        <div class="acts"><button class="btn go" id="actLift" type="button"><span class="ico swords"></span>В бой!</button></div>`;
+    } else if (st === 'owned') h += `<div class="stat">${stars}<span>${ic('shield')}${defense(o.b)}</span></div>
+        <div class="stat"><span>${ic('wood')}+5</span><span>${ic('gold')}+3</span></div>`;
+    else if (st === 'open') h += `<p>${v.tw}</p><div class="stat"><span>${ic('moon')}${v.nights}</span><span>${ic('crown')}</span></div>` +
+      '<div class="acts"><button class="btn go" id="actGo" type="button"><span class="ico swords"></span>В бой!</button></div>';
+    else if (st === 'locked') h += `<div class="stat"><span>${ic('lock')}</span><span>${v.needs.map(n => V(n).name).join(' / ')}</span></div>`;
+    else h += `<div class="stat"><span>${ic('crown')}</span><span>…</span></div>`;
   }
-  if (SAVE.store.wood || SAVE.store.gold) h += `<p class="muted">Всё со склада уйдёт с тобой в следующий забег.</p>`;
   $('panel').innerHTML = '<button class="x" id="panelClose" type="button" aria-label="Закрыть">×</button>' + h;
-  $('panel').hidden = false; $('hint').hidden = true;
+  $('panel').hidden = false;
   $('panelClose').onclick = () => selectNode(null);
   measurePanel();
   const [vx, vy] = mapPt(v.x, v.y);
@@ -2194,6 +2267,8 @@ window.bench = async () => {
   out.again = await measure(); out.dpr = DPR; out.screen = `${W}x${H}`; out.zombies = G.zombies.length;
   window.benchResult = out; return out;
 };
+// screenshots and checks from outside: open with #qa
+if (location.hash === '#qa') window.QA = { showMap, selectNode, beginVillage, V, SAVE, get G() { return G; } };
 })();
 </script>
 </body>

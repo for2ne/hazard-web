@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Примерочная иконок</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rubik:wght@400;600;800&display=swap">
+<style>
+/* Icon fitting room: every candidate from art/sprites/ui/var, tried on game-sized HUD, price labels and map bits, by day and night.
+   Click a candidate to put it everywhere; the line at the bottom is the choice to send back. */
+:root {
+  --night: #0c1219; --ember: #ff9a3c; --ember-deep: #d2541e; --bone: #efe6d2; --gold: #f5cf4b; --frost: #7fc7ff;
+  --panel: rgba(12, 16, 22, 0.82); --line: rgba(239, 230, 210, 0.12);
+  --display: "Russo One", "Arial Black", system-ui, sans-serif; --body: "Rubik", system-ui, -apple-system, sans-serif;
+  --sz: 20px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--night); color: var(--bone); font-family: var(--body); }
+main { max-width: 1100px; margin: 0 auto; padding: 16px 16px 120px; }
+h1 { font: 400 22px var(--display); margin: 0 0 4px; color: var(--ember); }
+.muted { opacity: .6; font-size: 13px; margin: 0 0 14px; }
+.scenes { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+.scene { position: relative; border-radius: 14px; overflow: hidden; min-height: 300px; padding: 12px; border: 1px solid var(--line);
+  background: url(art/ground.jpg) center / 420px; }
+.scene.night::before { content: ""; position: absolute; inset: 0; background: rgba(6, 12, 30, .72); }
+.scene > * { position: relative; }
+.tag { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; opacity: .7; margin-bottom: 8px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.pill { background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 14px;
+  display: flex; gap: 6px; align-items: center; font-variant-numeric: tabular-nums; }
+.pill b { font-family: var(--display); font-weight: 400; letter-spacing: .02em; }
+.ico { width: var(--sz); height: var(--sz); display: inline-block; flex: none; background: center / contain no-repeat; }
+.skip { width: 42px; height: 42px; display: grid; place-items: center; background: var(--panel); border: 2px solid var(--ember); border-radius: 50%; }
+.skip .ico { width: 26px; height: 26px; }
+.firebar { width: 90px; height: 8px; background: rgba(255,255,255,.1); border-radius: 4px; overflow: hidden; }
+.firebar i { display: block; height: 100%; width: 70%; background: linear-gradient(90deg, var(--ember-deep), var(--ember)); }
+.price { background: rgba(10,14,20,.78); border-radius: 9px; padding: 1px 8px; font: 600 11px var(--body); display: inline-flex; gap: 4px; align-items: center; }
+.price .ico { width: 12px; height: 12px; }
+.price .no { color: #ff8b7a; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; max-width: 300px; }
+.card h3 { font: 400 16px var(--display); margin: 0 0 8px; }
+.vs { display: flex; gap: 10px; align-items: center; font-family: var(--display); font-size: 18px; }
+.vs .ico { width: 28px; height: 28px; }
+.btn { background: var(--ember); color: var(--night); border-radius: 10px; padding: 8px 16px; font: 800 15px var(--body); display: inline-flex; gap: 6px; align-items: center; }
+.round { width: 38px; height: 38px; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); display: grid; place-items: center; }
+.node { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; font-weight: 600; text-shadow: 0 1px 2px #000; }
+.node .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 12px var(--ember); }
+.node .st { display: flex; gap: 2px; align-items: center; }
+.node .st .ico { width: 16px; height: 16px; }
+
+.xpbar { display: flex; gap: 8px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px 4px 4px; margin-bottom: 10px; }
+.xpbar > .ico { width: 30px; height: 33px; display: grid; place-items: center; padding-top: 4px; font-family: var(--display); font-size: 14px; color: #fff;
+  text-shadow: 0 0 2px #0e3a5e, 0 1px 0 #0e3a5e, 1px 0 0 #0e3a5e, -1px 0 0 #0e3a5e; }
+.xpbar > .ico b { font-weight: 400; }
+.xpbar .bar { flex: 1; height: 12px; background: rgba(0,0,0,.45); border-radius: 6px; overflow: hidden; }
+.xpbar .bar i { display: block; height: 100%; width: 60%; border-radius: 6px; background: linear-gradient(180deg, #c8ecff 0%, #7fc7ff 45%, #3d8fd6 100%); }
+.drops .ico { width: 15px; height: 15px; }
+.slots { margin-top: 18px; display: grid; gap: 10px; }
+.slot { display: grid; grid-template-columns: 90px 1fr; gap: 10px; align-items: center; background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+.slot .nm { font-weight: 600; font-size: 14px; }
+.slot .nm small { display: block; opacity: .55; font-weight: 400; font-size: 11px; }
+.cands { display: flex; flex-wrap: wrap; gap: 8px; }
+.cand { width: 76px; border-radius: 10px; border: 2px solid transparent; background: rgba(255,255,255,.04); padding: 6px 4px 4px; cursor: pointer; text-align: center;
+  color: var(--bone); font: 600 11px var(--body); }
+.cand img, .cand canvas { width: 56px; height: 56px; display: block; margin: 0 auto 3px; object-fit: contain; }
+.cand.on { border-color: var(--ember); background: rgba(255,154,60,.12); }
+.cand:focus-visible { outline: 2px solid var(--bone); }
+.ctrl { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 10px 0 0; font-size: 13px; }
+.out { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(12,16,22,.96); border-top: 1px solid var(--line); padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 10px);
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.out code { flex: 1; min-width: 200px; font-size: 13px; background: rgba(255,255,255,.06); padding: 8px 10px; border-radius: 8px; overflow-wrap: anywhere; }
+.out button { background: var(--ember); color: var(--night); border: 0; border-radius: 8px; padding: 8px 14px; font: 800 14px var(--body); cursor: pointer; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Примерочная иконок</h1>
+  <p class="muted">Нажми вариант, и он встанет везде сразу. Внизу строка с выбором: скопируй и пришли.</p>
+
+  <div class="scenes">
+    <div class="scene day" id="sceneDay"></div>
+    <div class="scene night" id="sceneNight"></div>
+  </div>
+  <div class="ctrl">
+    <label>Размер в HUD <input type="range" id="size" min="14" max="30" value="20"> <b id="sizeV">20</b> px</label>
+  </div>
+  <div class="slots" id="slots"></div>
+</main>
+<div class="out"><code id="out"></code><button type="button" id="copy">Скопировать</button></div>
+
+<template id="sceneTpl">
+  <div class="tag"></div>
+  <div class="row">
+    <div class="pill"><span class="ico" data-s="phase"></span><b class="ph"></b></div>
+    <div class="pill"><span class="ico" data-s="wood"></span><b>35</b></div>
+    <div class="pill"><span class="ico" data-s="gold"></span><b>12</b></div>
+  </div>
+  <div class="row">
+    <div class="skip"><span class="ico" data-s="moon"></span></div>
+    <div class="pill"><span class="ico" data-s="fire"></span><div class="firebar"><i></i></div></div>
+    <span class="price"><span class="ico" data-s="wood"></span>10 <span class="ico" data-s="gold"></span><span class="no">5</span></span>
+  </div>
+  <div class="row">
+    <div class="pill"><span class="ico" data-s="fire"></span><b>1/4</b></div>
+    <div class="round"><span class="ico" data-s="horde"></span></div>
+    <div class="round"><span class="ico" data-s="gear"></span></div>
+    <div class="round"><span class="ico" data-s="sound"></span></div>
+    <div class="round"><span class="ico" data-s="music"></span></div>
+  </div>
+  <div class="row">
+    <span class="node"><span class="dot"></span>Речная<span class="st"><span class="ico" data-s="moon"></span>5 <span class="ico" data-s="crown"></span></span></span>
+    <span class="node"><span class="dot" style="background:#777;box-shadow:none"></span>Кладбище<span class="st"><span class="ico" data-s="lock"></span></span></span>
+    <span class="node"><span class="dot" style="background:#e5484d;box-shadow:0 0 12px #e5484d"></span>Мельница<span class="st"><span class="ico" data-s="swords"></span></span></span>
+  </div>
+  <div class="xpbar"><span class="ico" data-s="soul"><b>3</b></span><div class="bar"><i></i></div></div>
+  <div class="row drops"><span class="ico" data-s="soul"></span><span class="ico" data-s="soul"></span><span class="ico" data-s="gold"></span><span class="ico" data-s="soul"></span></div>
+  <div class="card">
+    <h3>Мельница</h3>
+    <div class="vs"><span class="ico" data-s="shield"></span>14 <span style="opacity:.5">vs</span> <span class="ico" data-s="swords"></span>20</div>
+    <div class="row" style="margin:8px 0 0"><span class="btn"><span class="ico" data-s="swords"></span>В бой!</span><span class="pill"><span class="ico" data-s="wood"></span>+5 <span class="ico" data-s="gold"></span>+3</span></div>
+  </div>
+</template>
+
+<script>
+(() => {
+const SLOTS = {
+  wood: 'дерево', gold: 'золото', sun: 'день', moon: 'ночь', fire: 'костёр', shield: 'оборона', swords: 'набег',
+  soul: 'опыт', crown: 'вожак', lock: 'закрыто', gear: 'настройки', sound: 'звук', music: 'музыка', horde: 'осада без конца',
+};
+const $ = id => document.getElementById(id);
+let pick = {};
+try { pick = JSON.parse(localStorage.getItem('kostyor.icons')) || {}; } catch (e) {}
+
+// the gold coin that drops from zombies (same drawing as coinFace in index.html), as one more gold candidate
+function coinURL() {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d'); g.translate(64, 64); g.scale(8.4, 8.4);
+  g.fillStyle = '#f2b81f'; g.strokeStyle = '#7a5208'; g.lineWidth = 1.6;
+  g.beginPath(); g.arc(0, 0, 6.5, 0, Math.PI * 2); g.fill(); g.stroke();
+  g.fillStyle = '#ffd95a'; g.beginPath(); g.arc(0, 0, 4.3, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = 1.4; g.beginPath(); g.arc(-1, -1, 3, Math.PI * 1.05, Math.PI * 1.55); g.stroke();
+  return c.toDataURL();
+}
+const src = (slot, v) => v === 'code' ? coinURL() : v === 'crystal' ? 'art/sprites/top/crystal.png' : `art/sprites/ui/var/${slot}-${v}.png`;
+
+for (const [id, night] of [['sceneDay', false], ['sceneNight', true]]) {
+  const el = $(id); el.appendChild($('sceneTpl').content.cloneNode(true));
+  el.querySelector('.tag').textContent = night ? 'Ночь' : 'День';
+  el.querySelector('.ph').textContent = night ? '3/5 · 41' : '35';
+  el.querySelectorAll('[data-s="phase"]').forEach(n => n.dataset.s = night ? 'moon' : 'sun');
+}
+
+function apply() {
+  for (const slot of Object.keys(SLOTS)) {
+    const url = pick[slot] ? src(slot, pick[slot]) : '';
+    document.querySelectorAll(`.scene [data-s="${slot}"]`).forEach(n => n.style.backgroundImage = url ? `url("${url}")` : '');
+  }
+  document.querySelectorAll('.cand').forEach(b => b.classList.toggle('on', pick[b.dataset.slot] === b.dataset.v));
+  $('out').textContent = 'иконки: ' + Object.keys(SLOTS).filter(s => pick[s]).map(s => `${s}=${pick[s]}`).join(' ') + ` · размер ${$('size').value}px`;
+  try { localStorage.setItem('kostyor.icons', JSON.stringify(pick)); } catch (e) {}
+}
+
+fetch('art/sprites/ui/var/index.json').then(r => r.json()).then(idx => {
+  idx.gold = ['code', ...(idx.gold || [])];
+  const IN_GAME = { wood: 'b', gold: '1', moon: 'a', soul: 'a' };   // what the game uses now (art/sprites/ui/<slot>.png)
+  idx.soul = [...(idx.soul || []), 'crystal'];
+  for (const [slot, label] of Object.entries(SLOTS)) {
+    const vs = idx[slot] || []; if (!vs.length) continue;
+    if (!pick[slot] || !vs.includes(pick[slot])) pick[slot] = IN_GAME[slot] && vs.includes(IN_GAME[slot]) ? IN_GAME[slot] : vs[0];
+    const row = document.createElement('div'); row.className = 'slot';
+    row.innerHTML = `<div class="nm">${label}<small>${slot}</small></div><div class="cands"></div>`;
+    for (const v of vs) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'cand'; b.dataset.slot = slot; b.dataset.v = v;
+      b.innerHTML = `<img alt="" src="${src(slot, v)}">${v === 'code' ? 'с зомби' : v === 'crystal' ? 'кристалл' : v}`;
+      b.onclick = () => { pick[slot] = v; apply(); };
+      row.querySelector('.cands').appendChild(b);
+    }
+    $('slots').appendChild(row);
+  }
+  apply();
+});
+$('size').oninput = e => { document.documentElement.style.setProperty('--sz', e.target.value + 'px'); $('sizeV').textContent = e.target.value; apply(); };
+$('copy').onclick = () => { navigator.clipboard && navigator.clipboard.writeText($('out').textContent); $('copy').textContent = 'Готово'; setTimeout(() => $('copy').textContent = 'Скопировать', 1200); };
+})();
+</script>
+</body>
+</html>
