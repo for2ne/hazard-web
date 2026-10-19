@@ -741,7 +741,8 @@ function update(dt) {
     // shooting
     h.cd -= dt;
     if (h.cd <= 0) {
-      const targets = G.zombies.filter(z => d2(z, h) < st.range * st.range).sort((a, b) => d2(a, h) - d2(b, h)).slice(0, st.multi);
+      // only what can be seen: on fog nights a zombie outside every light is not a target (seen())
+      const targets = G.zombies.filter(z => d2(z, h) < st.range * st.range && seen(z) > 0.25).sort((a, b) => d2(a, h) - d2(b, h)).slice(0, st.multi);
       if (targets.length) {
         for (const z of targets) shoot(h.x, h.y, z, st.dmg, st.pierce, '#ffe7a8');
         sfx('bow', { max: 2, gap: 0.05, vol: 0.7 });
@@ -757,7 +758,7 @@ function update(dt) {
     }
     // chopping
     let chopping = false;
-    const busy = G.zombies.some(z => d2(z, h) < st.range * st.range);
+    const busy = G.zombies.some(z => d2(z, h) < st.range * st.range && seen(z) > 0.25);
     h.chopTree = null;
     if (!busy) for (const t of G.trees) {
       if (t.wood > 0 && d2(t, h) < (t.r + 22) ** 2) {
@@ -795,7 +796,7 @@ function update(dt) {
     s.cd -= dt;
     if (s.cd > 0) continue;
     let bestZ = null, bd = t.range * t.range;
-    for (const z of G.zombies) { const dd = d2(z, s); if (dd < bd) { bd = dd; bestZ = z; } }
+    for (const z of G.zombies) { const dd = d2(z, s); if (dd < bd && seen(z) > 0.25) { bd = dd; bestZ = z; } }
     if (bestZ) { shoot(s.x, s.y - 18, bestZ, t.dmg, 0, '#cfe8ff'); s.cd = 1 / t.rate; }
   }
 
