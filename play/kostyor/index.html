@@ -1352,29 +1352,26 @@ function light(x, y, r) {
   D.fillStyle = g; D.beginPath(); D.arc(x, y, r, 0, TAU); D.fill();
 }
 // What standing on a pad gives you, as a picture: the building (or its next level) with a green arrow for upgrades.
-// A torch is a small copy of the bonfire: the same stone ring with logs (fireLow sprite, fixed size, so it never
-// jitters) and the same live flame tongues on top; a knocked-out one is the cold ring with a few embers.
+// A torch is its own sprite (art/sprites/top/torch.png, chosen in icons.html) at a fixed size, so it never jitters;
+// only the warm glow under it breathes. A knocked-out one is the same sprite, dimmed, with ash and embers over the fire.
 function drawTorch(x, y, lit, seed, k = 1) {
-  const t = G.t + seed * 0.37, s = 0.42 * k;
+  const t = G.t + seed * 0.37, d = 26 * k;
   if (lit) {
     X.globalCompositeOperation = 'lighter';
-    const gr = 34 * k + Math.sin(t * 13) * 2, g = X.createRadialGradient(x, y, 4, x, y, gr);
-    g.addColorStop(0, 'rgba(255,150,50,.35)'); g.addColorStop(1, 'rgba(255,90,20,0)');
-    X.fillStyle = g; X.fillRect(x - gr, y - gr, gr * 2, gr * 2);
+    const g = X.createRadialGradient(x, y, 3, x, y, 34 * k);
+    g.addColorStop(0, `rgba(255,160,55,${0.38 + Math.sin(t * 5) * 0.06 + Math.sin(t * 13) * 0.04})`); g.addColorStop(1, 'rgba(255,100,25,0)');
+    X.fillStyle = g; X.fillRect(x - 34 * k, y - 34 * k, 68 * k, 68 * k);
     X.globalCompositeOperation = 'source-over';
   }
-  X.save(); if (!lit) X.globalAlpha *= 0.75;
-  const ok = spr('fireLow', x, y + 1, 28 * k, 0, 0, X.globalAlpha);
-  if (!ok) for (let i = 0; i < 6; i++) { const a = i * TAU / 6; circle(x + Math.cos(a) * 9 * k, y + Math.sin(a) * 9 * k, 3 * k, '#6c6a66', '#3a3836', 1); }
-  X.restore();
-  if (!lit) { for (const [dx, dy] of [[-2, 1], [2, -1], [0, 2]]) circle(x + dx * k, y + dy * k, 1.1 * k, Math.sin(t * 3 + dx) > 0 ? '#ff7a2a' : '#8a3a1a'); return; }
-  const tongues = [[-8, 0.8, 0], [8, 0.85, 1.7], [0, 1.15, 3.1]];
-  for (const [col, wk, hk] of [['#d2401e', 1.1, 1], ['#ff8a2a', 0.75, 0.8], ['#ffd25a', 0.48, 0.56], ['#fff3c0', 0.24, 0.32]]) {
-    for (const [dx, hm, ph] of tongues) {
-      const fl = Math.sin(t * 9 + ph * 2.1) * 0.18 + Math.sin(t * 15.3 + ph) * 0.1;
-      flameTongue(x + dx * s, y + 3, 7 * s * wk, 30 * s * hm * hk * (1 + fl), Math.sin(t * 6 + ph) * 4 * s, col);
-    }
-  }
+  const a0 = X.globalAlpha;
+  X.globalAlpha = a0 * (lit ? 1 : 0.8);
+  const ok = spr('torch', x, y, d, 0, 0, X.globalAlpha);
+  X.globalAlpha = a0;
+  if (!ok) circle(x, y, 8 * k, '#8d9298', '#3a3836', 1.5);
+  if (!lit) {
+    circle(x, y, d * 0.2, '#2b2724');
+    for (const [dx, dy] of [[-2, 1], [2, -1], [0, 2]]) circle(x + dx * k, y + dy * k, 1.1 * k, Math.sin(t * 3 + dx) > 0 ? '#ff7a2a' : '#8a3a1a');
+  } else if (!ok) circle(x, y, 4 * k, '#ffb43a');
 }
 function padIcon(s, act, ok) {
   const x = s.px, y = s.py, a = ok ? 0.95 : 0.5;
@@ -1444,7 +1441,7 @@ for (const k of ['walker', 'runner', 'brute', 'boss']) for (const f of ['Wind', 
 // attack frames sized and placed so their shirt sits on the standing sprite's shirt (fractions of the sprite's longer side)
 const ZATTACK = {"walker": {"Wind": {"size": 1.1084, "ox": 0.0006, "oy": -0.1904}, "Hit": {"size": 1.1801, "ox": 0.0091, "oy": 0.0493}}, "runner": {"Wind": {"size": 0.8831, "ox": -0.0633, "oy": 0.0532}, "Hit": {"size": 0.9028, "ox": 0.0783, "oy": 0.041}}, "brute": {"Wind": {"size": 1.0257, "ox": -0.007, "oy": -0.3538}, "Hit": {"size": 1.0627, "ox": -0.0142, "oy": 0.1709}}, "boss": {"Wind": {"size": 1.1911, "ox": 0.0078, "oy": -0.0223}, "Hit": {"size": 1.0087, "ox": 0.0016, "oy": 0.1047}}};
 for (const k of ['walker', 'runner', 'brute', 'boss']) for (const i of ['0', '1', '2', '3', 'Fall1', 'Fall2']) { const im = new Image(); im.src = `art/sprites/corpse/${k}${i}.png`; SPR['dead_' + k + i] = im; }
-for (const r of ['hero', 'heroShoot', 'heroAxe2', 'heroAxe4', 'walker', 'runner', 'brute', 'boss', 'arrow', 'fireLow', 'tower1', 'tower2', 'forge', 'tree', 'pine', 'oak', 'stump', 'grave', 'gold', 'crystal']) {
+for (const r of ['hero', 'heroShoot', 'heroAxe2', 'heroAxe4', 'walker', 'runner', 'brute', 'boss', 'arrow', 'fireLow', 'tower1', 'tower2', 'forge', 'tree', 'pine', 'oak', 'stump', 'grave', 'gold', 'crystal', 'torch']) {
   const i = new Image(); i.src = `art/sprites/top/${r}.png`; SPR[r] = i;
 }
 // Sprites are pre-scaled once to the size they take on screen (big source PNGs are slow to shrink every frame).
