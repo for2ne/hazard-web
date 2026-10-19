@@ -83,18 +83,18 @@ canvas { position: fixed; inset: 0; display: block; }
 @media (prefers-reduced-motion: reduce) { #skip { animation: none; } }
 #skip:focus-visible, .btn:focus-visible, .card:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 
-/* experience: a dark panel like the other HUD pills, a level badge and a thick frost bar that flashes on every crystal */
-.xp { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
-  width: min(560px, calc(100% - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
-  display: flex; gap: 8px; align-items: center; pointer-events: none;
-  background: var(--panel); border: 1px solid rgba(239, 230, 210, 0.12); border-radius: 999px; padding: 4px 10px 4px 4px; }
-.xp span { flex: none; width: 30px; height: 33px; margin: -6px 0 -4px; display: grid; place-items: center; padding-top: 4px;
+/* experience: a slim strip along the bottom edge with a small soul and the level, so the field keeps the screen;
+   it brightens on every soul and the soul pops on a new level */
+.xp { position: fixed; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 4px); display: flex; gap: 6px; align-items: center; pointer-events: none; opacity: .85; }
+@media (orientation: landscape) { .xp { left: 50%; right: auto; transform: translateX(-50%); width: min(420px, 50%); } }
+.xp span { flex: none; width: 20px; height: 22px; display: grid; place-items: center; padding-top: 3px;
   background: url(art/sprites/ui/soul.png) center / contain no-repeat;   /* the same soul that rises from zombies */
-  font-family: var(--display); font-size: 14px; color: #fff;
+  font-family: var(--display); font-size: 10px; color: #fff;
   text-shadow: 0 0 2px #0e3a5e, 0 1px 0 #0e3a5e, 1px 0 0 #0e3a5e, -1px 0 0 #0e3a5e, 0 -1px 0 #0e3a5e; }
-.xp .bar { flex: 1; height: 12px; background: rgba(0, 0, 0, .45); border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.6); }
-.xp .bar i { display: block; height: 100%; width: 0; border-radius: 6px; transition: width .15s;
-  background: linear-gradient(180deg, #c8ecff 0%, #7fc7ff 45%, #3d8fd6 100%); box-shadow: 0 0 8px rgba(127, 199, 255, .6); }
+.xp .bar { flex: 1; height: 5px; background: rgba(0, 0, 0, .4); border-radius: 3px; overflow: hidden; }
+.xp .bar i { display: block; height: 100%; width: 0; border-radius: 3px; transition: width .15s;
+  background: linear-gradient(90deg, #3d8fd6, #9fdcff); box-shadow: 0 0 6px rgba(127, 199, 255, .6); }
 
 .banner { position: fixed; left: 0; right: 0; top: 28%; text-align: center; font-family: var(--display); font-size: clamp(26px, 6vmin, 46px);
   letter-spacing: 0.03em; text-shadow: 0 3px 0 rgba(0,0,0,.5); pointer-events: none; opacity: 0; transition: opacity .4s; padding: 0 16px; }
@@ -138,7 +138,12 @@ canvas { position: fixed; inset: 0; display: block; }
 .ghost { font: 600 14px var(--body); color: var(--bone); background: transparent; border: 1px solid rgba(239, 230, 210, .3); border-radius: 12px; padding: 9px 14px; cursor: pointer; justify-self: center; }
 .ghost:focus-visible, .node:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 
-.map { position: fixed; inset: 0; background: #0b0812; overflow: hidden; }
+.map { position: fixed; inset: 0; height: 100vh; height: 100lvh; background: #0b0812; overflow: hidden; }
+/* phones play sideways: held upright, the game pauses behind a rotate-the-phone sign (no words) */
+.rotate { display: none; position: fixed; inset: 0; z-index: 2000; background: var(--night); place-items: center; }
+.rotate svg { width: 120px; height: 120px; color: var(--ember); animation: turn 2.2s ease-in-out infinite; }
+@keyframes turn { 0%, 25% { transform: rotate(0); } 55%, 100% { transform: rotate(-90deg); } }
+@media (orientation: portrait) and (pointer: coarse) and (max-width: 560px) { .rotate { display: grid; } }
 .field { position: absolute; inset: 0; touch-action: none; cursor: grab; }
 .field canvas { position: absolute; inset: 0; }
 .map-top { position: absolute; z-index: 2; left: 0; right: 0; top: 0; display: flex; gap: 8px 10px; align-items: center; flex-wrap: wrap; pointer-events: none;
@@ -190,6 +195,11 @@ canvas { position: fixed; inset: 0; display: block; }
     <button id="skip" type="button" aria-label="Начать ночь сейчас"><span class="ico moon" aria-hidden="true"></span></button>
     <div class="pill" aria-label="Костёр"><span class="ico fire" aria-hidden="true"></span><div class="firebar"><i id="fire"></i></div></div>
   </div>
+</div>
+<div class="rotate" role="img" aria-label="Поверни телефон горизонтально">
+  <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="20" y="6" width="24" height="44" rx="5" fill="none" stroke="currentColor" stroke-width="4"/>
+    <circle cx="32" cy="43" r="2.5" fill="currentColor"/><path d="M50 52a20 20 0 0 1-30 6" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M18 52l2 7 7-2" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </div>
 <div class="xp" aria-label="Опыт"><span id="lvl">1</span><div class="bar"><i id="xpbar"></i></div></div>
 <div class="banner" id="banner"></div>
@@ -1912,13 +1922,20 @@ let last = performance.now();
 const fpsOn = location.hash === '#fps', fpsEl = fpsOn ? document.body.appendChild(Object.assign(document.createElement('div'), { className: 'pill' })) : null;
 if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', left: '12px', bottom: '28px', zIndex: 9, pointerEvents: 'none' });
 let fpsN = 0, fpsT = 0, slowT = 0, slowN = 0;
+const upright = matchMedia('(orientation: portrait) and (pointer: coarse) and (max-width: 560px)');
+// Android can hold landscape for real once the page is fullscreen; iOS ignores both calls and relies on the rotate sign
+addEventListener('pointerdown', () => {
+  if (!matchMedia('(pointer: coarse)').matches || document.fullscreenElement) return;
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen({ navigationUI: 'hide' }).then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {});
+}, { once: true });
 function frame(now) {
   const raw = (now - last) / 1000, dt = Math.min(0.05, raw); last = now;
   if (fpsEl) { fpsN++; fpsT += Math.min(1, raw); if (fpsT >= 0.5) { fpsEl.textContent = `${Math.round(fpsN / fpsT)} FPS · ${G.zombies.length} зомби`; fpsN = 0; fpsT = 0; } }
   if (!$('map').hidden) drawMap(now / 1000);
   else if (!$('start').hidden) { /* the key art covers everything */ }
   else {
-    if (!G.paused) { if (G.slowT > 0) { G.slowT -= dt; dt *= 0.3; } update(dt); } draw();
+    if (!G.paused && !upright.matches) { if (G.slowT > 0) { G.slowT -= dt; dt *= 0.3; } update(dt); } draw();
     // the boss falls: a white flash over everything
     if (G.flash > 0) { X.setTransform(1, 0, 0, 1, 0, 0); X.globalAlpha = 0.55 * G.flash; X.fillStyle = '#fff6e0'; X.fillRect(0, 0, cv.width, cv.height); X.globalAlpha = 1; }
     hud();
@@ -1993,7 +2010,7 @@ const mapImg = new Image(); mapImg.src = 'art/map.jpg';
 const mapPan = { x: null, y: null };
 let mapView = { ox: 0, oy: 0, dw: 1, dh: 1 };
 function sizeMap() {
-  const r = $('field').getBoundingClientRect();
+  const r = $('map').getBoundingClientRect();
   mapW = Math.max(1, r.width); mapH = Math.max(1, r.height);
   for (const c of [mc, fogC]) { c.width = Math.round(mapW * DPR); c.height = Math.round(mapH * DPR); }
   mc.style.width = mapW + 'px'; mc.style.height = mapH + 'px';
@@ -2004,12 +2021,17 @@ function sizeMap() {
   }
 }
 addEventListener('resize', () => { if (!$('map').hidden) sizeMap(); });
+const settle = () => setTimeout(() => { resize(); if (!$('map').hidden) { sizeMap(); mapLayout(); } }, 350);
+addEventListener('orientationchange', settle);
+if (window.visualViewport) visualViewport.addEventListener('resize', settle);
 function mapLayout(focus) {
   const iw = mapImg.naturalWidth || 2400, ih = mapImg.naturalHeight || 1340;
   const s = Math.max(mapW / iw, mapH / ih), dw = iw * s, dh = ih * s;
   if (focus) { mapPan.x = mapW / 2 - focus.x / 100 * dw; mapPan.y = mapH / 2 - focus.y / 100 * dh; }
   if (mapPan.x === null) { mapPan.x = (mapW - dw) / 2; mapPan.y = (mapH - dh) / 2; }
-  mapPan.x = Math.min(0, Math.max(mapW - dw - panelBox.w, mapPan.x)); mapPan.y = Math.min(0, Math.max(mapH - dh - panelBox.h, mapPan.y));
+  // the top bar covers the map's upper edge on short landscape phones, so the map may be dragged down by its height
+  const topBar = document.querySelector('.map-top').getBoundingClientRect().bottom;
+  mapPan.x = Math.min(0, Math.max(mapW - dw - panelBox.w, mapPan.x)); mapPan.y = Math.min(topBar, Math.max(mapH - dh - panelBox.h, mapPan.y));
   mapView = { ox: mapPan.x, oy: mapPan.y, dw, dh };
 }
 // Space the floating panel takes on the right (landscape) or at the bottom (portrait), so the map can scroll out from under it.
@@ -2204,6 +2226,8 @@ function selectNode(v) {
   const [vx, vy] = mapPt(v.x, v.y);
   if (panelBox.w && vx > mapW - panelBox.w - 60) mapPan.x -= vx - (mapW - panelBox.w - 60) + 40;
   if (panelBox.h && vy > mapH - panelBox.h - 50) mapPan.y -= vy - (mapH - panelBox.h - 50) + 40;
+  const topBar = document.querySelector('.map-top').getBoundingClientRect().bottom;
+  if (vy < topBar + 40) mapPan.y += topBar + 40 - vy;   // a village under the top bar slides down into view
   if ($('actGo')) $('actGo').onclick = () => beginVillage(v);
   if ($('actDefend')) $('actDefend').onclick = () => beginRaid();
   if ($('actLift')) $('actLift').onclick = () => beginRaid(v.id);
@@ -2279,7 +2303,7 @@ window.bench = async () => {
   window.benchResult = out; return out;
 };
 // screenshots and checks from outside: open with #qa
-if (location.hash === '#qa') window.QA = { showMap, selectNode, beginVillage, V, SAVE, get G() { return G; } };
+if (location.hash === '#qa') window.QA = { showMap, selectNode, beginVillage, V, SAVE, get G() { return G; }, get map() { return { mapPan, panelBox, mapView, mapW, mapH }; } };
 })();
 </script>
 </body>
