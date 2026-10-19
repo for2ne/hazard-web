@@ -61,6 +61,9 @@ canvas { position: fixed; inset: 0; display: block; }
 .ico.music { background-image: url(art/sprites/ui/music.png); }
 .ico.horde { background-image: url(art/sprites/ui/horde.png); }
 .ico.big { width: 28px; height: 28px; }
+/* playtest: how dark the fog-village nights are, from a light night to pitch black */
+.dark-set { display: flex; gap: 10px; align-items: center; justify-content: center; }
+.dark-set input { width: 180px; accent-color: var(--ember); }
 .ico-btn { width: 44px; height: 44px; border-radius: 50%; padding: 0; display: grid; place-items: center; cursor: pointer;
   background: var(--panel); border: 1px solid rgba(239, 230, 210, .3); color: var(--bone); font: 800 16px var(--display); }
 .ico-btn .ico { width: 26px; height: 26px; }
@@ -243,6 +246,8 @@ canvas { position: fixed; inset: 0; display: block; }
     <div class="menu-list">
       <div class="acts" style="justify-content:center"><button class="ico-btn" id="sfxToggle" type="button" aria-label="Звук"><span class="ico sound"></span></button>
       <button class="ico-btn" id="musicToggle" type="button" aria-label="Музыка"><span class="ico music"></span></button></div>
+      <label class="dark-set" aria-label="Темнота ночью в Лесной"><span class="ico sun"></span>
+        <input type="range" id="fogDark" min="60" max="99" step="1"><span class="ico moon"></span></label>
       <button class="ghost danger" id="reset" type="button">Сбросить весь прогресс</button>
       <button class="btn" id="settingsClose" type="button">Готово</button>
     </div>
@@ -424,7 +429,8 @@ const towerInvested = lvl => TOWER.slice(0, lvl).reduce((a, t) => ({ wood: a.woo
 // Parts of the frame that can be switched off for the bench() measurement.
 // Experiment: pitch-dark nights in the fog village (Лесная). Outside the light of the fire, the hero and the towers it is
 // black, only zombie eyes glow. on: false brings back the old fog night (0.93 dark, lights at 72%); git tag kostyor-before-dark-night.
-const PITCH = { on: true, dark: 0.86, light: 0.9 };   // Warcraft-style: the ground stays readable, zombies outside the light are hidden
+const PITCH = { on: true, dark: 0.86, light: 0.9 };
+try { const v = +localStorage.getItem('kostyor.fogDark'); if (v >= 0.6 && v <= 0.99) PITCH.dark = v; } catch (e) {}   // Warcraft-style: the ground stays readable, zombies outside the light are hidden
 // How much of a zombie the player sees: 1 inside a light, fading to 0 at its edge (same lights as the darkness layer).
 function seen(z) {
   if (!(PITCH.on && G.cfg.twist === 'fog' && G.darkA > 0.3)) return 1;
@@ -2279,6 +2285,9 @@ function openSettings(from) { settingsFrom = from; $(from).hidden = true; $('res
 $('pauseSettings').onclick = () => openSettings('pause');
 $('mapSettings').onclick = () => { settingsFrom = 'map'; $('reset').textContent = 'Сбросить весь прогресс'; $('settings').hidden = false; };
 $('sfxToggle').onclick = () => sndToggle('sfx');
+// the slider changes PITCH.dark live (the night eases to it); remembered on this device
+$('fogDark').value = Math.round(PITCH.dark * 100);
+$('fogDark').oninput = e => { PITCH.dark = e.target.value / 100; try { localStorage.setItem('kostyor.fogDark', String(PITCH.dark)); } catch (er) {} };
 $('musicToggle').onclick = () => sndToggle('music');
 sndLabels();
 // every button clicks; zombies groan now and then in the dark
