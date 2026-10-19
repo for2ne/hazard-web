@@ -1,5 +1,5 @@
 {
- "version": 85,
+ "version": 86,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -592,15 +592,16 @@
       "type": "text",
       "text": "$49.99 / year",
       "align": "center",
-      "size": 15,
-      "color": "#6E6680"
+      "size": 20,
+      "color": "#3D3352",
+      "weight": "semibold"
      },
      {
       "type": "text",
       "text": "or $4.17 / month",
       "align": "center",
-      "size": 20,
-      "weight": "semibold",
+      "size": 15,
+      "weight": "medium",
       "color": "#EC5F78"
      }
     ]
@@ -1890,15 +1891,16 @@
       "type": "text",
       "text": "$49.99 / year",
       "align": "center",
-      "size": 15,
-      "color": "#6E6680"
+      "size": 20,
+      "color": "#3D3352",
+      "weight": "semibold"
      },
      {
       "type": "text",
       "text": "or $4.17 / month",
       "align": "center",
-      "size": 20,
-      "weight": "semibold",
+      "size": 15,
+      "weight": "medium",
       "color": "#EC5F78"
      }
     ]
@@ -2087,15 +2089,16 @@
      "type": "text",
      "text": "$49.99 / year",
      "align": "center",
-     "size": 15,
-     "color": "#6E6680"
+     "size": 20,
+     "color": "#3D3352",
+     "weight": "semibold"
     },
     {
      "type": "text",
      "text": "or $4.17 / month",
      "align": "center",
-     "size": 20,
-     "weight": "semibold",
+     "size": 15,
+     "weight": "medium",
      "color": "#EC5F78"
     }
    ]
