@@ -1,5 +1,5 @@
 {
- "version": 88,
+ "version": 89,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -2434,6 +2434,152 @@
      "size": 15,
      "weight": "medium",
      "font": "default",
+     "color": "#FFD36B"
+    }
+   ]
+  },
+  "paid_photo_monthly": {
+   "title": "Your pain forecast is ready",
+   "features": [],
+   "cta": "Continue",
+   "skippable": false,
+   "closeDelaySeconds": 0,
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.monthly",
+     "title": "Monthly",
+     "fallbackPrice": "$4.99",
+     "periodLabel": "per month",
+     "note": "$4.99/month. Cancel anytime.",
+     "cta": "Continue",
+     "isDefault": true
+    }
+   ],
+   "screenStyle": {
+    "dark": true,
+    "ink": "#FFFFFF",
+    "inkSoft": "#FFFFFFB8",
+    "accent": "#FF7E98",
+    "cta": [
+     "#FF7E98",
+     "#E8455F"
+    ],
+    "image": "https://hazard.studio/img/atmo/pw-bg-storm.jpg",
+    "imageName": "PaywallStorm",
+    "imagePosition": 0.3,
+    "tint": "#58287861",
+    "scrim": [
+     [
+      "#140E22D1",
+      0
+     ],
+     [
+      "#140E2259",
+      0.22
+     ],
+     [
+      "#140E2240",
+      0.45
+     ],
+     [
+      "#140E22C7",
+      0.66
+     ],
+     [
+      "#140E22F5",
+      1
+     ]
+    ],
+    "spacing": 6
+   },
+   "blocks": [
+    {
+     "type": "laurel",
+     "showIf": "topic != joint pain",
+     "value": "89%",
+     "label": "of people\nwith migraine",
+     "colors": [
+      "#FFC46B",
+      "#FF8A7A",
+      "#C99BFF"
+     ]
+    },
+    {
+     "type": "laurel",
+     "showIf": "topic == joint pain",
+     "value": "94%",
+     "label": "of people\nwith chronic pain",
+     "colors": [
+      "#FFC46B",
+      "#FF8A7A",
+      "#C99BFF"
+     ]
+    },
+    {
+     "type": "spacer",
+     "height": 8
+    },
+    {
+     "type": "text",
+     "text": "say the weather affects their pain",
+     "uppercase": true,
+     "size": 14,
+     "weight": "semibold",
+     "tracking": 1.6,
+     "align": "center",
+     "colors": [
+      "#FFC46B",
+      "#FF8A7A",
+      "#C99BFF"
+     ]
+    },
+    {
+     "type": "text",
+     "text": "University of Georgia survey · 4,600+ people",
+     "size": 11,
+     "align": "center",
+     "color": "#FFFFFF80"
+    },
+    {
+     "type": "spacer",
+     "height": 38
+    },
+    {
+     "type": "title",
+     "text": "Know your bad days\nthe evening before",
+     "size": 34,
+     "weight": "bold",
+     "font": "default",
+     "align": "center",
+     "color": "#FFFFFF"
+    },
+    {
+     "type": "text",
+     "text": "Solara watches pressure, storms and space weather — and warns you in time.",
+     "size": 17,
+     "font": "default",
+     "align": "center",
+     "color": "#FFFFFFB8"
+    },
+    {
+     "type": "price",
+     "pin": "bottom",
+     "text": "{price} / month",
+     "size": 20,
+     "weight": "semibold",
+     "font": "default",
+     "color": "#FFFFFF"
+    },
+    {
+     "type": "text",
+     "pin": "bottom",
+     "text": "No commitment · cancel anytime",
+     "size": 15,
+     "weight": "medium",
+     "font": "default",
+     "align": "center",
      "color": "#FFD36B"
     }
    ]
