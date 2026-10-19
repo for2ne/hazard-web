@@ -1997,7 +1997,7 @@ addEventListener('pointerdown', () => {
   if (el.requestFullscreen) el.requestFullscreen({ navigationUI: 'hide' }).then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {});
 }, { once: true });
 function frame(now) {
-  const raw = (now - last) / 1000, dt = Math.min(0.05, raw); last = now;
+  const raw = (now - last) / 1000; let dt = Math.min(0.05, raw); last = now;   // let: the boss slow-mo scales dt
   if (fpsEl) { fpsN++; fpsT += Math.min(1, raw); if (fpsT >= 0.5) { fpsEl.textContent = `${Math.round(fpsN / fpsT)} FPS · ${G.zombies.length} зомби`; fpsN = 0; fpsT = 0; } }
   if (!$('map').hidden) drawMap(now / 1000);
   else if (!$('start').hidden) { /* the key art covers everything */ }
