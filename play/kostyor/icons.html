@@ -170,7 +170,7 @@ function apply() {
 
 fetch('art/sprites/ui/var/index.json').then(r => r.json()).then(idx => {
   idx.gold = ['code', ...(idx.gold || [])];
-  const IN_GAME = { wood: 'b', gold: '1', moon: 'a', soul: 'a', anvil: 'b', lamp: 'c' };   // what the game uses now (art/sprites/ui/<slot>.png)
+  const IN_GAME = { wood: 'b', gold: '1', moon: 'a', soul: 'a', anvil: 'b', lamp: 'h' };   // what the game uses now (art/sprites/ui/<slot>.png)
   idx.soul = [...(idx.soul || []), 'crystal'];
   for (const [slot, label] of Object.entries(SLOTS)) {
     const vs = idx[slot] || []; if (!vs.length) continue;
