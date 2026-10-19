@@ -1,5 +1,5 @@
 {
- "version": 83,
+ "version": 85,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -510,7 +510,7 @@
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtGolden",
-    "showTrialTimeline": true,
+    "showTrialTimeline": false,
     "screenStyle": {
      "accent": "#EC5F78",
      "cta": [
@@ -520,42 +520,88 @@
     },
     "blocks": [
      {
-      "type": "badge",
-      "text": "SOLARA PLUS"
+      "type": "spacer",
+      "height": 8
      },
      {
       "type": "title",
-      "text": "Your {topic|pain} forecast is ready{withName|}"
+      "showIf": "topic != joint pain",
+      "text": "89%",
+      "size": 88,
+      "weight": "bold",
+      "font": "rounded",
+      "align": "center",
+      "color": "#EC5F78"
+     },
+     {
+      "type": "title",
+      "showIf": "topic == joint pain",
+      "text": "94%",
+      "size": 88,
+      "weight": "bold",
+      "font": "rounded",
+      "align": "center",
+      "color": "#EC5F78"
      },
      {
       "type": "text",
-      "text": "Know the bad days the weather brings — the evening before."
+      "showIf": "topic != joint pain",
+      "text": "of people with migraine say the weather affects their pain",
+      "size": 19,
+      "weight": "semibold",
+      "align": "center",
+      "color": "#3D3352"
      },
      {
-      "type": "forecast"
+      "type": "text",
+      "showIf": "topic == joint pain",
+      "text": "of people with chronic pain say the weather affects it",
+      "size": 19,
+      "weight": "semibold",
+      "align": "center",
+      "color": "#3D3352"
      },
      {
-      "type": "bullets",
-      "items": [
-       {
-        "icon": "bell.badge",
-        "text": "A warning the evening before a pressure drop or storm"
-       },
-       {
-        "icon": "calendar",
-        "text": "Your {topic|pain} risk for the week ahead"
-       },
-       {
-        "icon": "doc.text",
-        "text": "A report for your doctor"
-       }
-      ]
+      "type": "text",
+      "text": "University of Georgia survey of 4,600+ people",
+      "size": 12,
+      "align": "center",
+      "color": "#8C849C"
      },
      {
-      "type": "timeline"
+      "type": "spacer",
+      "height": 18
      },
      {
-      "type": "plans"
+      "type": "title",
+      "text": "Know your bad days the evening before",
+      "align": "center",
+      "size": 30
+     },
+     {
+      "type": "text",
+      "text": "Solara watches pressure, storms and space weather{withName|} — and warns you in time.",
+      "align": "center",
+      "color": "#6E6680"
+     },
+     {
+      "type": "spacer",
+      "height": 10
+     },
+     {
+      "type": "text",
+      "text": "$49.99 / year",
+      "align": "center",
+      "size": 15,
+      "color": "#6E6680"
+     },
+     {
+      "type": "text",
+      "text": "or $4.17 / month",
+      "align": "center",
+      "size": 20,
+      "weight": "semibold",
+      "color": "#EC5F78"
      }
     ]
    },
@@ -1762,7 +1808,7 @@
     "brandBadge": "PLUS",
     "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
     "heroImageName": "SkyArtGolden",
-    "showTrialTimeline": true,
+    "showTrialTimeline": false,
     "screenStyle": {
      "accent": "#EC5F78",
      "cta": [
@@ -1772,42 +1818,88 @@
     },
     "blocks": [
      {
-      "type": "badge",
-      "text": "SOLARA PLUS"
+      "type": "spacer",
+      "height": 8
      },
      {
       "type": "title",
-      "text": "Your {topic|pain} forecast is ready{withName|}"
+      "showIf": "topic != joint pain",
+      "text": "89%",
+      "size": 88,
+      "weight": "bold",
+      "font": "rounded",
+      "align": "center",
+      "color": "#EC5F78"
+     },
+     {
+      "type": "title",
+      "showIf": "topic == joint pain",
+      "text": "94%",
+      "size": 88,
+      "weight": "bold",
+      "font": "rounded",
+      "align": "center",
+      "color": "#EC5F78"
      },
      {
       "type": "text",
-      "text": "Know the bad days the weather brings — the evening before."
+      "showIf": "topic != joint pain",
+      "text": "of people with migraine say the weather affects their pain",
+      "size": 19,
+      "weight": "semibold",
+      "align": "center",
+      "color": "#3D3352"
      },
      {
-      "type": "forecast"
+      "type": "text",
+      "showIf": "topic == joint pain",
+      "text": "of people with chronic pain say the weather affects it",
+      "size": 19,
+      "weight": "semibold",
+      "align": "center",
+      "color": "#3D3352"
      },
      {
-      "type": "bullets",
-      "items": [
-       {
-        "icon": "bell.badge",
-        "text": "A warning the evening before a pressure drop or storm"
-       },
-       {
-        "icon": "calendar",
-        "text": "Your {topic|pain} risk for the week ahead"
-       },
-       {
-        "icon": "doc.text",
-        "text": "A report for your doctor"
-       }
-      ]
+      "type": "text",
+      "text": "University of Georgia survey of 4,600+ people",
+      "size": 12,
+      "align": "center",
+      "color": "#8C849C"
      },
      {
-      "type": "timeline"
+      "type": "spacer",
+      "height": 18
      },
      {
-      "type": "plans"
+      "type": "title",
+      "text": "Know your bad days the evening before",
+      "align": "center",
+      "size": 30
+     },
+     {
+      "type": "text",
+      "text": "Solara watches pressure, storms and space weather{withName|} — and warns you in time.",
+      "align": "center",
+      "color": "#6E6680"
+     },
+     {
+      "type": "spacer",
+      "height": 10
+     },
+     {
+      "type": "text",
+      "text": "$49.99 / year",
+      "align": "center",
+      "size": 15,
+      "color": "#6E6680"
+     },
+     {
+      "type": "text",
+      "text": "or $4.17 / month",
+      "align": "center",
+      "size": 20,
+      "weight": "semibold",
+      "color": "#EC5F78"
      }
     ]
    },
@@ -1913,7 +2005,7 @@
    "brandBadge": "PLUS",
    "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
    "heroImageName": "SkyArtGolden",
-   "showTrialTimeline": true,
+   "showTrialTimeline": false,
    "screenStyle": {
     "accent": "#EC5F78",
     "cta": [
@@ -1923,42 +2015,88 @@
    },
    "blocks": [
     {
-     "type": "badge",
-     "text": "SOLARA PLUS"
+     "type": "spacer",
+     "height": 8
     },
     {
      "type": "title",
-     "text": "Your {topic|pain} forecast is ready{withName|}"
+     "showIf": "topic != joint pain",
+     "text": "89%",
+     "size": 88,
+     "weight": "bold",
+     "font": "rounded",
+     "align": "center",
+     "color": "#EC5F78"
+    },
+    {
+     "type": "title",
+     "showIf": "topic == joint pain",
+     "text": "94%",
+     "size": 88,
+     "weight": "bold",
+     "font": "rounded",
+     "align": "center",
+     "color": "#EC5F78"
     },
     {
      "type": "text",
-     "text": "Know the bad days the weather brings — the evening before."
+     "showIf": "topic != joint pain",
+     "text": "of people with migraine say the weather affects their pain",
+     "size": 19,
+     "weight": "semibold",
+     "align": "center",
+     "color": "#3D3352"
     },
     {
-     "type": "forecast"
+     "type": "text",
+     "showIf": "topic == joint pain",
+     "text": "of people with chronic pain say the weather affects it",
+     "size": 19,
+     "weight": "semibold",
+     "align": "center",
+     "color": "#3D3352"
     },
     {
-     "type": "bullets",
-     "items": [
-      {
-       "icon": "bell.badge",
-       "text": "A warning the evening before a pressure drop or storm"
-      },
-      {
-       "icon": "calendar",
-       "text": "Your {topic|pain} risk for the week ahead"
-      },
-      {
-       "icon": "doc.text",
-       "text": "A report for your doctor"
-      }
-     ]
+     "type": "text",
+     "text": "University of Georgia survey of 4,600+ people",
+     "size": 12,
+     "align": "center",
+     "color": "#8C849C"
     },
     {
-     "type": "timeline"
+     "type": "spacer",
+     "height": 18
     },
     {
-     "type": "plans"
+     "type": "title",
+     "text": "Know your bad days the evening before",
+     "align": "center",
+     "size": 30
+    },
+    {
+     "type": "text",
+     "text": "Solara watches pressure, storms and space weather{withName|} — and warns you in time.",
+     "align": "center",
+     "color": "#6E6680"
+    },
+    {
+     "type": "spacer",
+     "height": 10
+    },
+    {
+     "type": "text",
+     "text": "$49.99 / year",
+     "align": "center",
+     "size": 15,
+     "color": "#6E6680"
+    },
+    {
+     "type": "text",
+     "text": "or $4.17 / month",
+     "align": "center",
+     "size": 20,
+     "weight": "semibold",
+     "color": "#EC5F78"
     }
    ]
   },
