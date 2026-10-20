@@ -391,7 +391,7 @@
       var first = { first_seen_web: new Date().toISOString() }; ["utm_source", "utm_campaign", "utm_content", "fbclid"].forEach(function (k) { if (ctx[k]) first["first_" + k] = ctx[k]; });
       m.people.set_once(first);
     });
-    steps = (variant.steps || []).filter(function (s) { return s.type !== "rating"; });
+    steps = (variant.steps || []).filter(function (s) { return s.type !== "rating" && !(s.showIf && s.showIf.indexOf("trialDays") >= 0); });
     if (qs.get("step")) {
       if (qs.get("step") === "paywall") { index = -1; history = []; go(steps.length - 1); return; }
       var k = steps.map(function (s) { return s.id; }).indexOf(qs.get("step")); if (k >= 0) { index = -1; history = [0]; go(k); return; }

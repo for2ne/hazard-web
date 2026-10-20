@@ -1,5 +1,5 @@
 {
- "version": 89,
+ "version": 90,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -474,6 +474,95 @@
      "cta": "Continue",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
+    },
+    {
+     "id": "trial-explainer",
+     "type": "blocks",
+     "showIf": "trialDays >= 1",
+     "screenStyle": {
+      "dark": true,
+      "ink": "#FFFFFF",
+      "inkSoft": "#FFFFFFB8",
+      "accent": "#FF7E98",
+      "cta": [
+       "#FF7E98",
+       "#E8455F"
+      ],
+      "image": "https://hazard.studio/img/atmo/pw-bg-storm.jpg",
+      "imageName": "PaywallStorm",
+      "imagePosition": 0.3,
+      "tint": "#58287861",
+      "scrim": [
+       [
+        "#140E22D1",
+        0
+       ],
+       [
+        "#140E2259",
+        0.22
+       ],
+       [
+        "#140E2240",
+        0.45
+       ],
+       [
+        "#140E22C7",
+        0.66
+       ],
+       [
+        "#140E22F5",
+        1
+       ]
+      ],
+      "spacing": 6
+     },
+     "blocks": [
+      {
+       "type": "spacer",
+       "size": 24
+      },
+      {
+       "type": "title",
+       "text": "How your free trial works",
+       "size": 30
+      },
+      {
+       "type": "spacer",
+       "size": 12
+      },
+      {
+       "type": "bullets",
+       "items": [
+        {
+         "icon": "lock.open.fill",
+         "text": "Today — full access, free"
+        },
+        {
+         "icon": "bell.badge.fill",
+         "text": "Day {reminderDay} — we remind you"
+        },
+        {
+         "icon": "creditcard.fill",
+         "text": "Day {chargeDay} — {planPrice} unless you cancel"
+        }
+       ]
+      },
+      {
+       "type": "spacer",
+       "size": 12
+      },
+      {
+       "type": "text",
+       "text": "Cancel anytime in Settings → Apple ID in two taps",
+       "size": 15
+      },
+      {
+       "type": "cta",
+       "text": "Continue",
+       "pin": "bottom",
+       "action": "next"
+      }
+     ]
     },
     {
      "id": "paywall",
@@ -1775,6 +1864,95 @@
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
     {
+     "id": "trial-explainer",
+     "type": "blocks",
+     "showIf": "trialDays >= 1",
+     "screenStyle": {
+      "dark": true,
+      "ink": "#FFFFFF",
+      "inkSoft": "#FFFFFFB8",
+      "accent": "#FF7E98",
+      "cta": [
+       "#FF7E98",
+       "#E8455F"
+      ],
+      "image": "https://hazard.studio/img/atmo/pw-bg-storm.jpg",
+      "imageName": "PaywallStorm",
+      "imagePosition": 0.3,
+      "tint": "#58287861",
+      "scrim": [
+       [
+        "#140E22D1",
+        0
+       ],
+       [
+        "#140E2259",
+        0.22
+       ],
+       [
+        "#140E2240",
+        0.45
+       ],
+       [
+        "#140E22C7",
+        0.66
+       ],
+       [
+        "#140E22F5",
+        1
+       ]
+      ],
+      "spacing": 6
+     },
+     "blocks": [
+      {
+       "type": "spacer",
+       "size": 24
+      },
+      {
+       "type": "title",
+       "text": "How your free trial works",
+       "size": 30
+      },
+      {
+       "type": "spacer",
+       "size": 12
+      },
+      {
+       "type": "bullets",
+       "items": [
+        {
+         "icon": "lock.open.fill",
+         "text": "Today — full access, free"
+        },
+        {
+         "icon": "bell.badge.fill",
+         "text": "Day {reminderDay} — we remind you"
+        },
+        {
+         "icon": "creditcard.fill",
+         "text": "Day {chargeDay} — {planPrice} unless you cancel"
+        }
+       ]
+      },
+      {
+       "type": "spacer",
+       "size": 12
+      },
+      {
+       "type": "text",
+       "text": "Cancel anytime in Settings → Apple ID in two taps",
+       "size": 15
+      },
+      {
+       "type": "cta",
+       "text": "Continue",
+       "pin": "bottom",
+       "action": "next"
+      }
+     ]
+    },
+    {
      "id": "paywall",
      "type": "paywall",
      "title": "Paywall"
@@ -2164,7 +2342,8 @@
     }
    ],
    "showTrialTimeline": true,
-   "closeDelaySeconds": 0
+   "closeDelaySeconds": 0,
+   "sameAsOnboarding": true
   },
   "lock": {
    "title": "Your pain forecast is ready",
@@ -2227,7 +2406,8 @@
     }
    ],
    "showTrialTimeline": true,
-   "closeDelaySeconds": 0
+   "closeDelaySeconds": 0,
+   "sameAsOnboarding": true
   },
   "match_peak": {
    "title": "Your pain forecast is ready",
@@ -2290,7 +2470,8 @@
     }
    ],
    "showTrialTimeline": true,
-   "closeDelaySeconds": 0
+   "closeDelaySeconds": 0,
+   "sameAsOnboarding": true
   },
   "paid_photo": {
    "title": "Your pain forecast is ready",
@@ -2583,6 +2764,132 @@
      "color": "#FFD36B"
     }
    ]
+  },
+  "settings": {
+   "title": "Your pain forecast is ready",
+   "features": [
+    "A warning the evening before a pressure drop, storm or cold snap",
+    "Your pain risk for today, tomorrow and the week ahead",
+    "See which weather comes before your bad days",
+    "A one-tap evening log, and a report for your doctor"
+   ],
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.yearly",
+     "title": "Yearly",
+     "fallbackPrice": "$49.99",
+     "periodLabel": "per year",
+     "note": "3 days free, then $49.99/year",
+     "cta": "Try 3 Days Free",
+     "isDefault": true
+    }
+   ],
+   "cta": "Try 3 Days Free",
+   "closeDelaySeconds": 0,
+   "skippable": true,
+   "trustLine": "3 days free, then $49.99/year. We'll remind you a day before. Cancel anytime in the App Store.",
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "brandName": "Solara",
+   "brandBadge": "PLUS",
+   "subtitle": "Know the headache and achy-joint days the weather brings — the evening before.",
+   "heroImageName": "SkyArtGolden",
+   "showTrialTimeline": false,
+   "screenStyle": {
+    "accent": "#EC5F78",
+    "cta": [
+     "#FF9AAE",
+     "#EC5F78"
+    ]
+   },
+   "blocks": [
+    {
+     "type": "spacer",
+     "height": 8
+    },
+    {
+     "type": "title",
+     "showIf": "topic != joint pain",
+     "text": "89%",
+     "size": 88,
+     "weight": "bold",
+     "font": "rounded",
+     "align": "center",
+     "color": "#EC5F78"
+    },
+    {
+     "type": "title",
+     "showIf": "topic == joint pain",
+     "text": "94%",
+     "size": 88,
+     "weight": "bold",
+     "font": "rounded",
+     "align": "center",
+     "color": "#EC5F78"
+    },
+    {
+     "type": "text",
+     "showIf": "topic != joint pain",
+     "text": "of people with migraine say the weather affects their pain",
+     "size": 19,
+     "weight": "semibold",
+     "align": "center",
+     "color": "#3D3352"
+    },
+    {
+     "type": "text",
+     "showIf": "topic == joint pain",
+     "text": "of people with chronic pain say the weather affects it",
+     "size": 19,
+     "weight": "semibold",
+     "align": "center",
+     "color": "#3D3352"
+    },
+    {
+     "type": "text",
+     "text": "University of Georgia survey of 4,600+ people",
+     "size": 12,
+     "align": "center",
+     "color": "#8C849C"
+    },
+    {
+     "type": "spacer",
+     "height": 18
+    },
+    {
+     "type": "title",
+     "text": "Know your bad days the evening before",
+     "align": "center",
+     "size": 30
+    },
+    {
+     "type": "text",
+     "text": "Solara watches pressure, storms and space weather{withName|} — and warns you in time.",
+     "align": "center",
+     "color": "#6E6680"
+    },
+    {
+     "type": "spacer",
+     "height": 10
+    },
+    {
+     "type": "text",
+     "text": "$49.99 / year",
+     "align": "center",
+     "size": 20,
+     "color": "#3D3352",
+     "weight": "semibold"
+    },
+    {
+     "type": "text",
+     "text": "or $4.17 / month",
+     "align": "center",
+     "size": 15,
+     "weight": "medium",
+     "color": "#EC5F78"
+    }
+   ],
+   "_doc": "20.10 v90: Settings → Upgrade. Without this key live 1.0.5/1.0.6 took the onboarding paywall (skippable:false) = no way out. 51+ always shows a close button in-app anyway."
   }
  },
  "routing": [
@@ -2594,8 +2901,21 @@
    "paywall": "paid_default",
    "_doc": "24.09: the bridge mints web_uid for every ad click → the app classifies it as source=web; the quiz is off, so web = paid direct → full onboarding. Restore bridge-plan-ready only when the quiz sends via=quiz.",
    "upgrade": {
-    "minBuild": 49,
-    "paywall": "paid_photo"
+    "minBuild": 50,
+    "paywall": "paid_photo",
+    "experiment": "price_v1",
+    "split": [
+     {
+      "arm": "yearly_trial",
+      "paywall": "paid_photo",
+      "weight": 50
+     },
+     {
+      "arm": "monthly_499",
+      "paywall": "paid_photo_monthly",
+      "weight": 50
+     }
+    ]
    }
   },
   {
@@ -2605,8 +2925,21 @@
    "variant": "paid-full-v1",
    "paywall": "paid_default",
    "upgrade": {
-    "minBuild": 49,
-    "paywall": "paid_photo"
+    "minBuild": 50,
+    "paywall": "paid_photo",
+    "experiment": "price_v1",
+    "split": [
+     {
+      "arm": "yearly_trial",
+      "paywall": "paid_photo",
+      "weight": 50
+     },
+     {
+      "arm": "monthly_499",
+      "paywall": "paid_photo_monthly",
+      "weight": 50
+     }
+    ]
    }
   },
   {
@@ -2616,16 +2949,42 @@
    "variant": "paid-full-v1",
    "paywall": "paid_default",
    "upgrade": {
-    "minBuild": 49,
-    "paywall": "paid_photo"
+    "minBuild": 50,
+    "paywall": "paid_photo",
+    "experiment": "price_v1",
+    "split": [
+     {
+      "arm": "yearly_trial",
+      "paywall": "paid_photo",
+      "weight": 50
+     },
+     {
+      "arm": "monthly_499",
+      "paywall": "paid_photo_monthly",
+      "weight": 50
+     }
+    ]
    }
   },
   {
    "default": true,
    "variant": "control",
    "upgrade": {
-    "minBuild": 49,
-    "paywall": "paid_photo"
+    "minBuild": 50,
+    "paywall": "paid_photo",
+    "experiment": "price_v1",
+    "split": [
+     {
+      "arm": "yearly_trial",
+      "paywall": "paid_photo",
+      "weight": 50
+     },
+     {
+      "arm": "monthly_499",
+      "paywall": "paid_photo_monthly",
+      "weight": 50
+     }
+    ]
    }
   }
  ],
