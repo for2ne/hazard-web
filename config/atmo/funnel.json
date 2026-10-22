@@ -1,5 +1,5 @@
 {
- "version": 90,
+ "version": 91,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -2890,6 +2890,144 @@
     }
    ],
    "_doc": "20.10 v90: Settings → Upgrade. Without this key live 1.0.5/1.0.6 took the onboarding paywall (skippable:false) = no way out. 51+ always shows a close button in-app anyway."
+  },
+  "paid_photo_weekly": {
+   "title": "Your pain forecast is ready",
+   "features": [],
+   "cta": "Continue",
+   "skippable": false,
+   "closeDelaySeconds": 0,
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$6.99",
+     "periodLabel": "per week",
+     "note": "3 days free, then $6.99/week",
+     "cta": "Continue",
+     "trialLine": "{trial} free · we'll remind you before it ends",
+     "isDefault": true
+    }
+   ],
+   "screenStyle": {
+    "dark": true,
+    "ink": "#FFFFFF",
+    "inkSoft": "#FFFFFFB8",
+    "accent": "#FF7E98",
+    "cta": [
+     "#FF7E98",
+     "#E8455F"
+    ],
+    "image": "https://hazard.studio/img/atmo/pw-bg-storm.jpg",
+    "imageName": "PaywallStorm",
+    "imagePosition": 0.3,
+    "tint": "#58287861",
+    "scrim": [
+     [
+      "#140E22D1",
+      0
+     ],
+     [
+      "#140E2259",
+      0.22
+     ],
+     [
+      "#140E2240",
+      0.45
+     ],
+     [
+      "#140E22C7",
+      0.66
+     ],
+     [
+      "#140E22F5",
+      1
+     ]
+    ],
+    "spacing": 6
+   },
+   "blocks": [
+    {
+     "type": "laurel",
+     "showIf": "topic != joint pain",
+     "value": "89%",
+     "label": "of people\nwith migraine",
+     "colors": [
+      "#FFC46B",
+      "#FF8A7A",
+      "#C99BFF"
+     ]
+    },
+    {
+     "type": "laurel",
+     "showIf": "topic == joint pain",
+     "value": "94%",
+     "label": "of people\nwith chronic pain",
+     "colors": [
+      "#FFC46B",
+      "#FF8A7A",
+      "#C99BFF"
+     ]
+    },
+    {
+     "type": "spacer",
+     "height": 8
+    },
+    {
+     "type": "text",
+     "text": "say the weather affects their pain",
+     "uppercase": true,
+     "size": 14,
+     "weight": "semibold",
+     "tracking": 1.6,
+     "align": "center",
+     "colors": [
+      "#FFC46B",
+      "#FF8A7A",
+      "#C99BFF"
+     ]
+    },
+    {
+     "type": "text",
+     "text": "University of Georgia survey · 4,600+ people",
+     "size": 11,
+     "align": "center",
+     "color": "#FFFFFF80"
+    },
+    {
+     "type": "spacer",
+     "height": 38
+    },
+    {
+     "type": "title",
+     "text": "Know your bad days\nthe evening before",
+     "size": 34,
+     "weight": "bold",
+     "font": "default",
+     "align": "center",
+     "color": "#FFFFFF"
+    },
+    {
+     "type": "text",
+     "text": "Solara watches pressure, storms and space weather — and warns you in time.",
+     "size": 17,
+     "font": "default",
+     "align": "center",
+     "color": "#FFFFFFB8"
+    },
+    {
+     "type": "price",
+     "pin": "bottom",
+     "text": "{price} / week",
+     "size": 20,
+     "weight": "semibold",
+     "font": "default",
+     "color": "#FFFFFF"
+    }
+   ],
+   "_doc": "22.10 v91: single offer for 1.0.7 — weekly $6.99 + 3-day trial (ASC price from 23.10; until then StoreKit shows $9.99 + trial). Decision Vitali 22.10: one plan on all traffic, 7 days, judge by qualified trials + charges."
   }
  },
  "routing": [
@@ -2902,18 +3040,13 @@
    "_doc": "24.09: the bridge mints web_uid for every ad click → the app classifies it as source=web; the quiz is off, so web = paid direct → full onboarding. Restore bridge-plan-ready only when the quiz sends via=quiz.",
    "upgrade": {
     "minBuild": 50,
-    "paywall": "paid_photo",
-    "experiment": "price_v1",
+    "paywall": "paid_photo_weekly",
+    "experiment": "price_v2",
     "split": [
      {
-      "arm": "yearly_trial",
-      "paywall": "paid_photo",
-      "weight": 50
-     },
-     {
-      "arm": "monthly_499",
-      "paywall": "paid_photo_monthly",
-      "weight": 50
+      "arm": "weekly_699_trial",
+      "paywall": "paid_photo_weekly",
+      "weight": 100
      }
     ]
    }
@@ -2926,18 +3059,13 @@
    "paywall": "paid_default",
    "upgrade": {
     "minBuild": 50,
-    "paywall": "paid_photo",
-    "experiment": "price_v1",
+    "paywall": "paid_photo_weekly",
+    "experiment": "price_v2",
     "split": [
      {
-      "arm": "yearly_trial",
-      "paywall": "paid_photo",
-      "weight": 50
-     },
-     {
-      "arm": "monthly_499",
-      "paywall": "paid_photo_monthly",
-      "weight": 50
+      "arm": "weekly_699_trial",
+      "paywall": "paid_photo_weekly",
+      "weight": 100
      }
     ]
    }
@@ -2950,18 +3078,13 @@
    "paywall": "paid_default",
    "upgrade": {
     "minBuild": 50,
-    "paywall": "paid_photo",
-    "experiment": "price_v1",
+    "paywall": "paid_photo_weekly",
+    "experiment": "price_v2",
     "split": [
      {
-      "arm": "yearly_trial",
-      "paywall": "paid_photo",
-      "weight": 50
-     },
-     {
-      "arm": "monthly_499",
-      "paywall": "paid_photo_monthly",
-      "weight": 50
+      "arm": "weekly_699_trial",
+      "paywall": "paid_photo_weekly",
+      "weight": 100
      }
     ]
    }
@@ -2971,18 +3094,13 @@
    "variant": "control",
    "upgrade": {
     "minBuild": 50,
-    "paywall": "paid_photo",
-    "experiment": "price_v1",
+    "paywall": "paid_photo_weekly",
+    "experiment": "price_v2",
     "split": [
      {
-      "arm": "yearly_trial",
-      "paywall": "paid_photo",
-      "weight": 50
-     },
-     {
-      "arm": "monthly_499",
-      "paywall": "paid_photo_monthly",
-      "weight": 50
+      "arm": "weekly_699_trial",
+      "paywall": "paid_photo_weekly",
+      "weight": 100
      }
     ]
    }
