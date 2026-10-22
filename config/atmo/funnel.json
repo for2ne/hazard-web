@@ -1,5 +1,5 @@
 {
- "version": 93,
+ "version": 94,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -3043,15 +3043,6 @@
      "weight": "semibold",
      "font": "default",
      "color": "#2A2238"
-    },
-    {
-     "type": "text",
-     "pin": "bottom",
-     "text": "That's less than $1 a day",
-     "size": 14,
-     "weight": "medium",
-     "align": "center",
-     "color": "#C2416A"
     }
    ],
    "_doc": "22.10 v92 (Vitali «го»): light relax paywall — m1 dad + daughter pointing at the laurel, personalized title/subtitle ({withName}, {painDays}), weekly $6.99 + 3-day trial, «less than $1 a day». Renders: hazard-tools marketing/solara/review/paywall-relax-point-sim.png"
