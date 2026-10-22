@@ -1,5 +1,5 @@
 {
- "version": 92,
+ "version": 93,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -16,8 +16,8 @@
      "id": "welcome",
      "type": "info",
      "artwork": "hero",
-     "title": "Your pain forecast",
-     "subtitle": "Pressure drops, storms and humidity hit many people as headaches and achy joints. Solara warns you the evening before.",
+     "title": "Get your good days back",
+     "subtitle": "Pressure drops, storms and humidity hit many people as headaches and achy joints. Solara warns you the evening before — so they stop catching you off guard.",
      "cta": "Get Started"
     },
     {
@@ -54,7 +54,7 @@
      "type": "payoff",
      "artwork": "hero",
      "title": "You're in the right place",
-     "subtitle": "Most people who feel the weather never learn what's behind it. A few quick questions — then you'll see your forecast.",
+     "subtitle": "Most people who feel the weather never learn what's behind it. A few quick questions — then you'll see your forecast, and the days you can win back.",
      "cta": "Let's Go"
     },
     {
@@ -1410,8 +1410,8 @@
      "id": "welcome",
      "type": "info",
      "artwork": "hero",
-     "title": "Your pain forecast",
-     "subtitle": "Pressure drops, storms and humidity hit many people as headaches and achy joints. Solara warns you the evening before.",
+     "title": "Get your good days back",
+     "subtitle": "Pressure drops, storms and humidity hit many people as headaches and achy joints. Solara warns you the evening before — so they stop catching you off guard.",
      "cta": "Get Started"
     },
     {
@@ -1448,7 +1448,7 @@
      "type": "payoff",
      "artwork": "hero",
      "title": "You're in the right place",
-     "subtitle": "Most people who feel the weather never learn what's behind it. A few quick questions — then you'll see your forecast.",
+     "subtitle": "Most people who feel the weather never learn what's behind it. A few quick questions — then you'll see your forecast, and the days you can win back.",
      "cta": "Let's Go"
     },
     {
