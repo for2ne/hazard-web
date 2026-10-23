@@ -1,5 +1,5 @@
 {
- "version": 96,
+ "version": 97,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -529,7 +529,7 @@
       },
       {
        "type": "text",
-       "text": "Try everything free. No surprises — we'll remind you before anything is charged.",
+       "text": "Nothing to pay today. We'll remind you before anything is charged.",
        "size": 17,
        "align": "leading",
        "color": "#5A5068"
@@ -557,15 +557,7 @@
       },
       {
        "type": "text",
-       "text": "✓ No payment today  ·  Billed securely by Apple",
-       "size": 15,
-       "weight": "semibold",
-       "align": "leading",
-       "color": "#2A2238"
-      },
-      {
-       "type": "text",
-       "text": "Cancel anytime in Settings → Apple ID in two taps",
+       "text": "Billed by Apple · cancel anytime in two taps",
        "size": 14,
        "align": "leading",
        "color": "#8A8296"
@@ -577,7 +569,7 @@
        "action": "next"
       }
      ],
-     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v96: «No payment today · billed securely by Apple» by the button (Blinkist-style honest timeline: +23% trial starts)"
+     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v97: «Nothing to pay today» in the subtitle, one grey line «Billed by Apple · cancel anytime in two taps» (v96's two stacked lines looked like fine print)"
     },
     {
      "id": "paywall",
@@ -1932,7 +1924,7 @@
       },
       {
        "type": "text",
-       "text": "Try everything free. No surprises — we'll remind you before anything is charged.",
+       "text": "Nothing to pay today. We'll remind you before anything is charged.",
        "size": 17,
        "align": "leading",
        "color": "#5A5068"
@@ -1960,15 +1952,7 @@
       },
       {
        "type": "text",
-       "text": "✓ No payment today  ·  Billed securely by Apple",
-       "size": 15,
-       "weight": "semibold",
-       "align": "leading",
-       "color": "#2A2238"
-      },
-      {
-       "type": "text",
-       "text": "Cancel anytime in Settings → Apple ID in two taps",
+       "text": "Billed by Apple · cancel anytime in two taps",
        "size": 14,
        "align": "leading",
        "color": "#8A8296"
@@ -1980,7 +1964,7 @@
        "action": "next"
       }
      ],
-     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v96: «No payment today · billed securely by Apple» by the button (Blinkist-style honest timeline: +23% trial starts)"
+     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v97: «Nothing to pay today» in the subtitle, one grey line «Billed by Apple · cancel anytime in two taps» (v96's two stacked lines looked like fine print)"
     },
     {
      "id": "paywall",
