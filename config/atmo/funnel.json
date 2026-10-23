@@ -1,5 +1,5 @@
 {
- "version": 97,
+ "version": 98,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -550,17 +550,23 @@
          "text": "Day {reminderDay} — we remind you"
         },
         {
-         "icon": "creditcard.fill",
+         "icon": "sparkles",
          "text": "Day {chargeDay} — your plan starts, unless you cancel"
         }
        ]
       },
       {
-       "type": "text",
-       "text": "Billed by Apple · cancel anytime in two taps",
-       "size": 14,
-       "align": "leading",
-       "color": "#8A8296"
+       "type": "divider",
+       "height": 1
+      },
+      {
+       "type": "bullets",
+       "items": [
+        {
+         "icon": "lock.shield.fill",
+         "text": "Billed by Apple · cancel in 2 taps"
+        }
+       ]
       },
       {
        "type": "cta",
@@ -569,7 +575,7 @@
        "action": "next"
       }
      ],
-     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v97: «Nothing to pay today» in the subtitle, one grey line «Billed by Apple · cancel anytime in two taps» (v96's two stacked lines looked like fine print)"
+     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v98: subtitle «Nothing to pay today…», day 3 icon sparkles (no card), divider + lock line «Billed by Apple · cancel in 2 taps»"
     },
     {
      "id": "paywall",
@@ -1945,17 +1951,23 @@
          "text": "Day {reminderDay} — we remind you"
         },
         {
-         "icon": "creditcard.fill",
+         "icon": "sparkles",
          "text": "Day {chargeDay} — your plan starts, unless you cancel"
         }
        ]
       },
       {
-       "type": "text",
-       "text": "Billed by Apple · cancel anytime in two taps",
-       "size": 14,
-       "align": "leading",
-       "color": "#8A8296"
+       "type": "divider",
+       "height": 1
+      },
+      {
+       "type": "bullets",
+       "items": [
+        {
+         "icon": "lock.shield.fill",
+         "text": "Billed by Apple · cancel in 2 taps"
+        }
+       ]
       },
       {
        "type": "cta",
@@ -1964,7 +1976,7 @@
        "action": "next"
       }
      ],
-     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v97: «Nothing to pay today» in the subtitle, one grey line «Billed by Apple · cancel anytime in two taps» (v96's two stacked lines looked like fine print)"
+     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v98: subtitle «Nothing to pay today…», day 3 icon sparkles (no card), divider + lock line «Billed by Apple · cancel in 2 taps»"
     },
     {
      "id": "paywall",
