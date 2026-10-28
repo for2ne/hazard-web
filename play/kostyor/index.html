@@ -49,6 +49,7 @@ canvas { position: fixed; inset: 0; display: block; }
 .ico { width: 20px; height: 20px; display: inline-block; flex: none; background: center / contain no-repeat; }
 .ico.wood { background-image: url(art/sprites/ui/wood.png); }
 .ico.gold { background-image: url(art/sprites/ui/gold.png); }
+.ico.stone { background-image: url(art/sprites/ui/stone.png); }
 .ico.sun { background-image: url(art/sprites/ui/sun.png); }
 .ico.moon { background-image: url(art/sprites/ui/moon.png); }
 .ico.moonFull { background-image: url(art/sprites/ui/moonFull.png); }
@@ -129,6 +130,8 @@ canvas { position: fixed; inset: 0; display: block; }
 .card { background: #18202a; border: 1px solid rgba(239, 230, 210, .16); border-radius: 14px; padding: 14px 10px; color: var(--bone); cursor: pointer; display: grid; gap: 6px; align-content: start;
   font: inherit; min-width: 0; }
 .card:hover { border-color: var(--ember); }
+.card .ci { width: 64px; height: 64px; justify-self: center; object-fit: contain; filter: drop-shadow(0 3px 6px rgba(0,0,0,.45)); }
+@media (max-width: 460px) { .card { grid-template-columns: 52px 1fr; column-gap: 10px; text-align: left; } .card .ci { width: 52px; height: 52px; grid-row: span 4; align-self: center; } }
 .card .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--frost); }
 .card .n { font-family: var(--display); font-size: 17px; line-height: 1.15; }
 .card .d { font-size: 13px; opacity: .8; line-height: 1.35; }
@@ -193,6 +196,7 @@ canvas { position: fixed; inset: 0; display: block; }
   <div class="hud-left">
     <div class="pill"><span class="ico sun" id="phaseIcon" aria-hidden="true"></span><b id="phase">35</b></div>
     <div class="pill"><span class="ico wood"></span><b id="wood">0</b></div>
+    <div class="pill"><span class="ico stone"></span><b id="stone">0</b></div>
     <div class="pill"><span class="ico gold"></span><b id="gold">0</b></div>
   </div>
   <div class="hud-right">
@@ -270,6 +274,7 @@ canvas { position: fixed; inset: 0; display: block; }
   <div class="map-top">
     <div class="pill" aria-label="Освобождено деревень"><span class="ico fire"></span><b id="freed">0/4</b></div>
     <div class="pill" aria-label="Дерево на складе"><span class="ico wood"></span><b id="stWood">0</b></div>
+    <div class="pill" aria-label="Камень на складе"><span class="ico stone"></span><b id="stStone">0</b></div>
     <div class="pill" aria-label="Золото на складе"><span class="ico gold"></span><b id="stGold">0</b></div>
     <span class="grow"></span>
     <button class="ico-btn wide" id="siege" type="button" aria-label="Осада без конца"><span class="ico horde"></span>∞</button>
@@ -418,17 +423,19 @@ const ZK = {
   brute:  { r: 18, hp: 110, spd: 28, dmg: 25, col: '#4d7838', xp: 5, gold: 4 },
   boss:   { r: 28, hp: 500, spd: 30, dmg: 45, col: '#7b5aa6', xp: 30, gold: 30 },
 };
-const WALL_COST = [6, 12, 20], WALL_HP = [60, 130, 220];
+const WALL_COST = [6, 12, 10], WALL_STONE = [0, 0, 8], WALL_HP = [60, 130, 220];   // the stone wall takes stone
 const TOWER = [
-  { wood: 10, gold: 0, dmg: 8, rate: 1.0, range: 230 },
-  { wood: 15, gold: 10, dmg: 14, rate: 1.3, range: 260 },
-  { wood: 25, gold: 25, dmg: 22, rate: 1.7, range: 290 },
+  // ranges cover a tower's own two wall sections, not the far side: a push meets one or two towers, never all four
+  { wood: 10, gold: 0, dmg: 8, rate: 1.0, range: 150 },
+  { wood: 15, gold: 10, dmg: 14, rate: 1.3, range: 170 },
+  { wood: 15, gold: 20, stone: 6, dmg: 22, rate: 1.7, range: 190 },
 ];
 const FORGE_WOOD = 15;
 // Torches: cheap light on the approaches, out past the walls. A zombie that walks into one knocks it out (it does not
 // hunt them); standing on its pad relights it, day or night. Pads per village: angle in degrees, distance from the fire.
 // Zombies fear fire: inside a torch's light they walk at TORCH.fear of their speed, so a torch is also a trap on the way in.
-const TORCH = { wood: 3, relight: 1, hp: 25, r: 9, light: 115, fear: 0.65 };
+// on: false hides torches entirely (no pads, nothing to build); the code stays for a later return.
+const TORCH = { on: false, wood: 3, relight: 1, hp: 25, r: 9, light: 115, fear: 0.65 };
 const TORCH_PADS = {
   mill: [[45, 330], [135, 330], [225, 330], [315, 330]],
   river: [[-12, 345], [12, 345], [168, 345], [192, 345]],
@@ -437,7 +444,7 @@ const TORCH_PADS = {
   siege: [[30, 335], [90, 350], [150, 335], [210, 335], [270, 350], [330, 335]],
 };
 const TOWER_HP = [300, 600, 1000], TOWER_R = 20;   // a tower is an obstacle zombies can break (Astra's numbers)
-const towerInvested = lvl => TOWER.slice(0, lvl).reduce((a, t) => ({ wood: a.wood + t.wood, gold: a.gold + t.gold }), { wood: 0, gold: 0 });
+const towerInvested = lvl => TOWER.slice(0, lvl).reduce((a, t) => ({ wood: a.wood + t.wood, gold: a.gold + t.gold, stone: a.stone + (t.stone || 0) }), { wood: 0, gold: 0, stone: 0 });
 
 // Parts of the frame that can be switched off for the bench() measurement.
 // Night light. Every night has a moon; the moon sets how dark the land gets and how far past a light (fire, hero, towers)
@@ -460,17 +467,22 @@ const fogK = () => G.cfg.twist === 'fog' ? 0.9 : 1;
 const nightDark = () => Math.min(0.99, Math.max(0.4, G.moon.dark + (G.cfg.twist === 'fog' ? 0.05 : 0) + nightShift));
 // How much of a zombie the player sees right now: 1 in light and dusk, fading to 0 at the dusk's outer edge.
 function seenNow(z) {
-  if (G.phase !== 'night' || !G.moon || !isFinite(G.moon.dusk) || G.darkA < 0.3) return 1;
+  if (G.phase !== 'night' || !G.moon || !isFinite(G.moon.dusk) || G.darkA < 0.3 || z.burn > 0) return 1;   // a burning zombie lights itself
   const k = fogK(), d = G.moon.dusk, h = G.hero;
   const vis = (x, y, r) => 1 - Math.min(1, Math.max(0, (Math.hypot(z.x - x, z.y - y) - r * d * 0.8) / (r * d * 0.2)));
   let a = vis(0, 0, (250 + G.fire.hp / G.fire.max * 40) * k);
   if (!h.dead) a = Math.max(a, vis(h.x, h.y, 140 * k));
+  for (const s of G.shots) if ((s.fire || s.light) && a < 1 && s.t < 2) a = Math.max(a, vis(s.x, s.y, (s.light ? 95 : 75) / d));
+  for (const r of G.reveals) if (a < 1) a = Math.max(a, vis(r.x, r.y, 120 / d));
+  for (const b of G.bolts) if (a < 1 && b.main) a = Math.max(a, vis(b.x2, b.y2, (b.sky ? 260 : 80) / d));
+  for (const p of G.firePatches) if (a < 1) a = Math.max(a, vis(p.x, p.y, 55 / d));
   for (const s of G.slots) if (s.lvl && s.hp > 0 && a < 1 && (s.kind === 'tower' || s.kind === 'torch')) a = Math.max(a, vis(s.x, s.y, (s.kind === 'tower' ? 95 : TORCH.light) * k));
   return a;
 }
 // what is drawn (z.vis) and what can be shot: a zombie stays a target for a second after it slips out of sight
 const seen = z => z.vis ?? 1;
 const targetable = z => G.t - (z.seenAt ?? -9) < 1;
+const HERO_BASE = { dmg: 10, rate: 1.6 }, RATE_CAP = 6;   // shots per second never go above RATE_CAP
 const PERF = { ground: true, fire: true, units: true, trees: true, fx: true, dark: true, text: true };
 let G;
 const SIEGE = { mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 35, dayLen: 22, nightLen: 55 };
@@ -478,16 +490,17 @@ function newGame(cfg = SIEGE) {
   music('day');
   G = {
     cfg, t: 0, phase: 'day', phaseT: cfg.firstDay, night: 0, darkA: 0,
-    wood: cfg.wood || 0, gold: cfg.gold || 0, graves: [], spawnEvery: 1,
+    wood: cfg.wood || 0, gold: cfg.gold || 0, stone: cfg.stone || 0, rocks: [], graves: [], spawnEvery: 1,
     fire: { x: 0, y: 0, hp: 300, max: 300 },
     zoom: 1, moon: null,
     hero: { x: 0, y: 60, r: 13, hp: 100, max: 100, spd: 150, cd: 0, dead: 0, fx: 0, fy: 1, chop: 0 },
-    stat: { dmg: 10, rate: 1.6, range: 210, multi: 1, pierce: 0, magnet: 70, chop: 1, aura: 0 },
+    stat: { dmg: 10, rate: 1.6, range: 150, multi: 1, pierce: 0, magnet: 70, chop: 1, yield: 1, aura: 0,
+      bounce: 0, split: 0, crit: 0, volley: 0, towerDmg: 1, wallK: 1, revive: 6, dash: 0 },
     lvls: {},
     xp: 0, lvl: 1, xpNext: 5, pending: 0,
     zombies: [], shots: [], drops: [], fx: [], texts: [], trees: [], slots: [], corpses: [], slashes: [], stains: [], rolls: [], slowT: 0, flash: 0,
-    spawnQ: [], spawnT: 0, mainAngles: [], forgeUses: 0,
-    cam: { x: 0, y: 30 }, shake: 0, paused: true, over: false,
+    spawnQ: [], spawnT: 0, plan: [], nightT: 0, pushAi: -1, mainAngles: [], forgeUses: 0,
+    cam: { x: 0, y: 30 }, rings: [], blooms: [], flames: [], firePatches: [], bolts: [], reveals: [], shards: [], frosts: [], shake: 0, paused: true, over: false,
   };
   for (let i = 0; i < 4; i++) {
     const a = i * TAU / 4 - Math.PI / 2;
@@ -500,7 +513,7 @@ function newGame(cfg = SIEGE) {
     G.slots.push({ kind: 'tower', name: 'Башня', x: Math.cos(a) * 116, y: Math.sin(a) * 116, px: Math.cos(a) * 74, py: Math.sin(a) * 74, lvl: 0, hold: 0, cd: 0 });
   }
   G.slots.push({ kind: 'forge', name: 'Кузница', x: 0, y: 100, px: 0, py: 60, lvl: 0, hold: 0 });
-  for (const [deg, r] of TORCH_PADS[(cfg.v && cfg.v.id) || 'siege'] || TORCH_PADS.siege) {
+  if (TORCH.on) for (const [deg, r] of TORCH_PADS[(cfg.v && cfg.v.id) || 'siege'] || TORCH_PADS.siege) {
     const a = deg * Math.PI / 180, x = Math.cos(a) * r, y = Math.sin(a) * r;
     G.slots.push({ kind: 'torch', name: 'Факел', x, y, px: x, py: y, r: TORCH.r, lvl: 0, hp: 0, max: TORCH.hp, hold: 0 });
   }
@@ -523,6 +536,15 @@ function newGame(cfg = SIEGE) {
     if (G.slots.some(o => o.kind === 'torch' && d2(o, t) < 60 * 60)) continue;   // keep torch pads clear
     if (G.trees.every(o => d2(o, t) > 55 * 55)) G.trees.push(t);
   }
+  // boulders to break for stone; few in the forest, more around the graveyard
+  const rockCount = { fog: 6, river: 10, graves: 14 }[cfg.twist] ?? 12;
+  tries = 0;
+  while (G.rocks.length < rockCount && tries++ < 3000) {
+    const a = Math.random() * TAU, r = rnd(250, 760);
+    const k = { x: Math.cos(a) * r, y: Math.sin(a) * r, r: rnd(16, 21), stone: 3, shake: 0 };
+    if (cfg.twist === 'river' && Math.abs(k.y) > 280 && Math.abs(k.y) < 390) continue;
+    if (G.trees.every(o => d2(o, k) > 50 * 50) && G.rocks.every(o => d2(o, k) > 70 * 70)) G.rocks.push(k);
+  }
   if (cfg.twist === 'graves') for (let i = 0; i < 7; i++) {
     const a = i * TAU / 7 + rnd(-0.3, 0.3), r = rnd(235, 400);
     G.graves.push({ x: Math.cos(a) * r, y: Math.sin(a) * r });
@@ -534,7 +556,7 @@ const dirName = a => DIRS[Math.round(((a % TAU) + TAU) % TAU / (TAU / 8)) % 8];
 // The next night's sides are chosen at dawn, so the day is spent building against a known threat.
 function planWave() {
   const c = G.cfg, n = G.night + 1 + c.d, a0 = Math.random() * TAU;
-  G.mainAngles = c.twist === 'river' ? [0, Math.PI] : n <= 1 ? [a0] : [a0, a0 + rnd(1.6, 3.2)];
+  G.mainAngles = c.twist === 'river' ? [0, Math.PI] : n <= 1 ? [a0] : c.mode === 'siege' && n >= 8 ? [a0, a0 + TAU / 3 + rnd(-0.4, 0.4), a0 - TAU / 3 + rnd(-0.4, 0.4)] : [a0, a0 + rnd(1.6, 3.2)];
   G.waveText = c.twist === 'river' ? 'по мостам, с востока и запада' : `с ${G.mainAngles.map(dirName).join(' и с ')}`;
 }
 const snapshot = () => ({
@@ -603,34 +625,66 @@ function banner(main, sub = '') {
 
 // ---------- upgrades ----------
 const UPS = [
-  { id: 'dmg', k: 'Оружие', n: 'Острые стрелы', d: '+30% урона', max: 6, go: () => G.stat.dmg *= 1.3 },
-  { id: 'rate', k: 'Оружие', n: 'Быстрая рука', d: '+20% скорострельности', max: 6, go: () => G.stat.rate *= 1.2 },
-  { id: 'multi', k: 'Оружие', n: 'Ещё одна стрела', d: 'Стреляет по ещё одной цели', max: 4, go: () => G.stat.multi++ },
-  { id: 'pierce', k: 'Оружие', n: 'Пробивание', d: 'Стрела проходит сквозь ещё одного зомби', max: 3, go: () => G.stat.pierce++ },
-  { id: 'aura', k: 'Новое', n: 'Огненное кольцо', d: 'Жжёт зомби вокруг героя', max: 3, go: () => G.stat.aura++ },
-  { id: 'range', k: 'Оружие', n: 'Зоркий глаз', d: '+15% дальности', max: 4, go: () => G.stat.range *= 1.15 },
-  { id: 'speed', k: 'Герой', n: 'Лёгкие ботинки', d: '+12% скорости бега', max: 4, go: () => G.hero.spd *= 1.12 },
-  { id: 'hp', k: 'Герой', n: 'Крепкое здоровье', d: '+25 к здоровью, полное лечение', max: 5, go: () => { G.hero.max += 25; G.hero.hp = G.hero.max; } },
-  { id: 'magnet', k: 'Герой', n: 'Магнит', d: 'Собирает добычу издалека', max: 3, go: () => G.stat.magnet *= 1.5 },
-  { id: 'chop', k: 'Деревня', n: 'Топор лесоруба', d: 'Рубит деревья вдвое быстрее', max: 2, go: () => G.stat.chop *= 2 },
-  { id: 'fire', k: 'Деревня', n: 'Жаркий костёр', d: '+100 к прочности костра и починка', max: 5, go: () => { G.fire.max += 100; G.fire.hp = G.fire.max; } },
+  // damage and fire rate add a share of the base instead of multiplying, so a full build ends near x2.8 / x2.2, not x5 / x3
+  { id: 'dmg', icon: 'dmg', k: 'Оружие', n: 'Острые стрелы', d: '+30% урона', max: 6, go: () => G.stat.dmg += HERO_BASE.dmg * 0.3 },
+  { id: 'rate', icon: 'rate', k: 'Оружие', n: 'Быстрая рука', d: '+20% скорострельности', max: 6, go: () => G.stat.rate += HERO_BASE.rate * 0.2 },
+  { id: 'multi', icon: 'multi', k: 'Оружие', n: 'Ещё одна стрела', d: 'Стреляет по ещё одной цели', max: 4, go: () => G.stat.multi++ },
+  { id: 'pierce', icon: 'pierce', k: 'Оружие', n: 'Пробивание', d: 'Стрела проходит сквозь ещё одного зомби', max: 3, go: () => G.stat.pierce++ },
+  // arrowheads: an element you can see on the arrow and on the zombie (one per run; ice and lightning come next)
+  { id: 'firearrow', icon: 'firearrow', k: 'Стихия', n: 'Огненные стрелы', max: 3, elem: true, go: () => {},
+    d: lv => ['Поджигают и раскаляют: каждое попадание жарче', 'Горят дольше и сильнее', 'Раскалённый до предела зомби вспыхивает огненным шаром'][lv] },
+  // three of these (150 + 60 = 210) let the archer reach the walls from the fire again
+  { id: 'icearrow', icon: 'icearrow', k: 'Стихия', n: 'Ледяные стрелы', max: 3, elem: true, go: () => {},
+    d: lv => ['Замедляют зомби', 'Замедляют сильнее и дольше', 'Замораживают; лёд разлетается осколками'][lv] },
+  { id: 'boltarrow', icon: 'boltarrow', k: 'Стихия', n: 'Грозовые стрелы', max: 3, elem: true, go: () => {},
+    d: lv => ['Молния перескакивает на соседа', 'Перескакивает на двоих', 'И молния с неба каждые несколько секунд'][lv] },
+  { id: 'lightarrow', icon: 'lightarrow', k: 'Стихия', n: 'Светлые стрелы', max: 3, elem: true, go: () => {},
+    d: lv => ['Светят во тьме, +50% урона громилам и вожаку', 'Каждое попадание высвечивает округу', 'Убитый зомби вспыхивает и ранит соседей'][lv] },
+  { id: 'bounce', icon: 'bounce', k: 'Оружие', n: 'Рикошет', d: 'Стрела отскакивает к ещё одной цели', max: 2, go: () => G.stat.bounce++ },
+  { id: 'split', icon: 'split', k: 'Оружие', n: 'Разделение', d: 'При попадании стрела распадается на осколки', max: 2, go: () => G.stat.split++ },
+  { id: 'crit', icon: 'crit', k: 'Оружие', n: 'Меткий выстрел', max: 3, go: () => G.stat.crit = [0, 5, 4, 3][(G.lvls.crit || 0) + 1],
+    d: lv => `Каждая ${[5, 4, 3][lv]}-я стрела бьёт втрое сильнее` },
+  { id: 'volley', icon: 'volley', k: 'Оружие', n: 'Залп', max: 3, go: () => G.stat.volley = [0, 6, 4.5, 3][(G.lvls.volley || 0) + 1],
+    d: lv => `Каждые ${[6, 4.5, 3][lv]} с веер стрел во все стороны` },
+  { id: 'towerdmg', icon: 'towerdmg', k: 'Деревня', n: 'Меткие башни', d: '+25% урона башен', max: 3, go: () => G.stat.towerDmg += 0.25 },
+  { id: 'walls', icon: 'walls', k: 'Деревня', n: 'Крепкие стены', d: '+30% прочности заборов, сами понемногу чинятся', max: 2, go: () => {
+    G.stat.wallK += 0.3; for (const sl of G.slots) if (sl.kind === 'wall' && sl.lvl) for (const p of sl.posts) { p.max = Math.round(WALL_HP[sl.lvl - 1] * G.stat.wallK); p.hp = Math.min(p.max, p.hp + p.max * 0.3); } } },
+  { id: 'towerelem', icon: 'towerelem', k: 'Деревня', n: 'Стрелы для башен', d: 'Башни стреляют стрелами твоей стихии', max: 1, needElem: true, go: () => {} },
+  { id: 'revive', icon: 'revive', k: 'Герой', n: 'Второе дыхание', d: 'Возвращается к костру быстрее', max: 2, go: () => G.stat.revive = [6, 4, 2.5][(G.lvls.revive || 0) + 1] },
+  { id: 'dash', icon: 'dash', k: 'Герой', n: 'Рывок', max: 2, go: () => G.stat.dash = [0, 4, 2.5][(G.lvls.dash || 0) + 1],
+    d: lv => `На бегу рывок каждые ${[4, 2.5][lv]} с` },
+  { id: 'range', icon: 'range', k: 'Оружие', n: 'Зоркий глаз', d: '+20 к дальности', max: 3, go: () => G.stat.range += 20 },
+  { id: 'speed', icon: 'speed', k: 'Герой', n: 'Лёгкие ботинки', d: '+12% скорости бега', max: 4, go: () => G.hero.spd *= 1.12 },
+  { id: 'hp', icon: 'hp', k: 'Герой', n: 'Крепкое здоровье', d: '+25 к здоровью, полное лечение', max: 5, go: () => { G.hero.max += 25; G.hero.hp = G.hero.max; } },
+  { id: 'magnet', icon: 'magnet', k: 'Герой', n: 'Магнит', d: 'Собирает добычу издалека', max: 3, go: () => G.stat.magnet *= 1.5 },
+  // faster swings, but gently (x1.35 a level, x1.8 at most): doubling made the swing frantic
+  { id: 'chop', icon: 'skill', k: 'Деревня', n: 'Сноровка', d: 'Рубит и добывает камень на 35% быстрее', max: 2, go: () => G.stat.chop *= 1.35 },
+  { id: 'fire', icon: 'firehp', k: 'Деревня', n: 'Жаркий костёр', d: '+100 к прочности костра и починка', max: 5, go: () => { G.fire.max += 100; G.fire.hp = G.fire.max; } },
 ];
 // Always available once the regular upgrades run out, so a level-up or the forge never offers an empty choice.
+// None of them makes the hero stronger: endless power growth is what made late nights trivial.
 const EXTRA = [
-  { id: 'might', k: 'Оружие', n: 'Закалка', d: '+10% урона', max: Infinity, go: () => G.stat.dmg *= 1.1 },
-  { id: 'heal', k: 'Деревня', n: 'Починка костра', d: 'Костёр полностью восстановлен', max: Infinity, go: () => { G.fire.hp = G.fire.max; } },
-  { id: 'swift', k: 'Оружие', n: 'Тетива', d: '+8% скорострельности', max: Infinity, go: () => G.stat.rate *= 1.08 },
+  { id: 'heal', icon: 'heal', k: 'Деревня', n: 'Починка костра', d: 'Костёр полностью восстановлен', max: Infinity, go: () => { G.fire.hp = G.fire.max; } },
+  { id: 'purse', icon: 'purse', k: 'Деревня', n: 'Кошель', d: '+15 золота', max: Infinity, go: () => { G.gold += 15; } },
+  { id: 'mend', icon: 'mend', k: 'Герой', n: 'Передышка', d: 'Герой полностью здоров', max: Infinity, go: () => { G.hero.hp = G.hero.max; } },
 ];
+// one element per run: the first element card taken is the run's element, the others stop showing up
+const ELEMS = ['firearrow', 'icearrow', 'boltarrow', 'lightarrow'];
+const heroElem = () => ELEMS.find(e => G.lvls[e]) || null;
 function offerCards(title) {
   G.paused = true;
   $('pickTitle').textContent = title;
-  const pool = UPS.filter(u => (G.lvls[u.id] || 0) < u.max).sort(() => Math.random() - 0.5).slice(0, 3);
+  const elem = heroElem();
+  const pool = UPS.filter(u => (G.lvls[u.id] || 0) < u.max && !(u.elem && elem && u.id !== elem) && !(u.needElem && !elem))
+    .sort(() => Math.random() - 0.5).slice(0, 3);
   for (const u of EXTRA) if (pool.length < 3) pool.push(u);
   const box = $('cards'); box.innerHTML = '';
   for (const u of pool) {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'card';
     const lv = G.lvls[u.id] || 0;
-    b.innerHTML = `<span class="k">${u.k}</span><span class="n">${u.n}</span><span class="d">${u.d}</span><span class="lv">${lv ? 'Уровень ' + lv + ' → ' + (lv + 1) : 'Новое'}</span>`;
+    const d = typeof u.d === 'function' ? u.d(lv) : u.d;
+    b.innerHTML = (u.icon ? `<img class="ci" alt="" src="art/sprites/ui/cards/${u.icon}.png">` : '') +
+      `<span class="k">${u.k}</span><span class="n">${u.n}</span><span class="d">${d}</span><span class="lv">${lv ? 'Уровень ' + lv + ' → ' + (lv + 1) : 'Новое'}</span>`;
     b.onclick = () => {
       u.go(); G.lvls[u.id] = lv + 1; sfx('card', { vol: 0.7, max: 1 });
       $('pick').hidden = true;
@@ -679,9 +733,20 @@ function startNight() {
   const boss = c.mode === 'siege' ? n % 5 === 0 : c.mode === 'liberate' && G.night === c.nights;
   G.needBoss = boss && c.mode === 'liberate'; G.bossWarned = false;
   if (boss) G.spawnQ.splice(Math.floor(G.spawnQ.length / 2), 0, 'boss');
-  G.spawnT = 0; G.spawnEvery = c.nightLen * 0.7 / G.spawnQ.length;
-  const where = c.twist === 'graves' ? `Идут ${G.waveText}, и могилы шевелятся` : `Идут ${G.waveText}`;
-  banner(isFinite(c.nights) ? `Ночь ${G.night} из ${c.nights}` : `Ночь ${G.night}`, `${G.moon.name}. ` + where + (boss ? '. С ними вожак!' : ''));
+  // The night comes in pushes: 2-5 dense bursts, each from one side, the sides taking turns, with a breather between.
+  // Towers cover their own side only, so a push has to be met by the hero running there (see TOWER ranges).
+  const pushes = Math.max(2, Math.min(5, 2 + Math.floor(n / 3))), order = G.mainAngles.map((_, i) => i).sort(() => Math.random() - 0.5);
+  const per = Math.ceil(G.spawnQ.length / pushes);
+  G.plan = []; G.nightT = 0;
+  for (let i = 0, t = 3; i < pushes; i++) {
+    const chunk = G.spawnQ.slice(i * per, (i + 1) * per), burst = Math.min(7, 1.5 + chunk.length * 0.22);
+    chunk.forEach((kind, j) => G.plan.push({ t: t + burst * j / chunk.length, kind, ai: order[i % order.length] }));
+    t += burst + 8;
+  }
+  G.spawnQ = [];
+  G.phaseT = Math.max(c.nightLen, G.plan.length ? G.plan[G.plan.length - 1].t + 12 : 0);   // the last push gets its time
+  const where = c.twist === 'graves' ? 'Могилы шевелятся' : '';   // no hint where they come from
+  banner(isFinite(c.nights) ? `Ночь ${G.night} из ${c.nights}` : `Ночь ${G.night}`, [G.moon.name, where, boss ? 'С ними вожак!' : ''].filter(Boolean).join('. '));
   $('skip').hidden = true;
 }
 function startDay() {
@@ -694,12 +759,13 @@ function startDay() {
   if (G.night >= G.cfg.nights) return finishRun(true);
   G.phase = 'day'; G.phaseT = G.cfg.dayLen;
   for (const t of G.trees) t.wood = 4;
+  for (const k of G.rocks) k.stone = 3;
   planWave();
-  banner('Рассвет', `Пережито ночей: ${G.night}. Следующей ночью пойдут ${G.waveText}. ${moonOf(G.night + 1).name}.`);
+  banner('Рассвет', `Пережито ночей: ${G.night}. Впереди: ${moonOf(G.night + 1).name.toLowerCase()}.`);
   $('skip').hidden = false;
   if (G.cfg.mode === 'siege' && G.night > best) { best = G.night; try { localStorage.setItem('kostyor.best', best); } catch (e) {} }
 }
-function spawnZombie(kind) {
+function spawnZombie(kind, ai) {
   const base = ZK[kind], n = G.night + G.cfg.d, tw = G.cfg.twist;
   let x, y;
   if (tw === 'graves' && G.graves.length && Math.random() < 0.35) {
@@ -708,11 +774,15 @@ function spawnZombie(kind) {
     burst(x, y, '#6b5a40', 8, 60);
   } else {
     const main = tw === 'river' ? 1 : 0.85, jit = tw === 'river' ? 0.35 : 0.5;
-    const a = Math.random() < main ? G.mainAngles[Math.floor(Math.random() * G.mainAngles.length)] + rnd(-jit, jit) : Math.random() * TAU;
+    const side = ai ?? Math.floor(Math.random() * G.mainAngles.length);
+    const a = Math.random() < main ? G.mainAngles[side] + rnd(-jit, jit) : Math.random() * TAU;
     x = Math.cos(a) * 800; y = Math.sin(a) * 800;
   }
-  // Waves grow mostly in numbers; health grows slowly, the boss a bit faster (about 20 s to kill with a mid build).
-  const hp = base.hp * (kind === 'boss' ? 1 + 0.24 * (n - 1) : 1 + 0.1 * (n - 1));
+  // Waves grow in numbers (budget x1.2 a night) and in health (below).
+  // Health grows by a factor per night (x1.14, the boss x1.18); in the endless siege past night 10 another x1.08 a night,
+  // so there is always a night no build survives: the record is how far you get.
+  const late = G.cfg.mode === 'siege' ? 1.08 ** Math.max(0, n - 10) : 1;
+  const hp = base.hp * (kind === 'boss' ? 1.18 ** (n - 1) : 1.14 ** (n - 1)) * late;
   if (kind === 'boss') sfx('boss', { vol: 1, max: 1 });
   G.zombies.push({ kind, x, y, r: base.r, hp, max: hp, spd: base.spd * (1 + 0.02 * n) * rnd(0.9, 1.1),
     dmg: base.dmg, col: base.col, hit: 0, block: null, wob: Math.random() * TAU, fx: 0, fy: 0 });
@@ -726,17 +796,17 @@ function padAction(s) {
       return { kind: 'repair', cost: { wood: c }, label: 'Починить', go: () => { for (const p of s.posts) p.hp = p.max; } };
     }
     if (s.lvl < 3) {
-      return { kind: s.lvl ? 'upgrade' : 'build', cost: { wood: WALL_COST[s.lvl] }, label: s.lvl ? 'Укрепить' : 'Забор', go: () => {
-        s.lvl++; for (const p of s.posts) { p.max = WALL_HP[s.lvl - 1]; p.hp = p.max; }
+      return { kind: s.lvl ? 'upgrade' : 'build', cost: { wood: WALL_COST[s.lvl], stone: WALL_STONE[s.lvl] }, label: s.lvl ? 'Укрепить' : 'Забор', go: () => {
+        s.lvl++; for (const p of s.posts) { p.max = Math.round(WALL_HP[s.lvl - 1] * G.stat.wallK); p.hp = p.max; }
       } };
     }
   } else if (s.kind === 'tower') {
     if (s.lvl && s.hp <= 0) {
-      const inv = towerInvested(s.lvl), c = { wood: Math.ceil(inv.wood / 2), gold: Math.ceil(inv.gold / 2) };
+      const inv = towerInvested(s.lvl), c = { wood: Math.ceil(inv.wood / 2), gold: Math.ceil(inv.gold / 2), stone: Math.ceil(inv.stone / 2) };
       return { kind: 'repair', cost: c, label: 'Восстановить', go: () => { s.hp = s.max; } };
     }
     if (s.lvl && s.hp < s.max) return { kind: 'repair', cost: { wood: 2 + s.lvl * 3 }, label: 'Починить', go: () => { s.hp = s.max; } };
-    if (s.lvl < 3) { const t = TOWER[s.lvl]; return { kind: s.lvl ? 'upgrade' : 'build', cost: { wood: t.wood, gold: t.gold }, label: s.lvl ? 'Улучшить' : 'Башня', go: () => { s.lvl++; s.hp = s.max = TOWER_HP[s.lvl - 1]; } }; }
+    if (s.lvl < 3) { const t = TOWER[s.lvl]; return { kind: s.lvl ? 'upgrade' : 'build', cost: { wood: t.wood, gold: t.gold, stone: t.stone || 0 }, label: s.lvl ? 'Улучшить' : 'Башня', go: () => { s.lvl++; s.hp = s.max = TOWER_HP[s.lvl - 1]; } }; }
   } else if (s.kind === 'torch') {
     if (!s.lvl) return { kind: 'build', cost: { wood: TORCH.wood }, label: 'Факел', go: () => { s.lvl = 1; s.hp = s.max; } };
     if (s.hp <= 0) return { kind: 'relight', cost: { wood: TORCH.relight }, label: 'Зажечь', go: () => { s.hp = s.max; } };
@@ -747,7 +817,7 @@ function padAction(s) {
   }
   return null;
 }
-const canPay = c => (c.wood || 0) <= G.wood && (c.gold || 0) <= G.gold;
+const canPay = c => (c.wood || 0) <= G.wood && (c.gold || 0) <= G.gold && (c.stone || 0) <= G.stone;
 
 // ---------- update ----------
 function update(dt) {
@@ -761,11 +831,12 @@ function update(dt) {
     if (!h.dead) h.hp = Math.min(h.max, h.hp + 10 * dt);
     if (G.phaseT <= 0) startNight();
   } else {
-    G.spawnT -= dt;
-    if (G.spawnQ.length && G.spawnT <= 0) { spawnZombie(G.spawnQ.shift()); G.spawnT = G.spawnEvery; }
+    G.nightT += dt;
+    while (G.plan.length && G.plan[0].t <= G.nightT) { const p = G.plan.shift(); G.pushAi = p.ai; spawnZombie(p.kind, p.ai); }
+    if (!G.plan.length && !G.zombies.length && G.phaseT > 2) G.phaseT = 2;   // everyone dead: dawn comes early
     if (G.phaseT <= 0) {
       // The village is only freed once its boss is dead: no waiting out the night.
-      if (G.needBoss && (G.spawnQ.includes('boss') || G.zombies.some(z => z.kind === 'boss'))) {
+      if (G.needBoss && (G.plan.some(p => p.kind === 'boss') || G.zombies.some(z => z.kind === 'boss'))) {
         G.phaseT = 0;
         if (!G.bossWarned) { G.bossWarned = true; banner('Вожак ещё жив', 'Рассвет не наступит, пока он ходит'); }
       } else startDay();
@@ -773,8 +844,8 @@ function update(dt) {
   }
   G.darkA += ((G.phase === 'night' ? nightDark() : 0) - G.darkA) * Math.min(1, dt * 0.8);
   for (const z of G.zombies) { z.vis = seenNow(z); if (z.vis > 0.25) z.seenAt = G.t; }
-  // the camera pulls back at night: more of the field, the dark and the eyes coming out of it
-  G.zoom += ((G.phase === 'night' ? 1.2 : 1) - G.zoom) * Math.min(1, dt * 0.7);
+  // the camera keeps one distance day and night (a night zoom-out was tried and dropped: smaller sprites, less dread)
+  G.zoom = 1;
 
   // hero
   if (h.dead > 0) {
@@ -783,7 +854,10 @@ function update(dt) {
   } else {
     h.shootT = Math.max(0, (h.shootT || 0) - dt); h.combatT = Math.max(0, (h.combatT || 0) - dt);
     const [mx, my] = moveInput();
-    h.x += mx * h.spd * dt; h.y += my * h.spd * dt;
+    // dash: while running, a short burst every st.dash seconds
+    if (st.dash && (mx || my)) { h.dashCd = (h.dashCd ?? 0) - dt; if (h.dashCd <= 0) { h.dashCd = st.dash; h.dashT = 0.16; burst(h.x, h.y, '#efe6d2', 8, 90); } }
+    const boost = h.dashT > 0 ? 3.2 : 1; h.dashT = Math.max(0, (h.dashT || 0) - dt);
+    h.x += mx * h.spd * boost * dt; h.y += my * h.spd * boost * dt;
     h.moving = !!(mx || my); if (h.moving) h.walk = (h.walk || 0) + dt * 11;
     if (mx || my) { h.fx = mx; h.fy = my; }
     const R = 880, l = Math.hypot(h.x, h.y); if (l > R) { h.x *= R / l; h.y *= R / l; }
@@ -808,11 +882,16 @@ function update(dt) {
       // only what can be seen: a zombie in the dark beyond every light's dusk is not a target (targetable())
       const targets = G.zombies.filter(z => d2(z, h) < st.range * st.range && targetable(z)).sort((a, b) => d2(a, h) - d2(b, h)).slice(0, st.multi);
       if (targets.length) {
-        for (const z of targets) shoot(h.x, h.y, z, st.dmg, st.pierce, '#ffe7a8');
+        const el = arrowElem('hero');
+        for (const z of targets) {
+          G.shotN = (G.shotN || 0) + 1;
+          const crit = st.crit && G.shotN % st.crit === 0;
+          shoot(h.x, h.y, z, st.dmg * (crit ? 3 : 1), st.pierce, crit ? '#fff2a0' : '#ffe7a8', el.fire || 0, { ...el, bounce: st.bounce, split: st.split, crit });
+        }
         sfx('bow', { max: 2, gap: 0.05, vol: 0.7 });
-        h.cd = 1 / st.rate; h.shotAt = G.t;
+        h.cd = 1 / Math.min(RATE_CAP, st.rate); h.shotAt = G.t;
         h.aim = Math.atan2(targets[0].y - h.y, targets[0].x - h.x); h.shootT = 0.35;
-        h.combatT = 1 / st.rate + 0.3;   // stays turned to the fight between shots, so it does not flick back and forth
+        h.combatT = 1 / Math.min(RATE_CAP, st.rate) + 0.3;   // stays turned to the fight between shots, so it does not flick back and forth
       }
     }
     // aura
@@ -828,10 +907,22 @@ function update(dt) {
       if (t.wood > 0 && d2(t, h) < (t.r + 22) ** 2) {
         chopping = true; h.chopTree = t;
         h.chop += dt * st.chop;
-        if (h.chop >= 0.45) {
-          h.chop = 0; t.wood--; G.wood++; sfx('chop', { vol: 0.75, max: 2 }); t.shake = 0.3; t.hitDir = Math.atan2(t.y - h.y, t.x - h.x); G.shake = Math.max(G.shake, 1.6);
+        if (h.chop >= CHOP_T) {
+          const got = Math.min(t.wood, st.yield); h.chop = 0; t.wood -= got; G.wood += got; sfx('chop', { vol: 0.75, max: 2 }); t.shake = 0.3; t.hitDir = Math.atan2(t.y - h.y, t.x - h.x); G.shake = Math.max(G.shake, 1.6);
           const hx = t.x + (h.x - t.x) / Math.sqrt(d2(t, h)) * t.r * 0.6, hy = t.y + (h.y - t.y) / Math.sqrt(d2(t, h)) * t.r * 0.6;
-          text(t.x, t.y - t.r, '+1', '#e2b07a'); burst(hx, hy, '#c48a4a', 6, 110); burst(hx, hy, '#f0d2a0', 4, 80);
+          text(t.x, t.y - t.r, '+' + got, '#e2b07a'); burst(hx, hy, '#c48a4a', 6, 110); burst(hx, hy, '#f0d2a0', 4, 80);
+        }
+        break;
+      }
+    }
+    // breaking boulders for stone: like chopping, a bit slower
+    if (!busy && !chopping) for (const k of G.rocks) {
+      if (k.stone > 0 && d2(k, h) < (k.r + 22) ** 2) {
+        chopping = true; h.chopTree = k;
+        h.chop += dt * st.chop;
+        if (h.chop >= 0.7) {
+          const got = Math.min(k.stone, st.yield); h.chop = 0; k.stone -= got; G.stone += got; sfx('chop', { vol: 0.75, max: 2, pitch: -0.35 }); k.shake = 0.25; G.shake = Math.max(G.shake, 2);
+          text(k.x, k.y - k.r, '+' + got, '#c9ced4'); burst(k.x, k.y, '#9aa0a6', 7, 110); burst(k.x, k.y, '#dfe3e6', 4, 80);
         }
         break;
       }
@@ -845,7 +936,7 @@ function update(dt) {
       if (on && act && canPay(act.cost)) {
         s.hold += dt;
         if (s.hold >= 0.6) {
-          G.wood -= act.cost.wood || 0; G.gold -= act.cost.gold || 0;
+          G.wood -= act.cost.wood || 0; G.gold -= act.cost.gold || 0; G.stone -= act.cost.stone || 0;
           act.go(); s.hold = -0.9; sfx(act.kind === 'upgrade' ? 'upgrade' : 'build', { vol: 0.8, max: 1 });
           burst(s.x, s.y, '#ffd28a', 18, 130);
         }
@@ -861,7 +952,7 @@ function update(dt) {
     if (s.cd > 0) continue;
     let bestZ = null, bd = t.range * t.range;
     for (const z of G.zombies) { const dd = d2(z, s); if (dd < bd && targetable(z)) { bd = dd; bestZ = z; } }
-    if (bestZ) { shoot(s.x, s.y - 18, bestZ, t.dmg, 0, '#cfe8ff'); s.cd = 1 / t.rate; }
+    if (bestZ) { const el = arrowElem('tower'); shoot(s.x, s.y - 18, bestZ, t.dmg * st.towerDmg, 0, '#cfe8ff', el.fire || 0, el); s.cd = 1 / t.rate; }
   }
 
   // zombies
@@ -893,7 +984,7 @@ function update(dt) {
     z.fx = dx / l; z.fy = dy / l;
     if (z.block && z.block.hp > 0) {
       const isTower = z.block.kind === 'tower';
-      z.block.hp -= z.dmg * dt; z.attacking = isTower ? 'stone' : 'wood';
+      z.block.hp -= z.dmg * dt * (z.frozenT > 0 ? 0 : 1); z.attacking = isTower ? 'stone' : 'wood';
       if (isTower) { z.block.attackers++; z.block.underAttack = 0.4; }
       if (z.block.hp <= 0) {
         burst(z.block.x, z.block.y, isTower ? '#8d9298' : '#8a5a32', isTower ? 26 : 10, isTower ? 130 : 90); G.shake = Math.max(G.shake, isTower ? 8 : 4);
@@ -902,7 +993,8 @@ function update(dt) {
     } else {
       z.wob += dt * z.spd * 0.16;
       const fear = torchesLit.some(t => (z.x - t.x) ** 2 + (z.y - t.y) ** 2 < (TORCH.light * 0.8) ** 2) ? TORCH.fear : 1;
-      z.x += z.fx * z.spd * fear * dt; z.y += z.fy * z.spd * fear * dt;
+      const cold = z.frozenT > 0 ? 0 : z.slowT > 0 ? z.slowK : 1;
+      z.x += z.fx * z.spd * fear * cold * dt; z.y += z.fy * z.spd * fear * cold * dt;
     }
     z.block = null;
     for (const p of posts) {
@@ -930,7 +1022,7 @@ function update(dt) {
       if (hd < hm) {
         // zombies stand their ground: the hero is the one pushed back, so it cannot shove them around or through walls
         h.x = z.x + (h.x - z.x) / (hd || 1) * hm; h.y = z.y + (h.y - z.y) / (hd || 1) * hm;
-        h.hp -= z.dmg * dt; z.attacking = 'hero'; sfx('hurt', { max: 1, gap: 0.7, vol: 0.6 });
+        h.hp -= z.dmg * dt * (z.frozenT > 0 ? 0 : 1); z.attacking = 'hero'; sfx('hurt', { max: 1, gap: 0.7, vol: 0.6 });
       }
     }
     // a zombie pressed against a post loses and regains contact every few frames: the attack only ends after a quarter
@@ -960,18 +1052,34 @@ function update(dt) {
   }
 
   if (!h.dead && h.hp <= 0) {
-    h.dead = 6; h.hp = 0; burst(h.x, h.y, '#ff6b5a', 20, 140); G.shake = 8; sfx('herodie', { vol: 0.9, max: 1 });
-    banner('Герой пал', 'Вернётся к костру через 6 секунд');
+    h.dead = G.stat.revive; h.hp = 0; burst(h.x, h.y, '#ff6b5a', 20, 140); G.shake = 8; sfx('herodie', { vol: 0.9, max: 1 });
+    banner('Герой пал', `Вернётся к костру через ${G.stat.revive} секунд`);
   }
   if (G.fire.hp <= 0) return gameOver();
 
   // shots
   for (const s of G.shots) {
     s.x += s.vx * dt; s.y += s.vy * dt; s.t += dt;
+    if (s.ice) { const l = Math.hypot(s.vx, s.vy) || 1; emit(40, dt, () => G.fx.push({ x: s.x - s.vx / l * 4 + rnd(-2, 2), y: s.y - s.vy / l * 4 + rnd(-2, 2), vx: -s.vx * 0.05 + rnd(-15, 15), vy: -s.vy * 0.05 + rnd(-15, 15), t: 0, max: rnd(0.2, 0.35), col: Math.random() < 0.5 ? '#ffffff' : '#a8e2ff', r: rnd(0.8, 1.6) })); }
+    if (s.fire) { const l = Math.hypot(s.vx, s.vy) || 1; emit(45, dt, () => flame(s.x + s.vx / l * 8, s.y + s.vy / l * 8, { vx: -s.vx * 0.12 + rnd(-12, 12), vy: -s.vy * 0.12 + rnd(-12, 12), s: rnd(3.5, 6), max: rnd(0.18, 0.32) })); }
     for (const z of G.zombies) {
       if (z.hp <= 0 || s.hitSet.has(z)) continue;
       if (d2(s, z) < (z.r + 4) ** 2) {
         hurt(z, s.dmg); s.hitSet.add(z); sfx('hit', { x: s.x, y: s.y, max: 4, gap: 0.02, vol: 0.55 });
+        if (s.fire) { ignite(z, s.fire, s.x, s.y); G.firePatches.push({ x: s.x, y: s.y + 4, t: 0, max: rnd(1, 1.5), r: rnd(6, 9) }); }
+        if (s.ice) chill(z, s.ice);
+        if (s.bolt) { shock(z); chainBolt(z, s.dmg * 0.6, s.bolt >= 2 ? 2 : 1); }
+        if (s.light) { if (z.kind === 'brute' || z.kind === 'boss') hurt(z, s.dmg * 0.5, true); if (s.light >= 2) G.reveals.push({ x: z.x, y: z.y, t: 0 }); z.lightLvl = s.light; }
+        if (s.crit) { burst(s.x, s.y, '#fff2a0', 10, 140); G.shake = Math.max(G.shake, 1.5); }
+        if (s.split && !s.shard) for (let i = 0; i < s.split + 1; i++) {
+          const a = Math.atan2(s.vy, s.vx) + (i - s.split / 2) * 0.55, v = 480;
+          G.shots.push({ x: s.x, y: s.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, dmg: s.dmg * 0.4, pierce: 0, col: s.col, fire: s.fire, ice: s.ice, t: 0.55, hitSet: new Set([z]), shard: true });
+        }
+        if (s.bounce > 0 && s.pierce <= 0) {   // ricochet: the arrow turns to the nearest other zombie
+          let nb = null, bd = 220 * 220;
+          for (const o of G.zombies) if (o !== z && o.hp > 0 && !s.hitSet.has(o)) { const dd = d2(o, z); if (dd < bd) { bd = dd; nb = o; } }
+          if (nb) { const l2 = Math.sqrt(bd) || 1, v = Math.hypot(s.vx, s.vy); s.vx = (nb.x - z.x) / l2 * v; s.vy = (nb.y - z.y) / l2 * v; s.bounce--; s.t = Math.min(s.t, 0.4); break; }
+        }
         { const l = Math.hypot(s.vx, s.vy) || 1; z.hitDx = s.vx / l; z.hitDy = s.vy / l; z.kick = 1;
           splatter(s.x, s.y, z.hitDx, z.hitDy, z.kind === 'brute' || z.kind === 'boss' ? 7 : 5, z.kind === 'boss'); }
         if (s.pierce-- <= 0) {
@@ -988,6 +1096,39 @@ function update(dt) {
   G.shots = G.shots.filter(s => s.t < 0.9);
 
   // deaths
+  // burning: damage over time, flames on the body; at fire level 3 a burning zombie bursts when it dies
+  for (const z of G.zombies) if (z.burn > 0) {
+    z.burn -= dt; hurt(z, z.burnDps * dt, true);
+    if (z.hp <= 0) z.burnKill = true;   // the fire itself finished it
+    z.charT = (z.charT || 0) + dt;
+    z.trailT = (z.trailT ?? 0.2) - dt;
+    if (z.trailT <= 0 && (z.heat || 0) >= 3) { z.trailT = rnd(0.35, 0.5); G.firePatches.push({ x: z.x + rnd(-4, 4), y: z.y + z.r * 0.4, t: 0, max: rnd(0.7, 1.1), r: rnd(4, 7) }); }   // a trail of fire where it walks
+    z.coolT = (z.coolT ?? 1.5) - dt;
+    if (z.coolT <= 0 && z.heat > 1) { z.heat--; z.coolT = 1.5; }
+    // at most one flare-up a second, so a hot crowd goes off in a quick chain, not all in one frame
+    // the boss flares up at most every 2 s and takes half the fireball (fire is for brutes, it should not melt the boss)
+    if (z.heat >= 5 && (G.lvls.firearrow || 0) >= 3 && z.hp > 0 && G.t - (G.lastFlare ?? -9) > 1 && !(z.kind === 'boss' && G.t - (z.flareAt ?? -9) < 2)) { z.heat = 0; G.lastFlare = G.t; z.flareAt = G.t; overheat(z); }
+    if (z.burn - dt <= 0) z.heat = 0;   // the fire went out: cold again
+    z.tickT = (z.tickT ?? 0.1) - dt;
+    if (z.tickT <= 0) {   // a burn tick: the zombie flashes warm and throws a few sparks
+      z.tickT = 0.5; z.burnFlash = 0.12;
+      for (let i = 0; i < 8; i++) G.fx.push({ x: z.x + rnd(-z.r, z.r) * 0.6, y: z.y + rnd(-z.r, z.r) * 0.6, vx: rnd(-30, 30), vy: rnd(-110, -50), t: 0, max: rnd(0.4, 0.75), col: ['#fff1a8', '#ffd25a', '#ff8a24'][i % 3], r: rnd(1.1, 2.2) });
+      for (let i = 0; i < 4; i++) flame(z.x + rnd(-z.r, z.r) * 0.5, z.y + rnd(-z.r, z.r) * 0.4, { s: rnd(4, 7), max: rnd(0.25, 0.4) });
+    }
+  }
+  for (const z of G.zombies) if (z.hp <= 0 && !z.elemDone) {
+    z.elemDone = true;
+    if (z.frozenT > 0 && z.iceLvl >= 3) {   // a frozen zombie shatters: ice shards hurt and chill its neighbours
+      for (let i = 0; i < 18; i++) { const a = Math.random() * TAU, v = rnd(160, 330); G.shards.push({ x: z.x, y: z.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, a: Math.random() * TAU, va: rnd(-14, 14), i: i % 5, s: z.r * rnd(0.4, 0.75), t: 0, max: rnd(0.45, 0.75) }); }
+      for (let i = 0; i < 10; i++) { const a = Math.random() * TAU, v = rnd(60, 160); G.fx.push({ x: z.x, y: z.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, max: rnd(0.25, 0.45), col: '#ffffff', r: rnd(1, 2) }); }
+      sfx('hit', { x: z.x, y: z.y, max: 3, vol: 0.7, pitch: 0.7 }); G.shake = Math.max(G.shake, 2.5);
+      for (const o of G.zombies) if (o !== z && o.hp > 0 && d2(o, z) < 90 * 90) { hurt(o, G.stat.dmg, true); chill(o, 2); }
+    }
+    if (z.lightLvl >= 3) {   // light: a killed zombie flares and burns its neighbours with light
+      G.rings.push({ x: z.x, y: z.y, r: 6, max: 60, t: 0, col: '255,236,170' }); G.reveals.push({ x: z.x, y: z.y, t: 0 });
+      for (const o of G.zombies) if (o !== z && o.hp > 0 && d2(o, z) < 60 * 60) hurt(o, G.stat.dmg * 0.8, true);
+    }
+  }
   for (const z of G.zombies) if (z.hp <= 0) {
     // the body stays where it fell: knocked back a little, turned, flattened; bodies pile up through the night
     const dx = z.hitDx ?? -z.fx, dy = z.hitDy ?? -z.fy, push = z.kind === 'boss' ? 6 : z.kind === 'brute' ? 9 : 14;
@@ -1058,6 +1199,43 @@ function update(dt) {
     if (f.stain && f.t >= f.max) { G.stains.push({ x: f.x, y: f.y, r: f.r * rnd(0.9, 1.5), col: f.col, a: Math.random() * TAU, fade: 1, life: rnd(6, 9) }); if (G.stains.length > 400) G.stains.shift(); }
   }
   G.fx = G.fx.filter(f => f.t < f.max);
+  updateFlames(dt);
+  // ground fire: a short burst of particle flames where the arrow struck, dying down over ~2 s
+  for (const p of G.firePatches) {
+    p.t += dt; const k = 1 - p.t / p.max;
+    emit(16 * k, dt, () => { const a = Math.random() * TAU, d = Math.sqrt(Math.random()) * p.r; flame(p.x + Math.cos(a) * d, p.y + Math.sin(a) * d * 0.6, { s: rnd(3, 5) * (0.5 + k * 0.6), max: rnd(0.3, 0.5) }); });
+  }
+  G.firePatches = G.firePatches.filter(p => p.t < p.max);
+  if (G.firePatches.length > 20) G.firePatches.splice(0, G.firePatches.length - 20);
+  for (const r of G.rings) r.t += dt;
+  for (const b of G.blooms) b.t += dt; G.blooms = G.blooms.filter(b => b.t < b.max);
+  for (const z of G.zombies) {
+    if (z.slowT > 0) { z.slowT -= dt; if (Math.random() < dt * 5) G.fx.push({ x: z.x + rnd(-z.r, z.r) * 0.7, y: z.y + rnd(-z.r, z.r) * 0.7, vx: rnd(-8, 8), vy: rnd(10, 30), t: 0, max: rnd(0.4, 0.7), col: '#e8f8ff', r: rnd(0.8, 1.5) }); }
+    if (z.frozenT > 0) { z.frozenT -= dt; z.frozenIn = (z.frozenIn || 0) + dt; }
+    if (z.shockT > 0) z.shockT -= dt;
+    if (z.burnFlash > 0) z.burnFlash -= dt;
+  }
+  for (const sh of G.shards) { sh.t += dt; sh.x += sh.vx * dt; sh.y += sh.vy * dt; const f = Math.exp(-4 * dt); sh.vx *= f; sh.vy *= f; sh.a += sh.va * dt; }
+  G.shards = G.shards.filter(sh => sh.t < sh.max);
+  for (const f of G.frosts) f.t += dt; G.frosts = G.frosts.filter(f => f.t < f.max);
+  for (const b of G.bolts) b.t += dt; G.bolts = G.bolts.filter(b => b.t < 0.2);
+  for (const r of G.reveals) r.t += dt; G.reveals = G.reveals.filter(r => r.t < 1.2);
+  if (!G.hero.dead) {
+    const st = G.stat, h = G.hero;
+    // a fan of arrows all round, whenever zombies are near (day or night: zombies can be on the field in daylight too)
+    if (st.volley) { G.volleyT = (G.volleyT ?? st.volley) - dt; if (G.volleyT <= 0 && G.zombies.some(z => d2(z, h) < 330 * 330)) {
+      G.volleyT = st.volley; const el = arrowElem('hero'), n = 12 + G.lvls.volley * 2;
+      for (let i = 0; i < n; i++) { const a = i * TAU / n; G.shots.push({ x: h.x, y: h.y, vx: Math.cos(a) * 520, vy: Math.sin(a) * 520, dmg: st.dmg * 0.8, pierce: 0, col: '#ffe7a8', ...el, t: 0.3, hitSet: new Set() }); }
+      sfx('bow', { max: 2, vol: 0.8 }); } }
+    if ((G.lvls.boltarrow || 0) >= 3) { G.skyT = (G.skyT ?? 4) - dt; if (G.skyT <= 0) {   // lightning from the sky on the thickest crowd near the hero
+      G.skyT = 4; let best = null, bn = 0;
+      for (const z of G.zombies) { if (z.hp <= 0 || d2(z, h) > 320 * 320) continue; let n = 0; for (const o of G.zombies) if (d2(o, z) < 70 * 70) n++; if (n > bn) { bn = n; best = z; } }
+      if (best) { makeBolt(best.x + rnd(-40, 40), best.y - 340, best.x, best.y, true); G.shake = Math.max(G.shake, 4); G.flash = Math.max(G.flash || 0, 0.35);
+        for (const o of G.zombies) if (o.hp > 0 && d2(o, best) < 70 * 70) shock(o);
+        for (const o of G.zombies) if (o.hp > 0 && d2(o, best) < 70 * 70) hurt(o, st.dmg * 2.5); G.rings.push({ x: best.x, y: best.y, r: 8, max: 70, t: 0, col: '210,235,255' }); } } }
+  }
+  if (G.stat.wallK > 1) for (const sl of G.slots) if (sl.kind === 'wall' && sl.lvl) for (const p of sl.posts) if (p.hp > 0 && p.hp < p.max) p.hp = Math.min(p.max, p.hp + p.max * 0.012 * dt);
+  G.rings = G.rings.filter(r => r.t < 0.35);
   // last night's bodies and stains sink into the ground once the next night has begun
   for (const c of G.corpses) if (c.sink != null) { c.sink -= dt; if (c.sink <= 0) c.gone = true; }
   // burning in the sun: smoke and embers rise, the body chars and fades away in about 2.5 s
@@ -1077,6 +1255,7 @@ function update(dt) {
   for (const t of G.texts) { t.t += dt; t.y -= 28 * dt; }
   G.texts = G.texts.filter(t => t.t < 0.9);
   for (const t of G.trees) t.shake = Math.max(0, t.shake - dt);
+  for (const k of G.rocks) k.shake = Math.max(0, k.shake - dt);
   for (const s of G.slots) if (s.kind === 'tower') { s.underAttack = Math.max(0, (s.underAttack || 0) - dt); s.marked = Math.max(0, (s.marked || 0) - dt); }
   G.shake = Math.max(0, G.shake - dt * 20);
 
@@ -1086,11 +1265,66 @@ function update(dt) {
 
   if (bannerTimer > 0) { bannerTimer -= dt; if (bannerTimer <= 0) $('banner').classList.remove('show'); }
 }
-function shoot(x, y, z, dmg, pierce, col) {
+function arrowElem(from) {   // the run's element and its level, for the hero (and towers with 'Стрелы для башен')
+  const e = heroElem(); if (!e) return {};
+  if (from === 'tower' && !G.lvls.towerelem) return {};
+  const lv = G.lvls[e]; return { fire: e === 'firearrow' ? lv : 0, ice: e === 'icearrow' ? lv : 0, bolt: e === 'boltarrow' ? lv : 0, light: e === 'lightarrow' ? lv : 0 };
+}
+function shoot(x, y, z, dmg, pierce, col, fire = 0, o = {}) {
   const lead = Math.sqrt((z.x - x) ** 2 + (z.y - y) ** 2) / 560;
   const tx = z.x + z.fx * z.spd * lead, ty = z.y + z.fy * z.spd * lead;
   const l = Math.hypot(tx - x, ty - y) || 1;
-  G.shots.push({ x, y, vx: (tx - x) / l * 560, vy: (ty - y) / l * 560, dmg, pierce, col, t: 0, hitSet: new Set() });
+  G.shots.push({ x, y, vx: (tx - x) / l * 560, vy: (ty - y) / l * 560, dmg, pierce, col, fire, t: 0, hitSet: new Set(), ...o });
+}
+// Ice: a slow (level 1: 35% for 2 s, level 2: 50% for 3 s); level 3 freezes a zombie for 1.2 s, and a frozen one that dies shatters
+function chill(z, lvl) {
+  z.slowT = Math.max(z.slowT || 0, lvl >= 2 ? 3 : 2); z.slowK = lvl >= 2 ? 0.5 : 0.65;
+  if (lvl >= 3 && !(z.frozenT > 0) && Math.random() < 0.35) { z.frozenT = 1.2; z.frozenIn = 0; z.iceRot = Math.random() * TAU; sfx('hit', { x: z.x, y: z.y, max: 3, vol: 0.5, pitch: 0.5 }); }
+  z.iceLvl = Math.max(z.iceLvl || 0, lvl);
+  for (let i = 0; i < 6; i++) G.fx.push({ x: z.x + rnd(-6, 6), y: z.y + rnd(-6, 6), vx: rnd(-50, 50), vy: rnd(-50, 50), t: 0, max: rnd(0.25, 0.45), col: Math.random() < 0.5 ? '#bfe9ff' : '#ffffff', r: rnd(1, 2) });
+  G.frosts.push({ x: z.x + rnd(-4, 4), y: z.y + rnd(-4, 4), t: 0, max: rnd(1, 1.6), s: z.r * rnd(1.8, 2.4), a: Math.random() * TAU });
+  if (G.frosts.length > 24) G.frosts.shift();
+}
+// a zombie struck by lightning flashes white-blue for a moment and throws sparks
+function shock(z) {
+  z.shockT = 0.16;
+  for (let i = 0; i < 7; i++) { const a = Math.random() * TAU, v = rnd(90, 220); G.fx.push({ x: z.x, y: z.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, max: rnd(0.12, 0.25), col: i % 2 ? '#ffffff' : '#9fd4ff', r: rnd(0.9, 1.6) }); }
+}
+// Lightning: jumps from the hit zombie to the nearest others, each jump drawn as a crooked bolt for a moment
+function chainBolt(from, dmg, jumps) {
+  let cur = from; const seen = new Set([from]);
+  for (let j = 0; j < jumps; j++) {
+    let nb = null, bd = 150 * 150;
+    for (const o of G.zombies) if (!seen.has(o) && o.hp > 0) { const dd = d2(o, cur); if (dd < bd) { bd = dd; nb = o; } }
+    if (!nb) break;
+    seen.add(nb); hurt(nb, dmg); makeBolt(cur.x, cur.y, nb.x, nb.y); shock(nb); cur = nb;
+  }
+}
+function overheat(z) {   // the fireball: a bloom, embers, soft flames, a ring; it lands on the zombie itself and its neighbours
+    const R = 50 + z.r;
+    G.blooms.push({ x: z.x, y: z.y, r: R * 1.1, t: 0, max: 0.35 });
+    for (let i = 0; i < 18; i++) { const a = Math.random() * TAU, v = rnd(120, 260); G.fx.push({ x: z.x, y: z.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 40, t: 0, max: rnd(0.5, 0.9), col: ['#fff1a8', '#ffd25a', '#ff8a24'][i % 3], r: rnd(1.2, 2.4) }); }
+    for (let i = 0; i < 40; i++) { const a = Math.random() * TAU, v = rnd(70, 210); flame(z.x, z.y, { vx: Math.cos(a) * v, vy: Math.sin(a) * v, s: rnd(6, 11), max: rnd(0.3, 0.55) }); }
+    for (let i = 0; i < 10; i++) flame(z.x + rnd(-8, 8), z.y + rnd(-8, 8), { s: rnd(12, 18), max: rnd(0.25, 0.4), vx: 0, vy: rnd(-30, -10) });
+    G.shake = Math.max(G.shake, 3.5);
+    G.rings.push({ x: z.x, y: z.y, r: 8, max: R, t: 0 });
+    sfx('fire', { x: z.x, y: z.y, max: 3, gap: 0.05, vol: 0.6 });
+    hurt(z, G.stat.dmg * (z.kind === 'boss' ? 1 : 2), true);
+    for (const o of G.zombies) if (o !== z && o.hp > 0 && d2(o, z) < R * R) { hurt(o, G.stat.dmg * 1.2, true); ignite(o, 2, o.x, o.y, 1); }
+}
+// Fire arrows set a zombie burning (level 1: 3 s, level 2: 4 s and hotter).
+// Heat: every fire hit adds one (up to 5); burning hurts 15% more per heat; it cools one step every 1.5 s without a hit.
+// With level-3 fire arrows a zombie at 5 heat overheats and flares up (the fireball), hurting its neighbours and heating them.
+function ignite(z, lvl, x, y, heat = 1) {
+  z.heat = Math.min(5, (z.heat || 0) + heat); z.coolT = 1.5;
+  if (!(z.burn > 0)) {   // catching fire: a whoosh of flame out of the hit point and a flare on the body
+    z.burnFlash = 0.18;
+    for (let i = 0; i < 14; i++) { const a = Math.random() * TAU, v = rnd(40, 120); flame(x, y, { vx: Math.cos(a) * v, vy: Math.sin(a) * v - 30, s: rnd(4.5, 8), max: rnd(0.25, 0.45) }); }
+  }
+  z.burn = Math.max(z.burn || 0, 2.5 + lvl * 0.5 + (lvl >= 2 ? 0.5 : 0));
+  z.burnDps = G.stat.dmg * (0.35 + 0.2 * Math.min(lvl, 2)) * (1 + 0.15 * (z.heat - 1));   // up to x1.6 at full heat
+  z.burnLvl = Math.max(z.burnLvl || 0, G.lvls.firearrow || lvl);
+  for (let i = 0; i < 8; i++) { const a = Math.random() * TAU, v = rnd(30, 80); flame(x, y, { vx: Math.cos(a) * v, vy: Math.sin(a) * v, s: rnd(3, 6), max: rnd(0.2, 0.35) }); }
 }
 function hurt(z, n, quiet) {
   z.hp -= n;
@@ -1166,6 +1400,7 @@ function draw() {
   const sx = (Math.random() - 0.5) * G.shake, sy = (Math.random() - 0.5) * G.shake;
   const ox = W / 2 - G.cam.x * S + sx, oy = H / 2 - G.cam.y * S + sy;
   X.setTransform(DPR * S, 0, 0, DPR * S, DPR * ox, DPR * oy);
+  G.worldInv = X.getTransform().invertSelf(); G.hero.arrowTip = null;   // set again by the rig while it draws an arrow
   const vw = W / S, vh = H / S, cx = G.cam.x, cy = G.cam.y;
   view = { x0: cx - vw / 2 - 40, y0: cy - vh / 2 - 40, x1: cx + vw / 2 + 40, y1: cy + vh / 2 + 40 };
 
@@ -1245,10 +1480,29 @@ function draw() {
 
   // trees the hero stands under are drawn below it, so it stays visible while chopping; the rest cover the units
   const underHero = t => !h.dead && d2(t, h) < (t.r * 1.6 + 16) ** 2;
+  for (const k of G.rocks) if (k.stone > 0 && !offView(k.x, k.y, 40)) drawRock(k);
   if (PERF.trees) for (const t of G.trees) if (t.wood > 0 && underHero(t)) drawTree(t);
   // zombies
   if (PERF.units) {
-    for (const z of G.zombies) { const a = seen(z); if (a <= 0.02) continue; X.globalAlpha = a; drawZombie(z); X.globalAlpha = 1; }
+    for (const f of G.frosts) { const k = f.t / f.max; iceImg('ice_frost', f.x, f.y, f.s * (0.85 + 0.15 * Math.min(1, k * 5)), f.a, 0.55 * (1 - k)); }
+    for (const z of G.zombies) {
+      const a = seen(z); if (a <= 0.02) continue;
+      X.globalAlpha = a;
+      // chilled: the sprite goes cold blue; frozen: bluer, and it stands in a block of ice
+      if (z.shockT > 0) TINT = { col: '#d8eeff', a: 0.5 };
+      else if (z.burn > 0) {   // heat shows: warm orange at 1, red-hot, then glowing yellow-white at 5; flaring on each tick
+        const ht = z.heat || 1;
+        TINT = { col: ['#ff7a24', '#ff7a24', '#ff6a22', '#ff6a22', '#ff8a2a', '#ff9a3a'][ht], a: (z.burnFlash > 0 ? 0.5 : 0.14 + ht * 0.035 + Math.sin(G.t * (10 + ht * 2) + (z.wob || 0)) * 0.06) };
+      }
+      else if (z.frozenT > 0) TINT = { col: '#9fe0ff', a: 0.5 }; else if (z.slowT > 0) TINT = { col: '#8fd4ff', a: 0.38 * Math.min(1, z.slowT * 2) };
+      drawZombie(z);
+      TINT = null;
+      if (z.frozenT > 0) {
+        const grow = Math.min(1, (z.frozenIn || 0) / 0.12), melt = Math.min(1, z.frozenT / 0.25);
+        iceImg('ice_block', z.x, z.y, ZSIZE[z.kind] * 1.12 * (0.7 + 0.3 * grow), z.iceRot || 0, 0.62 * melt * a);
+      }
+      X.globalAlpha = 1;
+    }
     drawSlashes();
   }
   // hero
@@ -1258,6 +1512,30 @@ function draw() {
   // shots
   X.lineCap = 'round';
   for (const s of G.shots) {
+    if (s.fire) {   // fire arrow: a hot glow at the head and a trail of sparks
+      const l = Math.hypot(s.vx, s.vy) || 1, hx2 = s.x + s.vx / l * 9, hy2 = s.y + s.vy / l * 9;
+      X.globalCompositeOperation = 'lighter';
+      const g = X.createRadialGradient(hx2, hy2, 0, hx2, hy2, 14);
+      g.addColorStop(0, 'rgba(255,190,80,.9)'); g.addColorStop(1, 'rgba(255,90,20,0)');
+      X.fillStyle = g; X.beginPath(); X.arc(hx2, hy2, 14, 0, TAU); X.fill();
+      X.globalCompositeOperation = 'source-over';
+
+    }
+    if (s.ice && iceOk('ice_head')) { const l = Math.hypot(s.vx, s.vy) || 1; spr('arrow', s.x, s.y, 24, Math.atan2(s.vy, s.vx) + Math.PI / 2); iceImg('ice_head', s.x + s.vx / l * 8, s.y + s.vy / l * 8, 11, Math.atan2(s.vy, s.vx) + Math.PI / 2); continue; }
+    if (s.bolt) { const l = Math.hypot(s.vx, s.vy) || 1, hx2 = s.x + s.vx / l * 9, hy2 = s.y + s.vy / l * 9;
+      X.globalCompositeOperation = 'lighter'; const g = X.createRadialGradient(hx2, hy2, 0, hx2, hy2, 10);
+      g.addColorStop(0, 'rgba(200,230,255,.85)'); g.addColorStop(1, 'rgba(120,180,255,0)'); X.fillStyle = g; X.beginPath(); X.arc(hx2, hy2, 10, 0, TAU); X.fill();
+      X.globalCompositeOperation = 'source-over'; if (Math.random() < 0.7) crackle(hx2, hy2, 9); }
+    if (s.light || s.crit) {   // placeholder looks: a coloured glow on the arrowhead
+      const l = Math.hypot(s.vx, s.vy) || 1, hx2 = s.x + s.vx / l * 9, hy2 = s.y + s.vy / l * 9;
+      const col = s.ice ? '150,215,255' : s.bolt ? '230,240,255' : s.light ? '255,236,160' : '255,240,150';
+      X.globalCompositeOperation = 'lighter';
+      const g = X.createRadialGradient(hx2, hy2, 0, hx2, hy2, s.crit ? 16 : 12);
+      g.addColorStop(0, `rgba(${col},.9)`); g.addColorStop(1, `rgba(${col},0)`);
+      X.fillStyle = g; X.beginPath(); X.arc(hx2, hy2, s.crit ? 16 : 12, 0, TAU); X.fill();
+      X.globalCompositeOperation = 'source-over';
+    }
+    if (s.shard) { X.strokeStyle = s.col; X.lineWidth = 2; const l = Math.hypot(s.vx, s.vy) || 1; X.beginPath(); X.moveTo(s.x, s.y); X.lineTo(s.x - s.vx / l * 8, s.y - s.vy / l * 8); X.stroke(); continue; }
     if (spr('arrow', s.x, s.y, 24, Math.atan2(s.vy, s.vx) + Math.PI / 2)) continue;
     const l = Math.hypot(s.vx, s.vy);
     X.strokeStyle = s.col; X.lineWidth = 2.5;
@@ -1285,6 +1563,15 @@ function draw() {
     if (!h.dead) light(h.x, h.y, 140 * fk);
     for (const s of G.slots) if (s.kind === 'tower' && s.lvl && s.hp > 0) light(s.x, s.y, 95 * fk);
     if (fg.lvl) light(fg.x, fg.y, 60);
+    for (const z of G.zombies) if (z.burn > 0) light(z.x, z.y, 70);   // fire lights the dark around it
+    for (const s of G.shots) if ((s.fire || s.light) && s.t < 2) light(s.x, s.y, s.light ? 95 : 75);
+    for (const r of G.reveals) light(r.x, r.y, 120 * (1 - r.t / 1.2) + 20);
+    for (const b of G.blooms) light(b.x, b.y, b.r * 3 * (1 - b.t / b.max) + 30);   // a fireball lights the night
+    for (const b of G.bolts) if (b.main) {   // lightning lights up the dark along its path for a moment; the sky strike lights all round
+      const k = 1 - b.t / 0.2; if (b.sky) light(b.x2, b.y2, 260 * k + 40);
+      else for (const t of [0, 0.5, 1]) light(b.x1 + (b.x2 - b.x1) * t, b.y1 + (b.y2 - b.y1) * t, 70 * k + 20);
+    }        // a fire arrow lights its way through the dark
+    for (const p of G.firePatches) light(p.x, p.y, 55 * (1 - p.t / p.max) + 15);   // and the ground it set alight
     for (const s of G.slots) if (s.kind === 'torch' && s.lvl && s.hp > 0) light(s.x, s.y, (TORCH.light + Math.sin(G.t * 11 + s.x) * 4) * fk);
     D.globalCompositeOperation = 'source-over';
     X.setTransform(1, 0, 0, 1, 0, 0);
@@ -1309,6 +1596,7 @@ function draw() {
     }
   }
   if (lootAfterDark) drawLoot();
+  drawBurning();
 
   // floating text
   X.textAlign = 'center'; X.textBaseline = 'middle';
@@ -1319,7 +1607,7 @@ function draw() {
   }
   X.globalAlpha = 1;
 
-  if (G.phase === 'day' || G.phaseT > G.cfg.nightLen - 8) waveArrows(ox, oy);
+  // no wave-direction arrows: not knowing where the horde comes from is part of the fear (waveArrows kept for later)
 
   // joystick (screen space)
   if (joy.on) {
@@ -1334,13 +1622,15 @@ function waveArrows(ox, oy) {
   X.setTransform(DPR, 0, 0, DPR, 0, 0);
   X.textAlign = 'center'; X.textBaseline = 'middle';
   const pulse = 0.65 + Math.sin(G.t * 5) * 0.3, m = 40, cx = W / 2, cy = H / 2;
-  for (const a of G.mainAngles) {
+  const next = G.phase === 'night' ? (G.plan.length ? G.plan[0].ai : G.pushAi) : -1;
+  for (const [i, a] of G.mainAngles.entries()) {
+    const hot = next < 0 || i === next;
     let sx = ox + Math.cos(a) * 290 * S, sy = oy + Math.sin(a) * 290 * S;
     const dx = sx - cx, dy = sy - cy;
     const k = Math.min(1, (W / 2 - m) / Math.max(Math.abs(dx), 1e-6), (H / 2 - m) / Math.max(Math.abs(dy), 1e-6));
     sx = cx + dx * k; sy = cy + dy * k;
     X.save(); X.translate(sx, sy); X.rotate(a);
-    X.fillStyle = `rgba(255,80,60,${pulse})`;
+    X.fillStyle = `rgba(255,80,60,${hot ? pulse : 0.22})`;
     for (const off of [0, -22]) { X.beginPath(); X.moveTo(26 + off, 0); X.lineTo(4 + off, -20); X.lineTo(10 + off, 0); X.lineTo(4 + off, 20); X.closePath(); X.fill(); }
     X.restore();
 
@@ -1409,10 +1699,10 @@ function padIcon(s, act, ok) {
 const labelCache = new Map();
 // painted resource icons for the price labels (art/sprites/ui); labels drawn before they load are redrawn once they do
 const UI = {};
-for (const k of ['wood', 'gold']) { const im = new Image(); im.onload = () => labelCache.clear(); im.src = `art/sprites/ui/${k}.png`; UI[k] = im; }
+for (const k of ['wood', 'gold', 'stone']) { const im = new Image(); im.onload = () => labelCache.clear(); im.src = `art/sprites/ui/${k}.png`; UI[k] = im; }
 function padLabel(x, y, act, ok) {
   if (offView(x, y, 80)) return;
-  const k = S0 * DPR, key = `${act.label}|${act.cost.wood || 0}|${act.cost.gold || 0}|${(act.cost.wood || 0) <= G.wood}|${(act.cost.gold || 0) <= G.gold}|${k.toFixed(2)}`;
+  const k = S0 * DPR, key = `${act.label}|${act.cost.wood || 0}|${act.cost.gold || 0}|${act.cost.stone || 0}|${canPay(act.cost)}|${(act.cost.wood || 0) <= G.wood}|${(act.cost.gold || 0) <= G.gold}|${k.toFixed(2)}`;
   let c = labelCache.get(key);
   if (!c) {
     if (labelCache.size > 200) labelCache.clear();
@@ -1429,6 +1719,7 @@ function padLabelDraw(X, x, y, act) {
   X.font = '600 11px Rubik, system-ui, sans-serif';
   const parts = [];
   if (act.cost.wood) parts.push(['wood', act.cost.wood]);
+  if (act.cost.stone) parts.push(['stone', act.cost.stone]);
   if (act.cost.gold) parts.push(['gold', act.cost.gold]);
   const lw = -6;
   let w = 6; for (const [, v] of parts) w += 22 + String(v).length * 6;
@@ -1437,7 +1728,7 @@ function padLabelDraw(X, x, y, act) {
   let cx = x - w / 2 + 6;
   X.textAlign = 'left'; cx += lw + 6;
   for (const [k, v] of parts) {
-    const have = k === 'wood' ? G.wood : G.gold;
+    const have = G[k];
     const ic = UI[k];
     if (ic.complete && ic.naturalWidth) X.drawImage(ic, cx - 2, y - 6, 12, 12);
     else if (k === 'wood') { X.fillStyle = '#b07a45'; X.fillRect(cx, y - 4, 8, 8); } else circle(cx + 4, y, 4, '#f5cf4b');
@@ -1452,7 +1743,8 @@ for (const k of ['walker', 'runner', 'brute', 'boss']) for (const f of ['Wind', 
 // attack frames sized and placed so their shirt sits on the standing sprite's shirt (fractions of the sprite's longer side)
 const ZATTACK = {"walker": {"Wind": {"size": 1.1084, "ox": 0.0006, "oy": -0.1904}, "Hit": {"size": 1.1801, "ox": 0.0091, "oy": 0.0493}}, "runner": {"Wind": {"size": 0.8831, "ox": -0.0633, "oy": 0.0532}, "Hit": {"size": 0.9028, "ox": 0.0783, "oy": 0.041}}, "brute": {"Wind": {"size": 1.0257, "ox": -0.007, "oy": -0.3538}, "Hit": {"size": 1.0627, "ox": -0.0142, "oy": 0.1709}}, "boss": {"Wind": {"size": 1.1911, "ox": 0.0078, "oy": -0.0223}, "Hit": {"size": 1.0087, "ox": 0.0016, "oy": 0.1047}}};
 for (const k of ['walker', 'runner', 'brute', 'boss']) for (const i of ['0', '1', '2', '3', 'Fall1', 'Fall2']) { const im = new Image(); im.src = `art/sprites/corpse/${k}${i}.png`; SPR['dead_' + k + i] = im; }
-for (const r of ['hero', 'heroShoot', 'heroAxe2', 'heroAxe4', 'walker', 'runner', 'brute', 'boss', 'arrow', 'fireLow', 'tower1', 'tower2', 'forge', 'tree', 'pine', 'oak', 'stump', 'grave', 'gold', 'crystal', 'logs2']) {
+for (const r of ['hero', 'heroShoot', 'heroAxe2', 'heroAxe4', 'walker', 'runner', 'brute', 'boss', 'arrow', 'fireLow', 'tower1', 'tower2', 'forge', 'tree', 'pine', 'oak', 'stump', 'grave', 'gold', 'crystal', 'rock', 'logs2', 'boulder1', 'boulder2', 'heroPick2', 'heroPick3', 'heroPick4',
+  ...['walker', 'runner', 'brute', 'boss'].map(k => k + 'BurnFx')]) {
   const i = new Image(); i.src = `art/sprites/top/${r}.png`; SPR[r] = i;
 }
 // Sprites are pre-scaled once to the size they take on screen (big source PNGs are slow to shrink every frame).
@@ -1479,8 +1771,21 @@ function spr(name, x, y, d, ang = 0, flash = 0, alpha = 1, k = 1) {
   X.save(); X.translate(x, y); if (ang) X.rotate(ang); if (k !== 1) X.scale(k, k); X.globalAlpha = alpha;
   X.drawImage(src, -w / 2, -hh / 2, w, hh);
   if (flash > 0) { X.globalCompositeOperation = 'lighter'; X.globalAlpha = flash * 0.7; X.drawImage(src, -w / 2, -hh / 2, w, hh); }
+  if (TINT) { X.globalCompositeOperation = 'source-over'; X.globalAlpha = alpha * TINT.a; X.drawImage(tinted(src, TINT.col), -w / 2, -hh / 2, w, hh); }
   X.restore();
   return true;
+}
+// a colour-filled silhouette of a sprite (cached per source and colour), laid over it to tint it: frost on a chilled zombie
+let TINT = null;
+const TINTS = new WeakMap();
+function tinted(src, col) {
+  let m = TINTS.get(src); if (!m) TINTS.set(src, m = {});
+  if (!m[col]) {
+    const c = document.createElement('canvas'); c.width = src.width; c.height = src.height; const g = c.getContext('2d');
+    g.drawImage(src, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = col; g.fillRect(0, 0, c.width, c.height);
+    m[col] = c;
+  }
+  return m[col];
 }
 // Upright sprite standing with its feet at (x, y), h world units tall, mirrored when flip is set.
 function sprFeet(name, x, y, h, flip = false, tilt = 0, flash = 0, k = 1) {
@@ -1558,6 +1863,170 @@ function coin(x, y, t) {
   if (coinImg.complete && coinImg.naturalWidth) X.drawImage(coinImg, -7.5, -7.5, 15, 15); else coinFace(X);
   X.restore();
 }
+// Cartoon fire flipbook (art/sprites/fx/fire0..15, made by art/fire_flipbook.py from scrolling noise: tongues tear off and
+// fly up), 20 frames a second, each flame on its own phase and mirrored at random, with a soft warm glow under it.
+const FLAMES = { img: [], ready: false, n: 16 };
+for (let i = 0; i < FLAMES.n; i++) { const im = new Image(); im.onload = () => { FLAMES.ready = FLAMES.img.every(f => f.complete && f.naturalWidth); }; im.src = `art/sprites/fx/fire${i}.png`; FLAMES.img.push(im); }
+const CAN_FILTER = 'filter' in CanvasRenderingContext2D.prototype;
+// Ice (art/ice_prep.py): a block of ice a frozen zombie stands in, shards it breaks into, frost on the ground, the icy arrowhead
+const ICE = {};
+for (const n of ['ice_block', 'ice_frost', 'ice_head', 'ice_shard0', 'ice_shard1', 'ice_shard2', 'ice_shard3', 'ice_shard4']) { const im = new Image(); im.src = `art/sprites/fx/${n}.png`; ICE[n] = im; }
+const iceOk = n => ICE[n] && ICE[n].complete && ICE[n].naturalWidth;
+function iceImg(n, x, y, d, ang = 0, alpha = 1) {
+  if (!iceOk(n) || offView(x, y, d)) return;
+  X.save(); X.translate(x, y); if (ang) X.rotate(ang); X.globalAlpha *= alpha;
+  X.drawImage(sprSrc(ICE[n], n, d, d), -d / 2, -d / 2, d, d); X.restore();
+}
+function flameSprite(x, baseY, h, seed, glow = true) {
+  if (offView(x, baseY, h)) return;
+  const n = FLAMES.n, ph = Math.abs(seed * 7.13) % n, fi = Math.floor(G.t * 20 + ph) % n, im = FLAMES.img[fi];
+  const w = h * (im.naturalWidth / im.naturalHeight);
+  if (glow) {
+    X.globalCompositeOperation = 'lighter';
+    const g = X.createRadialGradient(x, baseY - h * 0.25, 0, x, baseY - h * 0.25, h * 0.6);
+    g.addColorStop(0, 'rgba(255,150,50,.32)'); g.addColorStop(1, 'rgba(255,90,20,0)');
+    X.fillStyle = g; X.beginPath(); X.arc(x, baseY - h * 0.25, h * 0.6, 0, TAU); X.fill();
+    X.globalCompositeOperation = 'source-over';
+  }
+  X.save(); X.translate(x, baseY); if (Math.floor(ph) % 2) X.scale(-1, 1);
+  X.drawImage(sprSrc(im, 'fire' + fi, w, h), -w / 2, -h, w, h);
+  X.restore();
+}
+// ---------- fire: soft additive particles (born white-hot, cooling to orange and red, rising and wavering) ----------
+const FIRE_TEX = (() => {
+  // soft blobs; 'body' layers are drawn normally (they keep their colour on a bright day), 'glow' layers add light on top
+  const make = (stops) => {
+    const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+    const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    for (const [o, col] of stops) gr.addColorStop(o, col);
+    x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return c;
+  };
+  return {
+    bodyHot: make([[0, 'rgba(255,214,110,1)'], [0.45, 'rgba(255,150,40,.85)'], [1, 'rgba(230,80,20,0)']]),
+    bodyMid: make([[0, 'rgba(255,140,40,.95)'], [0.5, 'rgba(225,70,22,.7)'], [1, 'rgba(160,30,12,0)']]),
+    bodyLow: make([[0, 'rgba(205,58,20,.8)'], [0.55, 'rgba(120,28,12,.45)'], [1, 'rgba(60,20,12,0)']]),
+    glow: make([[0, 'rgba(255,250,215,1)'], [0.3, 'rgba(255,214,120,.6)'], [1, 'rgba(255,150,50,0)']]),
+  };
+})();
+const FLAME_CAP = 900;
+// one fire particle; vx/vy in units per second, s = size
+function flame(x, y, o = {}) {
+  if (G.flames.length >= FLAME_CAP) return;
+  G.flames.push({ x, y, vx: o.vx ?? rnd(-10, 10), vy: o.vy ?? rnd(-62, -34), t: 0, max: o.max ?? rnd(0.45, 0.8), s: o.s ?? rnd(5, 9), w: Math.random() * TAU });
+}
+// emit `rate` particles per second on average this frame
+const emit = (rate, dt, f) => { let n = rate * dt; while (n > 0) { if (n >= 1 || Math.random() < n) f(); n--; } };
+function updateFlames(dt) {
+  for (const f of G.flames) {
+    f.t += dt; f.w += dt * 9;
+    f.vx += Math.sin(f.w) * 70 * dt; f.vy -= 30 * dt;   // wavering, rising faster as it cools
+    f.vx *= 0.95; f.x += f.vx * dt; f.y += f.vy * dt;
+  }
+  G.flames = G.flames.filter(f => f.t < f.max);
+}
+function drawFlames() {
+  if (!G.flames.length) return;
+  X.save();
+  // body: tongues stretched upward, white-hot → orange → dark red as they rise and cool
+  for (const f of G.flames) {
+    if (offView(f.x, f.y, 24)) continue;
+    const k = f.t / f.max, tex = k < 0.3 ? FIRE_TEX.bodyHot : k < 0.65 ? FIRE_TEX.bodyMid : FIRE_TEX.bodyLow;
+    const sz = f.s * (k < 0.2 ? 0.6 + k * 2 : 1 - (k - 0.2) * 0.8);
+    X.globalAlpha = Math.min(1, (1 - k) * 1.6);
+    X.drawImage(tex, f.x - sz, f.y - sz * 1.6, sz * 2, sz * 2.6);
+  }
+  // glow: the young, hot part of each particle adds light
+  X.globalCompositeOperation = 'lighter';
+  for (const f of G.flames) {
+    const k = f.t / f.max;
+    if (k > 0.45 || offView(f.x, f.y, 24)) continue;
+    const sz = f.s * 0.85;
+    X.globalAlpha = (1 - k / 0.45) * 0.7;
+    X.drawImage(FIRE_TEX.glow, f.x - sz, f.y - sz * 1.4, sz * 2, sz * 2.4);
+  }
+  X.restore();
+}
+// Lightning: a jagged path made once (with a side branch or two), drawn in three layers (soft glow, blue body, white core),
+// flashing twice: on 0–0.07 s, off, on again 0.1–0.2 s with a fresh jitter, then gone.
+function boltPath(x1, y1, x2, y2, segs, jag) {
+  const pts = [[x1, y1]], dx = x2 - x1, dy = y2 - y1, l = Math.hypot(dx, dy) || 1, nx = -dy / l, ny = dx / l;
+  for (let i = 1; i < segs; i++) { const t = i / segs, o = rnd(-jag, jag) * Math.sin(t * Math.PI); pts.push([x1 + dx * t + nx * o, y1 + dy * t + ny * o]); }
+  pts.push([x2, y2]); return pts;
+}
+function makeBolt(x1, y1, x2, y2, sky = false) {
+  const l = Math.hypot(x2 - x1, y2 - y1), segs = Math.max(4, Math.round(l / (sky ? 22 : 14))), jag = sky ? 26 : Math.min(14, l * 0.12);
+  const main = boltPath(x1, y1, x2, y2, segs, jag), branches = [];
+  for (let b = 0; b < (sky ? 3 : Math.random() < 0.6 ? 1 : 0); b++) {
+    const k = Math.floor(rnd(0.25, 0.75) * main.length), [bx, by] = main[k], a = Math.atan2(y2 - y1, x2 - x1) + rnd(-1, 1), bl = l * rnd(0.15, 0.3);
+    branches.push(boltPath(bx, by, bx + Math.cos(a) * bl, by + Math.sin(a) * bl, 4, jag * 0.6));
+  }
+  G.bolts.push({ x1, y1, x2, y2, sky, main, branches, t: 0 });
+}
+function strokePath(pts) { X.beginPath(); X.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) X.lineTo(pts[i][0], pts[i][1]); X.stroke(); }
+function drawBolts() {
+  X.save(); X.lineCap = 'round'; X.lineJoin = 'round';
+  for (const b of G.bolts) {
+    const on = b.t < 0.07 || (b.t > 0.1 && b.t < 0.2); if (!on || !b.main) continue;
+    if (b.t > 0.1 && !b.rejig) { b.rejig = true; b.main = boltPath(b.x1, b.y1, b.x2, b.y2, b.main.length - 1, b.sky ? 26 : 10); }
+    const fade = b.t < 0.07 ? 1 : 1 - (b.t - 0.1) / 0.1, w = b.sky ? 1.8 : 0.55;   // chain bolts thin, the sky strike thick
+    // body drawn solid (reads on a bright day), the glow added on top
+    X.globalCompositeOperation = 'source-over';
+    X.strokeStyle = `rgba(40,90,200,${0.55 * fade})`; X.lineWidth = 7 * w; strokePath(b.main); for (const br of b.branches) { X.lineWidth = 4 * w; strokePath(br); }
+    X.strokeStyle = `rgba(110,190,255,${fade})`; X.lineWidth = 4.5 * w; strokePath(b.main); for (const br of b.branches) { X.lineWidth = 2.6 * w; strokePath(br); }
+    X.strokeStyle = `rgba(255,255,255,${fade})`; X.lineWidth = 2 * w; strokePath(b.main); for (const br of b.branches) { X.lineWidth = 1.2 * w; strokePath(br); }
+    X.globalCompositeOperation = 'lighter';
+    X.strokeStyle = `rgba(140,200,255,${0.35 * fade})`; X.lineWidth = 16 * w; strokePath(b.main);
+    if (b.sky) {   // the strike point blooms
+      const g = X.createRadialGradient(b.x2, b.y2, 0, b.x2, b.y2, 60);
+      g.addColorStop(0, `rgba(220,240,255,${0.7 * fade})`); g.addColorStop(1, 'rgba(120,180,255,0)');
+      X.fillStyle = g; X.beginPath(); X.arc(b.x2, b.y2, 60, 0, TAU); X.fill();
+    }
+    X.globalCompositeOperation = 'source-over';
+  }
+  X.restore();
+}
+// a tiny crackling arc next to an electric arrowhead
+function crackle(x, y, r) {
+  const a = Math.random() * TAU, l = rnd(r * 0.6, r * 1.2), pts = boltPath(x, y, x + Math.cos(a) * l, y + Math.sin(a) * l, 3, r * 0.35);
+  X.save(); X.globalCompositeOperation = 'lighter'; X.lineCap = 'round';
+  X.strokeStyle = 'rgba(150,210,255,.8)'; X.lineWidth = 2.2; strokePath(pts);
+  X.strokeStyle = 'rgba(255,255,255,.95)'; X.lineWidth = 0.9; strokePath(pts); X.restore();
+}
+function drawBurning() {
+  for (const b of G.blooms) {   // a fireball's glow
+    const k = b.t / b.max, g = X.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r * (0.6 + k * 0.6));
+    g.addColorStop(0, `rgba(255,230,150,${0.85 * (1 - k)})`); g.addColorStop(0.4, `rgba(255,140,40,${0.6 * (1 - k)})`); g.addColorStop(1, 'rgba(255,80,20,0)');
+    X.globalCompositeOperation = 'lighter'; X.fillStyle = g; X.beginPath(); X.arc(b.x, b.y, b.r * (0.6 + k * 0.6), 0, TAU); X.fill(); X.globalCompositeOperation = 'source-over';
+  }
+  for (const sh of G.shards) {   // ice shards of a shattered zombie
+    const k = sh.t / sh.max; iceImg('ice_shard' + sh.i, sh.x, sh.y, sh.s, sh.a, 1 - k * k);
+  }
+  drawBolts();
+  // the nocked fire arrow burns on its tip wherever the rig drew it (drawn back, reached from the quiver); no arrow, no flame
+  if (G.lvls.boltarrow && G.hero.arrowTip && !G.hero.dead) {   // the nocked electric arrow: a small blue glow and now and then a spark
+    const p = G.worldInv.transformPoint(G.hero.arrowTip), fl = 0.75 + Math.random() * 0.25;
+    X.globalCompositeOperation = 'lighter'; const g = X.createRadialGradient(p.x, p.y, 0, p.x, p.y, 8 * fl);
+    g.addColorStop(0, 'rgba(210,235,255,.9)'); g.addColorStop(1, 'rgba(120,180,255,0)'); X.fillStyle = g; X.beginPath(); X.arc(p.x, p.y, 8 * fl, 0, TAU); X.fill();
+    X.globalCompositeOperation = 'source-over';
+    if (Math.random() < 0.08) G.fx.push({ x: p.x, y: p.y, vx: rnd(-60, 60), vy: rnd(-60, 60), t: 0, max: rnd(0.08, 0.16), col: '#ffffff', r: rnd(0.8, 1.2) });
+  }
+  if (G.lvls.icearrow && G.hero.arrowTip && !G.hero.dead) {   // the nocked ice arrow has its icy head, and a little cold mist
+    const p = G.worldInv.transformPoint(G.hero.arrowTip), a = (G.hero.ang ?? 0) + Math.PI;
+    iceImg('ice_head', p.x, p.y, 10, a);
+    if (Math.random() < 0.12) G.fx.push({ x: p.x, y: p.y, vx: rnd(-10, 10), vy: rnd(5, 20), t: 0, max: rnd(0.3, 0.5), col: '#e8f8ff', r: rnd(0.8, 1.3) });
+  }
+  if (G.lvls.firearrow && G.hero.arrowTip && FLAMES.ready && !G.hero.dead) {
+    const p = G.worldInv.transformPoint(G.hero.arrowTip);
+    flameSprite(p.x, p.y + 3, 15, 1.7);
+    if (Math.random() < 0.1) G.fx.push({ x: p.x, y: p.y, vx: rnd(-12, 12), vy: rnd(-55, -30), t: 0, max: rnd(0.25, 0.4), col: '#ffd25a', r: rnd(0.8, 1.4) });
+  }
+  drawFlames();
+  for (const r of G.rings) {   // fire burst shockwave
+    const k = r.t / 0.35;
+    X.strokeStyle = `rgba(${r.col || '255,170,80'},${(1 - k) * 0.8})`; X.lineWidth = 5 * (1 - k) + 1;
+    X.beginPath(); X.arc(r.x, r.y, r.r + (r.max - r.r) * Math.sqrt(k), 0, TAU); X.stroke();
+  }
+}
 function drawLoot() {
   for (const d of G.drops) {
     if (offView(d.x, d.y, 30)) continue;
@@ -1633,6 +2102,7 @@ function drawFire() {
   if (k < 1) bar(0, -48, 46, k, '#ff9a3c');
 }
 // Chop frames (art/sprites/top/heroAxe*): drawn CHOP_D wide around the hood, which sits HOOD from the hero's centre.
+const CHOP_T = 0.6;   // seconds per axe blow (was 0.45; 'Сноровка' speeds it up)
 const CHOP_D = 110, HOOD = [0.36, -16.05];   // frames are anchored on the top of the hood
 // ---------- the archer rig (from ember/web/hero-lab.html, "Rig 2") ----------
 // The hero sprite split into layers (body, the hand that draws the string, the bow arm, bow, arrow, quiver) plus four painted
@@ -1731,7 +2201,9 @@ function drawArcherRig(h, bx, by, rot) {
   const tl = bendPt(at(RIG.tipL)), tr = bendPt(at(RIG.tipR));
   const nock = onString && (ph.name === 'draw' || ph.name === 'hold') ? hand : null;
   const arrowFile = RIG.layers.find(l => l.role === 'arrow').file, handFile = RIG.layers.find(l => l.role === 'hand').file;
-  const drawArrowAt = (pos, ang) => { X.save(); X.translate(pos.x, pos.y); X.rotate(ang); X.translate(-n0.x, -n0.y); L(arrowFile); X.restore(); };
+  const drawArrowAt = (pos, ang) => { X.save(); X.translate(pos.x, pos.y); X.rotate(ang); X.translate(-n0.x, -n0.y); L(arrowFile);
+    h.arrowTip = X.getTransform().transformPoint(new DOMPoint(tip0.x, tip0.y));   // canvas pixels; the fire arrow's flame follows it
+    X.restore(); };
   const handAndArrow = () => { if (arrowAt) drawArrowAt(arrowAt, arrowAng); X.save(); X.translate(hand.x - n0.x, hand.y - n0.y); L(handFile); X.restore(); };
   for (const l of RIG.layers) {
     if (l.role === 'body') { if (hidden) handAndArrow(); L(pose ? RPOSES[pose].file.replace('.png', '-nobow.png') : 'hooded_character_body-nobow.png'); }
@@ -1771,10 +2243,13 @@ function drawHero(h) {
     // Frames are cut so the hood sits at their centre; HOOD is where the hood is in the normal sprite.
     // two frames from one AI sprite sheet with an identical head, bow and quiver: 4 = axe in the trunk (the hit), 2 = axe drawn back.
     // (Frame 3, the full wind-up, twists the whole upper body and made the head and bow jump, so it is not used.)
-    const k = h.chop / 0.45, frame = k < 0.16 ? 4 : 2;
+    // the same two frames with a pickaxe instead of the axe when breaking stone (art/sprites/top/heroPick*, 0.7 s cycle)
+    // mining adds an overhead frame: hit (4) → lifting (2) → pick raised over the hood (3) → a flash of 2 → hit
+    const mine = tree.stone != null, k = h.chop / (mine ? 0.7 : CHOP_T);
+    const frame = !mine ? (k < 0.16 ? 4 : 2) : k < 0.14 ? 4 : k < 0.38 ? 2 : k < 0.88 ? 3 : 2;
     const ang = h.ang, ca = Math.cos(ang), sa = Math.sin(ang), wx = HOOD[0] * ca - HOOD[1] * sa, wy = HOOD[0] * sa + HOOD[1] * ca;
     // the head stays put: no body offset; only the arms and the axe move between frames
-    if (spr('heroAxe' + frame, hx + wx, hy + wy, CHOP_D, ang)) frameDone = true;
+    if (spr((mine ? 'heroPick' : 'heroAxe') + frame, hx + wx, hy + wy, CHOP_D, ang)) frameDone = true;
   }
   if (!frameDone && drawArcherRig(h, hx, hy, h.ang + step * 0.1)) frameDone = true;
   if (!frameDone && !spr(h.shootT > 0.15 ? 'heroShoot' : 'hero', hx, hy, 48, h.ang + step * 0.1, 0, 1, 1 + Math.abs(step) * 0.04)) {
@@ -1973,6 +2448,9 @@ function drawZombie(z) {
   if (z.kick > 0) z.kick = Math.max(0, z.kick - 0.12);
   const zx = z.x + z.fx * lunge + (z.hitDx || 0) * kick, zy = z.y + z.fy * lunge + (z.hitDy || 0) * kick;
   // each blow is a swipe: the body twists toward the striking arm, a different arm every blow
+  // burning: one painted burning sprite per kind (swapping two takes made the body jump: they differ slightly), also while fighting
+  // the plain sprite stays; only the living flame layer (cut from the burning take, aligned to the plain sprite) goes on top
+  const burnSpr = null;   // no fire on the body (as in Kingdom Rush): a burning zombie flashes warm on each tick instead
   const frames = z.fighting && ZATTACK[z.kind] && SPR[z.kind + 'Hit'] && SPR[z.kind + 'Hit'].naturalWidth;
   const swipe = z.fighting ? (z.blowN % 2 ? 1 : -1) * Math.sin(z.atkT * 7) * (frames ? 0.07 : heavy ? 0.22 : 0.32) : 0;
   const ang = z.ang + (z.fighting ? swipe : step * (heavy ? 0.07 : 0.13));
@@ -1985,6 +2463,16 @@ function drawZombie(z) {
     spr(z.kind + (Math.sin(z.atkT * 7) > 0.45 ? 'Hit' : 'Wind'), fx, fy, f.size * d, ang, z.hit, 1, 1 + lunge * 0.01);
   } else if (!spr(z.kind, zx, zy, ZSIZE[z.kind], ang, z.hit, 1, 1 + Math.abs(step) * 0.03 + lunge * 0.014)) {
     circle(z.x, z.y, z.r, z.hit > 0 ? '#ffffff' : z.col, '#1c2a14', 2.5);
+  }
+  if (burnSpr) {
+    // the fire on the body lives: the flame layer (art/burn_fx.py) swells and shrinks and flickers over the plain sprite
+    const ph = (z.wob || 0) * 2.7, t = G.t, d = ZSIZE[z.kind] * 1.3, a0 = X.globalAlpha;
+    const k1 = 1.03 + Math.sin(t * 9 + ph) * 0.035 + Math.sin(t * 15.7 + ph * 2) * 0.02;
+    spr(z.kind + 'BurnFx', zx, zy, d, ang + Math.sin(t * 6 + ph) * 0.03, 0, a0 * (0.88 + Math.sin(t * 11 + ph) * 0.12), k1);
+    X.globalCompositeOperation = 'lighter';
+    spr(z.kind + 'BurnFx', zx, zy, d, ang, 0, a0 * (0.18 + Math.max(0, Math.sin(t * 13 + ph * 3)) * 0.22), 1.08 + Math.sin(t * 7 + ph) * 0.04);
+    X.globalCompositeOperation = 'source-over';
+    X.globalAlpha = a0;
   }
   if (z.stuck) stuckArrows(z.stuck, zx, zy, ang);
   if (z.hp < z.max) bar(z.x, z.y - z.r - 8, z.r * 2, z.hp / z.max, '#e0533a');
@@ -2009,6 +2497,14 @@ function drawTower(s) {
   for (let i = 0; i < s.lvl; i++) circle(s.x - 8 + i * 8, s.y + d * 0.5 + 2, 2.8, '#ffd28a', '#5a3a12', 1);
 
 }
+function drawRock(k) {
+  const j = k.shake > 0 ? Math.sin(k.shake * 60) * 1.5 : 0;
+  k.rot ??= Math.abs(k.x * 0.29 + k.y * 0.17) % TAU;
+  shadow(k.x + 3, k.y + 4, k.r * 1.1);
+  const sz = k.r * 2.4 * (0.75 + k.stone / 12);   // shrinks a little as it is broken
+  k.spr ??= Math.abs(Math.round(k.x * 3 + k.y * 7)) % 2 ? 'boulder1' : 'boulder2';   // clean grey stone, two shapes
+  if (!spr(k.spr, k.x + j, k.y, sz, k.rot)) circle(k.x + j, k.y, k.r, '#8d9298', '#3a3d42', 2.5);
+}
 function drawTree(t) {
   const amp = t.shake > 0 ? (t.shake / 0.3) ** 2 * 6 * Math.cos((0.3 - t.shake) * 28) : 0;   // knocked away, then swings back
   const sh = amp * Math.cos(t.hitDir || 0), shy = amp * Math.sin(t.hitDir || 0);
@@ -2031,7 +2527,7 @@ function hud() {
     $('skip').querySelector('.ico').className = 'ico ' + moonOf(G.night + 1).icon;   // the button shows the coming night's moon
   }
   setText('phase', G.phase === 'day' ? `${s}` : G.needBoss && G.phaseT <= 0 ? `${G.night}${of} · ☠` : `${G.night}${of} · ${s}`);
-  setText('wood', String(G.wood)); setText('gold', String(G.gold));
+  setText('wood', String(G.wood)); setText('stone', String(G.stone)); setText('gold', String(G.gold));
   setText('lvl', `${G.lvl}`);
   $('fire').style.width = Math.max(0, G.fire.hp / G.fire.max * 100) + '%';
   $('xpbar').style.width = (G.xp / G.xpNext * 100) + '%';
@@ -2039,8 +2535,12 @@ function hud() {
 
 // ---------- loop ----------
 let last = performance.now();
-const fpsOn = location.hash === '#fps', fpsEl = fpsOn ? document.body.appendChild(Object.assign(document.createElement('div'), { className: 'pill' })) : null;
-if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', left: '12px', bottom: '28px', zIndex: 9, pointerEvents: 'none' });
+// playtest FPS counter, always on for now: frames per second and zombies on the field, small, top centre
+// shown on the local playtest server and with #fps, hidden on the public site
+const fpsOn = location.hash === '#fps' || /^(localhost|127\.|192\.168\.|10\.)/.test(location.hostname);
+const fpsEl = fpsOn ? document.body.appendChild(Object.assign(document.createElement('div'), { className: 'pill fps' })) : null;
+if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', left: '50%', transform: 'translateX(-50%)', top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+  zIndex: 9, pointerEvents: 'none', fontSize: '11px', padding: '3px 9px', opacity: '0.75' });
 let fpsN = 0, fpsT = 0, slowT = 0, slowN = 0;
 const upright = matchMedia('(orientation: portrait) and (pointer: coarse) and (max-width: 560px)');
 // Android can hold landscape for real once the page is fullscreen; iOS ignores both calls and relies on the rotate sign
@@ -2078,19 +2578,19 @@ function begin(cfg) {
   else if (cfg.mode === 'raid') banner(cfg.lift ? `Сними осаду: ${cfg.v.name}` : `Набег на ${cfg.v.name}`, 'Почини и укрепи деревню до темноты');
   else banner('Осада', 'Наруби дерева и построй защиту до темноты');
 }
-function takeStore() { const s = SAVE.store; SAVE.store = { wood: 0, gold: 0 }; persist(); return s; }
+function takeStore() { const s = SAVE.store; SAVE.store = { wood: 0, gold: 0, stone: 0 }; persist(); return s; }
 const beginSiege = () => begin(SIEGE);
 function beginVillage(v) {
   const s = takeStore();
   begin({ mode: 'liberate', v, nights: v.nights, d: v.d, twist: v.twist, firstDay: v.firstDay || 30, dayLen: v.dayLen || 18, nightLen: v.nightLen || 50,
-    wood: s.wood, gold: s.gold });
+    wood: s.wood, gold: s.gold, stone: s.stone || 0 });
 }
 // One night in your own village: either the incoming raid, or (liftId) lifting a siege.
 function beginRaid(liftId) {
   const id = liftId || SAVE.raid.id, v = V(id), o = SAVE.owned[id], s = takeStore();
   const power = liftId ? o.siegePower || 6 : SAVE.raid.power;
   begin({ mode: 'raid', lift: !!liftId, power, v, nights: 1, d: v.d + 3 + SAVE.raids, twist: v.twist, firstDay: 20, dayLen: 18, nightLen: 50,
-    wood: s.wood + 10, gold: s.gold, buildings: o.b });
+    wood: s.wood + 10, gold: s.gold, stone: s.stone || 0, buildings: o.b });
 }
 function autoResolve() {
   const r = SAVE.raid, v = V(r.id), o = SAVE.owned[r.id], def = defense(o.b);
@@ -2310,7 +2810,7 @@ function renderMap() {
     b.onclick = () => { if (!(mapDrag && mapDrag.moved)) selectNode(v); };
     f.appendChild(b);
   }
-  $('stWood').textContent = SAVE.store.wood; $('stGold').textContent = SAVE.store.gold;
+  $('stWood').textContent = SAVE.store.wood; $('stStone').textContent = SAVE.store.stone || 0; $('stGold').textContent = SAVE.store.gold;
 }
 function selectNode(v) {
   const raidV = SAVE.raid && V(SAVE.raid.id);
@@ -2428,11 +2928,30 @@ window.bench = async () => {
   out.again = await measure(); out.dpr = DPR; out.screen = `${W}x${H}`; out.zombies = G.zombies.length;
   window.benchResult = out; return out;
 };
+// element showcases: #fire, #ice, #bolt, #light — the archer with level-3 arrows of that element at the fire, zombies keep
+// walking in from all sides, day light
+// add "night" for a dark moonless night: #firenight, #icenight, #boltnight, #lightnight
+const SHOW = { fire: 'firearrow', ice: 'icearrow', bolt: 'boltarrow', light: 'lightarrow' }[location.hash.slice(1).replace(/night$/, '')];
+const SHOW_NIGHT = location.hash.endsWith('night');
+if (SHOW) {
+  $('start').hidden = true; beginVillage(V(SHOW_NIGHT ? 'forest' : 'mill'));
+  G.lvls[SHOW] = 3; G.stat.rate = 2.4; G.stat.multi = 2; G.stat.range = 230; G.stat.dmg = 8;
+  G.hero.x = 0; G.hero.y = 40; G.fire.max = G.fire.hp = 1e9; G.cfg.firstDay = 1e9;
+  bannerTimer = 0; $('banner').classList.remove('show');
+  if (SHOW_NIGHT) { G.phase = 'night'; G.moon = MOONS.new; G.darkA = nightDark(); G.phaseT = 999; G.plan = []; }
+  setInterval(() => {
+    if (!G || G.over) return;
+    if (SHOW_NIGHT) { if (G.phase !== 'night') { G.phase = 'night'; G.moon = MOONS.new; G.darkA = nightDark(); } G.plan = []; } else G.phase = 'day';
+    G.phaseT = 999; G.hero.hp = G.hero.max; G.pending = 0;
+    if (G.zombies.length < 16) { const a = Math.random() * TAU, k = Math.random() < 0.2 ? 'brute' : 'walker', b = ZK[k];
+      G.zombies.push({ kind: k, x: Math.cos(a) * 260, y: Math.sin(a) * 260, r: b.r, hp: b.hp * 3, max: b.hp * 3, spd: b.spd * 0.8, dmg: 0, col: b.col, hit: 0, block: null, wob: Math.random() * TAU, fx: 0, fy: 0 }); }
+  }, 450);
+}
 // test shortcut: #v=<village id> (mill, river, forest, grave) skips the menu and starts that village straight away
 const jump = /^#v=(\w+)/.exec(location.hash);
 if (jump && V(jump[1]) && !V(jump[1]).soon) { $('start').hidden = true; beginVillage(V(jump[1])); }
 // screenshots and checks from outside: open with #qa
-if (location.hash === "#qa") window.QA = { step: (dt, n = 1) => { for (let i = 0; i < n; i++) update(dt); }, seenNow, MOONS, showMap, selectNode, beginVillage, V, SAVE, get G() { return G; }, get map() { return { mapPan, panelBox, mapView, mapW, mapH }; } };
+if (location.hash === "#qa") window.QA = { draw, offerCards, newGame, step: (dt, n = 1) => { for (let i = 0; i < n; i++) update(dt); }, seenNow, MOONS, showMap, selectNode, beginVillage, V, SAVE, get G() { return G; }, get map() { return { mapPan, panelBox, mapView, mapW, mapH }; } };
 })();
 </script>
 </body>
