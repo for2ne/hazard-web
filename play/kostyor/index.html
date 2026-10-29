@@ -293,7 +293,7 @@ canvas { position: fixed; inset: 0; display: block; }
 const cv = document.getElementById('c'), X = cv.getContext('2d');
 const dark = document.createElement('canvas'), D = dark.getContext('2d');
 let W = 0, H = 0, DPR = 1, S = 1, S0 = 1;   // S0: scale for the screen, S: S0 with the night zoom-out applied
-// Render scale: up to 1.5x the CSS pixels, dropped to 1x automatically when the frame rate cannot keep up.
+// Render scale: up to 2x the CSS pixels, stepped down automatically only when the device cannot draw the frames in time.
 let maxDPR = 2;   // native on Retina; steps down only when the frame rate really suffers (see frame())
 const DARK_RES = 0.25;   // the night layer is soft gradients only, so it is drawn at a quarter of the resolution and stretched
 const vhProbe = document.body.appendChild(Object.assign(document.createElement('div'), { ariaHidden: 'true' }));
@@ -4030,7 +4030,7 @@ $('fpsToggle').onclick = () => { fpsOn = !fpsOn; try { localStorage.setItem('kos
 fpsShow();
 Object.assign(fpsEl.style, { position: 'fixed', left: '50%', transform: 'translateX(-50%)', top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
   zIndex: 9, pointerEvents: 'none', fontSize: '11px', padding: '3px 9px', opacity: '0.75' });
-let fpsN = 0, fpsT = 0, slowT = 0, slowN = 0;
+let fpsN = 0, fpsT = 0, slowT = 0, slowN = 0, slowW = 0;
 const upright = matchMedia('(orientation: portrait) and (pointer: coarse) and (max-width: 560px)');
 // Android can hold landscape for real once the page is fullscreen; iOS ignores both calls and relies on the rotate sign
 addEventListener('pointerdown', () => {
@@ -4044,14 +4044,20 @@ function frame(now) {
   if (!$('map').hidden) drawMap(now / 1000);
   else if (!$('start').hidden) { /* the key art covers everything */ }
   else {
+    const w0 = performance.now();
     if (!G.paused && !upright.matches) { if (G.slowT > 0) { G.slowT -= dt; dt *= 0.3; } update(dt); } draw();
     // the boss falls: a white flash over everything
     if (G.flash > 0) { X.setTransform(1, 0, 0, 1, 0, 0); X.globalAlpha = 0.55 * G.flash; X.fillStyle = '#fff6e0'; X.fillRect(0, 0, cv.width, cv.height); X.globalAlpha = 1; }
     hud();
-    // under ~45 FPS for three seconds of play: one step down in render scale (2x -> 1.5x -> 1x)
-    if (!G.paused && maxDPR > 1) {
-      slowT += Math.min(1, raw); slowN++;
-      if (slowT > 3) { if (slowN / slowT < 45) { maxDPR = maxDPR > 1.5 ? 1.5 : 1; resize(); sprCache.clear(); } slowT = 0; slowN = 0; }
+    // one step down in render scale (2x -> 1.5x -> 1x) only when the device really cannot draw the frames in time: under
+    // 40 FPS for four seconds AND the frames themselves take long. Not counted: the first seconds (art still loading bakes
+    // the ground again and again), single long frames (a bake after a resize), and a browser that simply caps the game at
+    // 30 FPS (iOS low power mode: the frames are quick, a lower scale would only blur the picture). It used to step down
+    // on those, the step's own bake stalled again, and the picture went down to 1x for nothing.
+    const work = performance.now() - w0;
+    if (!G.paused && maxDPR > 1 && G.t > 5) {
+      if (raw < 0.12 && work < 80) { slowT += raw; slowN++; slowW += work; }
+      if (slowT > 4) { if (slowN / slowT < 40 && slowW / slowN > 14) { maxDPR = maxDPR > 1.5 ? 1.5 : 1; resize(); sprCache.clear(); } slowT = 0; slowN = 0; slowW = 0; }
     }
   }
   requestAnimationFrame(frame);
