@@ -287,6 +287,7 @@ canvas { position: fixed; inset: 0; display: block; }
 </div>
 </div>
 
+<script src="villages.js"></script>
 <script>
 (() => {
 const cv = document.getElementById('c'), X = cv.getContext('2d');
@@ -318,19 +319,11 @@ let best = 0;
 try { best = +localStorage.getItem('kostyor.best') || 0; } catch (e) {}
 
 // ---------- the land: villages you free stay yours ----------
-const VILLAGES = [
-  { id: 'mill', name: 'Мельница', x: 17.5, y: 46, nights: 3, d: 0, twist: 'none', needs: [], nightLen: 40, dayLen: 12, firstDay: 20,
-    tw: 'Зомби пока немного. Хорошее место, чтобы научиться.', say: 'Староста: «Продержись до рассвета, и мельница снова закрутится».' },
-  { id: 'river', name: 'Речная', x: 28, y: 18, nights: 5, d: 2, twist: 'river', needs: ['mill'],
-    tw: 'Река прикрывает север и юг. Зомби идут только по мостам, с востока и запада.', say: 'Староста: «Перекрой мосты, и деревня выстоит».' },
-  { id: 'forest', name: 'Лесная', x: 54, y: 80, nights: 6, d: 3, twist: 'fog', needs: ['mill'],
-    tw: 'Леса вдвое больше, но ночью стоит густой туман и света меньше.', say: 'Лесник: «В тумане их не видно, пока не станет поздно».' },
-  { id: 'grave', name: 'Кладбище', x: 70, y: 48, nights: 6, d: 5, twist: 'graves', needs: ['river', 'forest'],
-    tw: 'Зомби встают из могил прямо внутри деревни.', say: 'Священник: «Мёртвые здесь не спят. Береги костёр со всех сторон».' },
-  { id: 'castle', name: 'Замок', x: 89.5, y: 15, soon: true, needs: ['grave'],
-    tw: 'Логово того, кто ведёт орду.', say: '' },
-];
-const ROADS = [['mill', 'river'], ['mill', 'forest'], ['river', 'grave'], ['forest', 'grave'], ['grave', 'castle']];
+// Every village is data: villages/<id>.json (layout, trees, rocks, rivers, graves, moons, where the horde comes from),
+// villages/campaign.json (the map order and roads). build_pwa.sh bundles them into villages.js. Format: villages/README.md.
+const VDATA = window.VILLAGE_DATA;
+const VILLAGES = VDATA.campaign.order.map(id => VDATA.villages[id]);
+const ROADS = VDATA.campaign.roads;
 const V = id => VILLAGES.find(v => v.id === id);
 let SAVE = { won: {}, owned: {}, store: { wood: 0, gold: 0 }, raid: null, raids: 0 };
 try { const s = JSON.parse(localStorage.getItem('kostyor.save')); if (s) SAVE = Object.assign(SAVE, s); } catch (e) {}
@@ -439,13 +432,6 @@ const FORGE_WOOD = 15;
 // Zombies fear fire: inside a torch's light they walk at TORCH.fear of their speed, so a torch is also a trap on the way in.
 // on: false hides torches entirely (no pads, nothing to build); the code stays for a later return.
 const TORCH = { on: false, wood: 3, relight: 1, hp: 25, r: 9, light: 115, fear: 0.65 };
-const TORCH_PADS = {
-  mill: [[45, 330], [135, 330], [225, 330], [315, 330]],
-  river: [[-12, 345], [12, 345], [168, 345], [192, 345]],
-  forest: [[30, 330], [90, 350], [150, 330], [210, 330], [270, 350], [330, 330]],
-  grave: [[0, 345], [60, 330], [120, 330], [180, 345], [240, 330], [300, 330]],
-  siege: [[30, 335], [90, 350], [150, 335], [210, 335], [270, 350], [330, 335]],
-};
 const TOWER_HP = [300, 600, 1000], TOWER_R = 20;   // a tower is an obstacle zombies can break (Astra's numbers)
 const towerInvested = lvl => TOWER.slice(0, lvl).reduce((a, t) => ({ wood: a.wood + t.wood, gold: a.gold + t.gold, stone: a.stone + (t.stone || 0) }), { wood: 0, gold: 0, stone: 0 });
 
@@ -460,14 +446,12 @@ const MOONS = {
   half: { dark: 0.82, dusk: 1.7, icon: 'moon', name: 'Месяц' },
   new: { dark: 0.9, dusk: 1.12, icon: 'moonNew', name: 'Безлунная ночь' },
 };
-const MOON_PLAN = { mill: ['full'], river: ['full', 'half', 'full', 'new', 'half'], forest: ['half', 'new', 'half', 'new', 'full', 'new'],
-  grave: ['full', 'half', 'new', 'half', 'full', 'new'], siege: ['full', 'half', 'new', 'half'] };
-const moonOf = night => { const p = MOON_PLAN[(G.cfg.v && G.cfg.v.id) || 'siege'] || MOON_PLAN.siege; return MOONS[p[(night - 1) % p.length]]; };
+const moonOf = night => { const p = G.cfg.v.moons; return MOONS[p[(night - 1) % p.length]]; };
 // playtest slider in settings: night brightness offset, -0.25 (lighter) … +0.08 (darker); remembered on this device
 let nightShift = 0;
 try { const v = +localStorage.getItem('kostyor.nightShift'); if (v >= -0.25 && v <= 0.08) nightShift = v; } catch (e) {}
-const fogK = () => G.cfg.twist === 'fog' ? 0.9 : 1;
-const nightDark = () => Math.min(0.99, Math.max(0.4, G.moon.dark + (G.cfg.twist === 'fog' ? 0.05 : 0) + nightShift));
+const fogK = () => G.cfg.v.fog ? 0.9 : 1;
+const nightDark = () => Math.min(0.99, Math.max(0.4, G.moon.dark + (G.cfg.v.fog ? 0.05 : 0) + nightShift));
 // How much of a zombie the player sees right now: 1 in light and dusk, fading to 0 at the dusk's outer edge.
 function seenNow(z) {
   if (G.phase !== 'night' || !G.moon || !isFinite(G.moon.dusk) || G.darkA < 0.3 || z.burn > 0) return 1;   // a burning zombie lights itself
@@ -486,9 +470,11 @@ function seenNow(z) {
 const seen = z => z.vis ?? 1;
 const targetable = z => G.t - (z.seenAt ?? -9) < 1;
 const HERO_BASE = { dmg: 10, rate: 1.6 }, RATE_CAP = 6;   // shots per second never go above RATE_CAP
-const PERF = { ground: true, fire: true, units: true, trees: true, fx: true, dark: true, text: true };
+const PERF = { ground: true, fire: true, units: true, trees: true, fx: true, dark: true, text: true, life: true };
 let G;
-const SIEGE = { mode: 'siege', nights: Infinity, d: 0, twist: 'none', firstDay: 35, dayLen: 22, nightLen: 55 };
+const LAB = { on: location.hash === '#lab', debug: /debug/.test(location.hash) };   // the world lab (#lab): every terrain piece, switches
+const SIEGE_V = VDATA.villages.siege;
+const SIEGE = { mode: 'siege', v: SIEGE_V, nights: Infinity, d: SIEGE_V.difficulty, firstDay: SIEGE_V.time.firstDay, dayLen: SIEGE_V.time.day, nightLen: SIEGE_V.time.night };
 function newGame(cfg = SIEGE) {
   music('day');
   G = {
@@ -501,24 +487,28 @@ function newGame(cfg = SIEGE) {
       bounce: 0, split: 0, crit: 0, volley: 0, towerDmg: 1, wallK: 1, revive: 6, dash: 0 },
     lvls: {},
     xp: 0, lvl: 1, xpNext: 5, pending: 0,
-    zombies: [], shots: [], drops: [], fx: [], texts: [], trees: [], slots: [], corpses: [], slashes: [], stains: [], rolls: [], slowT: 0, flash: 0,
+    zombies: [], shots: [], drops: [], fx: [], texts: [], trees: [], slots: [], blocks: [], flow: null, sources: [], corpses: [], slashes: [], stains: [], rolls: [], slowT: 0, flash: 0,
     spawnQ: [], spawnT: 0, plan: [], nightT: 0, pushAi: -1, mainAngles: [], forgeUses: 0,
     cam: { x: 0, y: 30 }, rings: [], blooms: [], flames: [], firePatches: [], bolts: [], reveals: [], shards: [], frosts: [], shake: 0, paused: true, over: false,
   };
-  for (let i = 0; i < 4; i++) {
-    const a = i * TAU / 4 - Math.PI / 2;
-    const posts = [];
-    for (let k = -3; k <= 3; k++) posts.push({ x: Math.cos(a + k * 0.13) * 178, y: Math.sin(a + k * 0.13) * 178, r: 11, hp: 0, max: 0 });
-    G.slots.push({ kind: 'wall', name: 'Забор', x: Math.cos(a) * 140, y: Math.sin(a) * 140, px: Math.cos(a) * 140, py: Math.sin(a) * 140, lvl: 0, hold: 0, posts });
-  }
-  for (let i = 0; i < 4; i++) {
-    const a = i * TAU / 4 + Math.PI / 4;
-    G.slots.push({ kind: 'tower', name: 'Башня', x: Math.cos(a) * 116, y: Math.sin(a) * 116, px: Math.cos(a) * 74, py: Math.sin(a) * 74, lvl: 0, hold: 0, cd: 0 });
-  }
-  G.slots.push({ kind: 'forge', name: 'Кузница', x: 0, y: 100, px: 0, py: 60, lvl: 0, hold: 0 });
-  if (TORCH.on) for (const [deg, r] of TORCH_PADS[(cfg.v && cfg.v.id) || 'siege'] || TORCH_PADS.siege) {
-    const a = deg * Math.PI / 180, x = Math.cos(a) * r, y = Math.sin(a) * r;
-    G.slots.push({ kind: 'torch', name: 'Факел', x, y, px: x, py: y, r: TORCH.r, lvl: 0, hp: 0, max: TORCH.hp, hold: 0 });
+  // build pads from the village file: walls and towers by angle around the fire, anything else by x, y (pad at px, py)
+  for (const p of cfg.v.pads) {
+    const a = (p.deg ?? 0) * Math.PI / 180, at = r => [Math.cos(a) * r, Math.sin(a) * r];
+    if (p.kind === 'wall') {
+      const [x, y] = at(p.r ?? 140), posts = [], pr = p.posts ?? 178;
+      for (let k = -3; k <= 3; k++) posts.push({ x: Math.cos(a + k * 0.13) * pr, y: Math.sin(a + k * 0.13) * pr, r: 11, hp: 0, max: 0 });
+      const wall = { kind: 'wall', name: 'Забор', x, y, px: x, py: y, lvl: 0, hold: 0, posts };
+      for (const q of posts) q.sec = wall;
+      G.slots.push(wall);
+    } else if (p.kind === 'tower') {
+      const [x, y] = at(p.r ?? 116), [px, py] = at(p.pad ?? 74);
+      G.slots.push({ kind: 'tower', name: 'Башня', x, y, px, py, lvl: 0, hold: 0, cd: 0 });
+    } else if (p.kind === 'forge') {
+      G.slots.push({ kind: 'forge', name: 'Кузница', x: p.x, y: p.y, px: p.px ?? p.x, py: p.py ?? p.y, lvl: 0, hold: 0 });
+    } else if (p.kind === 'torch' && TORCH.on) {
+      const [x, y] = at(p.r);
+      G.slots.push({ kind: 'torch', name: 'Факел', x, y, px: x, py: y, r: TORCH.r, lvl: 0, hp: 0, max: TORCH.hp, hold: 0 });
+    }
   }
   if (cfg.buildings) {
     const b = cfg.buildings;
@@ -527,45 +517,155 @@ function newGame(cfg = SIEGE) {
       if (s.lvl) for (const p of s.posts) p.max = p.hp = WALL_HP[s.lvl - 1];
     });
     G.slots.filter(s => s.kind === 'tower').forEach((s, i) => { s.lvl = b.towers[i] || 0; if (s.lvl) s.hp = s.max = TOWER_HP[s.lvl - 1]; });
-    G.slots.find(s => s.kind === 'forge').lvl = b.forge || 0;
+    const forge = G.slots.find(s => s.kind === 'forge'); if (forge) forge.lvl = b.forge || 0;
     G.slots.filter(s => s.kind === 'torch').forEach((s, i) => { s.lvl = (b.torches || [])[i] || 0; if (s.lvl) s.hp = s.max; });
   }
-  const treeCount = cfg.twist === 'fog' ? 80 : 46;
+  const L = cfg.v, onRiver = (o, pad) => (L.rivers || []).some(rv => Math.abs(o.y - rv.y) < rv.w / 2 + pad);
+  // terrain: cliffs and thick forest laid along lines; nobody walks through them, zombies go round (see buildFlow)
+  for (const b of L.blocks || []) {
+    const w = b.w ?? 70, step = w * 0.5;
+    for (let i = 0; i + 1 < b.pts.length; i++) {
+      const [x0, y0] = b.pts[i], [x1, y1] = b.pts[i + 1], n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / step));
+      for (let k = i ? 1 : 0; k <= n; k++) {
+        const x = x0 + (x1 - x0) * k / n, y = y0 + (y1 - y0) * k / n, h = Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
+        G.blocks.push({ type: b.type, x, y, r: w / 2, h });
+      }
+    }
+  }
+  // the painted pieces that cover the block lines: overlapping, a little scattered, drawn top to bottom
+  G.decor = [];
+  for (const b of (L.blocks || []).filter(b => b.type === 'forest')) {
+    const w = b.w ?? 70, step = w * 0.42;
+    for (let i = 0; i + 1 < b.pts.length; i++) {
+      const [x0, y0] = b.pts[i], [x1, y1] = b.pts[i + 1], n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / step));
+      for (let k = i ? 1 : 0; k <= n; k++) {
+        const x = x0 + (x1 - x0) * k / n, y = y0 + (y1 - y0) * k / n, h = Math.abs(Math.sin(x * 4.898 + y * 7.23) * 43758.5453) % 1;
+        // a thicket is our own single trees packed tight: two per step, either side of the line, mixed kinds and sizes
+        for (const side of [-1, 1]) {
+          const h2 = (h * (side > 0 ? 7.3 : 3.1)) % 1, nx = -(y1 - y0) / Math.hypot(x1 - x0, y1 - y0), ny = (x1 - x0) / Math.hypot(x1 - x0, y1 - y0), off = side * w * (0.15 + h2 * 0.3);
+          G.decor.push({ type: b.type, x: x + nx * off + (h2 - 0.5) * 12, y: y + ny * off, d: w * (1.05 + h2 * 0.45), tree: ['pine', 'oak', 'tree'][Math.floor(h2 * 3)], ang: h2 * TAU });
+        }
+      }
+    }
+  }
+  G.decor.sort((a, b) => a.y - b.y);
+  const offBlocks = (o, pad) => G.blocks.some(b => d2(b, o) < (b.r + pad) ** 2);
   let tries = 0;
-  while (G.trees.length < treeCount && tries++ < 3000) {
-    const a = Math.random() * TAU, r = rnd(270, 820);
+  while (G.trees.length < L.trees.count && tries++ < 3000) {
+    const a = Math.random() * TAU, r = rnd(L.trees.r[0], L.trees.r[1]);
     const t = { x: Math.cos(a) * r, y: Math.sin(a) * r, r: rnd(18, 26), wood: 4, shake: 0 };
-    if (cfg.twist === 'river' && Math.abs(t.y) > 280 && Math.abs(t.y) < 390) continue;
+    if (onRiver(t, 17) || offBlocks(t, 30)) continue;
     if (G.slots.some(o => o.kind === 'torch' && d2(o, t) < 60 * 60)) continue;   // keep torch pads clear
     if (G.trees.every(o => d2(o, t) > 55 * 55)) G.trees.push(t);
   }
-  // boulders to break for stone; few in the forest, more around the graveyard
-  const rockCount = { fog: 6, river: 10, graves: 14 }[cfg.twist] ?? 12;
+  // boulders to break for stone
   tries = 0;
-  while (G.rocks.length < rockCount && tries++ < 3000) {
-    const a = Math.random() * TAU, r = rnd(250, 760);
+  while (G.rocks.length < L.rocks.count && tries++ < 3000) {
+    const a = Math.random() * TAU, r = rnd(L.rocks.r[0], L.rocks.r[1]);
     const k = { x: Math.cos(a) * r, y: Math.sin(a) * r, r: rnd(16, 21), stone: 3, shake: 0 };
-    if (cfg.twist === 'river' && Math.abs(k.y) > 280 && Math.abs(k.y) < 390) continue;
+    if (onRiver(k, 17) || offBlocks(k, 30)) continue;
     if (G.trees.every(o => d2(o, k) > 50 * 50) && G.rocks.every(o => d2(o, k) > 70 * 70)) G.rocks.push(k);
   }
-  if (cfg.twist === 'graves') for (let i = 0; i < 7; i++) {
-    const a = i * TAU / 7 + rnd(-0.3, 0.3), r = rnd(235, 400);
+  if (L.graves) for (let i = 0; i < L.graves.count; i++) {
+    const a = i * TAU / L.graves.count + rnd(-0.3, 0.3), r = rnd(L.graves.r[0], L.graves.r[1]);
     G.graves.push({ x: Math.cos(a) * r, y: Math.sin(a) * r });
   }
+  if (L.highland) { G.blocks.push(...highlandBlocks(L)); G.decor.push(...highlandTrees(L)); G.decor.sort((a, c) => a.y - c.y); }
+  G.rockItems = null; ensureRocks();   // cliff collision from the painted rocks, once they are loaded
+  if (!G.rockItems) buildFlow();
   planWave();
+}
+// Paths round the terrain: a grid over the land, the distance from every cell to the fire going round the blocks
+// (Dijkstra, 8 neighbours), and per cell the step toward the fire. Walls and towers are not in it: zombies walk up to them
+// and break them, as before. Each cell also lists the blocks near it, for cheap pushing out of them.
+const FLOW_C = 20, FLOW_R = 960, FLOW_N = Math.ceil(2 * FLOW_R / FLOW_C);
+function buildFlow() {
+  G.flow = null;
+  if (!G.blocks.length) return;
+  const N = FLOW_N, cell = (x, y) => Math.floor((y + FLOW_R) / FLOW_C) * N + Math.floor((x + FLOW_R) / FLOW_C);
+  const solid = new Uint8Array(N * N), near = new Array(N * N), dist = new Float64Array(N * N).fill(Infinity);
+  for (let gy = 0; gy < N; gy++) for (let gx = 0; gx < N; gx++) {
+    const cx = (gx + 0.5) * FLOW_C - FLOW_R, cy = (gy + 0.5) * FLOW_C - FLOW_R, i = gy * N + gx;
+    for (const b of G.blocks) {
+      const dd = (b.x - cx) ** 2 + (b.y - cy) ** 2;
+      if (dd < (b.r + 14) ** 2) solid[i] = 1;
+      if (dd < (b.r + 50) ** 2) (near[i] ||= []).push(b);
+    }
+  }
+  // Dijkstra from the fire with a plain binary heap
+  const heap = [], push = (d, i) => { heap.push([d, i]); let k = heap.length - 1; while (k) { const pk = (k - 1) >> 1; if (heap[pk][0] <= heap[k][0]) break; [heap[pk], heap[k]] = [heap[k], heap[pk]]; k = pk; } },
+    pop = () => { const top = heap[0], end = heap.pop(); if (heap.length) { heap[0] = end; let k = 0; for (;;) { const l = 2 * k + 1, r = l + 1; let m = k; if (l < heap.length && heap[l][0] < heap[m][0]) m = l; if (r < heap.length && heap[r][0] < heap[m][0]) m = r; if (m === k) break; [heap[m], heap[k]] = [heap[k], heap[m]]; k = m; } } return top; };
+  const f = cell(0, 0); dist[f] = 0; push(0, f);
+  while (heap.length) {
+    const [d, i] = pop(); if (d > dist[i]) continue;
+    const gx = i % N, gy = (i / N) | 0;
+    for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) {
+      if (!ox && !oy) continue;
+      const nx = gx + ox, ny = gy + oy; if (nx < 0 || ny < 0 || nx >= N || ny >= N) continue;
+      const j = ny * N + nx; if (solid[j]) continue;
+      if (ox && oy && (solid[gy * N + nx] || solid[ny * N + gx])) continue;   // no cutting corners past a block
+      const nd = d + (ox && oy ? 1.414 : 1);
+      if (nd < dist[j]) { dist[j] = nd; push(nd, j); }
+    }
+  }
+  G.flow = { N, cell, solid, near, dist };
+}
+// the direction a zombie at (x, y) takes toward the fire; null where there is no path (it then walks straight)
+function flowDir(x, y) {
+  const F = G.flow, N = F.N, gx = Math.floor((x + FLOW_R) / FLOW_C), gy = Math.floor((y + FLOW_R) / FLOW_C);
+  if (gx < 0 || gy < 0 || gx >= N || gy >= N) return null;
+  let best = F.dist[gy * N + gx], bx = 0, by = 0;
+  // pressed into a block's edge (a cell with no path): head for the nearest open cell around it
+  const reach = isFinite(best) ? 1 : 2;
+  for (let oy = -reach; oy <= reach; oy++) for (let ox = -reach; ox <= reach; ox++) {
+    const nx = gx + ox, ny = gy + oy; if (nx < 0 || ny < 0 || nx >= N || ny >= N) continue;
+    const d = F.dist[ny * N + nx]; if (d < best) { best = d; bx = ox; by = oy; }
+  }
+  if ((!bx && !by) || !isFinite(best)) return null;
+  const tx = (gx + bx + 0.5) * FLOW_C - FLOW_R - x, ty = (gy + by + 0.5) * FLOW_C - FLOW_R - y, l = Math.hypot(tx, ty) || 1;
+  return [tx / l, ty / l];
+}
+// push a round body out of the terrain blocks near it
+function pushOutBlocks(o, r) {
+  const F = G.flow; if (!F) return false;
+  const gx = Math.floor((o.x + FLOW_R) / FLOW_C), gy = Math.floor((o.y + FLOW_R) / FLOW_C);
+  if (gx < 0 || gy < 0 || gx >= F.N || gy >= F.N) return false;
+  let hit = false;
+  for (const b of F.near[gy * F.N + gx] || []) {
+    const dx = o.x - b.x, dy = o.y - b.y, dd = Math.hypot(dx, dy), m = r + b.r;
+    if (dd < m) { o.x = b.x + dx / (dd || 1) * m; o.y = b.y + dy / (dd || 1) * m; hit = true; }
+  }
+  return hit;
+}
+// true when the straight line from a to b crosses no block (a zombie only chases the hero it can reach)
+function clearLine(a, b) {
+  if (!G.flow) return true;
+  for (const k of G.blocks) {
+    const vx = b.x - a.x, vy = b.y - a.y, l2 = vx * vx + vy * vy || 1, t = Math.max(0, Math.min(1, ((k.x - a.x) * vx + (k.y - a.y) * vy) / l2));
+    if ((a.x + vx * t - k.x) ** 2 + (a.y + vy * t - k.y) ** 2 < k.r * k.r) return false;
+  }
+  return true;
 }
 const DIRS = ['востока', 'юго-востока', 'юга', 'юго-запада', 'запада', 'северо-запада', 'севера', 'северо-востока'];
 const dirName = a => DIRS[Math.round(((a % TAU) + TAU) % TAU / (TAU / 8)) % 8];
 // The next night's sides are chosen at dawn, so the day is spent building against a known threat.
 function planWave() {
-  const c = G.cfg, n = G.night + 1 + c.d, a0 = Math.random() * TAU;
-  G.mainAngles = c.twist === 'river' ? [0, Math.PI] : n <= 1 ? [a0] : c.mode === 'siege' && n >= 8 ? [a0, a0 + TAU / 3 + rnd(-0.4, 0.4), a0 - TAU / 3 + rnd(-0.4, 0.4)] : [a0, a0 + rnd(1.6, 3.2)];
-  G.waveText = c.twist === 'river' ? 'по мостам, с востока и запада' : `с ${G.mainAngles.map(dirName).join(' и с ')}`;
+  const c = G.cfg, sp = c.v.spawn || {}, n = G.night + 1 + c.d, a0 = Math.random() * TAU, srcs = c.v.spawns;
+  if (srcs) {
+    // spawn sources from the village file: all of them can be seen by day, the night picks which ones open
+    const all = srcs.map((_, i) => i), pick = c.v.script ? all : all.sort(() => Math.random() - 0.5).slice(0, n <= 1 ? 1 : n >= (sp.threeSidesFrom || 99) ? 3 : 2);
+    G.sources = pick; G.mainAngles = pick.map(i => Math.atan2(srcs[i].y, srcs[i].x));
+    G.waveText = sp.text || `с ${G.mainAngles.map(dirName).join(' и с ')}`;
+    return;
+  }
+  // fixed sides from the village file (bridges, passes), else one random side on the first night, then two, then three
+  G.mainAngles = sp.sides ? sp.sides.map(d => d * Math.PI / 180) : n <= 1 ? [a0] : sp.threeSidesFrom && n >= sp.threeSidesFrom ? [a0, a0 + TAU / 3 + rnd(-0.4, 0.4), a0 - TAU / 3 + rnd(-0.4, 0.4)] : [a0, a0 + rnd(1.6, 3.2)];
+  G.waveText = sp.text || `с ${G.mainAngles.map(dirName).join(' и с ')}`;
 }
 const snapshot = () => ({
   walls: G.slots.filter(s => s.kind === 'wall').map(s => s.lvl),
   towers: G.slots.filter(s => s.kind === 'tower').map(s => s.lvl),
-  forge: G.slots.find(s => s.kind === 'forge').lvl,
+  forge: (G.slots.find(s => s.kind === 'forge') || {}).lvl || 0,
   torches: G.slots.filter(s => s.kind === 'torch').map(s => s.lvl),
 });
 
@@ -586,6 +686,7 @@ const endJoy = e => { if (e.pointerId === joy.id) joy.on = false; };
 cv.addEventListener('pointerup', endJoy); cv.addEventListener('pointercancel', endJoy);
 
 function moveInput() {
+  if (G.botMove) return G.botMove;   // the test bot (#qa) steers the hero
   let mx = 0, my = 0;
   if (keys.KeyA || keys.ArrowLeft) mx -= 1;
   if (keys.KeyD || keys.ArrowRight) mx += 1;
@@ -649,10 +750,10 @@ const UPS = [
     d: lv => `Каждая ${[5, 4, 3][lv]}-я стрела бьёт втрое сильнее` },
   { id: 'volley', icon: 'volley', k: 'Оружие', n: 'Залп', max: 3, go: () => G.stat.volley = [0, 6, 4.5, 3][(G.lvls.volley || 0) + 1],
     d: lv => `Каждые ${[6, 4.5, 3][lv]} с веер стрел во все стороны` },
-  { id: 'towerdmg', icon: 'towerdmg', k: 'Деревня', n: 'Меткие башни', d: '+25% урона башен', max: 3, go: () => G.stat.towerDmg += 0.25 },
-  { id: 'walls', icon: 'walls', k: 'Деревня', n: 'Крепкие стены', d: '+30% прочности заборов, сами понемногу чинятся', max: 2, go: () => {
+  { id: 'towerdmg', icon: 'towerdmg', k: 'Деревня', n: 'Меткие башни', d: '+25% урона башен', max: 3, needPad: 'tower', go: () => G.stat.towerDmg += 0.25 },
+  { id: 'walls', icon: 'walls', k: 'Деревня', n: 'Крепкие стены', d: '+30% прочности заборов, сами понемногу чинятся', max: 2, needPad: 'wall', go: () => {
     G.stat.wallK += 0.3; for (const sl of G.slots) if (sl.kind === 'wall' && sl.lvl) for (const p of sl.posts) { p.max = Math.round(WALL_HP[sl.lvl - 1] * G.stat.wallK); p.hp = Math.min(p.max, p.hp + p.max * 0.3); } } },
-  { id: 'towerelem', icon: 'towerelem', k: 'Деревня', n: 'Стрелы для башен', d: 'Башни стреляют стрелами твоей стихии', max: 1, needElem: true, go: () => {} },
+  { id: 'towerelem', icon: 'towerelem', k: 'Деревня', n: 'Стрелы для башен', d: 'Башни стреляют стрелами твоей стихии', max: 1, needElem: true, needPad: 'tower', go: () => {} },
   { id: 'revive', icon: 'revive', k: 'Герой', n: 'Второе дыхание', d: 'Возвращается к костру быстрее', max: 2, go: () => G.stat.revive = [6, 4, 2.5][(G.lvls.revive || 0) + 1] },
   { id: 'dash', icon: 'dash', k: 'Герой', n: 'Рывок', max: 2, go: () => G.stat.dash = [0, 4, 2.5][(G.lvls.dash || 0) + 1],
     d: lv => `На бегу рывок каждые ${[4, 2.5][lv]} с` },
@@ -661,7 +762,7 @@ const UPS = [
   { id: 'hp', icon: 'hp', k: 'Герой', n: 'Крепкое здоровье', d: '+25 к здоровью, полное лечение', max: 5, go: () => { G.hero.max += 25; G.hero.hp = G.hero.max; } },
   { id: 'magnet', icon: 'magnet', k: 'Герой', n: 'Магнит', d: 'Собирает добычу издалека', max: 3, go: () => G.stat.magnet *= 1.5 },
   // faster swings, but gently (x1.35 a level, x1.8 at most): doubling made the swing frantic
-  { id: 'chop', icon: 'skill', k: 'Деревня', n: 'Сноровка', d: 'Рубит и добывает камень на 35% быстрее', max: 2, go: () => G.stat.chop *= 1.35 },
+  { id: 'chop', icon: 'skill', k: 'Деревня', n: 'Сноровка', d: 'Рубит и добывает камень на 35% быстрее', max: 2, needPad: 'wall', go: () => G.stat.chop *= 1.35 },
   { id: 'fire', icon: 'firehp', k: 'Деревня', n: 'Жаркий костёр', d: '+100 к прочности костра и починка', max: 5, go: () => { G.fire.max += 100; G.fire.hp = G.fire.max; } },
 ];
 // Always available once the regular upgrades run out, so a level-up or the forge never offers an empty choice.
@@ -678,7 +779,7 @@ function offerCards(title) {
   G.paused = true;
   $('pickTitle').textContent = title;
   const elem = heroElem();
-  const pool = UPS.filter(u => (G.lvls[u.id] || 0) < u.max && !(u.elem && elem && u.id !== elem) && !(u.needElem && !elem))
+  const pool = UPS.filter(u => (G.lvls[u.id] || 0) < u.max && !(u.elem && elem && u.id !== elem) && !(u.needElem && !elem) && !(u.needPad && !G.slots.some(s => s.kind === u.needPad)))
     .sort(() => Math.random() - 0.5).slice(0, 3);
   for (const u of EXTRA) if (pool.length < 3) pool.push(u);
   const box = $('cards'); box.innerHTML = '';
@@ -733,22 +834,36 @@ function startNight() {
     else if (n >= 2 && r < 0.35) k = 'runner';
     G.spawnQ.push(k); budget -= k === 'brute' ? 4 : 1;
   }
-  const boss = c.mode === 'siege' ? n % 5 === 0 : c.mode === 'liberate' && G.night === c.nights;
+  const script = c.mode === 'liberate' && c.v.script && c.v.script[G.night - 1];
+  const boss = script ? script.some(p => p.boss) : c.mode === 'siege' ? n % 5 === 0 : c.mode === 'liberate' && G.night === c.nights;
   G.needBoss = boss && c.mode === 'liberate'; G.bossWarned = false;
-  if (boss) G.spawnQ.splice(Math.floor(G.spawnQ.length / 2), 0, 'boss');
+  if (boss && !script) G.spawnQ.splice(Math.floor(G.spawnQ.length / 2), 0, 'boss');
   // The night comes in pushes: 2-5 dense bursts, each from one side, the sides taking turns, with a breather between.
   // Towers cover their own side only, so a push has to be met by the hero running there (see TOWER ranges).
   const pushes = Math.max(2, Math.min(5, 2 + Math.floor(n / 3))), order = G.mainAngles.map((_, i) => i).sort(() => Math.random() - 0.5);
   const per = Math.ceil(G.spawnQ.length / pushes);
   G.plan = []; G.nightT = 0;
-  for (let i = 0, t = 3; i < pushes; i++) {
+  // a night written in the village file: its pushes in order, each from a given spawn source (or "any"), with its own mix
+  if (script) for (let i = 0, t = 3; i < script.length; i++) {
+    const p = script[i], chunk = [];
+    for (const k of ['walker', 'runner', 'brute']) for (let j = 0; j < (p[k] || 0); j++) chunk.push(k);
+    chunk.sort(() => Math.random() - 0.5);
+    for (let j = 0; j < (p.boss || 0); j++) chunk.splice(Math.floor(chunk.length / 2), 0, 'boss');
+    const nSrc = G.sources.length || G.mainAngles.length || 1;
+    const ai = p.from === 'any' || p.from == null ? Math.floor(Math.random() * nSrc) : p.from % nSrc;
+    if (p.at != null) t = p.at;
+    const burst = p.burst ?? Math.min(7, 1.5 + chunk.length * 0.22);
+    chunk.forEach((kind, j) => G.plan.push({ t: t + burst * j / chunk.length, kind, ai }));
+    t += burst + (p.gap ?? 8);
+  }
+  else for (let i = 0, t = 3; i < pushes; i++) {
     const chunk = G.spawnQ.slice(i * per, (i + 1) * per), burst = Math.min(7, 1.5 + chunk.length * 0.22);
     chunk.forEach((kind, j) => G.plan.push({ t: t + burst * j / chunk.length, kind, ai: order[i % order.length] }));
     t += burst + 8;
   }
   G.spawnQ = [];
   G.phaseT = Math.max(c.nightLen, G.plan.length ? G.plan[G.plan.length - 1].t + 12 : 0);   // the last push gets its time
-  const where = c.twist === 'graves' ? 'Могилы шевелятся' : '';   // no hint where they come from
+  const where = (c.v.graves && c.v.graves.text) || '';   // no hint where they come from
   banner(isFinite(c.nights) ? `Ночь ${G.night} из ${c.nights}` : `Ночь ${G.night}`, [G.moon.name, where, boss ? 'С ними вожак!' : ''].filter(Boolean).join('. '));
   $('skip').hidden = true;
 }
@@ -769,14 +884,18 @@ function startDay() {
   if (G.cfg.mode === 'siege' && G.night > best) { best = G.night; try { localStorage.setItem('kostyor.best', best); } catch (e) {} }
 }
 function spawnZombie(kind, ai) {
-  const base = ZK[kind], n = G.night + G.cfg.d, tw = G.cfg.twist;
+  const base = ZK[kind], n = G.night + G.cfg.d, L = G.cfg.v, sp = L.spawn || {};
   let x, y;
-  if (tw === 'graves' && G.graves.length && Math.random() < 0.35) {
+  if (G.graves.length && Math.random() < L.graves.rise) {
     const g = G.graves[Math.floor(Math.random() * G.graves.length)];
     x = g.x + rnd(-6, 6); y = g.y + rnd(-6, 6);
     burst(x, y, '#6b5a40', 8, 60);
+  } else if (L.spawns) {
+    const own = Math.random() < 1 - (sp.stray ?? 0.15) || G.sources.length < 2, i = own ? ai ?? 0 : Math.floor(Math.random() * G.sources.length);
+    const src = L.spawns[G.sources[i] ?? 0], a = Math.random() * TAU, r = Math.sqrt(Math.random()) * (src.r ?? 40);
+    x = src.x + Math.cos(a) * r; y = src.y + Math.sin(a) * r;
   } else {
-    const main = tw === 'river' ? 1 : 0.85, jit = tw === 'river' ? 0.35 : 0.5;
+    const main = 1 - (sp.stray ?? 0.15), jit = (sp.jitter ?? 28.6) * Math.PI / 180;
     const side = ai ?? Math.floor(Math.random() * G.mainAngles.length);
     const a = Math.random() < main ? G.mainAngles[side] + rnd(-jit, jit) : Math.random() * TAU;
     x = Math.cos(a) * 800; y = Math.sin(a) * 800;
@@ -838,10 +957,12 @@ function update(dt) {
     while (G.plan.length && G.plan[0].t <= G.nightT) { const p = G.plan.shift(); G.pushAi = p.ai; spawnZombie(p.kind, p.ai); }
     if (!G.plan.length && !G.zombies.length && G.phaseT > 2) G.phaseT = 2;   // everyone dead: dawn comes early
     if (G.phaseT <= 0) {
-      // The village is only freed once its boss is dead: no waiting out the night.
-      if (G.needBoss && (G.plan.some(p => p.kind === 'boss') || G.zombies.some(z => z.kind === 'boss'))) {
+      // No waiting out the night: dawn only comes once every zombie of it is dead (the HUD then counts them down).
+      // The village is only freed once its boss is dead, too.
+      if (G.plan.length || G.zombies.length) {
         G.phaseT = 0;
-        if (!G.bossWarned) { G.bossWarned = true; banner('Вожак ещё жив', 'Рассвет не наступит, пока он ходит'); }
+        const boss = G.needBoss && (G.plan.some(p => p.kind === 'boss') || G.zombies.some(z => z.kind === 'boss'));
+        if (boss && !G.bossWarned) { G.bossWarned = true; banner('Вожак ещё жив', 'Рассвет не наступит, пока он ходит'); }
       } else startDay();
     }
   }
@@ -865,6 +986,7 @@ function update(dt) {
     if (mx || my) { h.fx = mx; h.fy = my; }
     const R = 880, l = Math.hypot(h.x, h.y); if (l > R) { h.x *= R / l; h.y *= R / l; }
     const fd = Math.hypot(h.x, h.y); if (fd < 34) { h.x *= 34 / (fd || 1); h.y *= 34 / (fd || 1); }
+    pushOutBlocks(h, h.r);
     // standing wall stakes and towers stop the hero the same way they stop zombies (it slides along them);
     // the gaps between wall sections, where the towers stand, stay open
     for (const sl of G.slots) {
@@ -981,13 +1103,20 @@ function update(dt) {
     z.attacking = false;
     let tx = G.fire.x, ty = G.fire.y;
     if (z.target && z.target.hp > 0 && !(z.markT > 0)) { tx = z.target.x; ty = z.target.y; }
-    else if (!h.dead && d2(z, h) < 150 * 150) { tx = h.x; ty = h.y; }
+    else if (!h.dead && d2(z, h) < 150 * 150 && clearLine(z, h)) { tx = h.x; ty = h.y; }
     if (z.markT > 0) z.markT -= dt;
     const dx = tx - z.x, dy = ty - z.y, l = Math.hypot(dx, dy) || 1;
-    z.fx = dx / l; z.fy = dy / l;
+    const fl = G.flow && tx === G.fire.x && ty === G.fire.y && flowDir(z.x, z.y);
+    if (fl) { z.fx += (fl[0] - z.fx) * Math.min(1, dt * 8); z.fy += (fl[1] - z.fy) * Math.min(1, dt * 8); const k = Math.hypot(z.fx, z.fy) || 1; z.fx /= k; z.fy /= k; }
+    else { z.fx = dx / l; z.fy = dy / l; }
     if (z.block && z.block.hp > 0) {
       const isTower = z.block.kind === 'tower';
-      z.block.hp -= z.dmg * dt * (z.frozenT > 0 ? 0 : 1); z.attacking = isTower ? 'stone' : 'wood';
+      const blow = z.dmg * dt * (z.frozenT > 0 ? 0 : 1);
+      // a wall section takes blows as one: a blow on any of its stakes is shared by all the standing ones, so a crowd at
+      // one stake has to bring down the whole section (all its stakes' strength), and it falls all at once
+      if (z.block.sec) { const up = z.block.sec.posts.filter(p => p.hp > 0); for (const p of up) p.hp -= blow / up.length; }
+      else z.block.hp -= blow;
+      z.attacking = isTower ? 'stone' : 'wood';
       if (isTower) { z.block.attackers++; z.block.underAttack = 0.4; }
       if (z.block.hp <= 0) {
         burst(z.block.x, z.block.y, isTower ? '#8d9298' : '#8a5a32', isTower ? 26 : 10, isTower ? 130 : 90); G.shake = Math.max(G.shake, isTower ? 8 : 4);
@@ -1000,6 +1129,7 @@ function update(dt) {
       z.x += z.fx * z.spd * fear * cold * dt; z.y += z.fy * z.spd * fear * cold * dt;
     }
     z.block = null;
+    pushOutBlocks(z, z.r);
     for (const p of posts) {
       const ddx = z.x - p.x, ddy = z.y - p.y, dd = Math.hypot(ddx, ddy), m = z.r + p.r;
       if (dd < m) { z.x = p.x + ddx / (dd || 1) * m; z.y = p.y + ddy / (dd || 1) * m; z.block = p; }
@@ -1372,10 +1502,11 @@ function finishRun(won) {
     lines.push(`Твои деревни прислали на склад ${own * 5} дерева и ${own * 3} золота.`);
   }
   if (c.mode !== 'raid' && !SAVE.raid) {
-    const ids = Object.keys(SAVE.owned).filter(id => !SAVE.owned[id].sieged && !(won && v && id === v.id));
+    // only villages with towers to defend get raided (the teaching ones have none)
+    const ids = Object.keys(SAVE.owned).filter(id => !SAVE.owned[id].sieged && !(won && v && id === v.id) && V(id) && V(id).pads.some(p => p.kind === 'tower'));
     if (ids.length && Math.random() < 0.5) {
       const id = ids[Math.floor(Math.random() * ids.length)], t = V(id);
-      SAVE.raid = { id, power: 4 + t.d + SAVE.raids * 2 };
+      SAVE.raid = { id, power: 4 + t.difficulty + SAVE.raids * 2 };
       lines.push(`Тревога: орда идёт на ${t.name}!`);
     }
   }
@@ -1397,6 +1528,86 @@ function circle(x, y, r, fill, stroke, lw = 2) {
 function bar(x, y, w, v, col) {
   X.fillStyle = 'rgba(0,0,0,.55)'; X.fillRect(x - w / 2 - 1, y - 1, w + 2, 5);
   X.fillStyle = col; X.fillRect(x - w / 2, y, w * Math.max(0, v), 3);
+}
+// ---------- life: small things that move (grass in the wind, butterflies and birds by day, fireflies at night) ----------
+// Laid out once per village round the clearing; cheap (a few dozen sprites and shapes), drawn in three passes: on the
+// ground under the units, in the sky over the trees, and over the darkness (the fireflies glow).
+function lifeOf() {
+  if (G.life && G.life.v === G.cfg.v) return G.life;
+  const rand = seeded(7331), free = (x, y, r) => !G.blocks.some(b => (b.x - x) ** 2 + (b.y - y) ** 2 < (b.r + r) ** 2) && !G.trees.some(t => (t.x - x) ** 2 + (t.y - y) ** 2 < (t.r + r) ** 2);
+  const spot = (r0, r1, pad) => { for (let k = 0; k < 30; k++) { const a = rand() * TAU, d = r0 + rand() * (r1 - r0), x = Math.cos(a) * d, y = Math.sin(a) * d; if (free(x, y, pad)) return [x, y]; } return null; };
+  const tufts = [], flies = [], glows = [];
+  for (let i = 0; i < 90; i++) { const p = spot(90, 820, 10); if (p) tufts.push({ x: p[0], y: p[1], k: Math.floor(rand() * 8), s: 13 + rand() * 9, ph: rand() * TAU, bend: 0 }); }
+  for (let i = 0; i < 7; i++) { const p = spot(140, 600, 20); if (p) flies.push({ x: p[0], y: p[1], hx: p[0], hy: p[1], a: rand() * TAU, ph: rand() * TAU, col: ['#fff6d8', '#ffd84a', '#ff9a3c', '#bfe3ff'][Math.floor(rand() * 4)] }); }
+  for (let i = 0; i < 40; i++) { const p = spot(220, 850, 6); if (p) glows.push({ x: p[0], y: p[1], ph: rand() * TAU, sp: .6 + rand() * .8 }); }
+  return (G.life = { v: G.cfg.v, tufts, flies, glows, birds: [], birdT: 6 + rand() * 8, t: G.t });
+}
+// grass that sways and lies down where someone walks through it, and butterflies over it (by day)
+function lifeGround() {
+  if (!KIT.bits) return;
+  const L = lifeOf(), dt = Math.min(.05, Math.max(0, G.t - L.t)); L.t = G.t;
+  const walkers = G.hero.dead ? G.zombies : [G.hero, ...G.zombies];
+  for (const u of L.tufts) {
+    if (offView(u.x, u.y, 30)) continue;
+    let push = 0; for (const w of walkers) { const dx = u.x - w.x, dy = u.y - w.y; if (dx * dx + dy * dy < 22 * 22) { push = dx >= 0 ? 1 : -1; break; } }
+    u.bend += ((push * .9) - u.bend) * Math.min(1, dt * (push ? 12 : 3));
+    const im = KIT.bits.grass[u.k]; if (!im || !im.complete) continue;
+    const sway = Math.sin(G.t * 1.7 + u.ph) * .1 + Math.sin(G.t * 3.1 + u.ph * 2) * .04 + u.bend, w = u.s, h = w * im.naturalHeight / im.naturalWidth;
+    X.save(); X.translate(u.x, u.y); X.transform(1, 0, Math.tan(sway), 1, 0, 0); X.drawImage(im, -w / 2, -h, w, h); X.restore();   // skewed from its root, the tips move most
+  }
+  if (G.darkA > .35) return;
+  X.globalAlpha = 1 - G.darkA / .35;
+  for (const f of L.flies) {
+    // a butterfly flutters round its home patch, darts off when someone comes near, and drifts back
+    const h = G.hero, near = !h.dead && (f.x - h.x) ** 2 + (f.y - h.y) ** 2 < 50 * 50;
+    f.a += (Math.sin(G.t * 1.3 + f.ph) * 2.2 + (near ? Math.atan2(f.y - h.y, f.x - h.x) - f.a : Math.atan2(f.hy - f.y, f.hx - f.x) * .02)) * dt;
+    const sp = near ? 90 : 26; f.x += Math.cos(f.a) * sp * dt; f.y += Math.sin(f.a) * sp * dt;
+    if ((f.x - f.hx) ** 2 + (f.y - f.hy) ** 2 > 120 * 120) f.a = Math.atan2(f.hy - f.y, f.hx - f.x);
+    if (offView(f.x, f.y, 20)) continue;
+    const flap = Math.abs(Math.sin(G.t * 16 + f.ph)), lift = 5 + Math.sin(G.t * 2 + f.ph) * 2;
+    X.fillStyle = 'rgba(0,0,0,.18)'; X.beginPath(); X.ellipse(f.x + 2, f.y + 3, 2.5, 1.5, 0, 0, TAU); X.fill();   // its shadow
+    X.save(); X.translate(f.x, f.y - lift); X.rotate(f.a + Math.PI / 2);
+    X.fillStyle = f.col; X.strokeStyle = 'rgba(40,30,20,.7)'; X.lineWidth = .6;
+    for (const s of [-1, 1]) { X.beginPath(); X.ellipse(s * 2.4 * flap, -.6, 2.6 * flap + .4, 2.1, s * .4, 0, TAU); X.fill(); X.stroke(); X.beginPath(); X.ellipse(s * 1.7 * flap, 1.8, 1.7 * flap + .3, 1.4, -s * .3, 0, TAU); X.fill(); X.stroke(); }
+    X.fillStyle = '#3a2a1a'; X.fillRect(-.5, -2, 1, 4.5);
+    X.restore();
+  }
+  X.globalAlpha = 1;
+}
+// now and then a small flock crosses the sky by day; their shadows run over the ground below them
+function lifeSky() {
+  const L = lifeOf(), dt = Math.min(.05, G.t - (L.st ?? G.t)); L.st = G.t;
+  if (G.darkA < .3) { L.birdT -= dt; if (L.birdT <= 0 && !L.birds.length) {
+    L.birdT = 14 + Math.random() * 16;
+    const a = Math.random() * TAU, c = G.cam, n = 3 + Math.floor(Math.random() * 3), sx = c.x - Math.cos(a) * 520, sy = c.y - Math.sin(a) * 420, side = [-Math.sin(a), Math.cos(a)];
+    for (let i = 0; i < n; i++) { const back = Math.ceil(i / 2) * 16, off = (i % 2 ? 1 : -1) * Math.ceil(i / 2) * 13; L.birds.push({ x: sx - Math.cos(a) * back + side[0] * off, y: sy - Math.sin(a) * back + side[1] * off, a, ph: Math.random() * TAU, t: 0 }); }
+  } }
+  for (const b of L.birds) { b.t += dt; b.x += Math.cos(b.a) * 95 * dt; b.y += Math.sin(b.a) * 95 * dt; }
+  L.birds = L.birds.filter(b => b.t < 12);
+  for (const b of L.birds) {
+    if (offView(b.x, b.y + 70, 40)) continue;
+    const flap = Math.sin(G.t * 9 + b.ph), span = 7 + flap * 2.5;
+    X.fillStyle = 'rgba(10,20,10,.16)'; X.beginPath(); X.ellipse(b.x + 30, b.y + 70, span * .8, 2.2, b.a, 0, TAU); X.fill();   // the shadow far below
+    X.save(); X.translate(b.x, b.y); X.rotate(b.a);
+    X.strokeStyle = '#2a2622'; X.lineWidth = 1.8; X.lineCap = 'round'; X.lineJoin = 'round';
+    X.beginPath(); X.moveTo(-2, -span); X.quadraticCurveTo(1, -span * .4, 2, 0); X.quadraticCurveTo(1, span * .4, -2, span); X.stroke();   // two wings beating
+    X.fillStyle = '#2a2622'; X.beginPath(); X.ellipse(1.5, 0, 3, 1.4, 0, 0, TAU); X.fill();
+    X.restore();
+  }
+}
+// fireflies: soft blinking specks along the woods and in the grass, only in the dark
+function lifeNight() {
+  if (G.darkA < .3) return;
+  const L = lifeOf(), k = Math.min(1, (G.darkA - .3) / .3);
+  X.globalCompositeOperation = 'lighter';
+  for (const g of L.glows) {
+    const x = g.x + Math.sin(G.t * .4 * g.sp + g.ph) * 14, y = g.y + Math.cos(G.t * .33 * g.sp + g.ph * 1.3) * 10;
+    if (offView(x, y, 20)) continue;
+    const blink = Math.max(0, Math.sin(G.t * g.sp * 1.8 + g.ph)) ** 3; if (blink < .03) continue;
+    const gr = X.createRadialGradient(x, y, 0, x, y, 9); gr.addColorStop(0, `rgba(220,255,140,${.75 * blink * k})`); gr.addColorStop(1, 'rgba(160,255,90,0)');
+    X.fillStyle = gr; X.beginPath(); X.arc(x, y, 9, 0, TAU); X.fill();
+  }
+  X.globalCompositeOperation = 'source-over';
 }
 function draw() {
   S = S0 / (G.zoom || 1);
@@ -1462,8 +1673,10 @@ function draw() {
         X.strokeStyle = 'rgba(122,74,38,.7)'; X.lineWidth = 1.2; X.beginPath(); X.arc(p.x - 1, p.y - 1, p.r * 0.38, 0, TAU); X.stroke();
         if (s.lvl === 2) { X.strokeStyle = '#8d949c'; X.lineWidth = 3; X.beginPath(); X.arc(p.x, p.y, p.r + 1, 0, TAU); X.stroke(); }
       }
-      if (p.hp < p.max) bar(p.x, p.y - 17, 18, p.hp / p.max, '#e0b070');
     }
+    // one bar for the whole section (its stakes share the blows), over its middle stake
+    const mid = ps[Math.floor(ps.length / 2)];
+    if (mid.hp > 0 && mid.hp < mid.max) bar(mid.x, mid.y - 20, 44, mid.hp / mid.max, '#e0b070');
   }
 
   // drops: at night they are drawn after the darkness (see below), so coins and souls stay readable in the dark
@@ -1474,7 +1687,7 @@ function draw() {
   if (PERF.fire) drawFire();
   // forge
   const fg = G.slots.find(s => s.kind === 'forge');
-  if (fg.lvl) {
+  if (fg && fg.lvl) {
     shadow(fg.x, fg.y, 22);
     if (!spr('forge', fg.x, fg.y, 54)) { X.fillStyle = '#2d2f35'; X.fillRect(fg.x - 16, fg.y - 9, 32, 18); }
     circle(fg.x + 4, fg.y + 22, 3 + Math.sin(G.t * 9) * 0.8, '#ff8a3c');
@@ -1483,7 +1696,10 @@ function draw() {
 
   // trees the hero stands under are drawn below it, so it stays visible while chopping; the rest cover the units
   const underHero = t => !h.dead && d2(t, h) < (t.r * 1.6 + 16) ** 2;
+  for (const p of G.decor) if (!offView(p.x, p.y, p.d)) drawDecor(p);
+  if (LAB.debug) for (const b of G.blocks) { X.strokeStyle = 'rgba(255,60,60,.9)'; X.lineWidth = 1.5; X.beginPath(); X.arc(b.x, b.y, b.r, 0, TAU); X.stroke(); }
   for (const k of G.rocks) if (k.stone > 0 && !offView(k.x, k.y, 40)) drawRock(k);
+  if (PERF.life) lifeGround();
   if (PERF.trees) for (const t of G.trees) if (t.wood > 0 && underHero(t)) drawTree(t);
   // zombies
   if (PERF.units) {
@@ -1546,6 +1762,7 @@ function draw() {
   }
   // trees (canopy above units)
   if (PERF.trees) for (const t of G.trees) if (t.wood > 0 && !underHero(t) && !offView(t.x, t.y, t.r * 2)) drawTree(t);
+  if (PERF.life) lifeSky();
   for (const [x, y, act, ok] of padLater) padLabel(x, y, act, ok);
   // fx
   if (PERF.fx) for (const f of G.fx) { X.globalAlpha = 1 - f.t / f.max; circle(f.x, f.y, f.r, f.col); }
@@ -1565,7 +1782,7 @@ function draw() {
     light(0, 0, (250 + flick + G.fire.hp / G.fire.max * 40) * fk);
     if (!h.dead) light(h.x, h.y, 140 * fk);
     for (const s of G.slots) if (s.kind === 'tower' && s.lvl && s.hp > 0) light(s.x, s.y, 95 * fk);
-    if (fg.lvl) light(fg.x, fg.y, 60);
+    if (fg && fg.lvl) light(fg.x, fg.y, 60);
     for (const z of G.zombies) if (z.burn > 0) light(z.x, z.y, 70);   // fire lights the dark around it
     for (const s of G.shots) if ((s.fire || s.light) && s.t < 2) light(s.x, s.y, s.light ? 95 : 75);
     for (const r of G.reveals) light(r.x, r.y, 120 * (1 - r.t / 1.2) + 20);
@@ -1598,6 +1815,7 @@ function draw() {
       for (const [ex, ey] of eyesOf(z)) circle(ex, ey, er, '#ff5a3a');
     }
   }
+  if (PERF.life) lifeNight();
   if (lootAfterDark) drawLoot();
   drawBurning();
 
@@ -1819,10 +2037,1251 @@ dirtImg.onload = () => {
   villageGround = c;
 };
 dirtImg.src = 'art/dirt.jpg';
+// ---------- cliffs: our big rocks laid along each cliff line ----------
+// Painted rock pieces in the boulder's style, picked on the rocks2.html gallery (art/sprites/top/terrain/rock_<variant>_
+// <id>.png, cut by art/rock_prep.py; the same id is the same rock in every variant). Along a line they follow each other
+// end to end, overlapping a little (ROCK.step of a piece's length), turned along the line, as thick as the line x
+// ROCK.size; drawn back to front into the ground layer. The variant comes from the village ("rock": gray, brown, moss, snow) or a block's "color";
+// ROCK.mix is the share of mossy ones among grey. The lab (#lab) tunes ROCK and keeps it on the device.
+const ROCK_VARIANTS = ['gray', 'brown', 'moss', 'snow', 'red', 'dark', 'white', 'sand', 'lava'];
+// lab-tunable cliff numbers: spurs, cracks (on/off), light, height, block size, details, peaks, outline, shadow, edge wander
+const ROCK_DEF = { rough: 0, monoH: 1, monoMix: 0, monoTint: 1, monoLines: 1, monoTop: 0, monoWall: 3, terrace: 1.4, monoTex: 0.7, monoStones: 1, monoChip: 1, monoAO: 1, facet: 2, endFlat: 1, planes: 1, wallTex: 0.9, edges: 1, spurs: 0, cracks: 0, light: 1, hScale: 1.8, blockSize: 2, deco: 1, peaks: 1, outline: 2.5, shadow: 1, wander: 0.05, style: '', cover: '', variant: '', set: '', size: 1.4, step: 0.7, mix: 0, floor: 'auto', floorWidth: 2.6 };
+const ROCK = { ...ROCK_DEF };
+if (location.hash === '#lab') try { Object.assign(ROCK, JSON.parse(localStorage.getItem('kostyor.rock') || '{}')); } catch (e) {}
+// a small seeded random, so a village's rocks come out the same every time
+function seeded(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const ROCKS = { sizes: null, img: {} };
+fetch('art/sprites/top/terrain/rocks.json').then(r => r.json()).then(sz => { ROCKS.sizes = sz; rockVariant('gray'); }).catch(() => {});
+// a colour's pictures are loaded when a village first needs them (grey always: sizes and shapes come from it)
+function rockVariant(v) {
+  if (!ROCKS.sizes) return false;
+  let done = true;
+  for (const id of Object.keys(ROCKS.sizes)) {
+    let im = ROCKS.img[v + id];
+    if (!im) { im = new Image(); im.src = `art/sprites/top/terrain/rock_${v}_${id}.png`; ROCKS.img[v + id] = im; }
+    if (!im.complete) done = false;   // a missing one fails to load: complete, no width
+  }
+  return done;
+}
+// the colours the current village (or the lab) uses, all loaded
+function rocksReady() {
+  if (!ROCKS.sizes || !G) return false;
+  const vs = new Set(['gray', ROCK.variant || G.cfg.v.rock || 'gray']);
+  for (const b of G.cfg.v.blocks || []) if (b.color) vs.add(b.color);
+  if (ROCK.mix) vs.add('moss');
+  let ok = true; for (const v of vs) if (!rockVariant(v)) ok = false;
+  return ok;
+}
+// a ridge is built from one set only (a…f: the pieces of one sheet share height and shape, so they join up), the
+// village's "rockSet" or a block's "set", "a" by default (the plain wall of big merged boulders)
+const RIDGE_CAPS = { h5: 1, h7: 1 };
+function layoutRocks(blocks, villageVariant, villageSet) {
+  const items = [], ok = im => im && im.naturalWidth;
+  blocks.forEach((b, bi) => {
+    if (b.type !== 'cliff' || b.pts.length < 2) return;
+    const set = ROCK.set || b.set || villageSet || 'a', all = Object.keys(ROCKS.sizes), mine = all.filter(id => id[0] === set && !RIDGE_CAPS[id]), ids = mine.length ? mine : all;
+    const first = items.length;
+    const variant = ROCK.variant || b.color || villageVariant || 'gray', rand = seeded(bi * 2903 + Math.round(b.pts[0][0] * 3 + b.pts[0][1] * 7));
+    const thick = (b.w ?? 70) * ROCK.size;
+    // pieces follow the whole line by length: each one laid on the chord from where it starts to where it ends, so a
+    // long piece still sits on a bend
+    const segs = []; let len = 0;
+    for (let i = 0; i + 1 < b.pts.length; i++) { const [x0, y0, w0 = b.w ?? 70] = b.pts[i], [x1, y1, w1 = b.w ?? 70] = b.pts[i + 1], l = Math.hypot(x1 - x0, y1 - y0); segs.push({ x0, y0, x1, y1, w0, w1, l, s0: len }); len += l; }
+    const wAt = s => { s = Math.max(0, Math.min(len, s)); const g = segs.find(q => s <= q.s0 + q.l) || segs[segs.length - 1], k = g.l ? (s - g.s0) / g.l : 0; return g.w0 + (g.w1 - g.w0) * k; };   // a point may carry its own width
+    const at = s => { s = Math.max(0, Math.min(len, s)); const g = segs.find(q => s <= q.s0 + q.l) || segs[segs.length - 1], k = g.l ? (s - g.s0) / g.l : 0; return [g.x0 + (g.x1 - g.x0) * k, g.y0 + (g.y1 - g.y0) * k]; };
+    let last = '';
+    const capL = set + '5', capR = set + '7';
+    if (RIDGE_CAPS[capL]) {
+      // the atlas is a tile set: left cap, middle pieces, right cap, the row stretched a little to the ridge's length;
+      // one height for the whole ridge, pieces overlapping by a hair so no line shows between them
+      const hh = (b.w ?? 70) * ROCK.size, wOf = id => hh * ROCKS.img['gray' + id].naturalWidth / ROCKS.img['gray' + id].naturalHeight;
+      const seq = [capL]; let tot = wOf(capL) + wOf(capR);
+      for (;;) { let id; do id = ids[Math.floor(rand() * ids.length)]; while (id === last && ids.length > 1); if (tot + wOf(id) * 0.5 > len) break; seq.push(id); tot += wOf(id); last = id; }
+      seq.push(capR);
+      const f = len / tot; let t = 0;
+      for (const id of seq) {
+        const w = wOf(id) * f, [ax, ay] = at(t), [bx, by] = at(t + w), th = Math.atan2(by - ay, bx - ax), rot = th > Math.PI / 2 ? th - Math.PI : th < -Math.PI / 2 ? th + Math.PI : th;
+        const useId = rot !== th ? (id === capL ? capR : id === capR ? capL : id) : id;   // drawn turned round, the caps swap
+        const g0 = ROCKS.img['gray' + useId], im = ok(ROCKS.img[variant + useId]) ? ROCKS.img[variant + useId] : g0, [cx, cy] = at(t + w / 2);
+        items.push({ id: useId, img: im, x: cx, y: cy, w: w + 3, h: hh, rot });
+        t += w;
+      }
+      return;
+    }
+    for (let t = 0; t < len;) {
+      let id; do id = ids[Math.floor(rand() * ids.length)]; while (id === last && ids.length > 1); last = id;
+      const g0 = ROCKS.img['gray' + id], ar = g0.naturalWidth / g0.naturalHeight, h = wAt(t) * ROCK.size * (0.9 + rand() * 0.2), w = h * ar;
+      const span = Math.min(w, len - t + w * 0.3), [ax, ay] = at(t), [bx, by] = at(t + span), th = Math.atan2(by - ay, bx - ax);
+      const rot = th > Math.PI / 2 ? th - Math.PI : th < -Math.PI / 2 ? th + Math.PI : th;   // never upside down
+      const mossy = rand() < ROCK.mix, v = variant === 'gray' && mossy ? 'moss' : variant, im = ok(ROCKS.img[v + id]) ? ROCKS.img[v + id] : g0;
+      const [cx, cy] = at(t + span / 2);
+      items.push({ id, img: im, x: cx, y: cy, w, h, rot });
+      t += w * ROCK.step;
+    }
+  });
+  return items.sort((a, c) => a.y - c.y);
+}
+// ---------- cliffs from parts (style 'parts', Gemini's recipe) ----------
+// Angular stepped base slabs laid along the line (rotated, scaled, a little off it), wedges and ledges on both sides
+// so the thickness wanders, scree at the foot, caps of moss/grass/dirt over the seams. The slabs and wedges are drawn
+// WITHOUT their own outline (the *_core pictures) over one shared dark silhouette of all of them, so the outline runs
+// only round the whole mass and a ridge reads as one rock. Cut by art/parts_prep.py; collision from the slabs' shapes.
+const PARTS = { meta: null, img: {}, core: {} };
+const PART_CAPS = ['part_cap0', 'part_cap3', 'part_cap4', 'part_cap5', 'part_cap6'];
+fetch('art/sprites/top/terrain/parts.json').then(r => r.json()).then(m => {
+  for (const [cat, list] of Object.entries(m)) for (const o of list) {
+    PARTS.img[o.name] = Object.assign(new Image(), { src: `art/sprites/top/terrain/${o.name}.png` });
+    if (cat === 'base' || cat === 'wedge') PARTS.core[o.name] = Object.assign(new Image(), { src: `art/sprites/top/terrain/${o.name}_core.png` });
+  }
+  PARTS.meta = m;
+}).catch(() => {});
+const partsReady = () => !!PARTS.meta && [...Object.values(PARTS.img), ...Object.values(PARTS.core)].every(i => i.complete);
+function layoutParts(blocks) {
+  const items = [], M = PARTS.meta, pick = (rand, list) => list[Math.floor(rand() * list.length)];
+  blocks.forEach((b, bi) => {
+    if (b.type !== 'cliff' || b.pts.length < 2) return;
+    const rand = seeded(bi * 4421 + Math.round(b.pts[0][0] * 3 + b.pts[0][1] * 7));
+    const segs = []; let len = 0;
+    for (let i = 0; i + 1 < b.pts.length; i++) { const [x0, y0, w0 = b.w ?? 70] = b.pts[i], [x1, y1, w1 = b.w ?? 70] = b.pts[i + 1], l = Math.hypot(x1 - x0, y1 - y0); segs.push({ x0, y0, x1, y1, w0, w1, l, s0: len }); len += l; }
+    const seg = s => { s = Math.max(0, Math.min(len, s)); const g = segs.find(q => s <= q.s0 + q.l) || segs[segs.length - 1]; return [g, g.l ? (s - g.s0) / g.l : 0]; };
+    const at = s => { const [g, k] = seg(s); return [g.x0 + (g.x1 - g.x0) * k, g.y0 + (g.y1 - g.y0) * k]; };
+    const wAt = s => { const [g, k] = seg(s); return g.w0 + (g.w1 - g.w0) * k; };
+    const dirAt = s => { const [g] = seg(s); return Math.atan2(g.y1 - g.y0, g.x1 - g.x0); };
+    const add = (cat, name, x, y, h, rot, extra = {}) => { const im = PARTS.img[name]; items.push({ cat, id: name, img: im, core: PARTS.core[name], x, y, h, w: h * im.naturalWidth / im.naturalHeight, rot, ...extra }); };
+    const bases = ['part_base3', 'part_base4', 'part_base5', 'part_base6', 'part_base7', 'part_base1', 'part_base2'].filter(n => PARTS.img[n]),   // the tall ones with a wall
+     _b0 = M.base.map(o => o.name), wedges = M.wedge.map(o => o.name), screes = M.scree.map(o => o.name);
+    // like the reference: big slabs NOT turned along the line — all stand the same way, wall to the camera — set one
+    // after another along it, each nearer (lower) one drawn over the one behind; a few ledges, scree at the foot
+    for (let t = 0; t < len;) {
+      const thick = wAt(t), name = pick(rand, bases), im = PARTS.img[name], ar = im.naturalWidth / im.naturalHeight;
+      const w = thick * (1.35 + rand() * 0.35), h = w / ar, [cx, cy] = at(Math.min(len, t)), th = dirAt(t);
+      add('base', name, cx + (rand() - 0.5) * 8, cy + (rand() - 0.5) * 8, h, (rand() - 0.5) * 0.08);
+      if (rand() < 0.25) add('wedge', pick(rand, wedges), cx + (rand() < 0.5 ? -1 : 1) * w * 0.42, cy + h * 0.25, h * 0.55, 0);
+      if (rand() < 0.35) add('cap', pick(rand, PART_CAPS.slice(0, 2)), cx + (rand() - 0.5) * w * 0.4, cy - h * 0.18, h * 0.22, 0);
+      if (rand() < 0.5) add('scree', pick(rand, screes), cx + (rand() - 0.5) * w * 0.6, cy + h * 0.5, h * 0.35, 0);
+      // the next slab: as far along the line as this one reaches in that direction (overlapping a little)
+      const reach = 1 / Math.max(Math.abs(Math.cos(th)) / (w * 0.5), Math.abs(Math.sin(th)) / (h * 0.42));
+      t += reach * 1.25;
+    }
+  });
+  for (const it of items) it.solid = it.cat === 'base' || it.cat === 'wedge';
+  return items.sort((a, c) => a.y - c.y);
+}
+function paintParts(g) {
+  const its = G.rockItems, solids = its.filter(i => i.solid);
+  const put = (img, it) => { g.save(); g.translate(it.x, it.y); g.rotate(it.rot); g.drawImage(img, -it.w / 2, -it.h / 2, it.w, it.h); g.restore(); };
+  g.fillStyle = 'rgba(0,0,0,.2)';
+  for (const it of solids) { g.beginPath(); g.ellipse(it.x + 8, it.y + it.h * 0.25, it.w * 0.48, it.h * 0.38, 0, 0, TAU); g.fill(); }
+  for (const it of its) if (it.cat === 'scree') put(it.img, it);
+  for (const it of its) if (it.solid || it.cat === 'cap') put(it.img, it);   // back to front, each with its own outline, caps on their slab
+}
+// ---------- cliffs from the direction atlas (style 'atlas', Gemini's tile set, no rotation) ----------
+// Every piece stands the same way, wall to the camera. The line is split into runs by direction: across the screen
+// (horizontal pieces h*, tiled end to end, their ends blended to one joint by art/rock_prep.py), up-down (vertical
+// blocks v*, stacked, each lower one over the one above), slanted (diagonal step pieces d_dr / d_ur). Where an
+// across-run turns down there is a corner (c_ws / c_es); the line's ends get end pieces. Cut by art/atlas2_prep.py.
+const CLA = { meta: null, img: {} };
+fetch('art/sprites/top/terrain/cliff_atlas.json').then(r => r.json()).then(m => { for (const n of Object.keys(m)) CLA.img[n] = Object.assign(new Image(), { src: `art/sprites/top/terrain/cl_${n}.png` }); CLA.meta = m; }).catch(() => {});
+const atlasReady = () => !!CLA.meta && Object.values(CLA.img).every(i => i.complete) && rocksReady();
+function layoutAtlas(blocks) {
+  const items = [], H = id => ROCKS.img['gray' + id];
+  const add = (img, id, x, y, w, h, sortK = 0) => items.push({ cat: 'atlas', id, img, x, y, w, h, rot: 0, solid: true, sortY: y + h / 2 + sortK });
+  blocks.forEach((b, bi) => {
+    if (b.type !== 'cliff' || b.pts.length < 2) return;
+    const rand = seeded(bi * 6007 + Math.round(b.pts[0][0] * 3 + b.pts[0][1] * 7)), pick = a => a[Math.floor(rand() * a.length)];
+    const P = b.pts.map(([x, y, w]) => ({ x, y, w: w ?? b.w ?? 70 }));
+    const cls = (a, c) => { const dx = c.x - a.x, dy = c.y - a.y, t = Math.atan2(Math.abs(dy), Math.abs(dx)); return t < 0.52 ? 'H' : t > 1.05 ? 'V' : (dx * dy > 0 ? 'dr' : 'ur'); };
+    // runs of segments with one direction class
+    const runs = [];
+    for (let i = 0; i + 1 < P.length; i++) { const c = cls(P[i], P[i + 1]); if (runs.length && runs[runs.length - 1].c === c) runs[runs.length - 1].pts.push(P[i + 1]); else runs.push({ c, pts: [P[i], P[i + 1]] }); }
+    const T = P.reduce((a, p) => a + p.w, 0) / P.length;   // one thickness per ridge keeps the pieces matching
+    // the line's y at a screen x (or x at a y) inside a run
+    const along = (pts, key, v) => { for (let i = 0; i + 1 < pts.length; i++) { const a = pts[i], c = pts[i + 1], lo = Math.min(a[key], c[key]), hi = Math.max(a[key], c[key]); if (v >= lo - 1e-6 && v <= hi + 1e-6) { const k = hi - lo ? (v - a[key]) / (c[key] - a[key]) : 0; return [a.x + (c.x - a.x) * k, a.y + (c.y - a.y) * k]; } } const e = Math.abs(v - pts[0][key]) < Math.abs(v - pts[pts.length - 1][key]) ? pts[0] : pts[pts.length - 1]; return [e.x, e.y]; };
+    runs.forEach((r, ri) => {
+      const first = ri === 0, last = ri === runs.length - 1, xs = r.pts.map(p => p.x), ys = r.pts.map(p => p.y);
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      const startPt = r.pts[0], endPt = r.pts[r.pts.length - 1];
+      if (r.c === 'H') {
+        const hh = T * 1.15, wOf = id => hh * H(id).naturalWidth / H(id).naturalHeight;
+        const leftIsEnd = (first && startPt.x === x0) || (last && endPt.x === x0), rightIsEnd = (first && startPt.x === x1) || (last && endPt.x === x1);
+        const seq = []; let tot = 0;
+        if (leftIsEnd) { seq.push('h5'); tot += wOf('h5'); }
+        const mids = ['h1', 'h2', 'h3', 'h4', 'h6']; let prev = '';
+        for (;;) { let id; do id = pick(mids); while (id === prev); if (tot + wOf(id) * 0.5 + (rightIsEnd ? wOf('h7') : 0) > x1 - x0) break; seq.push(id); tot += wOf(id); prev = id; }
+        if (rightIsEnd) { seq.push('h7'); tot += wOf('h7'); }
+        // never stretched: the row keeps the pieces' own widths, centred on the run (it may reach a little past it)
+        let x = (x0 + x1) / 2 - tot / 2;
+        for (const id of seq) { const w = wOf(id), [, y] = along(r.pts, 'x', x + w / 2); add(H(id), id, x + w / 2, y, w + 2, hh); x += w; }
+      } else if (r.c === 'V') {
+        const ww = T * 0.95, hOf = n => ww * CLA.img[n].naturalHeight / CLA.img[n].naturalWidth;
+        const topIsEnd = (first && startPt.y === y0) || (last && endPt.y === y0), botIsEnd = (first && startPt.y === y1) || (last && endPt.y === y1);
+        let y = y0, i = 0;
+        while (y <= y1 || i === 0) {
+          const n = i === 0 && topIsEnd ? 'v_top' : pick(['v1', 'v2', 'v3', 'v4']), h = hOf(n), [x] = along(r.pts, 'y', y);
+          add(CLA.img[n], 'cl_' + n, x, y + h * 0.25, ww, h); y += h * 0.5; i++;
+        }
+        if (botIsEnd) { const h = hOf('v_bot'), [x] = along(r.pts, 'y', y1); add(CLA.img.v_bot, 'cl_v_bot', x, y1 + h * 0.3, ww, h); }
+      } else {
+        // never stretched: whole step pieces, as many as it takes to cover the run, overlapping evenly
+        const n = 'd_' + r.c, im = CLA.img[n], hh = T * 1.6, w = hh * im.naturalWidth / im.naturalHeight, span = x1 - x0, k = Math.max(1, Math.ceil(span / (w * 0.7)));
+        for (let j = 0; j < k; j++) { const cx = k === 1 ? (x0 + x1) / 2 : x0 + w * 0.35 + (span - w * 0.7) * j / (k - 1), [, cy] = along(r.pts, 'x', cx); add(im, 'cl_' + n, cx, cy, w, hh); }
+      }
+      // an across-run turning down into an up-down run: a corner piece over the joint
+      const nx = runs[ri + 1];
+      if (r.c === 'H' && nx && nx.c === 'V') {
+        const j = endPt, goesDown = nx.pts[nx.pts.length - 1].y > j.y; if (!goesDown) return;
+        const fromWest = startPt.x < j.x, n = fromWest ? 'c_ws' : 'c_es', im = CLA.img[n], w = T * 2.3, h = w * im.naturalHeight / im.naturalWidth;
+        add(im, 'cl_' + n, j.x + (fromWest ? -0.22 : 0.22) * w, j.y + h * 0.18, w, h, 40);
+      }
+    });
+  });
+  return items.sort((a, c) => a.sortY - c.sortY);
+}
+function paintAtlas(g) {
+  g.fillStyle = 'rgba(0,0,0,.2)';
+  for (const it of G.rockItems) { g.beginPath(); g.ellipse(it.x + 8, it.y + it.h * 0.3, it.w * 0.48, it.h * 0.3, 0, 0, TAU); g.fill(); }
+  for (const it of G.rockItems) g.drawImage(it.img, it.x - it.w / 2, it.y - it.h / 2, it.w, it.h);
+}
+// The rocks are laid out once per game (and again when the lab changes them); the same layout is drawn and collides.
+// how cliffs are drawn: 'blocks' (stepped blocks from code, the default), or for comparison in the lab 'rocks' (painted
+// rock pieces, set a or atlas h), 'atlas', 'parts', 'kit'; a village may pick one with "cliffs"
+const cliffMode = () => ROCK.style || (/cliffs=(\w+)/.exec(location.hash) || [])[1] || G.cfg.v.cliffs || 'blocks';   // #v=camp&cliffs=mono to try a style
+function ensureRocks() {
+  if (G.rockItems) return;
+  // a painted village whose cliffs were painted over the blockout collides with the blockout's shape: the top band and
+  // the wall below it, circles down the line
+  const P = G.cfg.v.painted;
+  if (cliffMode() === 'blocks' || cliffMode() === 'mono') {   // the blocks collide where they are drawn: every block's top and walls, and the base
+    G.rockItems = []; G.blocks = G.blocks.filter(b => b.type !== 'cliff').concat(blocksCollision(G.cfg.v.blocks || [])); buildFlow();
+    return;
+  }
+  if ((P && P.collide === 'blockout') || cliffMode() === 'kit') {   // the kit collides with its shape too
+    const circles = [];
+    for (const b of (G.cfg.v.blocks || []).filter(b => b.type === 'cliff' && b.pts.length > 1)) {
+      const Hb = (b.h ?? BLOCK_H) * 0.85;
+      for (let i = 0; i + 1 < b.pts.length; i++) {
+        const [x0, y0, w0 = b.w ?? 70] = b.pts[i], [x1, y1, w1 = b.w ?? 70] = b.pts[i + 1], step = Math.min(w0, w1) * 0.3, n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / step));
+        for (let k = 0; k <= n; k++) { const r = (w0 + (w1 - w0) * k / n) / 2 * 0.95; for (let d = 0; d <= Hb; d += r * 0.6) circles.push({ type: 'cliff', x: x0 + (x1 - x0) * k / n, y: y0 + (y1 - y0) * k / n + d, r, h: 0 }); }
+      }
+    }
+    G.rockItems = [];
+    G.blocks = G.blocks.filter(b => b.type !== 'cliff').concat(circles); buildFlow();
+    return;
+  }
+  if (cliffMode() === 'atlas') {
+    if (!atlasReady()) return;
+    G.rockItems = layoutAtlas(G.cfg.v.blocks || []); applyRockColliders(); return;
+  }
+  if (cliffMode() === 'parts') {
+    if (!partsReady()) return;
+    G.rockItems = layoutParts(G.cfg.v.blocks || []); applyRockColliders(); return;
+  }
+  if (!rocksReady()) return;
+  G.rockItems = layoutRocks(G.cfg.v.blocks || [], G.cfg.v.rock, G.cfg.v.rockSet);
+  applyRockColliders();
+}
+// A rock's shape across its length: every 1/24 of its width, the middle and half-height of the stone there (fractions
+// of its height), read once from the grey picture's alpha.
+const ROCK_PROF = new Map();
+function rockProfile(id, img) {
+  let pr = ROCK_PROF.get(id); if (pr) return pr;
+  const im = img || ROCKS.img['gray' + id], W = 64, H = Math.max(8, Math.round(W * im.naturalHeight / im.naturalWidth));
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.drawImage(im, 0, 0, W, H);
+  const a = x.getImageData(0, 0, W, H).data; pr = [];
+  // where the stone starts and ends along the length, so circles near the tips stay inside it
+  let x0 = W, x1 = -1;
+  for (let cx = 0; cx < W; cx++) for (let y = 0; y < H; y++) if (a[(y * W + cx) * 4 + 3] > 120) { x0 = Math.min(x0, cx); x1 = Math.max(x1, cx); break; }
+  for (let k = 0; k < 24; k++) {
+    const cx = Math.min(W - 1, Math.round((k + 0.5) / 24 * W)); let top = -1, bot = -1;
+    for (let y = 0; y < H; y++) if (a[(y * W + cx) * 4 + 3] > 120) { if (top < 0) top = y; bot = y; }
+    if (top >= 0) pr.push([(k + 0.5) / 24, (top + bot + 1) / 2 / H, (bot - top + 1) / 2 / H, Math.max(0, Math.min(cx - x0, x1 - cx) / W)]);
+  }
+  ROCK_PROF.set(id, pr); return pr;
+}
+// cliff collision from the rocks as drawn: a row of circles along each rock, as tall as the stone at that point
+function applyRockColliders() {
+  const circles = [];
+  for (const it of G.rockItems) {
+    if (it.solid === false) continue;   // scree and caps do not block
+    const cs = Math.cos(it.rot), sn = Math.sin(it.rot);
+    for (const [u, c, r, tip] of rockProfile(it.id, it.cat ? it.img : null)) {
+      const lx = (u - 0.5) * it.w, ly = (c - 0.5) * it.h, rr = Math.min(r * it.h * 0.92, tip * it.w + 4);   // never past the rock's tip
+      if (rr > 6) circles.push({ type: 'cliff', x: it.x + lx * cs - ly * sn, y: it.y + lx * sn + ly * cs, r: rr, h: 0 });
+    }
+  }
+  if (!circles.length) return;
+  G.blocks = G.blocks.filter(b => b.type !== 'cliff').concat(circles);
+  buildFlow();
+}
+// the ground at the foot of cliffs (art/floor_<name>.jpg, painted like the grass): a band along each cliff line, its
+// edge soft and blotchy so it fades into the grass; ROCK.floor picks the texture ('auto' = the one that goes with the
+// rock's colour, '' = none), floorWidth x the line width
+const FLOOR_NAMES = ['earth', 'dry', 'gravel', 'snow', 'red', 'sand', 'ash'];
+const FLOOR_AUTO = { gray: 'gravel', brown: 'dry', moss: 'gravel', snow: 'snow', red: 'red', dark: 'earth', white: 'gravel', sand: 'sand', lava: 'ash' };
+const FLOOR_IMG = {}; for (const n of FLOOR_NAMES) { const im = new Image(); im.src = `art/floor_${n}.jpg`; FLOOR_IMG[n] = im; }
+const floorReady = () => FLOOR_NAMES.every(n => FLOOR_IMG[n].complete);
+function paintCliffFloor(g, blocks, k) {
+  const all = blocks.filter(b => b.type === 'cliff' && b.pts.length > 1);
+  // one pass per floor texture: each cliff gets the floor of its own rock colour
+  const byFloor = {};
+  for (const b of all) {
+    const f = ROCK.floor === 'auto' ? FLOOR_AUTO[ROCK.variant || b.color || G.cfg.v.rock || 'gray'] : ROCK.floor;
+    if (f) (byFloor[f] ||= []).push(b);
+  }
+  for (const [f, cliffs] of Object.entries(byFloor)) paintFloorBand(g, cliffs, k, FLOOR_IMG[f]);
+}
+function paintFloorBand(g, cliffs, k, im) {
+  if (!im || !im.complete || !im.naturalWidth) return;
+  // the shape, solid, at a quarter of the resolution: stretched up with smoothing it gets a soft edge for free
+  const q = k / 4, lo = document.createElement('canvas'); lo.width = Math.ceil(g.canvas.width / 4); lo.height = Math.ceil(g.canvas.height / 4);
+  const x = lo.getContext('2d'); x.setTransform(q, 0, 0, q, GROUND_R * q, GROUND_R * q); x.lineCap = x.lineJoin = 'round'; x.strokeStyle = x.fillStyle = '#000';
+  cliffs.forEach((b, bi) => {
+    const W = (b.w ?? 70) * ROCK.floorWidth, rand = seeded(bi * 977 + 13), path = new Path2D();
+    b.pts.forEach(([px, py], i) => i ? path.lineTo(px, py) : path.moveTo(px, py));
+    x.globalAlpha = 0.45; x.lineWidth = W; x.stroke(path);
+    x.globalAlpha = 1; x.lineWidth = W * 0.7; x.stroke(path);
+    // bites and bulges along the edge, so it is not a clean band
+    for (let i = 0; i + 1 < b.pts.length; i++) {
+      const [x0, y0] = b.pts[i], [x1, y1] = b.pts[i + 1], l = Math.hypot(x1 - x0, y1 - y0), nx = -(y1 - y0) / (l || 1), ny = (x1 - x0) / (l || 1);
+      for (let t = 0; t < l; t += 22) {
+        const side = rand() < 0.5 ? 1 : -1, d = side * W * (0.3 + rand() * 0.15), r = W * (0.1 + rand() * 0.12);
+        x.beginPath(); x.arc(x0 + (x1 - x0) * t / l + nx * d, y0 + (y1 - y0) * t / l + ny * d, r, 0, TAU); x.fill();
+      }
+    }
+  });
+  const m = document.createElement('canvas'); m.width = g.canvas.width; m.height = g.canvas.height;
+  const y = m.getContext('2d'); y.imageSmoothingEnabled = true; y.drawImage(lo, 0, 0, lo.width * 4, lo.height * 4);
+  y.globalCompositeOperation = 'source-in'; y.setTransform(k, 0, 0, k, GROUND_R * k, GROUND_R * k);
+  const pat = y.createPattern(im, 'repeat'); pat.setTransform?.(new DOMMatrix().scale(0.6)); y.fillStyle = pat;
+  y.fillRect(-GROUND_R, -GROUND_R, 2 * GROUND_R, 2 * GROUND_R);
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(m, 0, 0); g.restore();
+}
+// ---------- cliff kit: the shape from code, the look from painted materials ----------
+// A cliff line is one extruded shape: its top band (the line, b.w wide, round ends) lifted by CLIFF.wall above the
+// ground, the wall hanging from every part of the band's edge that faces down (toward the camera), so it works for
+// any direction and bend with no joins. Materials painted once (art/cliff_prep.py): a seamless top tile, a seamless
+// wall strip, loose stones and grass tufts laid along the foot and the top. Drawn at screen resolution into the ground.
+const CLIFF = { wall: 50, line: 3, stones: 1, grass: 1 };
+const KIT = { top: Object.assign(new Image(), { src: 'art/sprites/top/terrain/cliff_top.jpg' }), wall: Object.assign(new Image(), { src: 'art/sprites/top/terrain/cliff_wall.jpg' }), bits: null,
+  tops: ['', '2', '3'].map(n => Object.assign(new Image(), { src: `art/sprites/top/terrain/cliff_top${n}.jpg` })), walls: ['', '2', '3'].map(n => Object.assign(new Image(), { src: `art/sprites/top/terrain/cliff_wall${n}.jpg` })) };
+fetch('art/sprites/top/terrain/cliff_bits.json').then(r => r.json()).then(m => {
+  const load = a => a.map(o => Object.assign(new Image(), { src: `art/sprites/top/terrain/${o.name}.png` }));
+  KIT.bits = { stones: load(m.stones), grass: load(m.grass) };
+}).catch(() => {});
+const kitReady = () => KIT.top.complete && KIT.wall.complete && [...KIT.tops, ...KIT.walls].every(i => i.complete) && !!KIT.bits && [...KIT.bits.stones, ...KIT.bits.grass].every(i => i.complete);
+// the band's outline as a closed polygon: one side, the far round end, the other side back, the near round end
+// a sharp corner of a cliff line becomes a curve wide enough that the band round it cannot fold over itself
+function roundCorners(b) {
+  const r = (b.w ?? 70) / 2, src = b.pts, out = [src[0]];
+  for (let i = 1; i + 1 < src.length; i++) {
+    const A = src[i - 1], V = src[i], B = src[i + 1], li = Math.hypot(V[0] - A[0], V[1] - A[1]) || 1, lo = Math.hypot(B[0] - V[0], B[1] - V[1]) || 1;
+    const di = [(V[0] - A[0]) / li, (V[1] - A[1]) / li], dO = [(B[0] - V[0]) / lo, (B[1] - V[1]) / lo], turn = Math.acos(Math.max(-1, Math.min(1, di[0] * dO[0] + di[1] * dO[1])));
+    if (turn < 0.5) { out.push(V); continue; }
+    const vw = V[2] ?? b.w ?? 70, d = Math.min((vw / 2) * (2 + turn * 2.2), li * 0.48, lo * 0.48), a = [V[0] - di[0] * d, V[1] - di[1] * d], c = [V[0] + dO[0] * d, V[1] + dO[1] * d];
+    for (let k = 0; k <= 10; k++) { const t = k / 10, u = 1 - t; out.push([u * u * a[0] + 2 * u * t * V[0] + t * t * c[0], u * u * a[1] + 2 * u * t * V[1] + t * t * c[1], vw]); }
+  }
+  out.push(src[src.length - 1]);
+  return { ...b, pts: out };
+}
+function bandOutline(b, bi = 0) {
+  b = roundCorners(b);
+  const r0 = (b.w ?? 70) / 2, P = [], rand = seeded(bi * 131 + 7);
+  // a point may carry its own width ([x, y, w]); between points it changes smoothly
+  const wAt = []; for (let i = 0; i + 1 < b.pts.length; i++) { const a = b.pts[i], c = b.pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(c[0] - a[0], c[1] - a[1]) / 8)); for (let k = i ? 1 : 0; k <= n; k++) wAt.push(((a[2] ?? b.w ?? 70) * (1 - k / n) + (c[2] ?? b.w ?? 70) * k / n) / (b.w ?? 70)); }
+  // the edge is rock, not a road: the half-width wanders in straight steps (jag), never past the collision much
+  // (it used to change every 3 samples by ±12%: on walls that read as zigzags; now slow and smooth)
+  const jag = () => { const ks = []; for (let i = 0; i < 400; i++) { const w = ROCK.rough >= 0.5 ? 0 : ROCK.wander; ks.push(r0 * (1 - w + rand() * w * 2)); } return t => { const per = ROCK.rough > 0.4 ? 4 : 8, i = Math.floor(t / per), f = t / per - i, e = ROCK.rough > 0.4 ? f : f * f * (3 - 2 * f); return ks[i % 400] * (1 - e) + ks[(i + 1) % 400] * e; }; };   // rough: straight facets, not soft waves
+  const rl = jag(), rr = jag(); let r = r0;
+  const bl = () => 0, br = () => 0;   // (swells and buttresses on the sides tried twice: teeth and wavy strata, dropped)
+  const pts = []; for (let i = 0; i + 1 < b.pts.length; i++) { const [x0, y0] = b.pts[i], [x1, y1] = b.pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 8)); for (let k = i ? 1 : 0; k <= n; k++) pts.push([x0 + (x1 - x0) * k / n, y0 + (y1 - y0) * k / n]); }
+  const nrm = i => { const a = pts[Math.max(0, i - 1)], c = pts[Math.min(pts.length - 1, i + 1)], l = Math.hypot(c[0] - a[0], c[1] - a[1]) || 1; return [-(c[1] - a[1]) / l, (c[0] - a[0]) / l]; };
+  const endFade = i => Math.min(1, Math.min(i, pts.length - 1 - i) / 4);   // no bulges right at the round ends
+  for (let i = 0; i < pts.length; i++) { const [nx, ny] = nrm(i), q = rl(i) * wAt[i] + bl(i) * endFade(i); P.push([pts[i][0] + nx * q, pts[i][1] + ny * q]); }
+  // the end of a ridge: a half circle (endFlat 0) or a square end with its two corners cut (endFlat 1, like a slab)
+  const CAP = [[1, 0], [0.55, 0.65], [-0.55, 0.65], [-1, 0]];
+  const cap = (i, from) => {
+    const [n0, n1] = nrm(i), nx = n0 * from, ny = n1 * from, tx = ny, ty = -nx, rc = r * wAt[i], kf = ROCK.rough > 0.3 ? 0 : ROCK.endFlat;
+    for (let k = 1; k < 12; k++) {
+      const t = k / 12, j = Math.min(2, Math.floor(t * 3)), f = t * 3 - j, u = CAP[j][0] + (CAP[j + 1][0] - CAP[j][0]) * f, v = CAP[j][1] + (CAP[j + 1][1] - CAP[j][1]) * f;
+      const cu = Math.cos(Math.PI * t), cv = Math.sin(Math.PI * t), U = cu + (u - cu) * kf, V = cv + (v - cv) * kf, rr2 = rc * (k % 2 && ROCK.rough > 0.3 ? 1 - ROCK.rough * (0.15 + rand() * 0.25) : 1);   // rough: a broken, angular end
+      P.push([pts[i][0] + rr2 * (nx * U + tx * V), pts[i][1] + rr2 * (ny * U + ty * V)]);
+    }
+  };
+  cap(pts.length - 1, 1);
+  for (let i = pts.length - 1; i >= 0; i--) { const [nx, ny] = nrm(i), q = rr(i) * wAt[i] + br(i) * endFade(i); P.push([pts[i][0] - nx * q, pts[i][1] - ny * q]); }
+  // on the inside of a tight bend the offset side folds back over itself: a side point that lands inside the band of
+  // another part of the line is pulled back to the last good one (point counts stay, the indexes below rely on them)
+  const unfold = (from, to, step) => {
+    let last = null;
+    for (let i = from; i !== to; i += step) {
+      const q = P[i], k = step > 0 ? i : 2 * pts.length + 10 - i, rq = r0 * wAt[Math.max(0, Math.min(pts.length - 1, k))] * 0.8;
+      // only nearby parts of the line can fold onto this point (a ring's two ends close to each other are not a fold)
+      const win = Math.ceil(rq * 3 / 8) + 4;
+      const bad = pts.some((s, j) => Math.abs(j - k) > 3 && Math.abs(j - k) < win && (s[0] - q[0]) ** 2 + (s[1] - q[1]) ** 2 < rq * rq);
+      if (bad && last) P[i] = last.slice(); else if (!bad) last = q;
+    }
+  };
+  cap(0, -1);
+  unfold(0, pts.length, 1); unfold(2 * pts.length + 10, pts.length + 11 - 1, -1);
+  // straight facets instead of a smooth curve: every 3-7 samples (25-55 units) a corner, the points between laid on the
+  // straight line to the next one (counts and indexes stay), so blocks cut from the band get flat sides and real corners
+  if (ROCK.facet > 0) {
+    const keep = [0]; for (let k = 0; k < P.length - 1;) { k = Math.min(P.length - 1, k + Math.max(2, Math.round((3 + rand() * 4) * ROCK.facet))); keep.push(k); }
+    const n = pts.length; if (ROCK.endFlat > 0) keep.push(n - 1, n + 3, n + 7, n + 11, 2 * n + 10, 2 * n + 14, 2 * n + 18);   // the flat ends' corners stay corners
+    keep.sort((a, b) => a - b);
+    for (let j = 0; j + 1 < keep.length; j++) { const a = P[keep[j]], c = P[keep[j + 1]]; for (let m = keep[j] + 1; m < keep[j + 1]; m++) { const t = (m - keep[j]) / (keep[j + 1] - keep[j]); P[m] = [a[0] + (c[0] - a[0]) * t, a[1] + (c[1] - a[1]) * t]; } }
+  }
+  P.n = pts.length;   // P[i] is the left side at sample i, P[2n + 10 - i] the right side (11 cap points between)
+  return P;
+}
+// ---------- high ground: the valley's sides ----------
+// "highland": polygons of raised land round the village (they may run past the map's edge). Their edge is a cliff:
+// the wall hangs below every part of the edge that faces the camera (down the screen), the rest shows only its rocky
+// lip; the top is grass a shade darker with our trees on it. Collision: the edge band (and the wall under it).
+// A polygon runs so that the valley is on its right-hand side when you walk along it on screen (clockwise).
+const HIGH = { wall: 72, lip: 16 };
+// the high ground's own grass (art/high_<name>.jpg): the village's "highGrass" (forest, meadow), or #…&high=<name> to try
+const HIGH_GRASS = {}; for (const n of ['forest', 'meadow']) HIGH_GRASS[n] = Object.assign(new Image(), { src: `art/high_${n}.jpg` });
+const highGrassName = L => (/high=(\w+)/.exec(location.hash) || [])[1] || L.highGrass || 'meadow';
+function highlandPolys(L) {
+  return (L.highland || []).map((poly, pi) => {
+    const rand = seeded(pi * 977 + 31), P = [];
+    for (let i = 0; i < poly.length; i++) {
+      const [x0, y0] = poly[i], [x1, y1] = poly[(i + 1) % poly.length], l = Math.hypot(x1 - x0, y1 - y0), n = Math.max(1, Math.ceil(l / 10));
+      const nx = -(y1 - y0) / (l || 1), ny = (x1 - x0) / (l || 1);
+      for (let k = 0; k < n; k++) { const t = k / n, off = (Math.abs(x0 + (x1 - x0) * t) > 900 || Math.abs(y0 + (y1 - y0) * t) > 900) ? 0 : (rand() - 0.5) * 12; P.push([x0 + (x1 - x0) * t + nx * off, y0 + (y1 - y0) * t + ny * off]); }
+    }
+    return { P, rand };
+  });
+}
+// collision circles along each edge: a band into the high ground, and down the wall where the edge faces the camera
+function highlandBlocks(L) {
+  const out = [];
+  for (const { P } of highlandPolys(L)) for (let i = 0; i < P.length; i += 2) {
+    const [x0, y0] = P[i], [x1, y1] = P[(i + 1) % P.length], l = Math.hypot(x1 - x0, y1 - y0) || 1, nx = (y1 - y0) / l, ny = -(x1 - x0) / l;   // n: into the high ground
+    if (Math.hypot(x0, y0) > 960) continue;
+    for (let d = 8; d <= 40; d += 16) out.push({ type: 'high', x: x0 + nx * d, y: y0 + ny * d, r: 16, h: 0 });
+    if (-ny > 0.05) for (let d = 14; d <= HIGH.wall * 0.8; d += 14) out.push({ type: 'high', x: x0, y: y0 + d, r: 15, h: 0 });
+  }
+  return out;
+}
+function paintHighland(g, L) {
+  if (!L.highland || !kitReady()) return;
+  const H = HIGH.wall, polys = highlandPolys(L);
+  const path = (P, dy = 0) => { const p = new Path2D(); P.forEach(([x, y], i) => i ? p.lineTo(x, y + dy) : p.moveTo(x, y + dy)); p.closePath(); return p; };
+  g.save();
+  for (const o of polys) { o.top = path(o.P); o.solid = new Path2D(); for (let d = 0; d <= H; d += 3) o.solid.addPath(path(o.P, d)); }
+  // the cliff's shadow falls into the valley
+  g.fillStyle = 'rgba(10,20,10,.28)'; g.translate(10, 16); for (const o of polys) g.fill(o.solid); g.translate(-10, -16);
+  g.lineJoin = 'round'; g.strokeStyle = '#26231f'; g.lineWidth = 6; for (const o of polys) { g.stroke(o.solid); g.fillStyle = '#26231f'; g.fill(o.solid); }
+  // the wall under every edge facing the camera (as in the cliff kit), lifted toward stone grey
+  const W = KIT.wall, wk = H * 1.1 / W.naturalHeight;
+  for (const o of polys) {
+    g.save(); g.clip(o.solid); let u = 0;
+    for (let i = 0; i < o.P.length; i++) {
+      const [x0, y0] = o.P[i], [x1, y1] = o.P[(i + 1) % o.P.length], dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy);
+      if (!l) continue;
+      if (dx / l > 0.05) {
+        const su = (u / wk) % W.naturalWidth, sw = Math.max(1, l / wk);
+        g.save(); g.setTransform(g.getTransform().multiply(new DOMMatrix([dx / sw, dy / sw, 0, wk, x0, y0])));
+        g.drawImage(W, su, 0, Math.min(sw + 1, W.naturalWidth - su), W.naturalHeight, 0, 0, Math.min(sw + 1, W.naturalWidth - su), W.naturalHeight);
+        if (su + sw > W.naturalWidth) g.drawImage(W, 0, 0, su + sw - W.naturalWidth + 1, W.naturalHeight, W.naturalWidth - su, 0, su + sw - W.naturalWidth + 1, W.naturalHeight);
+        g.restore();
+      }
+      u += l;
+    }
+    g.globalCompositeOperation = 'screen'; g.fillStyle = 'rgba(120,112,100,.55)'; g.fill(o.solid); g.globalCompositeOperation = 'source-over';
+    g.restore();
+  }
+  // the top: our grass a shade richer, a rocky lip along the edge, then the edge line
+  const stone = g.createPattern(KIT.top, 'repeat'); stone.setTransform?.(new DOMMatrix().scale(0.45));
+  for (const o of polys) {
+    const hg = HIGH_GRASS[highGrassName(L)];
+    if (hg && hg.complete && hg.naturalWidth) { const hp = g.createPattern(hg, 'repeat'); hp.setTransform?.(new DOMMatrix().scale(0.6)); g.fillStyle = hp; g.fill(o.top); }
+    else { g.fillStyle = grassPat; g.fill(o.top); g.fillStyle = 'rgba(20,45,25,.32)'; g.fill(o.top); }
+    g.save(); g.clip(o.top);
+    g.strokeStyle = stone; g.lineWidth = HIGH.lip * 2; g.stroke(o.top);
+    g.strokeStyle = 'rgba(255,250,235,.45)'; g.lineWidth = 5; g.stroke(o.top);
+    g.restore();
+    g.strokeStyle = '#26231f'; g.lineWidth = 2.5; g.stroke(o.top);
+  }
+  // loose stones at the foot of the walls
+  const { stones } = KIT.bits;
+  for (const o of polys) for (let i = 0; i < o.P.length; i += 2) {
+    const [x0, y0] = o.P[i], [x1, y1] = o.P[(i + 1) % o.P.length], l = Math.hypot(x1 - x0, y1 - y0) || 1;
+    if ((x1 - x0) / l > 0.3 && o.rand() < 0.18) { const im = stones[Math.floor(o.rand() * stones.length)], d = 8 + o.rand() * 14; g.drawImage(im, x0 - d / 2, y0 + H * 0.92 - d * 0.3 + o.rand() * 8, d, d * im.naturalHeight / im.naturalWidth); }
+  }
+  g.restore();
+}
+// trees standing on the high ground (drawn over the units like a thicket, out of reach anyway)
+function highlandTrees(L) {
+  const out = [];
+  for (const { P, rand } of highlandPolys(L)) {
+    const p = new Path2D(); P.forEach(([x, y], i) => i ? p.lineTo(x, y) : p.moveTo(x, y)); p.closePath();
+    const c = document.createElement('canvas').getContext('2d');
+    for (let y = -940; y <= 940; y += 62) for (let x = -940; x <= 940; x += 62) {
+      const tx = x + (rand() - 0.5) * 40, ty = y + (rand() - 0.5) * 40;
+      if (!c.isPointInPath(p, tx, ty) || rand() < 0.35) continue;
+      if (P.some(([px, py]) => (px - tx) ** 2 + (py - ty) ** 2 < 70 * 70)) continue;   // keep the lip clear
+      const h2 = rand(); out.push({ type: 'forest', x: tx, y: ty, d: 48 + h2 * 30, tree: ['pine', 'oak', 'tree'][Math.floor(rand() * 3)], ang: h2 * TAU });
+    }
+  }
+  return out;
+}
+// ---------- cliffs as stepped blocks (style 'blocks', Astra's recipe) ----------
+// The band round the line is cut into big blocks (40-75 units along it, split in two across where it is wide), their
+// corners chamfered; every block gets a height (22 / 32 / 42), all stand on a common low base (6). Drawn level by
+// level: each level's walls swept down to the camera, then its tops; one dark outline round the whole mass, thin lines
+// round the tops. No pictures are joined, so it holds together in any direction; painted detail comes later.
+const BLK = { top: ['#c4bdae', '#b6af9f'], wallFlat: '#6a645a', wall: '#6d655a', wallBase: '#544d45', line: '#26231f' };
+function chamfer(poly, c) {
+  const out = [], n = poly.length;
+  for (let i = 0; i < n; i++) {
+    const p = poly[i], a = poly[(i + n - 1) % n], b = poly[(i + 1) % n], la = Math.hypot(a[0] - p[0], a[1] - p[1]) || 1, lb = Math.hypot(b[0] - p[0], b[1] - p[1]) || 1;
+    const ca = Math.min(c, la * 0.4), cb = Math.min(c, lb * 0.4);
+    out.push([p[0] + (a[0] - p[0]) / la * ca, p[1] + (a[1] - p[1]) / la * ca], [p[0] + (b[0] - p[0]) / lb * cb, p[1] + (b[1] - p[1]) / lb * cb]);
+  }
+  return out;
+}
+// keep the part of a polygon on the near side of a line (Sutherland-Hodgman, one edge): points p with (p - o)·n <= 0
+function clipHalf(poly, ox, oy, nx, ny) {
+  const out = [], f = p => (p[0] - ox) * nx + (p[1] - oy) * ny;
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length], fa = f(a), fb = f(b);
+    if (fa <= 0) out.push(a);
+    if ((fa <= 0) !== (fb <= 0)) { const t = fa / (fa - fb); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); }
+  }
+  return out;
+}
+// The band is cut into a mosaic (Voronoi cells round seeds scattered along it: one or two across, 40-75 units apart),
+// so blocks have all sorts of shapes instead of slices across the ridge.
+// Rough cliffs as squared slabs: the band (edge kept straight) cut across into rows of 1-3 and along into slabs of
+// 40-90 units, rows staggered like brickwork; every slab a four-sided block with straight cuts, its corners nicked
+// a little, some pushed out past the edge or pulled in, so the outline steps in squares instead of zigzagging;
+// square ends, no round caps. Each slab is also its own piece of the base.
+function slabBlocks(b, bi, P, out, bases) {
+  const n = P.n, rand = seeded(bi * 5153 + 29), L = i => P[i], R = i => P[2 * n + 10 - i];
+  const lerp = (a, c, t) => [a[0] + (c[0] - a[0]) * t, a[1] + (c[1] - a[1]) * t];
+  const mid = i => lerp(L(i), R(i), 0.5), wAt = i => Math.hypot(L(i)[0] - R(i)[0], L(i)[1] - R(i)[1]);
+  const rows = Math.max(1, Math.min(3, Math.round(wAt(Math.floor(n / 2)) / 55)));
+  for (let r = 0; r < rows; r++) {
+    const t0 = r / rows, t1 = (r + 1) / rows, outer0 = r === 0, outer1 = r === rows - 1;
+    let i0 = r % 2 ? Math.floor(3 + rand() * 3) : 0;   // stagger the rows
+    if (i0 > 0) { // a short first slab so the row still starts at the end
+      const poly = [lerp(L(0), R(0), t0), lerp(L(i0), R(i0), t0), lerp(L(i0), R(i0), t1), lerp(L(0), R(0), t1)];
+      push(poly, 0, i0);
+    }
+    while (i0 < n - 1) {
+      let i1 = Math.min(n - 1, i0 + 5 + Math.floor(rand() * 7)); if (n - 1 - i1 < 3) i1 = n - 1;
+      // the side of the slab along the band follows its curve; the cuts across are straight
+      const side0 = [], side1 = []; for (let i = i0; i <= i1; i += Math.max(1, Math.floor((i1 - i0) / 3))) { side0.push(lerp(L(i), R(i), t0)); side1.push(lerp(L(i), R(i), t1)); }
+      if (side0.length < 2 || side0[side0.length - 1] !== lerp(L(i1), R(i1), t0)) { side0.push(lerp(L(i1), R(i1), t0)); side1.push(lerp(L(i1), R(i1), t1)); }
+      push([...side0, ...side1.reverse()], i0, i1, outer0, outer1);
+      i0 = i1;
+    }
+  }
+  function push(poly, i0, i1, outer0, outer1) {
+    // an outer slab may stand out past the edge or sit back from it
+    const im = Math.floor((i0 + i1) / 2), c = mid(im), shift = (rand() - 0.4) * 12;
+    if (outer0 || outer1) for (const q of poly) { const dx = q[0] - c[0], dy = q[1] - c[1], l = Math.hypot(dx, dy) || 1; const d = Math.hypot(dx, dy); if (d > wAt(im) * 0.35) { q[0] += dx / l * shift; q[1] += dy / l * shift; } }
+    let area = 0; for (let i = 0; i < poly.length; i++) { const a = poly[i], e = poly[(i + 1) % poly.length]; area += a[0] * e[1] - e[0] * a[1]; }
+    if (Math.abs(area) / 2 < 80) return;
+    const cp = chamfer(poly, 2.5);
+    bases.push(cp);
+    const t = im / Math.max(1, n - 1), v = Math.sin(Math.PI * t) * 0.7 + (rand() - 0.5) * 0.5 + (outer0 && !outer1 ? 0.25 : 0);
+    out.push({ poly: cp, h: v < 0.3 ? 24 : v < 0.7 ? 46 : 80, tone: rand() < 0.5 ? 0 : 1, peak: false });
+  }
+}
+function cliffBlocks(blocks) {
+  const out = [], bases = [];
+  blocks.filter(b => b.type === 'cliff' && b.pts.length > 1).forEach((b, bi) => {
+    const P = bandOutline(b, bi), n = P.n, rand = seeded(bi * 3371 + 17), L = i => P[i], R = i => P[2 * n + 10 - i];
+    if (ROCK.rough >= 0.5) { slabBlocks(b, bi, P, out, bases); return; }   // rough: squared slabs laid like masonry
+    bases.push(P);
+    const seeds = [];
+    for (let i = 0; i < n;) {
+      const l = L(i), r = R(i), mx = (l[0] + r[0]) / 2, my = (l[1] + r[1]) / 2, w = Math.hypot(l[0] - r[0], l[1] - r[1]), ux = (r[0] - l[0]) / (w || 1), uy = (r[1] - l[1]) / (w || 1);
+      const across = w > 85 ? (w > 150 ? 3 : 2) : 1;
+      for (let k = 0; k < across; k++) {
+        const off = across === 1 ? (rand() - 0.5) * w * 0.25 : (k - (across - 1) / 2) * w / across + (rand() - 0.5) * w * 0.15;
+        seeds.push({ x: mx + ux * off + (rand() - 0.5) * 14, y: my + uy * off + (rand() - 0.5) * 14, i, off, w });
+      }
+      i += Math.max(2, Math.round((3 + rand() * 9) * ROCK.blockSize));   // big and small blocks mixed, not a row of bricks
+    }
+    // height flows along the ridge, higher further from the camera; three levels so a step reads as a ledge
+    const ph = rand() * 6, hOf = sd => {
+      const t = sd.i / Math.max(1, n - 1), back = -sd.off * Math.sign(R(sd.i)[1] - L(sd.i)[1] || 1) / (sd.w || 1);
+      const v = Math.sin(Math.PI * t) * 0.7 + 0.25 * Math.sin(t * 9 + ph) + back * 0.8 + (rand() - 0.5) * 0.25;
+      return v < 0.35 ? 24 : v < 0.75 ? 46 : 80;
+    };
+    for (const sd of seeds) {
+      // cut from the stretch of band round this seed only (never the whole band: on a bend or a ring it comes back
+      // near, and a cell must not take bits of the other side)
+      const i0 = Math.max(0, sd.i - 14), i1 = Math.min(n - 1, sd.i + 14);
+      let cell = []; for (let i = i0; i <= i1; i++) cell.push(L(i).slice());
+      if (i1 === n - 1) cell.push(...P.slice(n, n + 11).map(q => q.slice()));
+      for (let i = i1; i >= i0; i--) cell.push(R(i).slice());
+      if (i0 === 0) cell.push(...P.slice(2 * n + 11, 2 * n + 22).map(q => q.slice()));
+      for (const o of seeds) {
+        if (o === sd) continue;
+        const dx = o.x - sd.x, dy = o.y - sd.y; if (dx * dx + dy * dy > 200 * 200) continue;
+        cell = clipHalf(cell, (sd.x + o.x) / 2, (sd.y + o.y) / 2, dx, dy);
+        if (cell.length < 3) break;
+      }
+      if (cell.length < 3) continue;
+      let area = 0; for (let i = 0; i < cell.length; i++) { const a = cell[i], c = cell[(i + 1) % cell.length]; area += a[0] * c[1] - c[0] * a[1]; }
+      if (Math.abs(area) / 2 < 60) continue;   // crumbs
+      // thin or stretched cells (on bends) stay, but low, so they fill the gap instead of leaving a pit
+      let per = 0; for (let i = 0; i < cell.length; i++) { const a = cell[i], c = cell[(i + 1) % cell.length]; per += Math.hypot(c[0] - a[0], c[1] - a[1]); }
+      const odd = 4 * Math.PI * Math.abs(area) / 2 / (per * per) < 0.3 || cell.some(([cx, cy]) => (cx - sd.x) ** 2 + (cy - sd.y) ** 2 > 140 * 140);
+      const hh = odd ? 24 : hOf(sd);
+      out.push({ poly: ROCK.rough >= 0.6 ? cell : chamfer(cell, 2.5 * (1 - ROCK.rough)), h: hh, tone: rand() < 0.5 ? 0 : 1, peak: hh >= 46 && !odd && rand() < (hh >= 80 ? 0.55 : 0.2) * ROCK.peaks });
+    }
+    // spurs: separate rocks standing at the foot, half in the ridge, on the side facing the camera, every 110-220 units,
+    // so a long wall is broken by a few stones in front of it (they share the base, the outline and the collision)
+    if (ROCK.spurs) for (let i = 5 + Math.floor(rand() * 8); i < n - 5; i += 18 + Math.floor(rand() * 16)) {
+      const l = L(i), r = R(i), front = l[1] > r[1] ? l : r, back = front === l ? r : l, w = Math.hypot(l[0] - r[0], l[1] - r[1]) || 1;
+      const ux = (front[0] - back[0]) / w, uy = (front[1] - back[1]) / w; if (uy < 0.35) continue;   // the side must face the camera
+      const rad = 28 + rand() * 12, cx = front[0] + ux * rad * 0.3, cy = front[1] + uy * rad * 0.3, poly = [];   // big and low: on small rocks the lines crowded
+      for (let k = 0, m = ROCK.rough > 0.4 || ROCK.facet > 0 ? 7 : 12; k < m; k++) { const a = k / m * TAU + rand() * 0.15 * (1 + ROCK.rough * 2), q = rad * (0.88 - ROCK.rough * 0.15 + rand() * (0.18 + ROCK.rough * 0.25)); /* rough: an angular rock */ poly.push([cx + Math.cos(a) * q * 1.25, cy + Math.sin(a) * q * 0.85]); }
+      const cp = ROCK.rough >= 0.6 ? poly : chamfer(poly, 3);
+      bases.push(cp);   // the same outline as the rock on it, so the base's edge is not a second line
+      out.push({ poly: cp, h: 24, tone: rand() < 0.5 ? 0 : 1, spur: true });
+    }
+  });
+  return { blocks: out, bases };
+}
+// a polygon swept straight up from dy0 to dy1 as one path: both copies and a quad per edge, every subpath wound the
+// same way so the nonzero fill is their union (one fill instead of one per pixel of height)
+function extrude(P, dy0, dy1) {
+  const p = new Path2D(), add = pts => { let a = 0; for (let i = 0; i < pts.length; i++) { const u = pts[i], v = pts[(i + 1) % pts.length]; a += u[0] * v[1] - v[0] * u[1]; } if (a < 0) pts = pts.slice().reverse(); pts.forEach(([x, y], i) => i ? p.lineTo(x, y) : p.moveTo(x, y)); p.closePath(); };
+  add(P.map(([x, y]) => [x, y + dy0])); add(P.map(([x, y]) => [x, y + dy1]));
+  for (let i = 0; i < P.length; i++) { const [ax, ay] = P[i], [bx, by] = P[(i + 1) % P.length]; add([[ax, ay + dy0], [bx, by + dy0], [bx, by + dy1], [ax, ay + dy1]]); }
+  return p;
+}
+// The drawn cliff on a 10-unit grid (a cell is rock if a block's walls or top, or the base, cover its centre), and a
+// small circle on every rock cell at the edge of the rock: collision that follows the picture exactly.
+function blocksCollision(blockLines) {
+  const C = 10, ctx = document.createElement('canvas').getContext('2d'), out = [];
+  if (cliffMode() === 'mono') {   // every layer and stone of the terraced rocks, as drawn
+    const solids = collectMono(blockLines).flatMap(o => [...o.layers, ...o.stones]);
+    var shapes = solids.map(l => ({ path: extrude(l.poly, -l.y0, -l.y1), x0: Math.min(...l.poly.map(p => p[0])) - 2, x1: Math.max(...l.poly.map(p => p[0])) + 2, y0: Math.min(...l.poly.map(p => p[1] - l.y1)) - 2, y1: Math.max(...l.poly.map(p => p[1] - l.y0)) + 2 }));
+  } else {
+  const { blocks, bases } = cliffBlocks(blockLines);
+  var shapes = [...bases.map(P => ({ poly: P, h: 8 })), ...blocks].map(o => {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const [a, b] of o.poly) { x0 = Math.min(x0, a); x1 = Math.max(x1, a); y0 = Math.min(y0, b - o.h * ROCK.hScale); y1 = Math.max(y1, b); }
+    return { path: extrude(o.poly, 0, -o.h * ROCK.hScale), x0, y0, x1, y1 };
+  });
+  }
+  if (!shapes.length) return out;
+  const gx0 = Math.floor(Math.min(...shapes.map(s => s.x0)) / C) - 1, gy0 = Math.floor(Math.min(...shapes.map(s => s.y0)) / C) - 1;
+  const gx1 = Math.ceil(Math.max(...shapes.map(s => s.x1)) / C) + 1, gy1 = Math.ceil(Math.max(...shapes.map(s => s.y1)) / C) + 1, W = gx1 - gx0 + 1, Hh = gy1 - gy0 + 1;
+  const rock = new Uint8Array(W * Hh);
+  for (const s of shapes) for (let gy = Math.floor(s.y0 / C); gy <= Math.ceil(s.y1 / C); gy++) for (let gx = Math.floor(s.x0 / C); gx <= Math.ceil(s.x1 / C); gx++) {
+    const i = (gy - gy0) * W + (gx - gx0); if (rock[i]) continue;
+    if (ctx.isPointInPath(s.path, gx * C, gy * C)) rock[i] = 1;
+  }
+  for (let y = 1; y < Hh - 1; y++) for (let x = 1; x < W - 1; x++) {
+    const i = y * W + x; if (!rock[i]) continue;
+    if (rock[i - 1] && rock[i + 1] && rock[i - W] && rock[i + W]) continue;   // inside: the edge circles hold it
+    out.push({ type: 'cliff', x: (x + gx0) * C, y: (y + gy0) * C, r: 8, h: 0 });
+  }
+  return out;
+}
+// A peak on a high block: the top rises to a point, a few big facets (the outline's arcs) lit by their direction,
+// back facets first; no lines between facets, one dark line round the outside only. Snow lies on the point.
+function paintPeak(x, o, h, pat) {
+  const P = o.poly, n = P.length;
+  let cx = 0, cy = 0; for (const [a, b] of P) { cx += a; cy += b; } cx /= n; cy /= n;
+  let rad = 0; for (const [a, b] of P) rad += Math.hypot(a - cx, b - cy); rad /= n;
+  const ax = cx + rad * 0.1, ay = cy - h - rad * 0.5, k = Math.max(3, Math.min(5, Math.round(n / 3))), facets = [];
+  for (let f = 0; f < k; f++) {
+    const i0 = Math.floor(f * n / k), i1 = Math.floor((f + 1) * n / k), pts = [[ax, ay]];
+    for (let i = i0; i <= i1; i++) pts.push([P[i % n][0], P[i % n][1] - h]);
+    const mx = (P[i0 % n][0] + P[i1 % n][0]) / 2 - cx, my = (P[i0 % n][1] + P[i1 % n][1]) / 2 - cy, l = Math.hypot(mx, my) || 1;
+    facets.push({ pts, lit: -(mx + my) / l * 0.7071, y: my });
+  }
+  facets.sort((a, b) => a.y - b.y);
+  const fpath = pts => { const q = new Path2D(); pts.forEach(([a, b], i) => i ? q.lineTo(a, b) : q.moveTo(a, b)); q.closePath(); return q; };
+  // the outside of the peak: the convex hull of the top and the point (one closed shape, so only its rim is outlined)
+  const pts = [[ax, ay], ...P.map(([a, b]) => [a, b - h])].sort((a, b) => a[0] - b[0] || a[1] - b[1]), cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]), lo = [], up = [];
+  for (const q of pts) { while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+  for (const q of pts.slice().reverse()) { while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+  const hull = fpath([...lo.slice(0, -1), ...up.slice(0, -1)]);
+  x.save(); x.lineJoin = 'round'; x.strokeStyle = BLK.line; x.lineWidth = 3.6; x.stroke(hull); x.fillStyle = pat; x.fill(hull);   // the outline, then the stone over its inner half
+  x.save(); x.clip(hull);
+  for (const f of facets) { const q = fpath(f.pts); x.fillStyle = f.lit > 0.25 ? `rgba(255,250,236,${0.22 * f.lit})` : f.lit < -0.2 ? `rgba(28,22,16,${0.16 * -f.lit})` : 'rgba(0,0,0,0)'; x.fill(q); }
+  x.restore();
+  if ((ROCK.cover || G.cfg.v.cover) === 'snow') { const q = new Path2D(); for (const f of facets) { const pts = f.pts.map(([a, b]) => [ax + (a - ax) * 0.45, ay + (b - ay) * 0.45]); q.addPath(fpath(pts)); } x.fillStyle = '#eef3f8'; x.fill(q); }
+  x.restore();
+}
+// painted details for the tops (art/sprites/top/terrain/top_<id>.png, picked on tops.html): m* moss, p* plants, b* bits
+const TOPS = { w: null, img: {} };
+fetch('art/sprites/top/terrain/tops.json').then(r => r.json()).then(m => { for (const n of Object.keys(m)) TOPS.img[n] = Object.assign(new Image(), { src: `art/sprites/top/terrain/top_${n}.png` }); TOPS.w = m; }).catch(() => {});
+const topsReady = () => !!TOPS.w && Object.values(TOPS.img).every(i => i.complete);
+// What lies on the tops (ROCK.cover in the lab, else the village's "cover"): 'moss' — green patches on some tops,
+// 'snow' — snow over most of the higher tops; drawn as soft-cornered blobs with an outline, inside the top only.
+function paintCover(x, o, top, h) {
+  const kind = ROCK.cover || G.cfg.v.cover || 'deco'; if (kind === 'none') return;
+  const r = Math.abs((o.poly[0][0] * 7.77 + o.poly[0][1] * 2.13) % 1), rr = seeded(Math.round(o.poly[0][0] * 13 + o.poly[0][1] * 7));
+  let cx = 0, cy = 0; for (const [a, b] of o.poly) { cx += a; cy += b; } cx /= o.poly.length; cy = cy / o.poly.length - h;
+  let rad = 0; for (const [a, b] of o.poly) rad += Math.hypot(a - cx, b - h - cy); rad /= o.poly.length;   // the top's mean radius
+  const blob = (bx, by, R, k) => { const p = new Path2D(), n = 11; for (let i = 0; i <= n; i++) { const a = i / n * TAU, q = R * (0.75 + rr() * 0.4); i ? p.lineTo(bx + Math.cos(a) * q, by + Math.sin(a) * q * k) : p.moveTo(bx + Math.cos(a) * q, by + Math.sin(a) * q * k); } p.closePath(); return p; };
+  x.save(); x.clip(top);
+  if (kind === 'deco' && topsReady()) {
+    // moss on about a third of the tops, plants (grass, ferns, small bushes, flowers) on some, odd bits now and then;
+    // sizes from the sheet (a moss cushion is big, a flower small), scaled to the game
+    const ids = Object.keys(TOPS.w), of = c => ids.filter(n => n[0] === c), put = (n, px, py, k = 1) => { const im = TOPS.img[n], w = Math.max(14, TOPS.w[n] / 1400 * 115) * k; x.drawImage(im, px - w / 2, py - w * im.naturalHeight / im.naturalWidth / 2, w, w * im.naturalHeight / im.naturalWidth); };
+    const pick = a => a[Math.floor(rr() * a.length)], moss = of('m'), plants = of('p'), bits = of('b').filter(n => !['b5', 'b6', 'b7', 'b8', 'b9', 'b13', 'b15'].includes(n));   // no nest, mushrooms, autumn leaves, snow, puddle or skull
+    const jx = cx + (rr() - 0.5) * rad * 0.6, jy = cy + (rr() - 0.5) * rad * 0.4;
+    // one detail per top at most: moss, a plant, a hole in the rock (b2, liked) or another bit
+    const D = ROCK.deco;
+    if (r < 0.2 * D) put(pick(moss), jx, jy, Math.min(1.3, rad / 28));
+    else if (r < 0.34 * D) put(pick(plants), jx, jy);
+    else if (r < 0.42 * D) put('b2', jx, jy);
+    else if (r < 0.47 * D) put(pick(bits), jx, jy);
+    x.restore(); return;
+  }
+  if (kind === 'snow' && topsReady()) {   // painted snow patches on the higher tops
+    if (h >= 46 || r < 0.4) { const n = r < 0.5 ? 'b8' : 'b9', im = TOPS.img[n], w = rad * (h >= 80 ? 1.7 : 1.3); x.drawImage(im, cx - w / 2, cy - w * im.naturalHeight / im.naturalWidth / 2, w, w * im.naturalHeight / im.naturalWidth); }
+    x.restore(); return;
+  }
+  if (kind === 'snow') {
+    if (h < 46 && r > 0.4) { x.restore(); return; }
+    const p = blob(cx - 3, cy - 4, rad * (h >= 80 ? 0.95 : 0.75), 0.85);
+    x.fillStyle = '#eef3f8'; x.fill(p);
+    x.save(); x.clip(p); x.translate(3, 5); x.strokeStyle = 'rgba(150,175,205,.65)'; x.lineWidth = 6; x.stroke(p); x.restore();   // blue shade on its lower side
+    x.strokeStyle = 'rgba(70,80,95,.7)'; x.lineWidth = 1.4; x.stroke(p);
+  } else {
+    // the first look the user liked: plain green patches with a lighter top, and now and then a small tuft of grass
+    const bits = KIT.bits, tuft = (tx, ty, d) => { const im = bits.grass[Math.floor(rr() * bits.grass.length)]; x.drawImage(im, tx - d / 2, ty - d * 0.8, d, d * im.naturalHeight / im.naturalWidth); };
+    if (r > 0.45) { if (r < 0.58) tuft(cx + (rr() - 0.5) * rad, cy + (rr() - 0.5) * rad * 0.6, 9 + rr() * 5); x.restore(); return; }
+    for (let j = 0, m = 1 + Math.floor(r * 3); j < m; j++) {
+      const bx = cx + (rr() - 0.6) * rad * 0.7, by = cy + (rr() - 0.6) * rad * 0.5, p = blob(bx, by, rad * (0.4 + rr() * 0.3), 0.8);
+      x.fillStyle = '#6d9a36'; x.fill(p);
+      x.save(); x.clip(p); x.translate(-2, -2); x.fillStyle = '#8fbf4a'; x.fill(p); x.restore();
+      x.strokeStyle = 'rgba(40,60,20,.8)'; x.lineWidth = 1.3; x.stroke(p);
+      if (rr() < 0.4) tuft(bx + (rr() - 0.5) * 10, by, 9 + rr() * 5);
+    }
+  }
+  x.restore();
+}
+// ---------- cliffs as single terraced rocks (style 'mono', Astra's recipe from the reference) ----------
+// One rock across the ridge, placed along the centre line (no band, no mosaic): an elongated slab ~1.65x as long as
+// wide, neighbours overlapping ~16%; each rock a stack of 2-4 layers, every lower layer sticking out further on all
+// sides by its own amount (a rough stepped pyramid), so ledges show on the flanks as well as in front. Neutral grey,
+// thick outline round every layer, drawn rock by rock back to front, each from its bottom layer up.
+BLK.mono = { line: '#2a2a2a', moss: '#69765c' };
+// painted grey stone for the mono rocks (art/mono_tex.py): tops tile both ways, walls are strips with upright fractures;
+// which one: ROCK.monoTop / monoWall (lab), or #…&mt=2&mw=3 to compare; -1 = our old stone made grey
+const MONO_ART = { top: [0, 1, 2, 3].map(i => Object.assign(new Image(), { src: `art/sprites/top/terrain/mono/top_${i}.jpg` })), wall: [0, 1, 2, 3].map(i => Object.assign(new Image(), { src: `art/sprites/top/terrain/mono/wall_${i}.jpg` })) };
+const monoArtReady = () => [...MONO_ART.top, ...MONO_ART.wall].every(i => i.complete && i.naturalWidth);
+const monoPick = (k, def) => { const m = new RegExp(k + '=(-?\\d)').exec(location.hash); return m ? +m[1] : def; };
+const monoClamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const monoMix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+const monoDist = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+const monoUnit = (a, b) => { const d = monoDist(a, b) || 1; return [(b[0] - a[0]) / d, (b[1] - a[1]) / d]; };
+const monoOutline = () => 3 * (ROCK.outline ?? 2.5) / 2.5;
+const monoGrey = (v, top = false) => { v = Math.round(v); return `rgb(${v},${v + 3},${v - (top ? 1 : 0)})`; };
+function monoPath(P, dy = 0) { const p = new Path2D(); P.forEach(([a, b], i) => i ? p.lineTo(a, b + dy) : p.moveTo(a, b + dy)); p.closePath(); return p; }
+// convex hull: the outline of one extruded layer (stroking extrude() would draw its inner edges too)
+function monoHull(points) {
+  const p = points.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]), cross = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  const half = src => { const out = []; for (const q of src) { while (out.length > 1 && cross(out[out.length - 2], out[out.length - 1], q) <= 0) out.pop(); out.push(q); } return out; };
+  return [...half(p).slice(0, -1), ...half(p.slice().reverse()).slice(0, -1)];
+}
+function monoRim(l) { return monoPath(monoHull([...l.poly.map(([a, b]) => [a, b - l.y0]), ...l.poly.map(([a, b]) => [a, b - l.y1])])); }
+function monoInside(P, q) { return P.every((a, i) => { const b = P[(i + 1) % P.length]; return (b[0] - a[0]) * (q[1] - a[1]) - (b[1] - a[1]) * (q[0] - a[0]) >= -1e-5; }); }
+// the centre line with its corners rounded (widths along), sampled by distance
+function monoRoute(b) {
+  let src = b.pts.map(p => [p[0], p[1], p[2] ?? b.w ?? 70]);
+  let closed = !!b.closed || monoDist(src[0], src[src.length - 1]) < .01;
+  if (monoDist(src[0], src[src.length - 1]) < .01) src.pop();
+  src = src.filter((p, i) => !i || monoDist(p, src[i - 1]) > .01);
+  if (src.length < 2) return null;
+  closed &&= src.length > 2;
+  const P = [], n = src.length;
+  for (let i = 0; i < n; i++) {
+    const v = src[i];
+    if (!closed && (i === 0 || i === n - 1)) { P.push(v); continue; }
+    const a = src[(i + n - 1) % n], c = src[(i + 1) % n], d = Math.min(monoDist(a, v) * .45, monoDist(v, c) * .45, v[2] * .65);
+    const A = monoMix(v, a, d / monoDist(a, v)), C = monoMix(v, c, d / monoDist(v, c));
+    for (let j = 0; j <= 6; j++) { const t = j / 6, u = 1 - t; P.push(v.map((_, k) => u * u * A[k] + 2 * u * t * v[k] + t * t * C[k])); }
+  }
+  if (closed) P.push(P[0].slice());
+  const S = [0]; for (let i = 1; i < P.length; i++) S.push(S[i - 1] + monoDist(P[i - 1], P[i]));
+  const length = S[S.length - 1];
+  function at(s) {
+    s = closed ? ((s % length) + length) % length : monoClamp(s, 0, length);
+    let lo = 0, hi = S.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (S[m] <= s) lo = m; else hi = m; }
+    return monoMix(P[lo], P[hi], (s - S[lo]) / (S[hi] - S[lo] || 1));
+  }
+  return { at, length, closed };
+}
+function monoBlocks(b, bi = 0) {
+  const route = monoRoute(b); if (!route || route.length < 1) return [];
+  const { at, length: T, closed } = route;
+  // placement density integrated along the line (shorter rocks on tight bends), then divided evenly: no leftover sliver
+  const K = Math.max(1, Math.ceil(T / 8)), ds = T / K, M = [0];
+  for (let k = 0; k < K; k++) {
+    const s = (k + .5) * ds, W = Math.max(12, at(s)[2]), u = monoUnit(at(s - W * .5), at(s)), v = monoUnit(at(s), at(s + W * .5));
+    const turn = Math.acos(monoClamp(u[0] * v[0] + u[1] * v[1], -1, 1)), curvature = turn / (W * .5);
+    const stride = monoClamp(.65 / (curvature || 1e-6), .75 * W, 1.38 * W) * (ROCK.blockSize / 2);
+    M.push(M[k] + ds / stride);
+  }
+  const total = M[K], count = Math.max(closed ? 3 : 1, Math.round(total));
+  const station = f => { const m = f * total; let k = 0; while (k < K - 1 && M[k + 1] < m) k++; return (k + (m - M[k]) / (M[k + 1] - M[k])) * ds; };
+  const start = at(0), end = at(T), startT = monoUnit(start, at(Math.min(8, T))), endT = monoUnit(at(Math.max(0, T - 8)), end);
+  const out = []; let previousHeight = null;
+  for (let i = 0; i < count; i++) {
+    const seed = ((bi + 1) * 9187 + i * 193) >>> 0, r = seeded(seed);
+    const s0 = station(i / count), s1 = station((i + 1) / count), c = at((s0 + s1) / 2), a = at(s0), b1 = at(s1);
+    const t = monoUnit(a, b1), n = [-t[1], t[0]], W = Math.max(12, (a[2] + 2 * c[2] + b1[2]) / 4), L = Math.max(.95 * W, monoDist(a, b1) / .84);
+    // height first, layers by height: low flat slabs (1-2 layers), middling, and tall ones (3); a neighbour never the same
+    let hf, N;
+    if (monoPick('hv', 1)) {
+      hf = [.22, .4, .62][Math.floor(r() * 3)] + r() * .1;
+      if (previousHeight !== null && Math.abs(hf - previousHeight) < .15) hf = previousHeight > .45 ? hf - .2 - r() * .05 : hf + .2 + r() * .05;
+      hf = monoClamp(hf, .18, .8); previousHeight = hf; hf *= ROCK.monoH;
+      N = hf < .3 * ROCK.monoH ? 1 + (r() < .5 ? 1 : 0) : hf < .5 * ROCK.monoH ? 2 : 3;
+    } else {   // #…&hv=0: the even version (two or three layers, heights close together) to compare
+      N = r() < .3 ? 2 : 3; hf = .4 + .22 * r();
+      if (previousHeight !== null && Math.abs(hf - previousHeight) < .08) hf = previousHeight > .51 ? previousHeight - .1 : previousHeight + .1;
+      previousHeight = hf; hf *= ROCK.monoH;
+    }
+    // four side-growth sequences, top -> bottom (sides: -along, +along, -across, +across)
+    const growth = Array.from({ length: N - 1 }, () => Array(4).fill(0)), sums = [], setbackSide = N > 2 && r() < .22 ? Math.floor(r() * 4) : -1;
+    for (let side = 0; side < 4; side++) {
+      const weights = Array.from({ length: N - 1 }, () => .35 + r());
+      if (N > 2 && r() < .25) weights[Math.floor(r() * weights.length)] = 0;
+      if (side === setbackSide) weights[0] = -.08;
+      const sum = weights.reduce((a2, v) => a2 + v, 0), budget = Math.min(.14 * W, 12 * (N - 1)) * ROCK.terrace, scale = Math.min(budget / sum, 15 / Math.max(...weights));
+      weights.forEach((v, j) => growth[j][side] = v * scale); sums[side] = weights.reduce((a2, v) => a2 + v * scale, 0);
+    }
+    // the same corner cuts through the whole rock: related strata, not noise
+    const cuts = Array.from({ length: 4 }, () => W * (.10 + r() * .055)), ext = [L / 2 - sums[0], L / 2 - sums[1], W / 2 - sums[2], W / 2 - sums[3]];
+    const polygon = e => {
+      const [u0, u1, v0, v1] = [-e[0], e[1], -e[2], e[3]], cc = cuts.map(v => Math.min(v * (.55 + r() * .9), (u1 - u0) * .3, (v1 - v0) * .3));   // each layer its own cut corners
+      let P = [[u0 + cc[0], v0], [u1 - cc[1], v0], [u1, v0 + cc[1]], [u1, v1 - cc[2]], [u1 - cc[2], v1], [u0 + cc[3], v1], [u0, v1 - cc[3]], [u0, v0 + cc[0]]]
+        .map(([u, v]) => [c[0] + t[0] * u + n[0] * v, c[1] + t[1] * u + n[1] * v]);
+      if (ROCK.monoChip) {   // a long side breaks into two faces: its middle pushed out a little (stays convex)
+        const Q = []; for (let k = 0; k < P.length; k++) {
+          const A = P[k], B = P[(k + 1) % P.length], d = monoDist(A, B); Q.push(A);
+          if (d > 26 && r() < .7) { const f = .3 + r() * .4, nx = (B[1] - A[1]) / d, ny = -(B[0] - A[0]) / d, o2 = (1.5 + r() * 3.5) * ROCK.monoChip; Q.push([A[0] + (B[0] - A[0]) * f + nx * o2, A[1] + (B[1] - A[1]) * f + ny * o2]); }
+        }
+        P = Q;
+      }
+      if (!closed && i === 0) P = clipHalf(P, start[0], start[1], -startT[0], -startT[1]);
+      if (!closed && i === count - 1) P = clipHalf(P, end[0], end[1], endT[0], endT[1]);
+      return P;
+    };
+    const topDown = []; for (let j = 0; j < N; j++) {
+      // each layer a little turned and its corners nudged (3-5 units): strata of one rock, but not a stack of plates
+      const P = polygon(ext), turn = (r() - .5) * .1, cs = Math.cos(turn), sn = Math.sin(turn), jit = 6 + j * 3;   // lower layers rougher
+      topDown.push(P.map(([px, py]) => { const dx = px - c[0], dy = py - c[1], jx = (r() - .5) * jit, jy = (r() - .5) * jit * .8; return [c[0] + dx * cs - dy * sn + jx, c[1] + dx * sn + dy * cs + jy]; }));
+      if (j < N - 1) for (let side = 0; side < 4; side++) ext[side] += growth[j][side];
+    }
+    const H = W * hf * (ROCK.hScale / 1.8), thickness = Array.from({ length: N }, () => .65 + r()), sumH = thickness.reduce((a2, v) => a2 + v, 0), layers = [];
+    let y = 0; for (let j = 0; j < N; j++) { const h = H * thickness[j] / sumH; layers.push({ poly: topDown[N - 1 - j], y0: y, y1: y + h }); y += h; }
+    const o = { seed, layers, stones: [], width: W, tone: (r() - .5) * 9, depth: Math.max(...layers[0].poly.map(p => p[1])), ti: Math.floor(r() * 4), wi: Math.floor(r() * 4), tint: r() };   // each rock its own stone pictures and tint
+    const stone = (q, radius, height, support) => {   // an irregular 5-7 sided stone
+      const m = 5 + Math.floor(r() * 3), a0 = r() * TAU;
+      return { poly: Array.from({ length: m }, (_, k) => { const ang = a0 + k * TAU / m + (r() - .5) * .5, rad = radius * (.7 + r() * .45); return [q[0] + Math.cos(ang) * rad, q[1] + Math.sin(ang) * rad * .75]; }), y0: height, y1: height + radius * .8, support };
+    };
+    if (ROCK.monoStones) {
+      // a few loose stones at the foot (camera side) and one on a broad ledge
+      const P = layers[0].poly;
+      for (let e = 0; e < P.length; e++) {
+        const A = P[e], B = P[(e + 1) % P.length], d = monoDist(A, B), nx = (B[1] - A[1]) / d, ny = -(B[0] - A[0]) / d;
+        if (ny < .15 || r() > .55) continue;
+        const q = monoMix(A, B, .25 + r() * .5), radius = 5 + r() * 5;
+        o.stones.push(stone([q[0] + nx * (radius + 2), q[1] + ny * (radius + 2)], radius, 0, -1));
+      }
+      for (let attempt = 0; attempt < 24 && N > 1; attempt++) {
+        const j = Math.floor(r() * (N - 1)), P2 = layers[j].poly, U = layers[j + 1].poly, e = Math.floor(r() * P2.length);
+        const q = monoMix(monoMix(P2[e], P2[(e + 1) % P2.length], .2 + r() * .6), c, .04 + r() * .08), s = stone(q, 3.5 + r() * 2.5, layers[j].y1, j);
+        if (s.poly.every(p => monoInside(P2, p) && !monoInside(U, p))) { o.stones.push(s); break; }
+      }
+    }
+    out.push(o);
+  }
+  return out;
+}
+const collectMono = blockLines => blockLines.filter(b => b.type === 'cliff' && b.pts.length > 1).flatMap((b, bi) => monoBlocks(b, bi));
+function paintMono(x, blocks) {
+  if (!blocks.length) return;
+  const ink = BLK.mono.line, outline = monoOutline();
+  // our painted stone, made grey once and laid over the flat tones (overlay): grain and chips without its beige and brown
+  const grey = im => { const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; const t = c.getContext('2d'); t.filter = 'grayscale(1) brightness(1.5)'; t.drawImage(im, 0, 0); return c; };
+  if (!BLK.monoGrain && kitReady()) BLK.monoGrain = { top: grey(KIT.tops[0]), wall: grey(KIT.walls[0]) };
+  const mt = monoPick('mt', ROCK.monoTop), mw = monoPick('mw', ROCK.monoWall);
+  const tops = monoArtReady() ? MONO_ART.top.map(im => x.createPattern(im, 'repeat')) : null, walls = tops && MONO_ART.wall.map(im => x.createPattern(im, 'repeat'));
+  const simple = monoPick('simple', 0), fixed = /[#&]mt=/.test(location.hash) || !ROCK.monoMix;   // one picture for all (to compare), or each rock its own
+  let art = null, tint = null;
+  // tints laid over a whole rock: most stay neutral grey, some warmer, cooler, greener, paler or darker
+  const TINTS = [[.3, null], [.15, 'rgba(160,125,90,.14)'], [.15, 'rgba(85,110,150,.13)'], [.12, 'rgba(105,140,90,.12)'], [.14, 'rgba(255,255,250,.1)'], [.14, 'rgba(30,32,30,.12)']];
+  const tintOf = v => { let a = 0; for (const [w, c] of TINTS) { a += w; if (v < a) return c; } return null; };
+  const grain = BLK.monoGrain && ROCK.monoTex > 0 && !monoPick('simple', 0) ? { top: x.createPattern(BLK.monoGrain.top, 'repeat'), wall: x.createPattern(BLK.monoGrain.wall, 'repeat') } : null;
+  const line = (P, color, width) => { x.beginPath(); P.forEach(([a, b], i) => i ? x.lineTo(a, b) : x.moveTo(a, b)); x.strokeStyle = color; x.lineWidth = width; x.stroke(); };
+  function paintLayer(l, next, r, tone, lw, heroTop, details) {
+    const P = l.poly, h = l.y1 - l.y0, rim = monoRim(l), top = monoPath(P, -l.y1);
+    x.fillStyle = '#707370'; x.fill(rim);   // opaque underlay: no seams between faces
+    for (let i = 0; i < P.length; i++) {
+      const a = P[i], b = P[(i + 1) % P.length], d = monoDist(a, b); if (d < .01) continue;
+      const nx = (b[1] - a[1]) / d, ny = -(b[0] - a[0]) / d; if (ny <= 1e-5) continue;
+      const face = monoPath([[a[0], a[1] - l.y1], [b[0], b[1] - l.y1], [b[0], b[1] - l.y0], [a[0], a[1] - l.y0]]);
+      if (art) {   // the painted wall along the face, then its light (paler turned to the light, darker away) and a wall shade
+        const k = .3, u = (a[0] * 1.7 + a[1]) % 500;
+        art.wall.setTransform(new DOMMatrix([(b[0] - a[0]) / d * k, (b[1] - a[1]) / d * k, 0, k, a[0] - (b[0] - a[0]) / d * u, a[1] - (b[1] - a[1]) / d * u - l.y1]));
+        x.fillStyle = art.wall; x.fill(face);
+        const v = tone - ROCK.light * (34 * nx + 4 * ny); x.fillStyle = v > 0 ? `rgba(255,255,250,${Math.min(.35, v / 120)})` : `rgba(15,17,15,${Math.min(.5, -v / 90)})`; x.fill(face);
+        x.fillStyle = 'rgba(20,22,20,.16)'; x.fill(face);
+      } else x.fillStyle = monoGrey(monoClamp(112 + tone - ROCK.light * (34 * nx + 4 * ny), 72, 130)), x.fill(face);
+      if (grain && !art) { const k = Math.max(h, 20) / 256, u = (a[0] * 1.7 + a[1]) % 500; grain.wall.setTransform(new DOMMatrix([(b[0] - a[0]) / d * k, (b[1] - a[1]) / d * k, 0, k, a[0] - (b[0] - a[0]) / d * u, a[1] - (b[1] - a[1]) / d * u - l.y1])); x.save(); x.globalCompositeOperation = 'soft-light'; x.globalAlpha = ROCK.monoTex; x.fillStyle = grain.wall; x.fill(face); x.restore(); }
+      const fg = x.createLinearGradient(0, Math.min(a[1], b[1]) - l.y1, 0, Math.max(a[1], b[1]) - l.y0); fg.addColorStop(0, 'rgba(0,0,0,0)'); fg.addColorStop(.6, 'rgba(0,0,0,0)'); fg.addColorStop(1, `rgba(20,22,20,${.28 * ROCK.monoAO})`);
+      x.fillStyle = fg; x.fill(face);   // every stratum darker at its foot
+      if (ROCK.monoLines > 1) { x.strokeStyle = '#555855'; x.lineWidth = 1.1; x.stroke(face); }   // (every face outlined: too many lines)
+      if (details) {
+        x.save(); x.clip(face);
+        for (let k = 0, m = Math.floor(d / (simple ? 55 : 28) + r() * .8); k < m; k++) {   // upright cracks down the face, one per ~28 units
+          const q = monoMix(a, b, (k + .2 + r() * .6) / m), len = h * (.45 + r() * .5), w = (r() - .5) * 3;
+          line([[q[0], q[1] - l.y1], [q[0] + w, q[1] - l.y1 + len * .5], [q[0] + w * .3, q[1] - l.y1 + len]], 'rgba(50,53,50,.85)', 1.2);
+        }
+        if (r() < .3) { const q = monoMix(a, b, .2 + r() * .6); x.fillStyle = '#a8aba5'; x.fill(monoPath([[q[0] - 3, q[1] - l.y1 + 1], [q[0] + 3, q[1] - l.y1 + 1], [q[0] + 1, q[1] - l.y1 + 4]])); }
+        x.restore();
+      }
+    }
+    if (art) {
+      const rr = Math.abs(P[0][0] * 12.9898 + P[0][1] * 78.233) % 1;
+      art.top.setTransform(new DOMMatrix().translate(rr * 500, rr * 300).rotate(rr * 360).scale(.32)); x.fillStyle = art.top; x.fill(top);
+      x.fillStyle = tone > 0 ? `rgba(255,255,250,${tone / 60})` : `rgba(20,22,20,${-tone / 50})`; x.fill(top);
+    } else x.fillStyle = monoGrey(157 + tone - (next ? 4 : 0), true), x.fill(top);
+    { // the top lit from the upper left: paler there, darker toward the lower right (it read flat)
+      let a0 = 1e9, b0 = 1e9, a1 = -1e9, b1 = -1e9; for (const [px, py] of P) { a0 = Math.min(a0, px); b0 = Math.min(b0, py); a1 = Math.max(a1, px); b1 = Math.max(b1, py); }
+      const tg = x.createLinearGradient(a0, b0 - l.y1, a1, b1 - l.y1); tg.addColorStop(0, `rgba(255,255,250,${.16 * ROCK.monoAO})`); tg.addColorStop(.5, 'rgba(0,0,0,0)'); tg.addColorStop(1, `rgba(20,22,20,${.18 * ROCK.monoAO})`);
+      x.fillStyle = tg; x.fill(top);
+    }
+    if (tint) { x.fillStyle = tint; x.fill(rim); }
+    if (grain && !art) { grain.top.setTransform(new DOMMatrix().translate(P[0][0] * 3 % 300, P[0][1] * 5 % 300).scale(0.4)); x.save(); x.globalCompositeOperation = 'soft-light'; x.globalAlpha = ROCK.monoTex; x.fillStyle = grain.top; x.fill(top); x.restore(); }
+    x.save(); x.clip(top);
+    if (heroTop && details) {
+      const cx = P.reduce((s, p) => s + p[0], 0) / P.length, cy = P.reduce((s, p) => s + p[1], 0) / P.length - l.y1;
+      for (let k = 0, m = simple ? (r() < .7 ? 1 : 2) : 1 + Math.floor(r() * 3); k < m; k++) {   // bold, sparse fractures from an edge
+        const e = Math.floor(r() * P.length), q = monoMix(P[e], P[(e + 1) % P.length], .25 + r() * .5), a = [q[0], q[1] - l.y1], b = monoMix(a, [cx, cy], .35 + r() * .35), mm = monoMix(a, b, .52);
+        mm[0] += (r() - .5) * 6; mm[1] += (r() - .5) * 5; line([a, mm, b], '#454944', 2.1);
+        if (r() < .45) line([mm, [mm[0] + 5, mm[1] + 6]], '#454944', 1.5);
+      }
+      if (ROCK.deco && topsReady()) paintCover(x, { poly: P }, top, l.y1);   // the painted moss, plants and holes, as on the blocks
+    }
+    if (next && ROCK.monoAO) { x.strokeStyle = `rgba(20,22,20,${.3 * ROCK.monoAO})`; x.lineWidth = 7; x.stroke(monoPath(next.poly, -next.y0)); }   // dark where the upper layer stands
+    if (next && ROCK.shadow) { x.save(); x.translate(3, 4); x.fillStyle = `rgba(30,33,30,${Math.min(.45, .24 * ROCK.shadow)})`; x.fill(extrude(next.poly, -next.y0, -next.y1)); x.restore(); }   // only on this ledge
+    for (let i = 0; i < P.length; i++) {   // a pale lip inside each rim, stronger toward the light
+      const a = P[i], b = P[(i + 1) % P.length], d = monoDist(a, b); if (d < .01) continue;
+      const nx = (b[1] - a[1]) / d, ny = -(b[0] - a[0]) / d;
+      if (nx + ny < 0 || ROCK.monoLines > 1) line([[a[0] - nx * 2.3, a[1] - l.y1 - ny * 2.3], [b[0] - nx * 2.3, b[1] - l.y1 - ny * 2.3]], `rgba(214,218,209,${nx + ny < 0 ? .6 : .38})`, 1.5);   // the pale lip toward the light only
+    }
+    x.restore();
+    if (lw > 0) { x.strokeStyle = ink; x.lineWidth = Math.min(ROCK.monoLines > 1 ? 1.6 : 1.1, lw); x.stroke(top); x.lineWidth = lw; x.stroke(rim); }
+  }
+  x.save(); x.lineJoin = 'round'; x.lineCap = 'round';
+  if (ROCK.shadow) {   // one shadow under everything
+    const shadow = new Path2D(); for (const o of blocks) for (const l of [...o.layers, ...o.stones]) shadow.addPath(extrude(l.poly, -l.y0, -l.y1));
+    x.save(); x.translate(9, 12); x.fillStyle = `rgba(25,28,25,${Math.min(.45, .26 * ROCK.shadow)})`; x.fill(shadow); x.restore();
+  }
+  for (const o of blocks.slice().sort((a, b) => a.depth - b.depth || a.seed - b.seed)) {
+    const r = seeded(o.seed + 713), ti = fixed ? mt : o.ti, wi = fixed ? Math.max(0, mw) : o.wi;
+    art = tops && ti >= 0 && !simple ? { top: tops[ti], wall: walls[wi] } : null; tint = ROCK.monoTint && !simple ? tintOf(o.tint) : null;
+    for (let j = 0; j < o.layers.length; j++) {
+      paintLayer(o.layers[j], o.layers[j + 1], r, o.tone, j ? outline * (ROCK.monoLines > 1 ? .55 : .4) : outline, j === o.layers.length - 1, true);
+      for (const s of o.stones) if (s.support === j) paintLayer(s, null, r, o.tone - 5, outline * .4, false, false);
+    }
+    for (const s of o.stones) if (s.support === -1) paintLayer(s, null, r, o.tone - 5, outline * .4, false, false);
+  }
+  x.restore();
+}
+function paintBlocks(g, blockLines) {
+  if (cliffMode() === 'mono') { if (kitReady()) paintMono(g, collectMono(blockLines)); return; }
+  const { blocks, bases } = cliffBlocks(blockLines);
+  if (!bases.length || !kitReady()) return;
+  // work only inside the cliffs' bounding box (whole-ground copies run phones out of canvas memory)
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for (const P of bases) for (const [a, b] of P) { x0 = Math.min(x0, a); y0 = Math.min(y0, b); x1 = Math.max(x1, a); y1 = Math.max(y1, b); }
+  const pad = 30, tf = g.getTransform(), px = tf.a; x0 -= pad; x1 += pad; y0 -= pad + 160 * ROCK.hScale; y1 += pad;
+  const W = Math.ceil((x1 - x0) * px), H = Math.ceil((y1 - y0) * px);
+  const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.setTransform(px, 0, 0, px, -x0 * px, -y0 * px); return [c, x]; };
+  const [Lc, x] = mk(); x.lineJoin = ROCK.rough > 0.4 ? 'miter' : 'round'; x.miterLimit = 3; x.lineCap = 'round';
+  const path = (P, dy) => { const p = new Path2D(); P.forEach(([a, b], i) => i ? p.lineTo(a, b + dy) : p.moveTo(a, b + dy)); p.closePath(); return p; };
+  // the painted wall, lifted toward stone grey once (no see-through layers over the cliff)
+  if (!BLK.wallTex) BLK.wallTex = KIT.walls.map(w => { const c = document.createElement('canvas'); c.width = w.naturalWidth; c.height = w.naturalHeight; const t = c.getContext('2d'); t.drawImage(w, 0, 0); t.globalCompositeOperation = 'screen'; t.fillStyle = 'rgb(105,98,86)'; t.fillRect(0, 0, c.width, c.height); return c; });
+  // several stone pictures mixed block by block (mostly the first two, the bluish slate and the brown wall now and then)
+  const wallPats = BLK.wallTex.map(c => { const p = x.createPattern(c, 'repeat'); p.setTransform?.(new DOMMatrix().scale(0.2)); return p; });
+  const topPats = KIT.tops.map(im => x.createPattern(im, 'repeat'));
+  const pickOf = (o, salt, weights) => { const r = Math.abs((o.poly[0][0] * (3.7 + salt) + o.poly[0][1] * (5.3 + salt)) % 1); let a = 0; for (let i = 0; i < weights.length; i++) { a += weights[i]; if (r < a) return i; } return 0; };
+  let topPat = topPats[0], wallPat = wallPats[0];
+  // the strips with upright columns (the layered one read as cartoon strata), lifted less than the tiled ones: the walls
+  // must stay well under the tops in value or the cliff loses its depth
+  if (!BLK.faceTex) BLK.faceTex = [0, 2].map(i => { const w = KIT.walls[i], c = document.createElement('canvas'); c.width = w.naturalWidth; c.height = w.naturalHeight; const t = c.getContext('2d'); t.drawImage(w, 0, 0); t.globalCompositeOperation = 'screen'; t.fillStyle = 'rgb(62,58,52)'; t.fillRect(0, 0, c.width, c.height); return c; });
+  const faceTex = BLK.faceTex;
+  // the height of the rock at a point, not counting one block (for the edges: what lies across each one)
+  const hit = document.createElement('canvas').getContext('2d'), plans = blocks.map(o => {
+    let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const [px2, py2] of o.poly) { a = Math.min(a, px2); b = Math.min(b, py2); c = Math.max(c, px2); d = Math.max(d, py2); }
+    return { o, p: path(o.poly, 0), a, b, c, d };
+  });
+  const heightAt = (self, qx, qy) => { let m = 0; for (const t of plans) if (t.o !== self && qx >= t.a && qx <= t.c && qy >= t.b && qy <= t.d && hit.isPointInPath(t.p, qx, qy)) m = Math.max(m, t.o.h); return m; };
+  const hs = ROCK.hScale, levels = [[8 * hs, bases.map(P => ({ poly: P, tone: 0, h: 8 }))], [24 * hs, blocks], [46 * hs, blocks.filter(b => b.h >= 46)], [80 * hs, blocks.filter(b => b.h >= 80)]];
+  let prev = 0;
+  for (const [h, list0] of levels) {
+    const list = list0.slice().sort((a, b) => Math.max(...a.poly.map(q => q[1])) - Math.max(...b.poly.map(q => q[1])));   // back to front
+    const lo = prev > 8 * hs + 0.01 ? prev - 0.7 : prev;   // walls above a level overlap the one under a hair: no seam across a tall wall
+    // the walls of this level: the block swept down to the camera, with a dark crease where it meets the level below
+    // shadows of this level's blocks falling down-right onto the lower tops already drawn
+    // (only onto the tops one step down: unclipped it also lay across the walls in front as a dark horizontal band)
+    if (h > 24 * hs) {
+      const rec = new Path2D(), cast = new Path2D(); for (const b of blocks) if (Math.abs(b.h * hs - prev) < 0.01) rec.addPath(path(b.poly, -prev));
+      for (const o of list) cast.addPath(path(o.poly, -prev), new DOMMatrix().translate(9, 7));
+      x.save(); x.clip(rec); x.fillStyle = `rgba(25,20,15,${0.2 * ROCK.shadow})`; x.fill(cast); x.restore();
+    }
+    // an underlay of this level's walls as one shape first: where two blocks' walls meet, their soft edges would let the
+    // ground through as a thin vertical line; now the same stone shows there instead
+    { const u = new Path2D(); for (const o of list) u.addPath(extrude(o.poly, -lo, -h)); x.fillStyle = ROCK.planes ? BLK.wallFlat : wallPats[0]; x.fill(u); }
+    for (const o of list) {
+      wallPat = wallPats[pickOf(o, 1, [0.5, 0.38, 0.12])];
+      // planes: a flat stone colour with the painted wall only showing through, so the light on each face carries the form
+      // (the painted wall is a whole wall strip with its own ledges and stones: each face gets it ONCE, from the block's top
+      // to its foot, running along the face; tiled small it repeated the same row of stones up a tall wall)
+      if (ROCK.planes) {
+        const e = extrude(o.poly, -lo, -h); x.fillStyle = BLK.wallFlat; x.fill(e);
+        let a2 = 0; for (let i = 0; i < o.poly.length; i++) { const u = o.poly[i], v = o.poly[(i + 1) % o.poly.length]; a2 += u[0] * v[1] - v[0] * u[1]; }
+        const cw0 = a2 > 0 ? 1 : -1, top = (o.h ?? 8) * hs, foot = o.h > 8 ? 8 * hs : 0, k = Math.max(top - foot, 46 * hs * 0.5) / 256, im = faceTex[pickOf(o, 1, [0.75, 0.25])];
+        const fp = x.createPattern(im, 'repeat'); x.globalAlpha = ROCK.wallTex;
+        let u = Math.abs(o.poly[0][0] * 3.1 + o.poly[0][1] * 1.7) % 600;
+        for (let i = 0; i < o.poly.length; i++) {
+          const [ax, ay] = o.poly[i], [bx, by] = o.poly[(i + 1) % o.poly.length], l = Math.hypot(bx - ax, by - ay); if (l < 0.01) continue;
+          if (-(bx - ax) / l * cw0 > 0.02) {   // a face that shows (turned toward the camera)
+            const q = new Path2D(); q.moveTo(ax, ay - h); q.lineTo(bx, by - h); q.lineTo(bx, by - lo); q.lineTo(ax, ay - lo); q.closePath();
+            fp.setTransform(new DOMMatrix([(bx - ax) / l * k, (by - ay) / l * k, 0, k, ax - (bx - ax) / l * u, ay - (by - ay) / l * u - top]));
+            x.fillStyle = fp; x.fill(q);
+          }
+          u += l;
+        }
+        x.globalAlpha = 1;
+      }
+      else { x.fillStyle = wallPat; x.fill(extrude(o.poly, -lo, -h)); }
+      // light on the wall faces: turned to the light (left) paler, turned away darker; and every wall darker at its foot
+      let a2 = 0; for (let i = 0; i < o.poly.length; i++) { const u = o.poly[i], v = o.poly[(i + 1) % o.poly.length]; a2 += u[0] * v[1] - v[0] * u[1]; }
+      const cw = a2 > 0 ? 1 : -1;
+      // edges seen nearly edge-on (joins between blocks, running up the screen) get no light: they were thin dark stripes.
+      // neighbouring edges with the same light are filled as ONE strip (a quad per short edge left a seam at every joint:
+      // vertical stripes); three steps of light by the way the face turns
+      const step = (ax, ay, bx, by) => { const l = Math.hypot(bx - ax, by - ay) || 1, nx = (by - ay) / l * cw, ny = -(bx - ax) / l * cw; return ny <= 0.35 ? -9 : nx < -0.45 ? 0 : nx < -0.15 ? 1 : nx > 0.45 ? 4 : nx > 0.15 ? 3 : 2; };
+      // planes: every face its own light by how far it turns to the light (left), in nine steps instead of three
+      const planeStep = (ax, ay, bx, by) => { const l = Math.hypot(bx - ax, by - ay) || 1, nx = (by - ay) / l * cw, ny = -(bx - ax) / l * cw; return ny <= 0.35 || l < 6 ? -9 : 10 + Math.round(-nx * 4); };   // no light on slivers (cut corners, joins): pale stripes
+      const lightOf = st => st < 5 ? LIGHT[st] : st > 10 ? `rgba(255,250,236,${(st - 10) / 4 * 0.3 * LI})` : st < 10 ? `rgba(20,16,12,${(10 - st) / 4 * 0.34 * LI})` : null;
+      const LI = ROCK.light, LIGHT = [`rgba(255,250,236,${0.15 * LI})`, `rgba(255,250,236,${0.07 * LI})`, null, `rgba(20,16,12,${0.1 * LI})`, `rgba(20,16,12,${0.22 * LI})`];
+      for (let i = 0, n0 = o.poly.length; i < n0;) {
+        const sf = ROCK.planes ? planeStep : step, [ax, ay] = o.poly[i], [bx, by] = o.poly[(i + 1) % n0], st = sf(ax, ay, bx, by);
+        let j = i + 1; while (j < n0) { const [cx2, cy2] = o.poly[j], [dx2, dy2] = o.poly[(j + 1) % n0]; if (sf(cx2, cy2, dx2, dy2) !== st) break; j++; }
+        if (st >= 0 && lightOf(st)) {
+          const q = new Path2D(), top = [], bot = []; for (let k = i; k <= j; k++) { const [px2, py2] = o.poly[k % n0]; top.push([px2, py2 - h]); bot.push([px2, py2 - lo]); }
+          bot.forEach(([a3, b3], k) => k ? q.lineTo(a3, b3) : q.moveTo(a3, b3)); for (let k = top.length - 1; k >= 0; k--) q.lineTo(top[k][0], top[k][1]); q.closePath();
+          x.fillStyle = lightOf(st); x.fill(q);
+        }
+        i = j;
+      }
+      // cracks down a third of the front wall faces: one calm crack from the top edge with a pale lip on its lit side,
+      // and now and then a ledge across a tall face
+      if (ROCK.cracks && h - prev >= 8) for (let i = 0; i < o.poly.length; i++) {
+        const [ax, ay] = o.poly[i], [bx, by] = o.poly[(i + 1) % o.poly.length], l = Math.hypot(bx - ax, by - ay);
+        const rc = Math.abs(Math.sin(ax * 12.9 + ay * 7.3 + h)) % 1, H2 = h - prev;
+        if (-(bx - ax) * cw <= 4 || l < 16 || rc > 0.38) continue;   // front faces only (as the face lighting), a third of them
+        const t = 0.3 + rc * 0.4, sx = ax + (bx - ax) * t, sy = ay + (by - ay) * t, len = H2 * (0.8 + rc * 0.2), seg = [[sx, sy - h]];
+        for (let k = 1; k <= 3; k++) seg.push([sx + Math.sin(rc * 40 + k * 2.1) * 2.2, sy - h + len * k / 3]);
+        const ln = (pts, dx, dy) => { x.beginPath(); pts.forEach(([a2, b2], j) => j ? x.lineTo(a2 + dx, b2 + dy) : x.moveTo(a2 + dx, b2 + dy)); x.stroke(); };
+        x.lineCap = 'round'; x.lineJoin = 'round';
+        x.strokeStyle = 'rgba(255,248,232,.35)'; x.lineWidth = 1.5; ln(seg, -1.5, 0);
+        x.strokeStyle = 'rgba(28,24,20,.75)'; x.lineWidth = 1.6; ln(seg, 0, 0);
+        if (rc < 0.12 && H2 >= 30) {
+          const ly = H2 * (0.4 + rc);
+          x.strokeStyle = 'rgba(28,24,20,.75)'; x.lineWidth = 1.8; x.beginPath(); x.moveTo(ax, ay - h + ly); x.lineTo(bx, by - h + ly); x.stroke();
+          x.strokeStyle = 'rgba(255,248,232,.35)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(ax, ay - h + ly - 2); x.lineTo(bx, by - h + ly - 2); x.stroke();
+        }
+      }
+      // one darkening from the block's real top to its foot (it restarted at every level: tall walls read as storeys)
+      let yb = -1e9, yt = 1e9; for (const [, py] of o.poly) { yb = Math.max(yb, py - (o.h > 8 ? 8 * hs : 0)); yt = Math.min(yt, py - (o.h ?? 8) * hs); }
+      const gr = x.createLinearGradient(0, yt, 0, yb); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(15,12,8,.32)');
+      x.fillStyle = gr; x.fill(extrude(o.poly, -lo, -h));
+      // a dark crease only where the block stands on the base, and only along its edges that face the camera
+      if (Math.abs(prev - 8 * hs) < 0.01) {
+        let a2 = 0; for (let i = 0; i < o.poly.length; i++) { const u = o.poly[i], v = o.poly[(i + 1) % o.poly.length]; a2 += u[0] * v[1] - v[0] * u[1]; }
+        const cw = a2 > 0 ? 1 : -1, cr = new Path2D();
+        for (let i = 0; i < o.poly.length; i++) { const [ax, ay] = o.poly[i], [bx, by] = o.poly[(i + 1) % o.poly.length]; if (-(bx - ax) * cw > 0.6 * Math.hypot(bx - ax, by - ay)) { cr.moveTo(ax, ay - prev); cr.lineTo(bx, by - prev); } /* edges truly facing the camera: a join between blocks runs up the screen and drew a line down the wall */ }
+        x.strokeStyle = 'rgba(38,35,31,.75)'; x.lineWidth = 1.6; x.stroke(cr);
+      }
+    }
+    // the tops: stone, a tone of their own, a pale bevel inside the upper-left edge, a crisp dark edge line
+    for (const o of list) {
+      if (o.h && Math.abs(h - o.h * hs) > 0.01) continue;   // a top only where the block ends (lower ones were covered anyway, but left lines)
+      const p = path(o.poly, -h);
+      // each block its own piece of the stone (shifted and turned) and its own tone, so no two tops look alike
+      topPat = topPats[pickOf(o, 2, [0.5, 0.38, 0.12])];
+      const r1 = (o.poly[0][0] * 12.9898 + o.poly[0][1] * 78.233) % 1, r2 = (o.poly[0][0] * 39.3468 + o.poly[0][1] * 11.135) % 1;
+      topPat.setTransform?.(new DOMMatrix().translate(r1 * 400, r2 * 400).rotate(r1 * 360).scale(0.42)); x.fillStyle = topPat; x.fill(p);
+      const tn = Math.abs(r2); x.fillStyle = tn < 0.33 ? 'rgba(255,248,232,.14)' : tn < 0.66 ? 'rgba(110,100,85,.16)' : 'rgba(90,98,110,.14)'; x.fill(p);
+      if (ROCK.edges && o.h > 8) {
+        // edges by what lies across them: open air or a lower step gets the dark line and the pale bevel; a neighbour as
+        // high or higher only a faint joint, so blocks of one height read as one mass of rock, not a tray of tiles
+        let a2 = 0; for (let i = 0; i < o.poly.length; i++) { const u = o.poly[i], v = o.poly[(i + 1) % o.poly.length]; a2 += u[0] * v[1] - v[0] * u[1]; }
+        const cw = a2 > 0 ? 1 : -1, open = new Path2D(), joint = new Path2D();
+        for (let i = 0; i < o.poly.length; i++) {
+          const [ax, ay] = o.poly[i], [bx, by] = o.poly[(i + 1) % o.poly.length], l = Math.hypot(bx - ax, by - ay); if (l < 0.01) continue;
+          const nx = (by - ay) / l * cw, ny = -(bx - ax) / l * cw, tgt = heightAt(o, (ax + bx) / 2 + nx * 3, (ay + by) / 2 + ny * 3) >= o.h ? joint : open;
+          tgt.moveTo(ax, ay - h); tgt.lineTo(bx, by - h);
+        }
+        x.save(); x.clip(p); x.translate(2, 2.5); x.strokeStyle = 'rgba(255,250,238,.6)'; x.lineWidth = 3; x.stroke(open); x.restore();
+        x.strokeStyle = 'rgba(38,35,31,.3)'; x.lineWidth = 1; x.stroke(joint);
+        x.strokeStyle = BLK.line; x.lineWidth = 1.8; x.stroke(open);
+      } else {
+        x.save(); x.clip(p); x.translate(2, 2.5); x.strokeStyle = 'rgba(255,250,238,.6)'; x.lineWidth = 3; x.stroke(p); x.restore();
+        x.strokeStyle = BLK.line; x.lineWidth = 1.8; x.stroke(p);
+      }
+      if (Math.abs(h - o.h * hs) < 0.01) { if (o.peak) paintPeak(x, o, h, topPat); else paintCover(x, o, p, h); }
+    }
+    prev = h;
+  }
+  const screeDraws = [];   // (moss and scree tried and dropped: the user did not want them)
+  // one silhouette canvas, reused for the shadow and the outline
+  const S = document.createElement('canvas'); S.width = W; S.height = H; const sx = S.getContext('2d');
+  sx.drawImage(Lc, 0, 0); sx.globalCompositeOperation = 'source-in'; sx.fillStyle = BLK.line; sx.fillRect(0, 0, W, H);
+  g.save(); g.setTransform(1, 0, 0, 1, tf.e + x0 * px, tf.f + y0 * px);
+  g.globalAlpha = Math.min(1, 0.18 * ROCK.shadow); g.drawImage(S, 10 * px, 14 * px); g.globalAlpha = Math.min(1, 0.14 * ROCK.shadow); for (const d of [2, 4, 6]) g.drawImage(S, d * 0.5 * px, d * px); g.globalAlpha = 1;
+  const o = ROCK.outline * px; if (o > 0) for (let a = 0; a < 8; a++) g.drawImage(S, Math.cos(a * Math.PI / 4) * o, Math.sin(a * Math.PI / 4) * o);
+  g.drawImage(Lc, 0, 0);
+  g.setTransform(tf); for (const [im, a, b, w, hh] of screeDraws) g.drawImage(im, a, b, w, hh);
+  g.restore();
+}
+function paintCliffKit(g, blocks) {
+  if (!kitReady()) return;
+  const cliffs = blocks.filter(b => b.type === 'cliff' && b.pts.length > 1), H = CLIFF.wall;
+  // a block's outline with its corners rounded (through the midpoints of its edges), so blocks look like worn stone
+  const polyPath = (P, dy = 0) => {
+    const p = new Path2D(), n = P.length, mid = i => [(P[i][0] + P[(i + 1) % n][0]) / 2, (P[i][1] + P[(i + 1) % n][1]) / 2 + dy];
+    const m0 = mid(n - 1); p.moveTo(m0[0], m0[1]);
+    for (let i = 0; i < n; i++) { const m = mid(i); p.quadraticCurveTo(P[i][0], P[i][1] + dy, m[0], m[1]); }
+    p.closePath(); return p;
+  };
+  const shapes = cliffs.map((b, bi) => ({ b, P: bandOutline(b, bi), rand: seeded(bi * 7717 + 3) }));
+  // A ridge is a row of separate blocks (like the reference): the band cut across every 50-100 units, each block's
+  // sides bulging out a little, its top lifted by its own amount (steps between neighbours), its own outline, bevel,
+  // tint, moss and dirt. Blocks are drawn back to front, so a nearer one overlaps the one behind it.
+  const all = [];
+  for (const s of shapes) {
+    const n = s.P.n, rand = s.rand, H0 = s.b.h ?? H;
+    const L = i => s.P[i], R = i => s.P[2 * n + 10 - i];
+    for (let i0 = 0; i0 < n - 1;) {
+      const i1 = Math.min(n - 1, i0 + 11 + Math.floor(rand() * 7)), bul = 4 + rand() * 8, side = (i, A) => {
+        const M = [(L(i)[0] + R(i)[0]) / 2, (L(i)[1] + R(i)[1]) / 2], p = A(i), dx = p[0] - M[0], dy = p[1] - M[1], l = Math.hypot(dx, dy) || 1, t = (i - i0) / (i1 - i0), k = bul * Math.sin(Math.PI * t) - 1.5;
+        return [p[0] + dx / l * k, p[1] + dy / l * k];
+      };
+      const poly = []; for (let i = i0; i <= i1; i++) poly.push(side(i, L)); for (let i = i1; i >= i0; i--) poly.push(side(i, R));
+      if (i0 === 0) for (let k = 0; k < 11; k++) poly.push(s.P[2 * n + 11 + k]);
+      if (i1 === n - 1) poly.splice(i1 - i0 + 1, 0, ...s.P.slice(n, n + 11));
+      const cy = poly.reduce((a, p) => a + p[1], 0) / poly.length, cx = poly.reduce((a, p) => a + p[0], 0) / poly.length;
+      all.push({ s, poly, cx, cy, H0, lift: rand() * 9, tint: rand(), rand });
+      i0 = i1;
+    }
+  }
+  all.sort((a, c) => a.cy - c.cy);
+  for (const k of all) { k.top = polyPath(k.poly, -k.lift); k.solid = new Path2D(); for (let d = -k.lift; d <= k.H0; d += 3) k.solid.addPath(polyPath(k.poly, d)); }
+  g.save();
+  g.fillStyle = 'rgba(0,0,0,.2)'; g.translate(9, 13); for (const k of all) g.fill(k.solid); g.translate(-9, -13);   // shadow to the bottom right
+  const W = KIT.wall, pat = g.createPattern(KIT.top, 'repeat'); pat.setTransform?.(new DOMMatrix().scale(0.45));
+  g.lineJoin = 'round';
+  for (const k of all) {
+    const rand = k.rand, P = k.poly, hh = k.H0 + k.lift, wk = hh * 1.05 / W.naturalHeight;
+    g.strokeStyle = g.fillStyle = '#26231f'; g.lineWidth = CLIFF.line * 2; g.stroke(k.solid); g.fill(k.solid);
+    // the wall under the block's down-facing edges
+    g.save(); g.clip(k.solid); let u = rand() * 400;
+    for (let i = 0; i < P.length; i++) {
+      const [x0, y0] = P[i], [x1, y1] = P[(i + 1) % P.length], dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy);
+      if (!l) continue;
+      if (dx / l > 0.05) {
+        const su = (u / wk) % W.naturalWidth, sw = Math.max(1, l / wk);
+        g.save(); g.setTransform(g.getTransform().multiply(new DOMMatrix([dx / sw, dy / sw, 0, wk, x0, y0 - k.lift])));
+        g.drawImage(W, su, 0, Math.min(sw + 1, W.naturalWidth - su), W.naturalHeight, 0, 0, Math.min(sw + 1, W.naturalWidth - su), W.naturalHeight);
+        if (su + sw > W.naturalWidth) g.drawImage(W, 0, 0, su + sw - W.naturalWidth + 1, W.naturalHeight, W.naturalWidth - su, 0, su + sw - W.naturalWidth + 1, W.naturalHeight);
+        g.restore();
+      }
+      u += l;
+    }
+    g.globalCompositeOperation = 'screen'; g.fillStyle = 'rgba(125,117,104,.55)'; g.fill(k.solid); g.globalCompositeOperation = 'source-over';
+    g.restore();
+    // the top: stone, a tint of its own, a pale bevel along its edge, then moss and dirt
+    g.fillStyle = pat; g.fill(k.top);
+    const t = k.tint; g.fillStyle = t < 0.33 ? `rgba(255,245,225,${0.1 + t * 0.25})` : t < 0.66 ? `rgba(90,96,110,${0.08 + (t - 0.33) * 0.3})` : `rgba(120,95,60,${0.06 + (t - 0.66) * 0.25})`; g.fill(k.top);
+    g.save(); g.clip(k.top);
+    // volume: the top darkens toward its edge, with a pale bevel on the upper-left side
+    g.strokeStyle = 'rgba(40,34,28,.22)'; g.lineWidth = 22; g.stroke(k.top);
+    g.strokeStyle = 'rgba(40,34,28,.18)'; g.lineWidth = 10; g.stroke(k.top);
+    g.translate(2.5, 3); g.strokeStyle = 'rgba(255,250,235,.55)'; g.lineWidth = 6; g.stroke(k.top); g.translate(-2.5, -3);
+    const blob = (x, y, r, fill, edge) => {
+      g.beginPath(); const m = 7 + Math.floor(rand() * 3);
+      for (let j = 0; j < m; j++) { const a = j / m * TAU, rr = r * (0.6 + rand() * 0.5); j ? g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr * 0.8) : g.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr * 0.8); }
+      g.closePath(); g.fillStyle = fill; g.fill(); g.strokeStyle = edge; g.lineWidth = 1.4; g.stroke();
+    };
+    if (rand() < 0.3) blob(k.cx + (rand() - 0.5) * 20, k.cy - k.lift + (rand() - 0.5) * 12, 9 + rand() * 7, '#c2a173', 'rgba(110,80,45,.7)');
+    if (rand() < 0.65) {   // a clump of our grass tufts
+      const { grass } = KIT.bits, x = k.cx + (rand() - 0.5) * 30, y = k.cy - k.lift + (rand() - 0.5) * 14;
+      for (let j = 0, m = 3 + Math.floor(rand() * 4); j < m; j++) { const im = grass[Math.floor(rand() * grass.length)], d = 9 + rand() * 8; g.drawImage(im, x + (rand() - 0.5) * 22 - d / 2, y + (rand() - 0.5) * 10 - d, d, d * im.naturalHeight / im.naturalWidth); }
+    }
+    g.restore();
+    g.strokeStyle = '#26231f'; g.lineWidth = CLIFF.line * 0.8; g.stroke(k.top);
+  }
+  // loose stones at the foot of the walls and grass tufts on top
+  const { stones, grass } = KIT.bits;
+  for (const s of shapes) {
+    const rand = s.rand, H0 = s.b.h ?? H;
+    for (let i = 0; i < s.P.length; i += 3) {
+      const [x0, y0] = s.P[i], [x1, y1] = s.P[(i + 1) % s.P.length], l = Math.hypot(x1 - x0, y1 - y0) || 1, ny = (x1 - x0) / l;
+      if (ny > 0.3 && rand() < 0.3 * CLIFF.stones) { const im = stones[Math.floor(rand() * stones.length)], d = 6 + rand() * 12; g.drawImage(im, x0 - d / 2 + (rand() - 0.5) * 14, y0 + H0 - d * 0.2 + rand() * 12, d, d * im.naturalHeight / im.naturalWidth); }
+    }
+    const b = s.b, r = (b.w ?? 70) / 2;
+    for (let i = 0; i + 1 < b.pts.length; i++) if (rand() < 0.3 * CLIFF.grass) {
+      const [x0, y0] = b.pts[i], [x1, y1] = b.pts[i + 1], tt = rand(), im = grass[Math.floor(rand() * grass.length)], d = 10 + rand() * 7;
+      g.drawImage(im, x0 + (x1 - x0) * tt + (rand() - 0.5) * r - d / 2, y0 + (y1 - y0) * tt + (rand() - 0.5) * r - d - 8, d, d * im.naturalHeight / im.naturalWidth);
+    }
+  }
+  g.restore();
+}
+// A cliff blockout: the ridge as one extruded shape along its whole line — the top band (the line, b.w wide) lifted
+// by BLOCK_H, the wall below it running down to the ground — so the wall faces the camera whichever way the line goes
+// and there are no joins. Drawn flat (light top, dark wall, one outline); it is the base the AI repaints (#paint test).
+const BLOCK_H = 50;
+function linePath(b, dy = 0) { const p = new Path2D(); b.pts.forEach(([x, y], i) => i ? p.lineTo(x, y + dy) : p.moveTo(x, y + dy)); return p; }
+function paintBlockout(g, blocks) {
+  const cliffs = blocks.filter(b => b.type === 'cliff' && b.pts.length > 1);
+  g.save(); g.lineCap = g.lineJoin = 'round';
+  const sweep = (b, col, extra) => { g.strokeStyle = col; g.lineWidth = (b.w ?? 70) + extra; for (let d = 0; d <= BLOCK_H; d += 4) g.stroke(linePath(b, d)); };
+  for (const b of cliffs) sweep(b, '#23211f', 8);                          // outline around top + wall
+  for (const b of cliffs) sweep(b, '#6e665c', 0);                          // the wall
+  for (const b of cliffs) { g.strokeStyle = '#23211f'; g.lineWidth = (b.w ?? 70) + 6; g.stroke(linePath(b)); }   // the top's edge line
+  for (const b of cliffs) { g.strokeStyle = '#bdb6a6'; g.lineWidth = (b.w ?? 70); g.stroke(linePath(b)); }       // the top
+  g.restore();
+}
+function paintRocks(g) {
+  ensureRocks();
+  if (!G.rockItems) return;
+  if (cliffMode() === 'parts') return paintParts(g);
+  if (cliffMode() === 'atlas') return paintAtlas(g);
+  g.fillStyle = 'rgba(0,0,0,.2)';
+  for (const it of G.rockItems) { g.save(); g.translate(it.x + 5, it.y + 7); g.rotate(it.rot); g.beginPath(); g.ellipse(0, 0, it.w * 0.46, it.h * 0.42, 0, 0, TAU); g.fill(); g.restore(); }
+  for (const it of G.rockItems) { g.save(); g.translate(it.x, it.y); g.rotate(it.rot); g.drawImage(it.img, -it.w / 2, -it.h / 2, it.w, it.h); g.restore(); }
+}
 // Everything on the ground that never moves is painted once into one big image per game (and screen scale).
 const GROUND_R = 940;
+const PAINTED = {}; const paintedImg = src => PAINTED[src] || (PAINTED[src] = Object.assign(new Image(), { src }));
 function groundLayer() {
-  const k = Math.min(S0 * DPR, 4096 / (2 * GROUND_R)), key = `${k.toFixed(3)}|${!!villageGround}|${groundImg.complete}|${!!(SPR.grave && SPR.grave.complete)}`;
+  ensureRocks();   // the rocks may finish loading after the game started: lay them out (and their collision) then
+  const k = Math.min(S0 * DPR, 4096 / (2 * GROUND_R)), key = `${k.toFixed(3)}|${location.hash}|${ROCK.rough}|${ROCK.cover}|${ROCK.spurs}|${topsReady()}|${kitReady()}|${partsReady()}|${atlasReady()}|${ROCK.style}|${kitReady()}|${monoArtReady()}|${HIGH_GRASS.forest.complete}${HIGH_GRASS.meadow.complete}|${ROCK.style}|${G.cfg.v.painted ? paintedImg(G.cfg.v.painted.src).complete : ''}|${rocksReady()}|${ROCK.variant}|${ROCK.set}|${ROCK.floor}${ROCK.floorWidth}${floorReady()}|${!!villageGround}|${groundImg.complete}|${!!(SPR.grave && SPR.grave.complete)}`;
   if (G.ground && G.groundKey === key) return G.ground;
   const c = G.ground || document.createElement('canvas');
   c.width = c.height = Math.ceil(2 * GROUND_R * k);
@@ -1831,11 +3290,30 @@ function groundLayer() {
   g.fillStyle = grassPat; g.fillRect(-GROUND_R, -GROUND_R, 2 * GROUND_R, 2 * GROUND_R);
   if (villageGround) g.drawImage(villageGround, -230, -230, 460, 460);
   g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = 30; g.beginPath(); g.arc(0, 0, 905, 0, TAU); g.stroke();
-  if (G.cfg.twist === 'river') for (const ry of [-335, 335]) {
-    g.fillStyle = '#24506b'; g.fillRect(-GROUND_R, ry - 38, 2 * GROUND_R, 76);
+  for (const { y: ry, w: rw } of G.cfg.v.rivers || []) {
+    g.fillStyle = '#24506b'; g.fillRect(-GROUND_R, ry - rw / 2, 2 * GROUND_R, rw);
     g.fillStyle = 'rgba(160,210,240,.18)';
     for (let i = -11; i <= 11; i++) g.fillRect(i * 85 + (i % 2) * 30, ry - 14 + ((i + 11) % 3) * 12, 30, 3);
   }
+  // spawn sources: a dark trampled hollow with bones, seen by day; nothing tells which one opens tonight
+  for (const sp of G.cfg.v.spawns || []) {
+    const r = (sp.r ?? 40) * 1.4, gg = g.createRadialGradient(sp.x, sp.y, r * 0.15, sp.x, sp.y, r);
+    gg.addColorStop(0, 'rgba(18,10,14,.85)'); gg.addColorStop(0.6, 'rgba(40,24,22,.5)'); gg.addColorStop(1, 'rgba(40,24,22,0)');
+    g.fillStyle = gg; g.beginPath(); g.arc(sp.x, sp.y, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(225,215,190,.75)'; g.lineWidth = 3; g.lineCap = 'round';
+    for (let i = 0; i < 6; i++) {
+      const a = i * 2.39 + sp.x * 0.01, d = r * (0.3 + (i % 3) * 0.17), bx = sp.x + Math.cos(a) * d, by = sp.y + Math.sin(a) * d, o = a * 1.7;
+      g.beginPath(); g.moveTo(bx - Math.cos(o) * 7, by - Math.sin(o) * 7); g.lineTo(bx + Math.cos(o) * 7, by + Math.sin(o) * 7); g.stroke();
+    }
+  }
+  // a village can have its ground painted as one picture (Kingdom Rush style): "painted": {"src", "half"} covers
+  // -half…half around the fire and replaces the cliff floor and rocks (their collision still comes from the rocks)
+  const P = G.cfg.v.painted, pim = P && paintedImg(P.src);
+  if (pim && pim.complete && pim.naturalWidth) { ensureRocks(); g.drawImage(pim, -P.half, -P.half, 2 * P.half, 2 * P.half); }
+  else if (/blockout/.test(location.hash)) { paintCliffFloor(g, G.cfg.v.blocks || [], k); paintBlockout(g, G.cfg.v.blocks || []); }
+  else if (cliffMode() === 'blocks' || cliffMode() === 'mono') { ensureRocks(); paintCliffFloor(g, G.cfg.v.blocks || [], k); paintBlocks(g, G.cfg.v.blocks || []); }
+  else if (cliffMode() === 'kit') { ensureRocks(); paintHighland(g, G.cfg.v); paintCliffFloor(g, G.cfg.v.blocks || [], k); paintCliffKit(g, G.cfg.v.blocks || []); }
+  else { paintCliffFloor(g, G.cfg.v.blocks || [], k); paintRocks(g); }
   for (const gr of G.graves) {
     const i = SPR.grave;
     if (i && i.complete && i.naturalWidth) { g.save(); g.translate(gr.x, gr.y); g.rotate(Math.PI / 2); const w = 38, h = 38 * i.naturalHeight / i.naturalWidth; g.drawImage(i, -w / 2, -h / 2, w, h); g.restore(); }
@@ -2508,6 +3986,11 @@ function drawRock(k) {
   k.spr ??= Math.abs(Math.round(k.x * 3 + k.y * 7)) % 2 ? 'boulder1' : 'boulder2';   // clean grey stone, two shapes
   if (!spr(k.spr, k.x + j, k.y, sz, k.rot)) circle(k.x + j, k.y, k.r, '#8d9298', '#3a3d42', 2.5);
 }
+// a tree of a thicket over a forest block line (its collision is still the line of circles in G.blocks)
+function drawDecor(p) {
+  shadow(p.x + 3, p.y + 3, p.d * 0.38);
+  if (!spr(p.tree, p.x, p.y, p.d, p.ang)) circle(p.x, p.y, p.d * 0.3, '#8d9298', '#3a3d42', 2.5);
+}
 function drawTree(t) {
   const amp = t.shake > 0 ? (t.shake / 0.3) ** 2 * 6 * Math.cos((0.3 - t.shake) * 28) : 0;   // knocked away, then swings back
   const sh = amp * Math.cos(t.hitDir || 0), shy = amp * Math.sin(t.hitDir || 0);
@@ -2529,7 +4012,7 @@ function hud() {
     $('phaseIcon').className = 'ico ' + (G.phase === 'day' ? 'sun' : (G.moon || MOONS.half).icon);
     $('skip').querySelector('.ico').className = 'ico ' + moonOf(G.night + 1).icon;   // the button shows the coming night's moon
   }
-  setText('phase', G.phase === 'day' ? `${s}` : G.needBoss && G.phaseT <= 0 ? `${G.night}${of} · ☠` : `${G.night}${of} · ${s}`);
+  setText('phase', G.phase === 'day' ? `${s}` : G.phaseT <= 0 ? `${G.night}${of} · ☠ ${G.plan.length + G.zombies.length}` : `${G.night}${of} · ${s}`);
   setText('wood', String(G.wood)); setText('stone', String(G.stone)); setText('gold', String(G.gold));
   setText('lvl', `${G.lvl}`);
   $('fire').style.width = Math.max(0, G.fire.hp / G.fire.max * 100) + '%';
@@ -2580,22 +4063,23 @@ function begin(cfg) {
   for (const id of ['start', 'over', 'pick', 'map']) $(id).hidden = true;
   $('skip').hidden = false;
   G.paused = false; last = performance.now();
-  if (cfg.mode === 'liberate') banner(cfg.v.name, cfg.v.tw);
+  if (cfg.mode === 'liberate') banner(cfg.v.name, cfg.v.intro);
   else if (cfg.mode === 'raid') banner(cfg.lift ? `Сними осаду: ${cfg.v.name}` : `Набег на ${cfg.v.name}`, 'Почини и укрепи деревню до темноты');
+  else if (cfg.mode === 'lab') banner('Лаборатория мира', 'Все объекты земли; переключатели слева');
   else banner('Осада', 'Наруби дерева и построй защиту до темноты');
 }
 function takeStore() { const s = SAVE.store; SAVE.store = { wood: 0, gold: 0, stone: 0 }; persist(); return s; }
 const beginSiege = () => begin(SIEGE);
 function beginVillage(v) {
   const s = takeStore();
-  begin({ mode: 'liberate', v, nights: v.nights, d: v.d, twist: v.twist, firstDay: v.firstDay || 30, dayLen: v.dayLen || 18, nightLen: v.nightLen || 50,
+  begin({ mode: 'liberate', v, nights: v.nights, d: v.difficulty, firstDay: v.time.firstDay, dayLen: v.time.day, nightLen: v.time.night,
     wood: s.wood, gold: s.gold, stone: s.stone || 0 });
 }
 // One night in your own village: either the incoming raid, or (liftId) lifting a siege.
 function beginRaid(liftId) {
   const id = liftId || SAVE.raid.id, v = V(id), o = SAVE.owned[id], s = takeStore();
   const power = liftId ? o.siegePower || 6 : SAVE.raid.power;
-  begin({ mode: 'raid', lift: !!liftId, power, v, nights: 1, d: v.d + 3 + SAVE.raids, twist: v.twist, firstDay: 20, dayLen: 18, nightLen: 50,
+  begin({ mode: 'raid', lift: !!liftId, power, v, nights: 1, d: v.difficulty + 3 + SAVE.raids, firstDay: 20, dayLen: 18, nightLen: 50,
     wood: s.wood + 10, gold: s.gold, stone: s.stone || 0, buildings: o.b });
 }
 function autoResolve() {
@@ -2843,7 +4327,7 @@ function selectNode(v) {
     } else if (st === 'owned') h += `<div class="stat">${stars}<span>${ic('shield')}${defense(o.b)}</span></div>
         <div class="stat"><span>${ic('wood')}+5</span><span>${ic('gold')}+3</span></div>` +
         (OPEN_ALL ? '<div class="acts"><button class="btn go" id="actGo" type="button"><span class="ico swords"></span>В бой!</button></div>' : '');
-    else if (st === 'open') h += `<p>${v.tw}</p><div class="stat"><span>${ic('moon')}${v.nights}</span><span>${ic('crown')}</span></div>` +
+    else if (st === 'open') h += `<p>${v.intro}</p><div class="stat"><span>${ic('moon')}${v.nights}</span><span>${ic('crown')}</span></div>` +
       '<div class="acts"><button class="btn go" id="actGo" type="button"><span class="ico swords"></span>В бой!</button></div>';
     else if (st === 'locked') h += `<div class="stat"><span>${ic('lock')}</span><span>${v.needs.map(n => V(n).name).join(' / ')}</span></div>`;
     else h += `<div class="stat"><span>${ic('crown')}</span><span>…</span></div>`;
@@ -2953,11 +4437,97 @@ if (SHOW) {
       G.zombies.push({ kind: k, x: Math.cos(a) * 260, y: Math.sin(a) * 260, r: b.r, hp: b.hp * 3, max: b.hp * 3, spd: b.spd * 0.8, dmg: 0, col: b.col, hit: 0, block: null, wob: Math.random() * TAU, fx: 0, fy: 0 }); }
   }, 450);
 }
+// the world lab: villages/lab.json, endless day (or a chosen night), a panel of switches
+if (LAB.on) {
+  $('start').hidden = true;
+  begin({ mode: 'lab', v: VDATA.villages.lab, nights: Infinity, d: 0, firstDay: 1e9, dayLen: 1e9, nightLen: 1e9 });
+  G.fire.max = G.fire.hp = 1e9;
+  const panel = document.createElement('div');
+  panel.style.cssText = 'position:fixed;left:12px;top:64px;z-index:20;display:flex;flex-direction:column;gap:6px;font:600 13px system-ui;';
+  let night = null, zombies = false;
+  const btn = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.cssText = 'padding:6px 10px;border-radius:8px;border:0;background:rgba(20,16,24,.8);color:#f2e6d0;text-align:left'; b.onclick = () => { fn(); sync(); }; panel.appendChild(b); return b; };
+  const B = {
+    day: btn('День', () => { night = null; }), full: btn('Полнолуние', () => { night = 'full'; }), half: btn('Месяц', () => { night = 'half'; }), new: btn('Безлунная', () => { night = 'new'; }),
+    debug: btn('Границы', () => { LAB.debug = !LAB.debug; }), zomb: btn('Зомби', () => { zombies = !zombies; if (!zombies) G.zombies = []; }),
+  };
+  const sync = () => {
+    for (const k of ['day', 'full', 'half', 'new']) B[k].style.outline = (night || 'day') === k ? '2px solid #ffb347' : '';
+    B.debug.style.outline = LAB.debug ? '2px solid #ffb347' : ''; B.zomb.style.outline = zombies ? '2px solid #ffb347' : '';
+  };
+  document.body.appendChild(panel); sync();
+  // the cliff constructor: rock colour and how the rocks are laid, the ground repainted on every change, kept on this device
+  const box = document.createElement('div');
+  box.style.cssText = 'position:fixed;right:12px;top:64px;z-index:20;width:220px;max-height:calc(100% - 80px);overflow:auto;padding:10px;border-radius:10px;background:rgba(20,16,24,.85);color:#f2e6d0;font:600 12px system-ui;';
+  const save = () => { try { localStorage.setItem('kostyor.rock', JSON.stringify(ROCK)); } catch (e) {} G.groundKey = null; G.rockItems = null; ensureRocks(); };
+  const head = document.createElement('div'); head.textContent = 'Скалы'; head.style.cssText = 'font-size:14px;margin-bottom:6px'; box.appendChild(head);
+  const VIEWS = [['', '', 'Блоки'], ['mono', '', 'Моно'], ['rocks', 'a', 'Камни a'], ['atlas', '', 'Атлас 2'], ['parts', '', 'Детали'], ['rocks', 'h', 'Атлас h'], ['kit', '', 'Конструктор']];
+  const viewBtn = document.createElement('button'); viewBtn.type = 'button'; viewBtn.style.cssText = 'width:100%;margin-bottom:8px;padding:6px;border-radius:8px;border:0;background:#ffb347;color:#201810;font-weight:700';
+  const viewName = () => { const v = VIEWS.find(([st, se]) => (ROCK.style || '') === st && (st === 'rocks' ? (ROCK.set || 'a') === se : true)) || VIEWS[0]; viewBtn.textContent = 'Вид: ' + v[2]; };
+  viewBtn.onclick = () => { const i = VIEWS.findIndex(([st, se]) => (ROCK.style || '') === st && (st === 'rocks' ? (ROCK.set || 'a') === se : true)), [st, se] = VIEWS[(i + 1) % VIEWS.length]; ROCK.style = st; ROCK.set = se; viewName(); G.rockItems = null; save(); };
+  viewName(); box.appendChild(viewBtn);
+
+  const vrow = document.createElement('div'); vrow.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:8px'; box.appendChild(vrow);
+  const NAMES = { gray: 'Серые', brown: 'Коричневые', moss: 'Зелень', snow: 'Снег', red: 'Красные', dark: 'Базальт', white: 'Известняк', sand: 'Песчаник', lava: 'Лава' };
+  const vbtn = Object.fromEntries(ROCK_VARIANTS.map(v => { const b = document.createElement('button'); b.type = 'button'; b.textContent = NAMES[v];
+    b.style.cssText = 'padding:6px;border-radius:8px;border:0;background:#2a2430;color:#f2e6d0;font-weight:700'; b.onclick = () => { ROCK.variant = v; mark(); save(); }; vrow.appendChild(b); return [v, b]; }));
+  const srow = document.createElement('div'); srow.style.cssText = 'display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:8px'; box.appendChild(srow);
+  const sbtn = Object.fromEntries('abcdef'.split('').map(k => { const b = document.createElement('button'); b.type = 'button'; b.textContent = k;
+    b.style.cssText = 'padding:6px 0;border-radius:8px;border:0;background:#2a2430;color:#f2e6d0;font-weight:700'; b.onclick = () => { ROCK.set = k; mark(); save(); }; srow.appendChild(b); return [k, b]; }));
+  const spurRow = document.createElement('label'); spurRow.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:8px';
+  const spurBox = Object.assign(document.createElement('input'), { type: 'checkbox', checked: !!ROCK.spurs });
+  spurBox.onchange = () => { ROCK.spurs = spurBox.checked ? 1 : 0; save(); };
+  spurRow.append(spurBox, 'Камни у подножия'); box.appendChild(spurRow);
+  const crRow = document.createElement('label'); crRow.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:8px';
+  const crBox = Object.assign(document.createElement('input'), { type: 'checkbox', checked: !!ROCK.cracks });
+  crBox.onchange = () => { ROCK.cracks = crBox.checked ? 1 : 0; save(); };
+  crRow.append(crBox, 'Трещины на стенах'); box.appendChild(crRow);
+  for (const [k, label] of [['planes', 'Стены плоскостями (свет по граням)'], ['edges', 'Контур только по краю и перепадам'], ['monoMix', 'Моно: у каждой глыбы своя текстура'], ['monoTint', 'Моно: у каждой глыбы свой оттенок']]) {
+    const row = document.createElement('label'); row.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:8px';
+    const cb = Object.assign(document.createElement('input'), { type: 'checkbox', checked: !!ROCK[k] });
+    cb.onchange = () => { ROCK[k] = cb.checked ? 1 : 0; save(); };
+    row.append(cb, label); box.appendChild(row);
+  }
+  const crow = document.createElement('div'); crow.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:8px'; box.appendChild(crow);
+  const cbtn = Object.fromEntries([['', 'Детали'], ['moss', 'Пятна'], ['snow', 'Снег'], ['none', 'Голые']].map(([k, label]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label;
+    b.style.cssText = 'padding:6px 0;border-radius:8px;border:0;background:#2a2430;color:#f2e6d0;font-weight:700;font-size:11px'; b.onclick = () => { ROCK.cover = k; mark(); save(); }; crow.appendChild(b); return [k, b]; }));
+  const frow = document.createElement('div'); frow.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:8px'; box.appendChild(frow);
+  const FN = { auto: 'Пол: авто', '': 'Без пола', earth: 'Земля', dry: 'Сухая', gravel: 'Гравий', snow: 'Снег', red: 'Красная', sand: 'Песок', ash: 'Пепел' };
+  const fbtn = Object.fromEntries(Object.entries(FN).map(([k, label]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label;
+    b.style.cssText = 'padding:6px 0;border-radius:8px;border:0;background:#2a2430;color:#f2e6d0;font-weight:700;font-size:11px'; b.onclick = () => { ROCK.floor = k; mark(); save(); }; frow.appendChild(b); return [k, b]; }));
+  const mark = () => {
+    for (const [k, b] of Object.entries(cbtn)) b.style.outline = (ROCK.cover || '') === k ? '2px solid #ffb347' : '';
+    for (const [k, b] of Object.entries(fbtn)) b.style.outline = ROCK.floor === k ? '2px solid #ffb347' : '';
+    for (const [v, b] of Object.entries(vbtn)) b.style.outline = (ROCK.variant || 'gray') === v ? '2px solid #ffb347' : '';
+    for (const [k, b] of Object.entries(sbtn)) b.style.outline = (ROCK.set || 'a') === k ? '2px solid #ffb347' : '';
+  };
+  const RANGES = { facet: [0, 2, 0.1, 'Грани (0 = гладкие дуги)'], endFlat: [0, 1, 0.05, 'Торцы (0 = круглые, 1 = срезанные)'], terrace: [0, 2.5, 0.1, 'Моно: ширина уступов'], monoTex: [0, 1, 0.05, 'Моно: фактура камня'], monoChip: [0, 3, 0.1, 'Моно: изломы краёв'], monoH: [0.5, 2, 0.05, 'Моно: высота глыб'], monoTop: [-1, 3, 1, 'Моно: верх (картинка, -1 = старый)'], monoWall: [0, 3, 1, 'Моно: стена (картинка)'], monoLines: [1, 2, 1, 'Моно: линии (1 = меньше, 2 = как было)'], monoAO: [0, 2, 0.1, 'Моно: тень в стыках'], wallTex: [0, 1, 0.05, 'Текстура стен (при плоскостях)'], rough: [0, 1, 0.05, 'Грубость (острее, рубленые края)'], hScale: [0.5, 1.8, 0.05, 'Высота скал'], blockSize: [0.5, 2, 0.05, 'Размер глыб'], light: [0, 2.5, 0.1, 'Свет на стенах'], shadow: [0, 2.5, 0.1, 'Тени'], outline: [0, 5, 0.25, 'Контур'], wander: [0, 0.25, 0.01, 'Неровность края'], deco: [0, 2, 0.05, 'Детали на верхушках'], peaks: [0, 2, 0.1, 'Пики'], floorWidth: [1, 5, 0.1, 'Пол: ширина'], size: [0.6, 2.5, 0.05, 'Толщина скал'], step: [0.5, 1.1, 0.02, 'Шаг (меньше = плотнее)'], mix: [0, 1, 0.05, 'Зелень среди серых'] };
+  const inputs = {};
+  for (const [k, [min, max, step, label]] of Object.entries(RANGES)) {
+    const row = document.createElement('label'); row.style.cssText = 'display:block;margin:6px 0';
+    const val = document.createElement('span'); val.style.float = 'right';
+    const inp = Object.assign(document.createElement('input'), { type: 'range', min, max, step, value: ROCK[k] }); inp.style.width = '100%';
+    inp.oninput = () => { ROCK[k] = +inp.value; val.textContent = inp.value; save(); };
+    row.append(label, val, inp); val.textContent = ROCK[k]; box.appendChild(row); inputs[k] = [inp, val];
+  }
+  const out = document.createElement('textarea'); out.readOnly = true; out.style.cssText = 'width:100%;height:50px;margin-top:6px;font:11px monospace;background:#111;color:#cfc;border:0;border-radius:6px';
+  const act = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.cssText = 'margin:6px 6px 0 0;padding:6px 10px;border-radius:8px;border:0;background:#ffb347;color:#201810;font-weight:700'; b.onclick = fn; box.appendChild(b); };
+  act('Скопировать', () => { out.value = JSON.stringify(ROCK); out.select(); try { navigator.clipboard.writeText(out.value); } catch (e) {} });
+  act('Сбросить', () => { Object.assign(ROCK, ROCK_DEF); for (const [k, [inp, val]] of Object.entries(inputs)) { inp.value = ROCK[k]; val.textContent = ROCK[k]; } mark(); save(); });
+  box.appendChild(out);
+  document.body.appendChild(box); mark();
+  setInterval(() => {
+    if (!G || G.over) return;
+    if (night) { G.phase = 'night'; G.moon = MOONS[night]; } else G.phase = 'day';
+    G.phaseT = 999; G.plan = []; G.hero.hp = G.hero.max; G.pending = 0;
+    for (const z of G.zombies) z.dmg = 0;
+    if (zombies && G.zombies.length < 12) spawnZombie('walker', 0);
+  }, 400);
+}
 // test shortcut: #v=<village id> (mill, river, forest, grave) skips the menu and starts that village straight away
 const jump = /^#v=(\w+)/.exec(location.hash);
 if (jump && V(jump[1]) && !V(jump[1]).soon) { $('start').hidden = true; beginVillage(V(jump[1])); }
 // screenshots and checks from outside: open with #qa
-if (location.hash === "#qa") window.QA = { draw, offerCards, newGame, step: (dt, n = 1) => { for (let i = 0; i < n; i++) update(dt); }, seenNow, MOONS, showMap, selectNode, beginVillage, V, SAVE, get G() { return G; }, get map() { return { mapPan, panelBox, mapView, mapW, mapH }; } };
+if (location.hash === "#qa" || LAB.on) window.QA = { bandOutline, cliffBlocks, flowDir, clearLine, padAction, draw, offerCards, newGame, step: (dt, n = 1) => { for (let i = 0; i < n; i++) update(dt); }, seenNow, MOONS, showMap, selectNode, beginVillage, V, SAVE, get G() { return G; }, get map() { return { mapPan, panelBox, mapView, mapW, mapH }; } };
 })();
 </script>
 </body>
