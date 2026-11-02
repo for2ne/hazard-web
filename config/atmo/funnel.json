@@ -1,5 +1,5 @@
 {
- "version": 100,
+ "version": 101,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -2863,7 +2863,7 @@
    "closeDelaySeconds": 0,
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
-   "title": "Ease your pain without pills",
+   "title": "Pain Relief",
    "features": [],
    "plans": [
     {
@@ -2918,7 +2918,7 @@
     },
     {
      "type": "text",
-     "text": "say the weather triggers their pain · UGA survey, 4,600+ people",
+     "text": "say the weather affects their pain · UGA survey, 4,600+ people",
      "size": 12,
      "align": "center",
      "color": "#A9A6B8"
@@ -2945,24 +2945,24 @@
      "items": [
       {
        "icon": "wind",
-       "text": "2–5 min relief routines, no pills"
+       "text": "Relief routines in 2–5 minutes"
       },
       {
        "icon": "arrow.down.heart.fill",
-       "text": "See what eases your pain"
+       "text": "Track what helps you feel better"
       },
       {
        "icon": "cloud.bolt.rain.fill",
-       "text": "Warning before a hard day"
+       "text": "Warning before a hard weather day"
       },
       {
        "icon": "doc.text.fill",
-       "text": "Report for your doctor"
+       "text": "Notes to share with your doctor"
       }
      ]
     }
    ],
-   "_doc": "02.11 v100 (Vitali «го»): dark plum relief-first paywall, buyer structure (title, laurel, «Tap Continue for 3 days free», 4 bullets, one plan, price line above CTA). Renders: hazard-tools marketing/solara/review/paywall-relief-plum-v6(.png|-se.png)."
+   "_doc": "02.11 v100 (Vitali «го»): dark plum relief-first paywall, buyer structure (title, laurel, «Tap Continue for 3 days free», 4 bullets, one plan, price line above CTA). Renders: hazard-tools marketing/solara/review/paywall-relief-plum-v6(.png|-se.png). | 02.11 v101: no medical claims (atmo review): no medication wording, «affects» as in the UGA survey, «notes» not «report»."
   }
  },
  "routing": [
