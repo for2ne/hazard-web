@@ -1,5 +1,5 @@
 {
- "version": 99,
+ "version": 100,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -474,95 +474,6 @@
      "cta": "Continue",
      "beforeImageURL": "https://hazard.studio/img/atmo/ba-before-m1.jpg",
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
-    },
-    {
-     "id": "trial-explainer",
-     "type": "blocks",
-     "showIf": "trialDays >= 1",
-     "screenStyle": {
-      "dark": false,
-      "ink": "#2A2238",
-      "inkSoft": "#5A5068",
-      "accent": "#E8455F",
-      "cta": [
-       "#FF7E98",
-       "#E8455F"
-      ],
-      "image": "https://hazard.studio/img/atmo/pw-bg-relax-morning.jpg",
-      "imagePosition": 1.0,
-      "scrim": [
-       [
-        "#FFF8F1F2",
-        0
-       ],
-       [
-        "#FFF8F1D9",
-        0.45
-       ],
-       [
-        "#FFF8F173",
-        0.62
-       ],
-       [
-        "#FFF8F100",
-        0.78
-       ],
-       [
-        "#FFF8F100",
-        1
-       ]
-      ],
-      "spacing": 8
-     },
-     "blocks": [
-      {
-       "type": "spacer",
-       "height": 20
-      },
-      {
-       "type": "title",
-       "text": "Your 3 calm days\nstart today",
-       "size": 32,
-       "weight": "bold",
-       "align": "leading",
-       "color": "#2A2238"
-      },
-      {
-       "type": "text",
-       "text": "Nothing to pay now — just enjoy it. We'll remind you a day before your plan starts.",
-       "size": 17,
-       "align": "leading",
-       "color": "#5A5068"
-      },
-      {
-       "type": "spacer",
-       "height": 10
-      },
-      {
-       "type": "bullets",
-       "items": [
-        {
-         "icon": "sun.max.fill",
-         "text": "Today — full access, free"
-        },
-        {
-         "icon": "bell.badge.fill",
-         "text": "Day {reminderDay} — we remind you"
-        },
-        {
-         "icon": "sparkles",
-         "text": "Day {chargeDay} — your plan starts, unless you cancel"
-        }
-       ]
-      },
-      {
-       "type": "cta",
-       "text": "Continue",
-       "pin": "bottom",
-       "action": "next"
-      }
-     ],
-     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v99 (Vitali): no billing words on this screen (no card, no «billed», no lock) — it sells calm: 3 free days, we remind you, nothing to pay now; payment lives on the next screen"
     },
     {
      "id": "paywall",
@@ -1864,95 +1775,6 @@
      "afterImageURL": "https://hazard.studio/img/atmo/ba-after-m1.jpg"
     },
     {
-     "id": "trial-explainer",
-     "type": "blocks",
-     "showIf": "trialDays >= 1",
-     "screenStyle": {
-      "dark": false,
-      "ink": "#2A2238",
-      "inkSoft": "#5A5068",
-      "accent": "#E8455F",
-      "cta": [
-       "#FF7E98",
-       "#E8455F"
-      ],
-      "image": "https://hazard.studio/img/atmo/pw-bg-relax-morning.jpg",
-      "imagePosition": 1.0,
-      "scrim": [
-       [
-        "#FFF8F1F2",
-        0
-       ],
-       [
-        "#FFF8F1D9",
-        0.45
-       ],
-       [
-        "#FFF8F173",
-        0.62
-       ],
-       [
-        "#FFF8F100",
-        0.78
-       ],
-       [
-        "#FFF8F100",
-        1
-       ]
-      ],
-      "spacing": 8
-     },
-     "blocks": [
-      {
-       "type": "spacer",
-       "height": 20
-      },
-      {
-       "type": "title",
-       "text": "Your 3 calm days\nstart today",
-       "size": 32,
-       "weight": "bold",
-       "align": "leading",
-       "color": "#2A2238"
-      },
-      {
-       "type": "text",
-       "text": "Nothing to pay now — just enjoy it. We'll remind you a day before your plan starts.",
-       "size": 17,
-       "align": "leading",
-       "color": "#5A5068"
-      },
-      {
-       "type": "spacer",
-       "height": 10
-      },
-      {
-       "type": "bullets",
-       "items": [
-        {
-         "icon": "sun.max.fill",
-         "text": "Today — full access, free"
-        },
-        {
-         "icon": "bell.badge.fill",
-         "text": "Day {reminderDay} — we remind you"
-        },
-        {
-         "icon": "sparkles",
-         "text": "Day {chargeDay} — your plan starts, unless you cancel"
-        }
-       ]
-      },
-      {
-       "type": "cta",
-       "text": "Continue",
-       "pin": "bottom",
-       "action": "next"
-      }
-     ],
-     "_doc": "23.10 v95 (Vitali): no price here — the screen read as the paywall (pink CTA, price) and 7 of 10 ad users closed the app on it; the price stays on the paywall right above the buy button · v99 (Vitali): no billing words on this screen (no card, no «billed», no lock) — it sells calm: 3 free days, we remind you, nothing to pay now; payment lives on the next screen"
-    },
-    {
      "id": "paywall",
      "type": "paywall",
      "title": "Paywall"
@@ -3034,6 +2856,113 @@
     }
    ],
    "_doc": "22.10 v92 (Vitali «го»): light relax paywall — m1 dad + daughter pointing at the laurel, personalized title/subtitle ({withName}, {painDays}), weekly $6.99 + 3-day trial, «less than $1 a day». Renders: hazard-tools marketing/solara/review/paywall-relax-point-sim.png"
+  },
+  "relief_dark": {
+   "cta": "Continue",
+   "skippable": false,
+   "closeDelaySeconds": 0,
+   "termsURL": "https://hazard.studio/apps/solara/terms.html",
+   "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
+   "title": "Ease your pain without pills",
+   "features": [],
+   "plans": [
+    {
+     "productId": "com.hazard.atmo.pro.weekly",
+     "title": "Weekly",
+     "fallbackPrice": "$6.99",
+     "periodLabel": "per week",
+     "note": "3 days free, then $6.99/week",
+     "cta": "Continue",
+     "isDefault": true
+    }
+   ],
+   "screenStyle": {
+    "dark": true,
+    "background": [
+     "#3A2448",
+     "#1E1530"
+    ],
+    "ink": "#CFCDD8",
+    "inkSoft": "#A9A6B8",
+    "accent": "#FF5A6E",
+    "cta": [
+     "#FF5A6E",
+     "#E8455F"
+    ],
+    "spacing": 8
+   },
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Pain Relief",
+     "size": 46,
+     "weight": "heavy",
+     "align": "center",
+     "font": "default",
+     "colors": [
+      "#FF8A5B",
+      "#FF5A6E"
+     ]
+    },
+    {
+     "type": "laurel",
+     "value": "89%",
+     "label": "of people\nwith migraine",
+     "colors": [
+      "#C9C9D1",
+      "#FFFFFF",
+      "#C9C9D1"
+     ],
+     "color": "#FFFFFF",
+     "height": 230
+    },
+    {
+     "type": "text",
+     "text": "say the weather triggers their pain · UGA survey, 4,600+ people",
+     "size": 12,
+     "align": "center",
+     "color": "#A9A6B8"
+    },
+    {
+     "type": "spacer",
+     "height": 8
+    },
+    {
+     "type": "title",
+     "text": "Tap Continue for\n3 days free ⚡",
+     "size": 28,
+     "weight": "bold",
+     "align": "center",
+     "font": "default",
+     "color": "#FFFFFF"
+    },
+    {
+     "type": "spacer",
+     "height": 6
+    },
+    {
+     "type": "bullets",
+     "items": [
+      {
+       "icon": "wind",
+       "text": "2–5 min relief routines, no pills"
+      },
+      {
+       "icon": "arrow.down.heart.fill",
+       "text": "See what eases your pain"
+      },
+      {
+       "icon": "cloud.bolt.rain.fill",
+       "text": "Warning before a hard day"
+      },
+      {
+       "icon": "doc.text.fill",
+       "text": "Report for your doctor"
+      }
+     ]
+    }
+   ],
+   "_doc": "02.11 v100 (Vitali «го»): dark plum relief-first paywall, buyer structure (title, laurel, «Tap Continue for 3 days free», 4 bullets, one plan, price line above CTA). Renders: hazard-tools marketing/solara/review/paywall-relief-plum-v6(.png|-se.png)."
   }
  },
  "routing": [
@@ -3046,12 +2975,12 @@
    "_doc": "24.09: the bridge mints web_uid for every ad click → the app classifies it as source=web; the quiz is off, so web = paid direct → full onboarding. Restore bridge-plan-ready only when the quiz sends via=quiz.",
    "upgrade": {
     "minBuild": 50,
-    "paywall": "paid_photo_weekly",
-    "experiment": "price_v2",
+    "paywall": "relief_dark",
+    "experiment": "paywall_relief_v1",
     "split": [
      {
-      "arm": "weekly_699_trial",
-      "paywall": "paid_photo_weekly",
+      "arm": "weekly_699_relief_dark",
+      "paywall": "relief_dark",
       "weight": 100
      }
     ]
@@ -3065,12 +2994,12 @@
    "paywall": "paid_default",
    "upgrade": {
     "minBuild": 50,
-    "paywall": "paid_photo_weekly",
-    "experiment": "price_v2",
+    "paywall": "relief_dark",
+    "experiment": "paywall_relief_v1",
     "split": [
      {
-      "arm": "weekly_699_trial",
-      "paywall": "paid_photo_weekly",
+      "arm": "weekly_699_relief_dark",
+      "paywall": "relief_dark",
       "weight": 100
      }
     ]
@@ -3084,12 +3013,12 @@
    "paywall": "paid_default",
    "upgrade": {
     "minBuild": 50,
-    "paywall": "paid_photo_weekly",
-    "experiment": "price_v2",
+    "paywall": "relief_dark",
+    "experiment": "paywall_relief_v1",
     "split": [
      {
-      "arm": "weekly_699_trial",
-      "paywall": "paid_photo_weekly",
+      "arm": "weekly_699_relief_dark",
+      "paywall": "relief_dark",
       "weight": 100
      }
     ]
@@ -3100,12 +3029,12 @@
    "variant": "control",
    "upgrade": {
     "minBuild": 50,
-    "paywall": "paid_photo_weekly",
-    "experiment": "price_v2",
+    "paywall": "relief_dark",
+    "experiment": "paywall_relief_v1",
     "split": [
      {
-      "arm": "weekly_699_trial",
-      "paywall": "paid_photo_weekly",
+      "arm": "weekly_699_relief_dark",
+      "paywall": "relief_dark",
       "weight": 100
      }
     ]
