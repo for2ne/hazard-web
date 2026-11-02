@@ -1,5 +1,5 @@
 {
- "version": 101,
+ "version": 102,
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -2962,7 +2962,13 @@
      ]
     }
    ],
-   "_doc": "02.11 v100 (Vitali «го»): dark plum relief-first paywall, buyer structure (title, laurel, «Tap Continue for 3 days free», 4 bullets, one plan, price line above CTA). Renders: hazard-tools marketing/solara/review/paywall-relief-plum-v6(.png|-se.png). | 02.11 v101: no medical claims (atmo review): no medication wording, «affects» as in the UGA survey, «notes» not «report»."
+   "_doc": "02.11 v100 (Vitali «го»): dark plum relief-first paywall, buyer structure (title, laurel, «Tap Continue for 3 days free», 4 bullets, one plan, price line above CTA). Renders: hazard-tools marketing/solara/review/paywall-relief-plum-v6(.png|-se.png). | 02.11 v101: no medical claims (atmo review): no medication wording, «affects» as in the UGA survey, «notes» not «report». | 02.11 v102: disclosure below CTA 11pt + plan card (1.0.8 (56)+; older builds ignore).",
+   "disclosure": {
+    "position": "belowCTA",
+    "size": 11,
+    "opacity": 0.55
+   },
+   "planCard": true
   }
  },
  "routing": [
