@@ -1,5 +1,6 @@
 {
- "version": 103,
+ "version": 104,
+ "trial_reminder": {"enabled": false, "_doc": "04.11 Vitali: pre-charge push off (4 of 19 cancels came right after it). Paywalls no longer promise a reminder (trustLine/trialLine/showTrialTimeline cleaned in v104)."},
  "experimentId": "onb-science-v1",
  "flags": {
   "settings.replay": false,
@@ -503,7 +504,7 @@
     "cta": "Try 3 Days Free",
     "closeDelaySeconds": 0,
     "skippable": false,
-    "trustLine": "3 days free, then $49.99/year. We'll remind you a day before. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then $49.99/year. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -898,7 +899,7 @@
      "Apple Health",
      "Air Quality"
     ],
-    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -919,7 +920,7 @@
       "label": "pressure data"
      }
     ],
-    "showTrialTimeline": true
+    "showTrialTimeline": false
    }
   },
   {
@@ -1017,7 +1018,7 @@
      "Apple Health",
      "Air Quality"
     ],
-    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -1038,7 +1039,7 @@
       "label": "pressure data"
      }
     ],
-    "showTrialTimeline": true
+    "showTrialTimeline": false
    }
   },
   {
@@ -1283,7 +1284,7 @@
      "Apple Health",
      "Air Quality"
     ],
-    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+    "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -1304,7 +1305,7 @@
       "label": "pressure data"
      }
     ],
-    "showTrialTimeline": true
+    "showTrialTimeline": false
    }
   },
   {
@@ -1802,7 +1803,7 @@
     "cta": "Try 3 Days Free",
     "closeDelaySeconds": 0,
     "skippable": false,
-    "trustLine": "3 days free, then $49.99/year. We'll remind you a day before. Cancel anytime in the App Store.",
+    "trustLine": "3 days free, then $49.99/year. Cancel anytime in the App Store.",
     "termsURL": "https://hazard.studio/apps/solara/terms.html",
     "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
     "brandName": "Solara",
@@ -1955,7 +1956,7 @@
     "7-Day Outlook",
     "Your Triggers"
    ],
-   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -1976,7 +1977,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": true
+   "showTrialTimeline": false
   },
   "paid_default": {
    "title": "Your pain forecast is ready",
@@ -2000,7 +2001,7 @@
    "cta": "Try 3 Days Free",
    "closeDelaySeconds": 0,
    "skippable": false,
-   "trustLine": "3 days free, then $49.99/year. We'll remind you a day before. Cancel anytime in the App Store.",
+   "trustLine": "3 days free, then $49.99/year. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -2142,7 +2143,7 @@
     "7-Day Outlook",
     "Your Triggers"
    ],
-   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -2163,7 +2164,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": true,
+   "showTrialTimeline": false,
    "closeDelaySeconds": 0,
    "sameAsOnboarding": true
   },
@@ -2206,7 +2207,7 @@
     "7-Day Outlook",
     "Your Triggers"
    ],
-   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -2227,7 +2228,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": true,
+   "showTrialTimeline": false,
    "closeDelaySeconds": 0,
    "sameAsOnboarding": true
   },
@@ -2270,7 +2271,7 @@
     "7-Day Outlook",
     "Your Triggers"
    ],
-   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year — we'll remind you a day before. Cancel anytime in the App Store.",
+   "trustLine": "Weekly is billed today. Yearly: 3 days free, then $49.99/year. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -2291,7 +2292,7 @@
      "label": "pressure data"
     }
    ],
-   "showTrialTimeline": true,
+   "showTrialTimeline": false,
    "closeDelaySeconds": 0,
    "sameAsOnboarding": true
   },
@@ -2311,7 +2312,7 @@
      "periodLabel": "per year",
      "note": "3 days free, then $49.99/year",
      "cta": "Continue",
-     "trialLine": "{trial} free · we'll remind you before it ends",
+     "trialLine": "{trial} free · cancel anytime",
      "isDefault": true
     }
    ],
@@ -2609,7 +2610,7 @@
    "cta": "Try 3 Days Free",
    "closeDelaySeconds": 0,
    "skippable": true,
-   "trustLine": "3 days free, then $49.99/year. We'll remind you a day before. Cancel anytime in the App Store.",
+   "trustLine": "3 days free, then $49.99/year. Cancel anytime in the App Store.",
    "termsURL": "https://hazard.studio/apps/solara/terms.html",
    "privacyURL": "https://hazard.studio/apps/solara/privacy.html",
    "brandName": "Solara",
@@ -2729,7 +2730,7 @@
      "periodLabel": "per week",
      "note": "3 days free, then $6.99/week",
      "cta": "Continue",
-     "trialLine": "{trial} free · we'll remind you before it ends",
+     "trialLine": "{trial} free · cancel anytime",
      "isDefault": true
     }
    ],
