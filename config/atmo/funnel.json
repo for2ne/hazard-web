@@ -1,5 +1,5 @@
 {
- "version": 104,
+ "version": 105,
  "trial_reminder": {"enabled": false, "_doc": "04.11 Vitali: pre-charge push off (4 of 19 cancels came right after it). Paywalls no longer promise a reminder (trustLine/trialLine/showTrialTimeline cleaned in v104)."},
  "experimentId": "onb-science-v1",
  "flags": {
@@ -2726,9 +2726,9 @@
     {
      "productId": "com.hazard.atmo.pro.weekly",
      "title": "Weekly",
-     "fallbackPrice": "$6.99",
+     "fallbackPrice": "$9.99",
      "periodLabel": "per week",
-     "note": "3 days free, then $6.99/week",
+     "note": "3 days free, then $9.99/week",
      "cta": "Continue",
      "trialLine": "{trial} free · cancel anytime",
      "isDefault": true
@@ -2870,9 +2870,9 @@
     {
      "productId": "com.hazard.atmo.pro.weekly",
      "title": "Weekly",
-     "fallbackPrice": "$6.99",
+     "fallbackPrice": "$9.99",
      "periodLabel": "per week",
-     "note": "3 days free, then $6.99/week",
+     "note": "3 days free, then $9.99/week",
      "cta": "Continue",
      "isDefault": true
     }
